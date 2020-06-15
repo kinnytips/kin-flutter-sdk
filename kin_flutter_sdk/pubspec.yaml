@@ -1,8 +1,8 @@
 name: kin_flutter_sdk
-description: A new Flutter package project.
+description: A Flutter Wrapper for Kin SDK.
 version: 0.0.1
-author:
-homepage:
+author: Kinny
+homepage: https://kinny.io/
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -20,6 +20,13 @@ dev_dependencies:
 
 # The following section is specific to Flutter.
 flutter:
+  plugin:
+    platforms:
+      android:
+        package: com.kinny.kin
+        pluginClass: KinPlugin
+      ios:
+        pluginClass: KinPlugin
 
   # To add assets to your package, add an assets section, like this:
   # assets:
