@@ -1,6 +1,6 @@
-# kin_flutter_sdk
+# Kin Flutter SDK
 
-A new Flutter project.
+A Flutter wrapper for the Kin SDK supporting Swift and Kotlin implementations
 
 ## Getting Started
 
