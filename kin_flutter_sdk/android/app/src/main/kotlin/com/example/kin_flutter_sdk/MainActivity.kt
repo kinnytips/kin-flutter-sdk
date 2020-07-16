@@ -1,4 +1,4 @@
-package com.example.kin_flutter_sdk
+package com.kin.kin_flutter_sdk
 
 import androidx.annotation.NonNull
 import io.flutter.embedding.android.FlutterActivity
