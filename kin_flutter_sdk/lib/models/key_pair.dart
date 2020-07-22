@@ -1,5 +1,7 @@
 import 'dart:typed_data';
 
+import 'decorated_signature.dart';
+
 class IKeyPair {
     /**
      * Returns the human readable account ID encoded in strkey.
@@ -57,4 +59,8 @@ class IKeyPair {
     Future<bool> verify(ByteData data, ByteData signature) async {
 
     }
+}
+
+class KeyPair implements IKeyPair {
+
 }
