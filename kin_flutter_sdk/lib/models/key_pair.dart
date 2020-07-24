@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'decorated_signature.dart';
+import 'signature_hint.dart';
 
 class IKeyPair {
     /**
@@ -62,5 +64,67 @@ class IKeyPair {
 }
 
 class KeyPair implements IKeyPair {
+  @override
+  String accountId;
+
+  @override
+  ByteData publicKey;
+
+  @override
+  ByteData rawSecretSeed;
+
+  @override
+  var secretSeed;
+
+  @override
+  var signatureHint;
+
+  @override
+  var xdrPublicKey;
+
+  @override
+  var xdrSignerKey;
+
+  @override
+  Future<bool> canSign() {
+    // TODO: implement canSign
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<ByteData> sign(ByteData data) {
+      // TODO: implement sign
+      throw UnimplementedError();
+    }
+  
+    @override
+    Future<DecoratedSignature> signDsign(Byt(DataData data) {
+      // TODO: implement signDecorated
+      throw UnimplementedError();
+    }
+  
+    @override
+    Future<sign(BytrDataByteData data, ByteData signature) {
+    // TODO: implement verify
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<DecoratedSignature> signDecorated(ByteData data) {
+      // TODO: implement signDecorated
+      throw UnimplementedError();
+    }
+  
+    @override
+    Future<bool> ve(ByteDate dat dataeData signature) {
+    // TODO: implement verify
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> verify(ByteData data, ByteData signature) {
+    // TODO: implement verify
+    throw UnimplementedError();
+  }
 
 }
