@@ -1,0 +1,17 @@
+name: Kin flutter SDK CI
+
+on:
+  push:
+    branches: [ sdk-update ]
+jobs:
+  test-application:
+    runs-on: ubuntu-latest
+
+    container:
+      image:  google/dart:latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install dependencies
+      run: pub get
+    - name: Run tests
+      run: pub run test
