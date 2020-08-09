@@ -1,7 +1,7 @@
-library kin_flutter_sdk;
+library kin_sdk;
 
 /// A Calculator.
-class Calculator {
+class Kin {
   /// Returns [value] plus 1.
   int addOne(int value) => value + 1;
 }
