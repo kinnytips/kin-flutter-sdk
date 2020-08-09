@@ -1,0 +1,3 @@
+class TransactionId {
+  String id;
+}
