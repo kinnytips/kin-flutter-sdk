@@ -1,4 +1,4 @@
-package com.kin.kin_flutter_sdk
+package io.kinny.kin
 
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
