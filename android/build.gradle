@@ -1,4 +1,4 @@
-group 'io.kinny.kin_sdk'
+group 'io.kinny.kin'
 version '1.0-SNAPSHOT'
 
 buildscript {
@@ -40,4 +40,6 @@ android {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "org.kin.sdk.android:base:0.1.12"
+    implementation "org.kin.sdk.android:base-compat:0.1.12"
 }

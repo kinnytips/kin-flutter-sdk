@@ -1,4 +1,4 @@
-package io.kinny.kin_sdk
+package io.kinny.kin
 
 import androidx.annotation.NonNull;
 
