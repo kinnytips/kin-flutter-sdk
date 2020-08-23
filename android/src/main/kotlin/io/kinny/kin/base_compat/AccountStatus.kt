@@ -1,4 +1,4 @@
-package io.kinny.kin
+package io.kinny.kin.base_compat
 
 class AccountStatus {
 }
