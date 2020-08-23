@@ -12,7 +12,9 @@ import org.kin.sdk.base.stellar.models.NetworkEnvironment
 import org.kin.sdk.base.storage.KinFileStorage
 import org.kin.sdk.base.tools.Promise
 
-class BackupRestore: MethodCallHandler {
+class BackupRestore(
+    private val kinAccountContext: KinAccountContext
+): MethodCallHandler {
     private val REQ_CODE_BACKUP = 9000
     private val REQ_CODE_RESTORE = 9001
 
@@ -63,6 +65,7 @@ class BackupRestore: MethodCallHandler {
     }
 
     private fun importWallet(privateKey: Key.PrivateKey, network: NetworkEnvironment): Promise<Boolean> {
+
         val environment: KinEnvironment =
                 KinEnvironment.Horizon.Builder(network)
                         .setStorage(KinFileStorage.Builder("path/to/storage/location"))
