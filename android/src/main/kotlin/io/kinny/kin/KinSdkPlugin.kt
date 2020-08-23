@@ -8,6 +8,9 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry.Registrar
+import org.kin.sdk.base.KinEnvironment
+import org.kin.sdk.base.stellar.models.NetworkEnvironment
+import org.kin.sdk.base.storage.KinFileStorage
 
 /** KinSdkPlugin */
 public class KinSdkPlugin: FlutterPlugin, MethodCallHandler {
@@ -37,6 +40,35 @@ public class KinSdkPlugin: FlutterPlugin, MethodCallHandler {
       val channel = MethodChannel(registrar.messenger(), "kin_sdk")
       channel.setMethodCallHandler(KinSdkPlugin())
     }
+  }
+
+  private val testKinEnvironment: KinEnvironment.Agora by lazy {
+    KinEnvironment.Agora.Builder(NetworkEnvironment.KinStellarTestNet)
+            .setAppInfoProvider(object : AppInfoProvider {
+              override val appInfo: AppInfo =
+                      AppInfo(
+                              DemoAppConfig.DEMO_APP_IDX,
+                              DemoAppConfig.DEMO_APP_ACCOUNT_ID,
+                              "Kin Demo App",
+                              R.drawable.app_icon
+                      )
+
+              override fun getPassthroughAppUserCredentials(): AppUserCreds {
+                return AppUserCreds("demo_app_uid", "demo_app_user_passkey")
+              }
+            })
+            .setStorage(KinFileStorage.Builder("${applicationContext.filesDir}/kin"))
+            .build()
+            .apply {
+              addDefaultInvoices(invoiceRepository)
+            }
+  }
+
+  private val mainNetKinEnvironment: KinEnvironment.Agora by lazy {
+    KinEnvironment.Agora.Builder(NetworkEnvironment.KinStellarMainNet)
+            .setAppInfoProvider(this)
+            .setStorage(KinFileStorage.Builder("${applicationContext.filesDir}/kin"))
+            .build()
   }
 
   override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {

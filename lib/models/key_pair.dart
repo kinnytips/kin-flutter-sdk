@@ -14,7 +14,7 @@ class IKeyPair {
      * Returns the human readable secret seed encoded in strkey.
      */
     CharArray secretSeed;
-
+    
     /**
      * Returns the raw 32 byte secret seed.
      */
@@ -61,6 +61,15 @@ class IKeyPair {
     Future<bool> verify(ByteData data, ByteData signature) async {
 
     }
+}
+    
+class CharArray {
+}
+
+class SignerKey {
+}
+
+class PublicKey {
 }
 
 class KeyPair implements IKeyPair {
@@ -114,12 +123,6 @@ class KeyPair implements IKeyPair {
       // TODO: implement signDecorated
       throw UnimplementedError();
     }
-  
-    @override
-    Future<bool> ve(ByteDate dat dataeData signature) {
-    // TODO: implement verify
-    throw UnimplementedError();
-  }
 
   @override
   Future<bool> verify(ByteData data, ByteData signature) {
