@@ -2,7 +2,7 @@ name: Kin flutter SDK CI
 
 on:
   push:
-    branches: [ sdk-update ]
+    branches: [ master ]
 jobs:
   test-application:
     runs-on: ubuntu-latest
