@@ -1,6 +1,6 @@
 # Kin Flutter SDK (Unofficial)
 
-Plugin Package for using Kin cryptocurrency Official SDK within Flutter. currently supporting IOS and Android Implmentations.
+Plugin Package for using [Kin Cryptocurrency](https://www.kin.org/) Official SDK within Flutter. currently supporting [IOS](https://github.com/kinecosystem/kin-ios) and [Android](https://github.com/kinecosystem/kin-android) Implmentations.
 
 ## Getting Started
 
@@ -12,4 +12,3 @@ Android and/or iOS.
 For help getting started with Flutter, view our
 [online documentation](https://flutter.dev/docs), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
-
