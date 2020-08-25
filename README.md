@@ -1,6 +1,6 @@
-# kin_sdk
+# Kin Flutter SDK (Unofficial)
 
-A new flutter plugin project.
+Plugin Package for using Kin cryptocurrency Official SDK within Flutter. currently supporting IOS and Android Implmentations.
 
 ## Getting Started
 
