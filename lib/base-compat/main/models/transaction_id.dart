@@ -1,3 +1,0 @@
-class TransactionId {
-  String id;
-}

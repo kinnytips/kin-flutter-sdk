@@ -2,7 +2,7 @@ name: kin_sdk
 description: A new flutter plugin project.
 version: 0.0.1
 author:
-homepage:
+homepage: "https://www.kinny.io"
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -30,7 +30,7 @@ flutter:
   plugin:
     platforms:
       android:
-        package: io.kinny.kin_sdk
+        package: io.kinny.kin
         pluginClass: KinSdkPlugin
       ios:
         pluginClass: KinSdkPlugin
