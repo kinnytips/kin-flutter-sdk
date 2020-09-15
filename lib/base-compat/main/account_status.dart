@@ -1,8 +1,7 @@
-import 'dart:async';
+@_MyAccountStatus(0, 2)
+class _MyAccountStatus {
+  final int NOT_CREATED;
+  final int CREATED;
 
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
- 
-class _MyAccountStatus extends State<KinAccount> {
-  static const platform = const MethodChannel('com.kinecosystem.kin-sdk/AccountStatus');
+  const _MyAccountStatus(this.NOT_CREATED, this.CREATED);
 }
