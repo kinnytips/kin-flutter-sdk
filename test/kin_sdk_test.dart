@@ -1,4 +1,4 @@
-import 'package:flutter/services.dart';
+/* import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kin_sdk/kin_sdk.dart';
 
@@ -21,3 +21,4 @@ void main() {
     expect(await KinSdk.platformVersion, '42');
   });
 }
+ */

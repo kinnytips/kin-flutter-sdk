@@ -42,14 +42,10 @@ android {
         disable 'InvalidPackage'
     }
 }
-
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    //implementation "org.kin.sdk.android:base:0.2.1"
-    // implementation "org.kin.sdk.android:base-compat:0.2.1"
-    implementation "org.kin.sdk.android:base:0.2.2"
+    implementation ('org.kin.sdk.android:base:0.2.2')
+    implementation ('org.kin.sdk.android:base-compat:0.2.2')
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'androidx.multidex:multidex:$multidex_version'
-
-
 }
