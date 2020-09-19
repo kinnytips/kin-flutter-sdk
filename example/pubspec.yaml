@@ -1,4 +1,4 @@
-name: kin_sdk_example
+name: kin
 description: Demonstrates how to use the kin_sdk plugin.
 
 # The following line prevents the package from being accidentally published to

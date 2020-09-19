@@ -1,4 +1,4 @@
-# kin_sdk_example
+# kin
 
 Demonstrates how to use the kin_sdk plugin.
 

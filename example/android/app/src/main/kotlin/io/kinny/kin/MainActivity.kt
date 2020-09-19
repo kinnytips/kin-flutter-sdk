@@ -1,4 +1,4 @@
-package io.kinny.kin_sdk_example
+package io.kinny.kin
 
 import io.flutter.embedding.android.FlutterActivity
 
