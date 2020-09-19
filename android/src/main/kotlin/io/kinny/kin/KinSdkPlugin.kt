@@ -70,14 +70,12 @@ public class KinSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         try {
             if (!kinClient.hasAccount()) {
                 account = kinClient.addAccount()
-                Log.i("INFO - base- compat", account.publicAddress)
-
+                return result.success(account.publicAddress)
             }
         } catch (e: CreateAccountException) {
             e.printStackTrace()
+            return result.error("400", "Unable to create account", "Exception")
         }
-
-        return result.success("Success")
     }
 
     private fun createAccount(result: Result) {
@@ -103,7 +101,7 @@ public class KinSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                         .createNewAccount()
                         .build()
 
-        return result.success("Account id ${context.accountId.toString()}")
+        return result.success(context.accountId.toString())
     }
 
     override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
@@ -128,9 +126,9 @@ public class KinSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 }
 
 class DemoAppConfig {
-      companion object {
-          val DEMO_APP_IDX = AppIdx(1)
-          val DEMO_APP_ACCOUNT_ID =
-                  KinAccount.Id("GDHCB4VCNNFIMZI3BVHLA2FVASECBR2ZXHOAXEBBFVUH5G2YAD7V3JVH")
-      }
-  }
+    companion object {
+        val DEMO_APP_IDX = AppIdx(1)
+        val DEMO_APP_ACCOUNT_ID =
+                KinAccount.Id("GDHCB4VCNNFIMZI3BVHLA2FVASECBR2ZXHOAXEBBFVUH5G2YAD7V3JVH")
+    }
+}
