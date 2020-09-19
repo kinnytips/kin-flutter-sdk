@@ -5,7 +5,7 @@ Plugin Package for using [Kin Cryptocurrency](https://www.kin.org/) Official SDK
 ## How to use the SDK
 
 SDK has: <br>
-1) `KinSdk` for all the newer oprations using the `Agora` 
+1) `KinSdk` for all the newer operations using `Agora` 
 2) `KinBaseCompatSdk` for older version of the sdk.
 
 ### KinSdk (`base`)
