@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'xdr/xdr_asset.dart';
-import 'key_pair.dart';
+import 'models/key_pair.dart';
 import 'util.dart';
 import 'asset_type_native.dart';
 import 'asset_type_credit_alphanum4.dart';
