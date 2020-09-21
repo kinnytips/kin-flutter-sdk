@@ -1,4 +1,4 @@
-import 'key_pair.dart';
+import 'models/key_pair.dart';
 import 'util.dart';
 import 'xdr/xdr_type.dart';
 import 'xdr/xdr_account.dart';
