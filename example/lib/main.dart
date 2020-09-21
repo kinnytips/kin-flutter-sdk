@@ -1,7 +1,9 @@
-import 'package:flutter/material.dart';
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:kin_sdk/base-compat/main/models/key_pair.dart';
 import 'package:kin_sdk/kin_sdk.dart';
 
 void main() {
@@ -14,7 +16,8 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String _platformVersion = 'Unknown';
+  String _platformVersion;
+  String _message;
 
   @override
   void initState() {
@@ -25,6 +28,7 @@ class _MyAppState extends State<MyApp> {
   // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> initPlatformState() async {
     String platformVersion;
+
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
       platformVersion = await KinSdk.platformVersion;
@@ -39,6 +43,15 @@ class _MyAppState extends State<MyApp> {
 
     setState(() {
       _platformVersion = platformVersion;
+      KeyPair kp = KeyPair.random();
+      _message = "ID:\n" + kp.accountId;
+    });
+  }
+
+  void _btPress() {
+    setState(() {
+      KeyPair kp = KeyPair.random();
+      _message = "ID:\n" + kp.accountId + "\n\n";
     });
   }
 
@@ -47,10 +60,17 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Plugin example app'),
+          title: const Text('Kin Flutter SDK Demo'),
         ),
-        body: Center(
-          child: Text('Running on: $_platformVersion\n'),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text('Running on: $_platformVersion\n\n' + _message),
+        ),
+
+        floatingActionButton: FloatingActionButton(
+          onPressed: _btPress,
+          tooltip: 'Press',
+          child: Icon(Icons.add_circle),
         ),
       ),
     );

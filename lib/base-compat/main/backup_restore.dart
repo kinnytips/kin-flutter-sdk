@@ -1,9 +1,6 @@
-import 'dart:async';
 
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
-class _BackupRestoreState extends State<BackupRestore>  {
+/*class _BackupRestoreState extends State<BackupRestore>  {
   static const platform = const MethodChannel('com.kinecosystem.kin-sdk/BackupRestore');
   // Backup and Restore
   String _exportWalletResult = 'awaiting wallet to export.';
@@ -34,4 +31,4 @@ class _BackupRestoreState extends State<BackupRestore>  {
     });
   }
 
-}
+}*/

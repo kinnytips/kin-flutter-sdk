@@ -1,10 +1,12 @@
-import 'package:http/http.dart' as http;
-import 'package:stellar_flutter_sdk/src/asset_type_credit_alphanum.dart';
-import 'package:stellar_flutter_sdk/src/asset_type_native.dart';
-import 'package:stellar_flutter_sdk/src/stellar_sdk.dart';
 import 'dart:convert';
-import '../responses/response.dart';
+
+import 'package:http/http.dart' as http;
+import 'package:kin_sdk/kin_sdk.dart';
+
+import '../asset_type_credit_alphanum.dart';
+import '../asset_type_native.dart';
 import '../assets.dart';
+import '../responses/response.dart';
 
 /// Exception thrown when request returned an non-success HTTP code.
 class ErrorResponse implements Exception {
@@ -60,7 +62,7 @@ abstract class RequestBuilder {
   Map<String, String> queryParameters;
   static final Map<String, String> headers = {
     "X-Client-Name": "stellar_flutter_sdk",
-    "X-Client-Version": StellarSDK.versionNumber
+    "X-Client-Version": KinSdk.platformVersion.toString()
   };
 
   RequestBuilder(

@@ -2,27 +2,27 @@
 // Use of this source code is governed by a license that can be
 // found in the LICENSE file.
 
-import 'package:http/http.dart' as http;
 import 'dart:async';
-import '../util.dart';
-import '../requests/request_builder.dart';
-import 'effects/effect_responses.dart';
-import 'operations/operation_responses.dart';
 
-// responses
-import 'transaction_response.dart';
+import 'package:http/http.dart' as http;
+import 'package:kin_sdk/base-compat/main/responses/path_response.dart';
+import 'package:kin_sdk/base-compat/main/responses/root_response.dart';
+import 'package:kin_sdk/base-compat/main/responses/submit_transaction_response.dart';
+import 'package:kin_sdk/base-compat/main/responses/trade_aggregation_response.dart';
+import 'package:kin_sdk/base-compat/main/responses/trade_response.dart';
+import 'package:kin_sdk/base-compat/main/responses/transaction_response.dart';
+import 'package:kin_sdk/base-compat/main/sep/0002/federation.dart';
+
+import '../requests/request_builder.dart';
+import '../util.dart';
 import 'account_response.dart';
 import 'asset_response.dart';
+import 'effects/effect_responses.dart';
+import 'fee_stats_response.dart';
 import 'ledger_response.dart';
 import 'offer_response.dart';
-import 'fee_stats_response.dart';
+import 'operations/operation_responses.dart';
 import 'order_book_response.dart';
-import 'path_response.dart';
-import 'root_response.dart';
-import 'submit_transaction_response.dart';
-import 'trade_response.dart';
-import 'trade_aggregation_response.dart';
-import '../sep/0002/federation.dart';
 
 String serializeNull(dynamic src) {
   return null;

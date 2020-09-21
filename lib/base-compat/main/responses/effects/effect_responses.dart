@@ -2,13 +2,14 @@
 // Use of this source code is governed by a license that can be
 // found in the LICENSE file.
 
+import 'package:kin_sdk/base-compat/main/responses/effects/trade_effects_responses.dart';
+import 'package:kin_sdk/base-compat/main/responses/effects/trustline_effects_responses.dart';
+
 import '../response.dart';
 import 'account_effects_responses.dart';
-import 'signer_effects_responses.dart';
-import 'trustline_effects_responses.dart';
-import 'trade_effects_responses.dart';
 import 'data_effects_responses.dart';
 import 'misc_effects_responses.dart';
+import 'signer_effects_responses.dart';
 
 ///Abstract class for effect responses.
 /// See: <a href="https://developers.stellar.org/api/resources/effects/" target="_blank">Effects</a>.

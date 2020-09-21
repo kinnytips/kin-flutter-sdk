@@ -1,28 +1,29 @@
 import 'dart:typed_data';
-import 'package:fixnum/fixnum.dart' as fixNum;
-import 'package:tweetnacl/tweetnacl.dart' as ed25519;
-import 'dart:typed_data';
-import "../util.dart";
-import 'network.dart';
-import 'transaction.dart';
-import 'xdr/xdr_data_io.dart';
-import 'xdr/xdr_signing.dart';
-import 'xdr/xdr_type.dart';
-import 'xdr/xdr_account.dart';
+
 import 'package:collection/collection.dart';
-import 'decorated_signature.dart';
-import 'signature_hint.dart';
+import 'package:fixnum/fixnum.dart' as fixNum;
+import 'package:kin_sdk/base-compat/main/network.dart';
+import 'package:kin_sdk/base-compat/main/xdr/xdr_account.dart';
+import 'package:kin_sdk/base-compat/main/xdr/xdr_data_io.dart';
+import 'package:kin_sdk/base-compat/main/xdr/xdr_signing.dart';
+import 'package:kin_sdk/base-compat/main/xdr/xdr_type.dart';
+import 'package:tweetnacl/tweetnacl.dart' as ed25519;
+
+import "../util.dart";
+import 'transaction.dart';
 
 class VersionByte {
   final _value;
+
   const VersionByte._internal(this._value);
+
   toString() => 'VersionByte.$_value';
+
   VersionByte(this._value);
   getValue() => this._value;
 
   static const ACCOUNT_ID = const VersionByte._internal((6 << 3)); // G
   static const MUXED_ACCOUNT_ID = const VersionByte._internal((12 << 3)); // M
-  static const SEED = const VersionByte._internal((18 << 3)); // S
   static const PRE_AUTH_TX = const VersionByte._internal((19 << 3)); // T
   static const SHA256_HASH = const VersionByte._internal((23 << 3)); // X
 
@@ -43,14 +44,6 @@ class StrKey {
 
   static Uint8List decodeStellarMuxedAccountId(String data) {
     return decodeCheck(VersionByte.MUXED_ACCOUNT_ID, data);
-  }
-
-  static String encodeStellarSecretSeed(Uint8List data) {
-    return encodeCheck(VersionByte.SEED, data);
-  }
-
-  static Uint8List decodeStellarSecretSeed(String data) {
-    return decodeCheck(VersionByte.SEED, data);
   }
 
   static String encodePreAuthTx(Uint8List data) {
@@ -148,14 +141,6 @@ class KeyPair {
     return _mPrivateKey != null;
   }
 
-  /// Creates a new KeyPair object from a Stellar secret [seed] ("S...").
-  static KeyPair fromSecretSeed(String seed) {
-    Uint8List decoded = StrKey.decodeStellarSecretSeed(seed);
-    KeyPair keypair = fromSecretSeedList(decoded);
-
-    return keypair;
-  }
-
   /// Creates a new KeyPair object from a raw 32 byte secret [seed].
   static KeyPair fromSecretSeedList(Uint8List seed) {
     _mPrivateKeySeed = seed;
@@ -171,6 +156,7 @@ class KeyPair {
           XdrMuxedAccountMed25519.decode(XdrDataInputStream(bytes));
       return fromPublicKey(muxMed25519.ed25519.uint256);
     }
+
     Uint8List decoded = StrKey.decodeStellarAccountId(accountId);
     return fromPublicKey(decoded);
   }
@@ -188,9 +174,6 @@ class KeyPair {
 
   /// Returns the human readable account ID of this key pair.
   String get accountId => StrKey.encodeStellarAccountId(_mPublicKey);
-
-  ///Returns the human readable secret seed of this key pair.
-  String get secretSeed => StrKey.encodeStellarSecretSeed(_mPrivateKeySeed);
 
   Uint8List get publicKey => _mPublicKey;
   Uint8List get privateKey => _mPrivateKey;
