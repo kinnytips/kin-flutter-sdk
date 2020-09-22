@@ -2,15 +2,9 @@ import 'dart:typed_data';
 
 import 'package:collection/collection.dart';
 import 'package:fixnum/fixnum.dart' as fixNum;
-import 'package:kin_sdk/base-compat/main/network.dart';
-import 'package:kin_sdk/base-compat/main/xdr/xdr_account.dart';
-import 'package:kin_sdk/base-compat/main/xdr/xdr_data_io.dart';
-import 'package:kin_sdk/base-compat/main/xdr/xdr_signing.dart';
-import 'package:kin_sdk/base-compat/main/xdr/xdr_type.dart';
 import 'package:tweetnacl/tweetnacl.dart' as ed25519;
 
 import "../util.dart";
-import 'transaction.dart';
 
 class VersionByte {
   final _value;
@@ -20,13 +14,10 @@ class VersionByte {
   toString() => 'VersionByte.$_value';
 
   VersionByte(this._value);
+
   getValue() => this._value;
 
   static const ACCOUNT_ID = const VersionByte._internal((6 << 3)); // G
-  static const MUXED_ACCOUNT_ID = const VersionByte._internal((12 << 3)); // M
-  static const PRE_AUTH_TX = const VersionByte._internal((19 << 3)); // T
-  static const SHA256_HASH = const VersionByte._internal((23 << 3)); // X
-
 }
 
 class StrKey {
@@ -36,30 +27,6 @@ class StrKey {
 
   static Uint8List decodeStellarAccountId(String data) {
     return decodeCheck(VersionByte.ACCOUNT_ID, data);
-  }
-
-  static String encodeStellarMuxedAccountId(Uint8List data) {
-    return encodeCheck(VersionByte.MUXED_ACCOUNT_ID, data);
-  }
-
-  static Uint8List decodeStellarMuxedAccountId(String data) {
-    return decodeCheck(VersionByte.MUXED_ACCOUNT_ID, data);
-  }
-
-  static String encodePreAuthTx(Uint8List data) {
-    return encodeCheck(VersionByte.PRE_AUTH_TX, data);
-  }
-
-  static Uint8List decodePreAuthTx(String data) {
-    return decodeCheck(VersionByte.PRE_AUTH_TX, data);
-  }
-
-  static String encodeSha256Hash(Uint8List data) {
-    return encodeCheck(VersionByte.SHA256_HASH, data);
-  }
-
-  static Uint8List decodeSha256Hash(String data) {
-    return decodeCheck(VersionByte.SHA256_HASH, data);
   }
 
   static String encodeCheck(VersionByte versionByte, Uint8List data) {
@@ -136,34 +103,11 @@ class KeyPair {
     _mPrivateKey = privateKey;
   }
 
-  /// Returns true if this Keypair is capable of signing.
-  bool canSign() {
-    return _mPrivateKey != null;
-  }
-
   /// Creates a new KeyPair object from a raw 32 byte secret [seed].
   static KeyPair fromSecretSeedList(Uint8List seed) {
     _mPrivateKeySeed = seed;
     ed25519.KeyPair kp = ed25519.Signature.keyPair_fromSeed(seed);
     return new KeyPair(kp.publicKey, kp.secretKey);
-  }
-
-  /// Creates a new KeyPair object from a stellar [accountId].
-  static KeyPair fromAccountId(String accountId) {
-    if (accountId.startsWith('M')) {
-      Uint8List bytes = StrKey.decodeStellarMuxedAccountId(accountId);
-      XdrMuxedAccountMed25519 muxMed25519 =
-          XdrMuxedAccountMed25519.decode(XdrDataInputStream(bytes));
-      return fromPublicKey(muxMed25519.ed25519.uint256);
-    }
-
-    Uint8List decoded = StrKey.decodeStellarAccountId(accountId);
-    return fromPublicKey(decoded);
-  }
-
-  /// Creates a new KeyPair object from a 32 byte [publicKey] address.
-  static KeyPair fromPublicKey(Uint8List publicKey) {
-    return new KeyPair(publicKey, null);
   }
 
   /// Generates a random Stellar KeyPair object.
@@ -174,136 +118,4 @@ class KeyPair {
 
   /// Returns the human readable account ID of this key pair.
   String get accountId => StrKey.encodeStellarAccountId(_mPublicKey);
-
-  Uint8List get publicKey => _mPublicKey;
-  Uint8List get privateKey => _mPrivateKey;
-
-  XdrSignatureHint get signatureHint {
-    XdrDataOutputStream xdrOutputStream = new XdrDataOutputStream();
-    XdrPublicKey.encode(xdrOutputStream, this.xdrPublicKey);
-    Uint8List publicKeyBytes = Uint8List.fromList(xdrOutputStream.bytes);
-    Uint8List signatureHintBytes = Uint8List.fromList(publicKeyBytes
-        .getRange(publicKeyBytes.length - 4, publicKeyBytes.length)
-        .toList());
-
-    XdrSignatureHint signatureHint = new XdrSignatureHint();
-    signatureHint.signatureHint = signatureHintBytes;
-    return signatureHint;
-  }
-
-  XdrMuxedAccount get xdrMuxedAccount {
-    XdrMuxedAccount xdrMuxAccount = XdrMuxedAccount();
-    xdrMuxAccount.discriminant = XdrCryptoKeyType.KEY_TYPE_ED25519;
-    xdrMuxAccount.ed25519 = xdrPublicKey.getEd25519();
-    return xdrMuxAccount;
-  }
-
-  XdrPublicKey get xdrPublicKey {
-    XdrPublicKey publicKey = new XdrPublicKey();
-    publicKey.setDiscriminant(XdrPublicKeyType.PUBLIC_KEY_TYPE_ED25519);
-    XdrUint256 uint256 = new XdrUint256();
-    uint256.uint256 = this.publicKey;
-    publicKey.setEd25519(uint256);
-    return publicKey;
-  }
-
-  XdrSignerKey get xdrSignerKey {
-    XdrSignerKey signerKey = new XdrSignerKey();
-    signerKey.discriminant = XdrSignerKeyType.SIGNER_KEY_TYPE_ED25519;
-    XdrUint256 uint256 = new XdrUint256();
-    uint256.uint256 = this.publicKey;
-    signerKey.ed25519 = uint256;
-    return signerKey;
-  }
-
-  static KeyPair fromXdrPublicKey(XdrPublicKey key) {
-    return KeyPair.fromPublicKey(key.getEd25519().uint256);
-  }
-
-  static KeyPair fromXdrSignerKey(XdrSignerKey key) {
-    return KeyPair.fromPublicKey(key.ed25519.uint256);
-  }
-
-  /// Sign the provided data with the keypair's private key [data].
-  Uint8List sign(Uint8List data) {
-    if (_mPrivateKey == null) {
-      throw new Exception(
-          "KeyPair does not contain secret key. Use KeyPair.fromSecretSeed method to create a new KeyPair with a secret key.");
-    }
-    ed25519.Signature sgr = ed25519.Signature(null, _mPrivateKey);
-    return sgr.detached(data);
-  }
-
-  /// Sign the provided [data] with the keypair's private key.
-  XdrDecoratedSignature signDecorated(Uint8List data) {
-    Uint8List signatureBytes = this.sign(data);
-
-    XdrSignature signature = XdrSignature();
-    signature.signature = signatureBytes;
-
-    XdrDecoratedSignature decoratedSignature = new XdrDecoratedSignature();
-    decoratedSignature.hint = this.signatureHint;
-    decoratedSignature.signature = signature;
-    return decoratedSignature;
-  }
-
-  /// Verify the provided [data] and [signature] match this keypair's public key.
-  bool verify(Uint8List data, Uint8List signature) {
-    ed25519.Signature sgr = ed25519.Signature(_mPublicKey, null);
-    return sgr.detached_verify(data, signature);
-  }
-}
-
-/// SignerKey is a helper class that creates XdrSignerKey objects.
-class SignerKey {
-  /// Create <code>ed25519PublicKey</code> XdrSignerKey from the given [keyPair].
-  static XdrSignerKey ed25519PublicKey(KeyPair keyPair) {
-    checkNotNull(keyPair, "keyPair cannot be null");
-    return keyPair.xdrSignerKey;
-  }
-
-  /// Create <code>sha256Hash</code> XdrSignerKey from a sha256 [hash] of a preimage.
-  static XdrSignerKey sha256Hash(Uint8List hash) {
-    checkNotNull(hash, "hash cannot be null");
-    XdrSignerKey signerKey = new XdrSignerKey();
-    XdrUint256 value = SignerKey._createUint256(hash);
-
-    signerKey.discriminant = XdrSignerKeyType.SIGNER_KEY_TYPE_HASH_X;
-    signerKey.hashX = value;
-
-    return signerKey;
-  }
-
-  /// Create <code>preAuthTx</code> XdrSignerKey from a Transaction [tx].
-  static XdrSignerKey preAuthTx(Transaction tx, Network network) {
-    checkNotNull(tx, "tx cannot be null");
-    XdrSignerKey signerKey = new XdrSignerKey();
-    XdrUint256 value = SignerKey._createUint256(tx.hash(network));
-
-    signerKey.discriminant = XdrSignerKeyType.SIGNER_KEY_TYPE_PRE_AUTH_TX;
-    signerKey.preAuthTx = value;
-
-    return signerKey;
-  }
-
-  /// Create <code>preAuthTx</code> XdrSignerKey from a transaction [hash].
-  static XdrSignerKey preAuthTxHash(Uint8List hash) {
-    checkNotNull(hash, "hash cannot be null");
-    XdrSignerKey signerKey = new XdrSignerKey();
-    XdrUint256 value = SignerKey._createUint256(hash);
-
-    signerKey.discriminant = XdrSignerKeyType.SIGNER_KEY_TYPE_PRE_AUTH_TX;
-    signerKey.preAuthTx = value;
-
-    return signerKey;
-  }
-
-  static XdrUint256 _createUint256(Uint8List hash) {
-    if (hash.length != 32) {
-      throw new Exception("hash must be 32 bytes long");
-    }
-    XdrUint256 value = new XdrUint256();
-    value.uint256 = hash;
-    return value;
-  }
 }
