@@ -39,6 +39,47 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
+  assets:
+    - assets/kin_logo.png
+
+
+  fonts:
+    - family: black
+      fonts:
+        - asset: fonts/work_sans_black.ttf
+
+    - family: bold
+      fonts:
+        - asset: fonts/work_sans_bold.ttf
+
+    - family: extra_bold
+      fonts:
+        - asset: fonts/work_sans_extra_bold.ttf
+
+    - family: extra_light
+      fonts:
+        - asset: fonts/work_sans_extra_light.ttf
+
+    - family: light
+      fonts:
+        - asset: fonts/work_sans_light.ttf
+
+    - family: medium
+      fonts:
+        - asset: fonts/work_sans_medium.ttf
+
+    - family: regular
+      fonts:
+        - asset: fonts/work_sans_regular.ttf
+
+    - family: semi_bold
+      fonts:
+        - asset: fonts/work_sans_semi_bold.ttf
+
+    - family: thin
+      fonts:
+        - asset: fonts/work_sans_thin.ttf
+
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg
