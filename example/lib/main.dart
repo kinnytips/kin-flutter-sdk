@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:kin_sdk_example/kin_sdk_id.dart';
+import 'package:kin_sdk_example/ui/kin_sdk_id.dart';
 
 void main() {
   runApp(MyApp());
