@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kin_sdk/base-compat/main/models/key_pair.dart';
 import 'package:kin_sdk/kin_sdk.dart';
-import 'package:kin_sdk_example/kin_wallet.dart';
+import 'package:kin_sdk_example/help/Constants.dart';
+
+import 'kin_wallet.dart';
 
 class KinSdkId extends StatefulWidget {
   @override
@@ -61,17 +63,48 @@ class _MyAppState extends State<KinSdkId> {
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: GestureDetector(
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => KinWallet(
-                      kinId: _message,
-                    ),
-                  ));
-            },
-            child: Text("ID:\n" + _message),
+          child: ListView(
+            children: <Widget>[
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => KinWallet(
+                          kinId: _message,
+                        ),
+                      ));
+                },
+                child: Text("ID:\n" + _message),
+              ),
+              SizedBox(
+                height: 30,
+              ),
+              Text(
+                importWallet,
+                style: TextStyle(
+                  fontSize: 18.0,
+                  fontFamily: 'medium',
+                  color: appBlackColor,
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  /* Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => SendKin()),
+                    );*/
+                },
+                child: Text(
+                  restoreBackup,
+                  style: TextStyle(
+                    fontSize: 17.0,
+                    fontFamily: 'regular',
+                    color: appGreyColor,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
         floatingActionButton: FloatingActionButton(

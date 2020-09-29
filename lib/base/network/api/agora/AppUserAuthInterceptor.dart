@@ -1,0 +1,6 @@
+class AppUserAuthInterceptor(
+
+AppInfoProvider appInfoProvider
+) {
+
+}
