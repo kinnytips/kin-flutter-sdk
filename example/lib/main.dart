@@ -25,9 +25,15 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> initPlatformState() async {
     String accountId;
-
+    KinSdk sdk = KinSdk(
+        1,
+        "GDHCB4VCNNFIMZI3BVHLA2FVASECBR2ZXHOAXEBBFVUH5G2YAD7V3JVH",
+        "Kinny App",
+        0,
+        "demo_app_uid",
+        "demo_app_user_passkey");
     try {
-      accountId = await KinSdk.createAccount;
+      accountId = await sdk.createAccount;
     } on PlatformException {
       accountId = 'Failed to get accountId';
     }

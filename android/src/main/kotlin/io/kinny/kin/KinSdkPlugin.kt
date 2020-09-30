@@ -53,7 +53,7 @@ public class KinSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
         when (call.method) {
             "createAccount" -> {
-                return createAccount(result)
+                return createAccount(call, result)
             }
             "createBaseCompatAccount" -> {
                 return createAccountUsingBaseCompat(result)
@@ -78,19 +78,22 @@ public class KinSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         }
     }
 
-    private fun createAccount(result: Result) {
+    private fun createAccount(call: MethodCall, result: Result) {
         val environment: KinEnvironment =
                 KinEnvironment.Agora.Builder(NetworkEnvironment.KinStellarTestNet)
                         .setAppInfoProvider(object : AppInfoProvider {
                             override val appInfo: AppInfo =
                                     AppInfo(
-                                            DemoAppConfig.DEMO_APP_IDX,
-                                            DemoAppConfig.DEMO_APP_ACCOUNT_ID,
-                                            "Kin Demo App", 0
+                                            AppIdx(call.argument<Int>("appIdx")!!),
+                                            KinAccount.Id(call.argument<String>("accountId")!!),
+                                            call.argument<String>("appName")!!,
+                                            call.argument<Int>("appIconResourceId")!!
                                     )
 
                             override fun getPassthroughAppUserCredentials(): AppUserCreds {
-                                return AppUserCreds("demo_app_uid", "demo_app_user_passkey")
+                                return AppUserCreds(
+                                        call.argument<String>("appUid")!!,
+                                        call.argument<String>("appUserPasskey")!!)
                             }
                         })
                         .setStorage(KinFileStorage.Builder("/data/user/0/io.kinny.kin/files/kin"))
@@ -122,13 +125,5 @@ public class KinSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
     override fun onDetachedFromActivityForConfigChanges() {
         TODO("Not yet implemented")
-    }
-}
-
-class DemoAppConfig {
-    companion object {
-        val DEMO_APP_IDX = AppIdx(1)
-        val DEMO_APP_ACCOUNT_ID =
-                KinAccount.Id("GDHCB4VCNNFIMZI3BVHLA2FVASECBR2ZXHOAXEBBFVUH5G2YAD7V3JVH")
     }
 }
