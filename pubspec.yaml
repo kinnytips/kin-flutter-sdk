@@ -20,6 +20,9 @@ dependencies:
   pointycastle: ^1.0.0
   unorm_dart: ^0.1.2
   grpc: ^2.3.0
+  async: ^2.2.0
+  protobuf: ^1.0.1
+  meta: ^1.1.7
 
 dev_dependencies:
   flutter_test:
