@@ -56,7 +56,7 @@ public class KinSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 return createAccount(call, result)
             }
             "createBaseCompatAccount" -> {
-                return createAccountUsingBaseCompat(result)
+                return createAccountUsingBaseCompat(call, result)
             }
             else -> {
                 result.notImplemented()
@@ -64,8 +64,9 @@ public class KinSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         }
     }
 
-    private fun createAccountUsingBaseCompat(result: Result) {
-        val kinClient = KinClient(activity, Environment.TEST, "1acd")
+    private fun createAccountUsingBaseCompat(call: MethodCall, result: Result) {
+        val env = if (call.argument<Boolean>("isProduction")!!) Environment.PRODUCTION else Environment.TEST
+        val kinClient = KinClient(activity, env, call.argument<String>("appId"))
         val account: KinBaseCompatAccount
         try {
             if (!kinClient.hasAccount()) {
