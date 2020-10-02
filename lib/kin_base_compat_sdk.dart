@@ -14,7 +14,7 @@ class KinBaseCompatSdk {
   Future<String> get createAccount async {
     final String accountId = await _channel.invokeMethod(
         'createBaseCompatAccount',
-        {'appId': this.appId, 'isProdcution': this.isProduction});
+        {'appId': this.appId, 'isProduction': this.isProduction});
     return accountId;
   }
 }
