@@ -16,24 +16,23 @@ import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 
 import org.kin.sdk.base.KinAccountContext
 import org.kin.sdk.base.KinEnvironment
-import org.kin.sdk.base.models.AppInfo
-import org.kin.sdk.base.models.AppUserCreds
 import org.kin.sdk.base.network.services.AppInfoProvider
 import org.kin.sdk.base.stellar.models.NetworkEnvironment
 import org.kin.sdk.base.storage.KinFileStorage
-import org.kin.sdk.base.models.AppIdx
-import org.kin.sdk.base.models.KinAccount
 import kin.sdk.Environment
 import kin.sdk.KinAccount as KinBaseCompatAccount
 import kin.sdk.KinClient
 import kin.sdk.exception.CreateAccountException
+import org.kin.sdk.base.models.*
+import org.kin.sdk.base.tools.DisposeBag
 
 /** KinSdkPlugin */
-public class KinSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
+class KinSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     private lateinit var channel: MethodChannel
-    private lateinit var activity: Activity;
+    private lateinit var activity: Activity
     private lateinit var context: Context
-
+    private lateinit var environment: KinEnvironment
+    private lateinit var kinContext: KinAccountContext
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         channel = MethodChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(), "kin_sdk")
         channel.setMethodCallHandler(this);
@@ -52,9 +51,23 @@ public class KinSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
         when (call.method) {
+            // base sdk
             "createAccount" -> {
                 return createAccount(call, result)
             }
+            "addAccount" -> {
+                return addAccount(call, result)
+            }
+            "getAccountInfo" -> {
+                return getAccountInfo(call, result)
+            }
+            "sendPayment" -> {
+                return sendPayment(call, result)
+            }
+            "getTransactionHistory" -> {
+                return getTransactionHistory(call, result)
+            }
+            // base compat sdk
             "createBaseCompatAccount" -> {
                 return createAccountUsingBaseCompat(call, result)
             }
@@ -80,7 +93,34 @@ public class KinSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     }
 
     private fun createAccount(call: MethodCall, result: Result) {
-        val environment: KinEnvironment =
+        environment = KinEnvironment.Agora.Builder(NetworkEnvironment.KinStellarTestNet)
+                .setAppInfoProvider(object : AppInfoProvider {
+                    override val appInfo: AppInfo =
+                            AppInfo(
+                                    AppIdx(call.argument<Int>("appIdx")!!),
+                                    KinAccount.Id(call.argument<String>("accountId")!!),
+                                    call.argument<String>("appName")!!,
+                                    call.argument<Int>("appIconResourceId")!!
+                            )
+
+                    override fun getPassthroughAppUserCredentials(): AppUserCreds {
+                        return AppUserCreds(
+                                call.argument<String>("appUid")!!,
+                                call.argument<String>("appUserPasskey")!!)
+                    }
+                })
+                .setStorage(KinFileStorage.Builder("/data/user/0/io.kinny.kin/files/kin"))
+                .build()
+
+        kinContext = KinAccountContext.Builder(environment)
+                .createNewAccount()
+                .build()
+
+        return result.success(kinContext.accountId.toString())
+    }
+
+    private fun addAccount(call: MethodCall, result: Result) {
+        environment =
                 KinEnvironment.Agora.Builder(NetworkEnvironment.KinStellarTestNet)
                         .setAppInfoProvider(object : AppInfoProvider {
                             override val appInfo: AppInfo =
@@ -99,13 +139,36 @@ public class KinSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                         })
                         .setStorage(KinFileStorage.Builder("/data/user/0/io.kinny.kin/files/kin"))
                         .build()
+        environment.importPrivateKey(Key.PrivateKey(call.argument<String>("privateKey")!!)).then {
+            io.flutter.Log.d("KIN_SDK", "Private key is imported.")
+            kinContext =
+                    KinAccountContext.Builder(environment)
+                            .useExistingAccount(KinAccount.Id(call.argument<String>("accountId")!!))
+                            .build()
+            return@then result.success(kinContext.accountId.toString())
+        }
+    }
 
-        val context: KinAccountContext =
-                KinAccountContext.Builder(environment)
-                        .createNewAccount()
-                        .build()
+    private fun sendPayment(call: MethodCall, result: Result) {
+        kinContext.sendKinPayment(KinAmount(call.argument<Double>("amount")!!), KinAccount.Id(call.argument<String>("destinationAccountId")!!))
+                .then {
+                    return@then result.success(kinContext.accountId.toString())
+                }
+    }
 
-        return result.success(context.accountId.toString())
+    private fun getAccountInfo(call: MethodCall, result: Result) {
+        kinContext.getAccount().then { kinAccount: KinAccount ->
+            return@then result.success(kinAccount.balance.amount.value)
+        }
+    }
+
+    private fun getTransactionHistory(call: MethodCall, result: Result) {
+        val lifecycle = DisposeBag()
+        kinContext.observePayments()
+                .add { payments: List<KinPayment> ->
+                    return@add result.success(kinContext.accountId.toString())
+                }
+                .disposedBy(lifecycle)
     }
 
     override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
