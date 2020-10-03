@@ -126,7 +126,7 @@ class KinSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                             override val appInfo: AppInfo =
                                     AppInfo(
                                             AppIdx(call.argument<Int>("appIdx")!!),
-                                            KinAccount.Id(call.argument<String>("accountId")!!),
+                                            KinAccount.Id(call.argument<String>("appAccountId")!!),
                                             call.argument<String>("appName")!!,
                                             call.argument<Int>("appIconResourceId")!!
                                     )
@@ -143,7 +143,7 @@ class KinSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             io.flutter.Log.d("KIN_SDK", "Private key is imported.")
             kinContext =
                     KinAccountContext.Builder(environment)
-                            .useExistingAccount(KinAccount.Id(call.argument<String>("accountId")!!))
+                            .useExistingAccount(KinAccount.Id(call.argument<String>("appAccountId")!!))
                             .build()
             return@then result.success(kinContext.accountId.toString())
         }

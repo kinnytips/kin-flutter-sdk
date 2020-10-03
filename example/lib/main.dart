@@ -25,7 +25,7 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> initPlatformState() async {
     String accountId;
-    KinSdk sdk = KinSdk(
+    KinSdk sdk = KinSdk.newAccount(
         1,
         "GDHCB4VCNNFIMZI3BVHLA2FVASECBR2ZXHOAXEBBFVUH5G2YAD7V3JVH",
         "Kinny App",
