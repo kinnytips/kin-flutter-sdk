@@ -2,37 +2,42 @@ package io.kinny.kin
 
 import android.app.Activity
 import android.content.Context
-import androidx.annotation.NonNull;
-
-import io.flutter.embedding.engine.plugins.activity.ActivityAware
+import android.util.Log
+import androidx.annotation.NonNull
 import io.flutter.embedding.engine.plugins.FlutterPlugin
+import io.flutter.embedding.engine.plugins.activity.ActivityAware
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry.Registrar
-import android.util.Log
-import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
-
+import kin.sdk.Environment
+import kin.sdk.KinClient
+import kin.sdk.exception.CreateAccountException
 import org.kin.sdk.base.KinAccountContext
 import org.kin.sdk.base.KinEnvironment
+import org.kin.sdk.base.models.*
 import org.kin.sdk.base.network.services.AppInfoProvider
 import org.kin.sdk.base.stellar.models.NetworkEnvironment
 import org.kin.sdk.base.storage.KinFileStorage
-import kin.sdk.Environment
-import kin.sdk.KinAccount as KinBaseCompatAccount
-import kin.sdk.KinClient
-import kin.sdk.exception.CreateAccountException
-import org.kin.sdk.base.models.*
 import org.kin.sdk.base.tools.DisposeBag
+import java.math.BigDecimal
+import kin.sdk.KinAccount as KinBaseCompatAccount
 
 /** KinSdkPlugin */
 class KinSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     private lateinit var channel: MethodChannel
     private lateinit var activity: Activity
     private lateinit var context: Context
+
+    // base classes
     private lateinit var environment: KinEnvironment
     private lateinit var kinContext: KinAccountContext
+
+    // base-compat classes
+    private lateinit var kinClient: KinClient
+
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         channel = MethodChannel(flutterPluginBinding.getFlutterEngine().getDartExecutor(), "kin_sdk")
         channel.setMethodCallHandler(this);
@@ -77,20 +82,14 @@ class KinSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         }
     }
 
-    private fun createAccountUsingBaseCompat(call: MethodCall, result: Result) {
-        val env = if (call.argument<Boolean>("isProduction")!!) Environment.PRODUCTION else Environment.TEST
-        val kinClient = KinClient(activity, env, call.argument<String>("appId"))
-        val account: KinBaseCompatAccount
-        try {
-            if (!kinClient.hasAccount()) {
-                account = kinClient.addAccount()
-                return result.success(account.publicAddress)
-            }
-        } catch (e: CreateAccountException) {
-            e.printStackTrace()
-            return result.error("400", "Unable to create account", "Exception")
-        }
-    }
+    /**
+     *
+     *
+     * BASE SDK implementations
+     *
+     *
+     */
+
 
     private fun createAccount(call: MethodCall, result: Result) {
         environment = KinEnvironment.Agora.Builder(NetworkEnvironment.KinStellarTestNet)
@@ -98,7 +97,7 @@ class KinSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                     override val appInfo: AppInfo =
                             AppInfo(
                                     AppIdx(call.argument<Int>("appIdx")!!),
-                                    KinAccount.Id(call.argument<String>("accountId")!!),
+                                    KinAccount.Id(call.argument<String>("appAccountId")!!),
                                     call.argument<String>("appName")!!,
                                     call.argument<Int>("appIconResourceId")!!
                             )
@@ -157,8 +156,12 @@ class KinSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     }
 
     private fun getAccountInfo(call: MethodCall, result: Result) {
+        var value = "-1"
         kinContext.getAccount().then { kinAccount: KinAccount ->
-            return@then result.success(kinAccount.balance.amount.value)
+            value = kinAccount.balance.amount.value.toString()
+            Log.i("AMOUNT","Amount is retrieved")
+            Log.i("AMOUNT","Amount is returned")
+            return@then result.success(value)
         }
     }
 
@@ -169,6 +172,51 @@ class KinSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                     return@add result.success(kinContext.accountId.toString())
                 }
                 .disposedBy(lifecycle)
+    }
+
+    /**
+     *
+     *
+     * BASE COMPAT sdk implementations
+     *
+     *
+     */
+
+
+    private fun createAccountUsingBaseCompat(call: MethodCall, result: Result) {
+        val env = if (call.argument<Boolean>("isProduction")!!) Environment.PRODUCTION else Environment.TEST
+        kinClient = KinClient(activity, env, call.argument<String>("appId"))
+        val account: KinBaseCompatAccount
+        try {
+            if (!kinClient.hasAccount()) {
+                account = kinClient.addAccount()
+                return result.success(account.publicAddress)
+            }
+        } catch (e: CreateAccountException) {
+            e.printStackTrace()
+            return result.error("400", "Unable to create account", "Exception")
+        }
+    }
+
+    private fun addAccountUsingBaseCompat(call: MethodCall, result: Result) {
+    }
+
+    private fun sendPaymentUsingBaseCompat(call: MethodCall, result: Result) {
+
+    }
+
+    private fun getAccountInfoUsingBaseCompat(call: MethodCall, result: Result) {
+        val account: KinBaseCompatAccount
+        if (kinClient.hasAccount()) {
+            account = kinClient.getAccount(0)
+            return result.success(account.publicAddress)
+        } else {
+            result.success("No Account")
+        }
+    }
+
+    private fun getTransactionHistoryUsingBaseCompat(call: MethodCall, result: Result) {
+
     }
 
     override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
