@@ -58,23 +58,24 @@ class KinSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         when (call.method) {
             // base sdk
             "createAccount" -> {
-                return createAccount(call, result)
+                createAccount(call, result)
             }
             "addAccount" -> {
-                return addAccount(call, result)
+             addAccount(call, result)
             }
             "getAccountInfo" -> {
-                return getAccountInfo(call, result)
+                Log.i("AMOUNT", " So is this here!!")
+                 getAccountInfo(call, result)
             }
             "sendPayment" -> {
-                return sendPayment(call, result)
+                 sendPayment(call, result)
             }
             "getTransactionHistory" -> {
-                return getTransactionHistory(call, result)
+                 getTransactionHistory(call, result)
             }
             // base compat sdk
             "createBaseCompatAccount" -> {
-                return createAccountUsingBaseCompat(call, result)
+                 createAccountUsingBaseCompat(call, result)
             }
             else -> {
                 result.notImplemented()
@@ -114,8 +115,7 @@ class KinSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         kinContext = KinAccountContext.Builder(environment)
                 .createNewAccount()
                 .build()
-
-        return result.success(kinContext.accountId.toString())
+        return result.success(kinContext.accountId.encodeAsString())
     }
 
     private fun addAccount(call: MethodCall, result: Result) {
@@ -159,10 +159,12 @@ class KinSdkPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         var value = "-1"
         kinContext.getAccount().then { kinAccount: KinAccount ->
             value = kinAccount.balance.amount.value.toString()
-            Log.i("AMOUNT","Amount is retrieved")
-            Log.i("AMOUNT","Amount is returned")
-            return@then result.success(value)
+            Log.i("AMOUNT", "Amount is retrieved")
+            Log.i("AMOUNT", "Amount is returned")
+            result.success(value)
         }
+       
+        Log.i("AMOUNT", "Amount is already here");
     }
 
     private fun getTransactionHistory(call: MethodCall, result: Result) {
