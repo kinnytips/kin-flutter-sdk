@@ -3,7 +3,6 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:kin_sdk/kin_sdk.dart';
-import 'package:kin_sdk/kin_base_compat_sdk.dart';
 
 void main() {
   runApp(MyApp());
