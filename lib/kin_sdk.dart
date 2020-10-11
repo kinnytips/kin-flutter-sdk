@@ -1,88 +1,26 @@
 import 'dart:async';
 
-import 'package:flutter/services.dart';
+import 'package:kin_sdk/models/application/account_creation_response.dart';
+import 'package:kin_sdk/services/kin_service.dart';
+import 'package:logging/logging.dart';
 
 class KinSdk {
-  int appIdx;
-  String appAccountId;
-  String appName;
-  int appIconResourceId;
-  String appUid;
-  String appUserPasskey;
-  String privateKey;
-  String accountId;
+  String _accountId;
+  KinService service;
 
-  KinSdk.newAccount(int appIdx, String appAccountId, String appName,
-      int appIconResourceId, String appUid, String appUserPasskey) {
-    this.appIdx = appIdx;
-    this.appAccountId = appAccountId;
-    this.appName = appName;
-    this.appIconResourceId = appIconResourceId;
-    this.appUid = appUid;
-    this.appUserPasskey = appUserPasskey;
-  }
-
-  KinSdk.existingAccount(
-      int appIdx,
-      String appAccountId,
-      String appName,
-      int appIconResourceId,
-      String appUid,
-      String appUserPasskey,
-      String accountId,
-      String privateKey) {
-    this.appIdx = appIdx;
-    this.appAccountId = appAccountId;
-    this.appName = appName;
-    this.appIconResourceId = appIconResourceId;
-    this.appUid = appUid;
-    this.appUserPasskey = appUserPasskey;
-    this.accountId = accountId;
-    this.privateKey = privateKey;
-  }
-
-  static const MethodChannel _channel = const MethodChannel('kin_sdk');
-
-  Future<String> get createAccount async {
-    final String accountId = await _channel.invokeMethod('createAccount', {
-      'appIdx': this.appIdx,
-      'appAccountId': this.appAccountId,
-      'appName': this.appName,
-      'appIconResourceId': this.appIconResourceId,
-      'appUid': this.appUid,
-      'appUserPasskey': this.appUserPasskey,
+  KinSdk(this._accountId) {
+    this.service = KinService();
+    Logger.root.level = Level.ALL;
+    Logger.root.onRecord.listen((record) {
+      print('${record.level.name}: ${record.time}: ${record.message}');
     });
-    return accountId;
   }
 
-  Future<String> get addAccount async {
-    final String accountId = await _channel.invokeMethod('addAccount', {
-      'appIdx': this.appIdx,
-      'appAccountId': this.appAccountId,
-      'appName': this.appName,
-      'appIconResourceId': this.appIconResourceId,
-      'appUid': this.appUid,
-      'appUserPasskey': this.appUserPasskey,
-      'accountId': this.accountId,
-      'privateKey': this.privateKey,
-    });
-    return accountId;
-  }
+  String get accountId => _accountId;
 
-  Future<String> sendPayment(int value, String address) async {
-    final String accountId = await _channel.invokeMethod(
-        'sendPayment', {'amount': value, 'destinationAddress': address});
-    return accountId;
-  }
+  Future<AccountCreationResponse> get createAccount =>
+      service.createAccount(this.accountId);
 
-  Future<String> get getAccountInfo async {
-    final String accountId = await _channel.invokeMethod('getAccountInfo');
-    return accountId;
-  }
-
-  Future<String> get getTransactionHistory async {
-    final String accountId =
-        await _channel.invokeMethod('getTransactionHistory');
-    return accountId;
-  }
+  Future<AccountCreationResponse> get addAccount =>
+      service.addAccount(this.accountId);
 }
