@@ -2,51 +2,45 @@
 
 Plugin Package for using [Kin Cryptocurrency](https://www.kin.org/) Official SDK within Flutter. currently supporting [IOS](https://github.com/kinecosystem/kin-ios) and [Android](https://github.com/kinecosystem/kin-android) Implmentations.
 
+## Documentation
+[API] (https://docs.kin.org/agora/api)
+[TECHNICAL ARCHITECTURE] (https://docs.kin.org/how-it-works#kin-binary-memo-format)
+
+
 ## How to use the SDK
+### Initiate the sdk
 
-SDK has: <br>
-1) `KinSdk` for all the newer operations using `Agora` 
-2) `KinBaseCompatSdk` for older version of the sdk.
+```
+ KinSdk sdk = KinSdk("GDHCB4VCNNFIMZI3BVHLA2FVASECBR2ZXHOAXEBBFVUH5G2YAD7V3JVH");
+```
+Now, this instance can be used to perform all the operations on the `kin` blockchain.
 
-### KinSdk (`base`)
-### Creating an account 
-```dart
-import 'package:kin_sdk/kin_sdk.dart';
-
-
-Future<void> createAccount() async {
-    String accountId;
-
-    try {
-      accountId = await KinSdk.createAccount;
-    } on PlatformException {
-      accountId = 'Failed to create accountId';
-    }
-
-    setState(() {
-      _accountId = accountId;
-    });
-  }
+### Creating a new account
+```
+var response = await sdk.createAccount;
 ```
 
+### Adding an existing account
+```
+var response = await sdk.addAccount;
+```
 
-### KinBaseCompatSdk (`base-compat`)
-### Creating an account 
-```dart
-import 'package:kin_sdk/kin_base_compat_sdk.dart';
+### Fetching account info
+```
+var response = await sdk.getAccountInfo;
+```
 
+### Fetching account info
+```
+var response = await sdk.getAccountInfo;
+```
 
-Future<void> createAccount() async {
-    String accountId;
+### Fetching account history
+```
+var response = await sdk.getAccountHistory;
+```
 
-    try {
-      accountId = await KinBaseCompatSdk.createAccount;
-    } on PlatformException {
-      accountId = 'Failed to create accountId';
-    }
-
-    setState(() {
-      _accountId = accountId;
-    });
-  }
+### Fetching account transactions
+```
+var response = await sdk.getTransaction(String transactionId);
 ```
