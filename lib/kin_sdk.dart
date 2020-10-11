@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:kin_sdk/models/application/account_creation_response.dart';
+import 'package:kin_sdk/models/application/account_info_response.dart';
 import 'package:kin_sdk/services/kin_service.dart';
 import 'package:logging/logging.dart';
 
@@ -23,4 +24,7 @@ class KinSdk {
 
   Future<AccountCreationResponse> get addAccount =>
       service.addAccount(this.accountId);
+
+  Future<AccountInfoResponse> get getAccountInfo =>
+      service.getAccountInfo(this.accountId);
 }
