@@ -1,5 +1,5 @@
 #!/bin/bash
-protoc -I lib/proto --dart_out=lib/gencode lib/proto/metrics/v3/*.proto lib/proto/validate/*.proto
-protoc -I lib/proto --dart_out=lib/gencode lib/proto/common/v3/*.proto lib/proto/validate/*.proto
-protoc -I lib/proto --dart_out=lib/gencode lib/proto/account/v3/*.proto lib/proto/validate/*.proto
-protoc -I lib/proto --dart_out=lib/gencode lib/proto/transaction/v3/*.proto lib/proto/validate/*.proto
+protoc -I lib/models/protodefs --dart_out=grpc:lib/models/gen  lib/models/protodefs/metrics/v3/*.proto lib/models/protodefs/validate/*.proto
+protoc -I lib/models/protodefs --dart_out=grpc:lib/models/gen  lib/models/protodefs/common/v3/*.proto lib/models/protodefs/validate/*.proto
+protoc -I lib/models/protodefs --dart_out=grpc:lib/models/gen  lib/models/protodefs/account/v3/*.proto lib/models/protodefs/validate/*.proto
+protoc -I lib/models/protodefs --dart_out=grpc:lib/models/gen  lib/models/protodefs/transaction/v3/*.proto lib/models/protodefs/validate/*.proto
