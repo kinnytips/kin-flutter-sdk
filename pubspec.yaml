@@ -16,6 +16,8 @@ dependencies:
   protobuf: ^1.0.1
   grpc: ^2.3.0
   logging: ^0.11.4
+  fixnum: ^0.10.11
+
 
 
 dev_dependencies:

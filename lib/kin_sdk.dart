@@ -6,11 +6,11 @@ import 'package:kin_sdk/services/kin_service.dart';
 import 'package:logging/logging.dart';
 
 class KinSdk {
-  String _accountId;
-  KinService service;
+  final String _accountId;
+  KinService _service;
 
-  KinSdk(this._accountId) {
-    this.service = KinService();
+  KinSdk(this._accountId, {bool isProduction = false}) {
+    this._service = KinService(isProduction: isProduction);
     Logger.root.level = Level.ALL;
     Logger.root.onRecord.listen((record) {
       print('${record.level.name}: ${record.time}: ${record.message}');
@@ -20,11 +20,11 @@ class KinSdk {
   String get accountId => _accountId;
 
   Future<AccountCreationResponse> get createAccount =>
-      service.createAccount(this.accountId);
+      _service.createAccount(this.accountId);
 
   Future<AccountCreationResponse> get addAccount =>
-      service.addAccount(this.accountId);
+      _service.addAccount(this.accountId);
 
   Future<AccountInfoResponse> get getAccountInfo =>
-      service.getAccountInfo(this.accountId);
+      _service.getAccountInfo(this.accountId);
 }

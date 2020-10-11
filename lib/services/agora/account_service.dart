@@ -8,13 +8,16 @@ import 'package:logging/logging.dart';
 
 class AccountService {
   final log = Logger('AccountService');
+  final String endpoint;
+  
+  AccountService(this.endpoint);
 
   Future<AccountCreationResponse> initiateAccount(String accountId) async {
     var createAccountRequest = CreateAccountRequest()
       ..accountId = (StellarAccountId()..value = accountId);
     if (createAccountRequest.hasAccountId()) {
       try {
-        var response = await AccountClient(ClientChannel("api.agorainfra.dev"))
+        var response = await AccountClient(ClientChannel(endpoint))
             .createAccount(createAccountRequest)
             .timeout(Duration(seconds: 10));
         return AccountCreationResponse(
@@ -30,16 +33,16 @@ class AccountService {
   }
 
   Future<AccountInfoResponse> retrieveAccount(String accountId) async {
-    var createAccountRequest = GetAccountInfoRequest()
+    var getAccountInfoRequest = GetAccountInfoRequest()
       ..accountId = (StellarAccountId()..value = accountId);
-    if (createAccountRequest.hasAccountId()) {
+    if (getAccountInfoRequest.hasAccountId()) {
       try {
-        var response = await AccountClient(ClientChannel("api.agorainfra.dev"))
-            .getAccountInfo(createAccountRequest)
+        var response = await AccountClient(ClientChannel(endpoint))
+            .getAccountInfo(getAccountInfoRequest)
             .timeout(Duration(seconds: 10));
         return AccountInfoResponse(true, response.result, response.accountInfo);
       } catch (e) {
-        log.severe("Error creating account :" + e.toString());
+        log.severe("Error retrieving account :" + e.toString());
         return AccountInfoResponse(
             false, GetAccountInfoResponse_Result.NOT_FOUND, null);
       }
