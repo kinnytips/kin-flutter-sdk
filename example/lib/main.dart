@@ -15,7 +15,6 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String _accountId = 'No account id';
-  String _amount = 'No amount';
 
   @override
   void initState() {
@@ -25,27 +24,22 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> initPlatformState() async {
     String accountId;
-    String amount;
-    KinSdk sdk = KinSdk.newAccount(
-        1,
-        "GDHCB4VCNNFIMZI3BVHLA2FVASECBR2ZXHOAXEBBFVUH5G2YAD7V3JVH",
-        "Kinny App",
-        0,
-        "demo_app_uid",
-        "demo_app_user_passkey");
+    KinSdk sdk =
+        KinSdk("GDHCB4VCNNFIMZI3BVHLA2FVASECBR2ZXHOAXEBBFVUH5G2YAD7V3JVH");
     try {
-    accountId = await sdk.createAccount;
-     amount = await sdk.getAccountInfo;
+      var response = await sdk.createAccount;
+      if (response.isSuccess)
+        accountId = response.accountInfo.accountId.toString();
+      else
+        accountId = "Failure";
     } on PlatformException {
       accountId = 'Failed to get accountId';
-      amount = '-- no amount --';
     }
 
     if (!mounted) return;
 
     setState(() {
       _accountId = accountId;
-      _amount = amount;
     });
   }
 
@@ -60,10 +54,7 @@ class _MyAppState extends State<MyApp> {
           children: [
             Center(
               child: Text('Base : $_accountId\n'),
-            ),
-            Center(
-              child: Text('Base Amount: $_amount\n'),
-            ),
+            )
           ],
         ),
       ),
