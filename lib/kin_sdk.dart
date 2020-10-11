@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:kin_sdk/models/application/account_creation_response.dart';
+import 'package:kin_sdk/models/application/account_history_response.dart';
 import 'package:kin_sdk/models/application/account_info_response.dart';
 import 'package:kin_sdk/services/kin_service.dart';
 import 'package:logging/logging.dart';
@@ -27,4 +28,10 @@ class KinSdk {
 
   Future<AccountInfoResponse> get getAccountInfo =>
       _service.getAccountInfo(this.accountId);
+
+  Future<AccountHistoryResponse> get getAccountHistory =>
+      _service.getAccountHistory(this.accountId);
+
+  Future<AccountHistoryResponse> getTransaction(String transactionId) =>
+      _service.getTransaction(transactionId);
 }
