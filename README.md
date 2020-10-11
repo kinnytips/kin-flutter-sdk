@@ -3,8 +3,8 @@
 Plugin Package for using [Kin Cryptocurrency](https://www.kin.org/) Official SDK within Flutter. currently supporting [IOS](https://github.com/kinecosystem/kin-ios) and [Android](https://github.com/kinecosystem/kin-android) Implmentations.
 
 ## Documentation
-[API] (https://docs.kin.org/agora/api)
-[TECHNICAL ARCHITECTURE] (https://docs.kin.org/how-it-works#kin-binary-memo-format)
+[API](https://docs.kin.org/agora/api) <br/>
+[TECHNICAL ARCHITECTURE](https://docs.kin.org/how-it-works#kin-binary-memo-format)
 
 
 ## How to use the SDK
