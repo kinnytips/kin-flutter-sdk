@@ -5,13 +5,12 @@
 // @dart = 2.3
 // ignore_for_file: camel_case_types,non_constant_identifier_names,library_prefixes,unused_import,unused_shown_name,return_of_invalid_type
 
-import 'dart:async' as $async;
 import 'dart:core' as $core;
 
 import 'package:fixnum/fixnum.dart' as $fixnum;
 import 'package:protobuf/protobuf.dart' as $pb;
 
-import '../../common/v3/model.pb.dart' as $2;
+import '../../common/v3/model.pb.dart' as $3;
 
 import 'transaction_service.pbenum.dart';
 
@@ -19,7 +18,7 @@ export 'transaction_service.pbenum.dart';
 
 class GetHistoryRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo('GetHistoryRequest', package: const $pb.PackageName('kin.agora.transaction.v3'), createEmptyInstance: create)
-    ..aOM<$2.StellarAccountId>(1, 'accountId', subBuilder: $2.StellarAccountId.create)
+    ..aOM<$3.StellarAccountId>(1, 'accountId', subBuilder: $3.StellarAccountId.create)
     ..aOM<Cursor>(2, 'cursor', subBuilder: Cursor.create)
     ..e<GetHistoryRequest_Direction>(3, 'direction', $pb.PbFieldType.OE, defaultOrMaker: GetHistoryRequest_Direction.ASC, valueOf: GetHistoryRequest_Direction.valueOf, enumValues: GetHistoryRequest_Direction.values)
     ..hasRequiredFields = false
@@ -41,15 +40,15 @@ class GetHistoryRequest extends $pb.GeneratedMessage {
   static GetHistoryRequest _defaultInstance;
 
   @$pb.TagNumber(1)
-  $2.StellarAccountId get accountId => $_getN(0);
+  $3.StellarAccountId get accountId => $_getN(0);
   @$pb.TagNumber(1)
-  set accountId($2.StellarAccountId v) { setField(1, v); }
+  set accountId($3.StellarAccountId v) { setField(1, v); }
   @$pb.TagNumber(1)
   $core.bool hasAccountId() => $_has(0);
   @$pb.TagNumber(1)
   void clearAccountId() => clearField(1);
   @$pb.TagNumber(1)
-  $2.StellarAccountId ensureAccountId() => $_ensure(0);
+  $3.StellarAccountId ensureAccountId() => $_ensure(0);
 
   @$pb.TagNumber(2)
   Cursor get cursor => $_getN(1);
@@ -110,7 +109,7 @@ class GetHistoryResponse extends $pb.GeneratedMessage {
 class SubmitTransactionRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo('SubmitTransactionRequest', package: const $pb.PackageName('kin.agora.transaction.v3'), createEmptyInstance: create)
     ..a<$core.List<$core.int>>(1, 'envelopeXdr', $pb.PbFieldType.OY)
-    ..aOM<$2.InvoiceList>(2, 'invoiceList', subBuilder: $2.InvoiceList.create)
+    ..aOM<$3.InvoiceList>(2, 'invoiceList', subBuilder: $3.InvoiceList.create)
     ..hasRequiredFields = false
   ;
 
@@ -139,21 +138,21 @@ class SubmitTransactionRequest extends $pb.GeneratedMessage {
   void clearEnvelopeXdr() => clearField(1);
 
   @$pb.TagNumber(2)
-  $2.InvoiceList get invoiceList => $_getN(1);
+  $3.InvoiceList get invoiceList => $_getN(1);
   @$pb.TagNumber(2)
-  set invoiceList($2.InvoiceList v) { setField(2, v); }
+  set invoiceList($3.InvoiceList v) { setField(2, v); }
   @$pb.TagNumber(2)
   $core.bool hasInvoiceList() => $_has(1);
   @$pb.TagNumber(2)
   void clearInvoiceList() => clearField(2);
   @$pb.TagNumber(2)
-  $2.InvoiceList ensureInvoiceList() => $_ensure(1);
+  $3.InvoiceList ensureInvoiceList() => $_ensure(1);
 }
 
 class SubmitTransactionResponse_InvoiceError extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo('SubmitTransactionResponse.InvoiceError', package: const $pb.PackageName('kin.agora.transaction.v3'), createEmptyInstance: create)
     ..a<$core.int>(1, 'opIndex', $pb.PbFieldType.OU3)
-    ..aOM<$2.Invoice>(2, 'invoice', subBuilder: $2.Invoice.create)
+    ..aOM<$3.Invoice>(2, 'invoice', subBuilder: $3.Invoice.create)
     ..e<SubmitTransactionResponse_InvoiceError_Reason>(3, 'reason', $pb.PbFieldType.OE, defaultOrMaker: SubmitTransactionResponse_InvoiceError_Reason.UNKNOWN, valueOf: SubmitTransactionResponse_InvoiceError_Reason.valueOf, enumValues: SubmitTransactionResponse_InvoiceError_Reason.values)
     ..hasRequiredFields = false
   ;
@@ -183,15 +182,15 @@ class SubmitTransactionResponse_InvoiceError extends $pb.GeneratedMessage {
   void clearOpIndex() => clearField(1);
 
   @$pb.TagNumber(2)
-  $2.Invoice get invoice => $_getN(1);
+  $3.Invoice get invoice => $_getN(1);
   @$pb.TagNumber(2)
-  set invoice($2.Invoice v) { setField(2, v); }
+  set invoice($3.Invoice v) { setField(2, v); }
   @$pb.TagNumber(2)
   $core.bool hasInvoice() => $_has(1);
   @$pb.TagNumber(2)
   void clearInvoice() => clearField(2);
   @$pb.TagNumber(2)
-  $2.Invoice ensureInvoice() => $_ensure(1);
+  $3.Invoice ensureInvoice() => $_ensure(1);
 
   @$pb.TagNumber(3)
   SubmitTransactionResponse_InvoiceError_Reason get reason => $_getN(2);
@@ -207,7 +206,7 @@ class SubmitTransactionResponse extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo('SubmitTransactionResponse', package: const $pb.PackageName('kin.agora.transaction.v3'), createEmptyInstance: create)
     ..e<SubmitTransactionResponse_Result>(1, 'result', $pb.PbFieldType.OE, defaultOrMaker: SubmitTransactionResponse_Result.OK, valueOf: SubmitTransactionResponse_Result.valueOf, enumValues: SubmitTransactionResponse_Result.values)
     ..pc<SubmitTransactionResponse_InvoiceError>(2, 'invoiceErrors', $pb.PbFieldType.PM, subBuilder: SubmitTransactionResponse_InvoiceError.create)
-    ..aOM<$2.TransactionHash>(3, 'hash', subBuilder: $2.TransactionHash.create)
+    ..aOM<$3.TransactionHash>(3, 'hash', subBuilder: $3.TransactionHash.create)
     ..aInt64(4, 'ledger')
     ..a<$core.List<$core.int>>(5, 'resultXdr', $pb.PbFieldType.OY)
     ..hasRequiredFields = false
@@ -241,15 +240,15 @@ class SubmitTransactionResponse extends $pb.GeneratedMessage {
   $core.List<SubmitTransactionResponse_InvoiceError> get invoiceErrors => $_getList(1);
 
   @$pb.TagNumber(3)
-  $2.TransactionHash get hash => $_getN(2);
+  $3.TransactionHash get hash => $_getN(2);
   @$pb.TagNumber(3)
-  set hash($2.TransactionHash v) { setField(3, v); }
+  set hash($3.TransactionHash v) { setField(3, v); }
   @$pb.TagNumber(3)
   $core.bool hasHash() => $_has(2);
   @$pb.TagNumber(3)
   void clearHash() => clearField(3);
   @$pb.TagNumber(3)
-  $2.TransactionHash ensureHash() => $_ensure(2);
+  $3.TransactionHash ensureHash() => $_ensure(2);
 
   @$pb.TagNumber(4)
   $fixnum.Int64 get ledger => $_getI64(3);
@@ -272,7 +271,7 @@ class SubmitTransactionResponse extends $pb.GeneratedMessage {
 
 class GetTransactionRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo('GetTransactionRequest', package: const $pb.PackageName('kin.agora.transaction.v3'), createEmptyInstance: create)
-    ..aOM<$2.TransactionHash>(1, 'transactionHash', subBuilder: $2.TransactionHash.create)
+    ..aOM<$3.TransactionHash>(1, 'transactionHash', subBuilder: $3.TransactionHash.create)
     ..hasRequiredFields = false
   ;
 
@@ -292,15 +291,15 @@ class GetTransactionRequest extends $pb.GeneratedMessage {
   static GetTransactionRequest _defaultInstance;
 
   @$pb.TagNumber(1)
-  $2.TransactionHash get transactionHash => $_getN(0);
+  $3.TransactionHash get transactionHash => $_getN(0);
   @$pb.TagNumber(1)
-  set transactionHash($2.TransactionHash v) { setField(1, v); }
+  set transactionHash($3.TransactionHash v) { setField(1, v); }
   @$pb.TagNumber(1)
   $core.bool hasTransactionHash() => $_has(0);
   @$pb.TagNumber(1)
   void clearTransactionHash() => clearField(1);
   @$pb.TagNumber(1)
-  $2.TransactionHash ensureTransactionHash() => $_ensure(0);
+  $3.TransactionHash ensureTransactionHash() => $_ensure(0);
 }
 
 class GetTransactionResponse extends $pb.GeneratedMessage {
@@ -358,11 +357,11 @@ class GetTransactionResponse extends $pb.GeneratedMessage {
 
 class HistoryItem extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo('HistoryItem', package: const $pb.PackageName('kin.agora.transaction.v3'), createEmptyInstance: create)
-    ..aOM<$2.TransactionHash>(1, 'hash', subBuilder: $2.TransactionHash.create)
+    ..aOM<$3.TransactionHash>(1, 'hash', subBuilder: $3.TransactionHash.create)
     ..a<$core.List<$core.int>>(2, 'resultXdr', $pb.PbFieldType.OY)
     ..a<$core.List<$core.int>>(3, 'envelopeXdr', $pb.PbFieldType.OY)
     ..aOM<Cursor>(4, 'cursor', subBuilder: Cursor.create)
-    ..aOM<$2.InvoiceList>(5, 'invoiceList', subBuilder: $2.InvoiceList.create)
+    ..aOM<$3.InvoiceList>(5, 'invoiceList', subBuilder: $3.InvoiceList.create)
     ..hasRequiredFields = false
   ;
 
@@ -382,15 +381,15 @@ class HistoryItem extends $pb.GeneratedMessage {
   static HistoryItem _defaultInstance;
 
   @$pb.TagNumber(1)
-  $2.TransactionHash get hash => $_getN(0);
+  $3.TransactionHash get hash => $_getN(0);
   @$pb.TagNumber(1)
-  set hash($2.TransactionHash v) { setField(1, v); }
+  set hash($3.TransactionHash v) { setField(1, v); }
   @$pb.TagNumber(1)
   $core.bool hasHash() => $_has(0);
   @$pb.TagNumber(1)
   void clearHash() => clearField(1);
   @$pb.TagNumber(1)
-  $2.TransactionHash ensureHash() => $_ensure(0);
+  $3.TransactionHash ensureHash() => $_ensure(0);
 
   @$pb.TagNumber(2)
   $core.List<$core.int> get resultXdr => $_getN(1);
@@ -422,15 +421,15 @@ class HistoryItem extends $pb.GeneratedMessage {
   Cursor ensureCursor() => $_ensure(3);
 
   @$pb.TagNumber(5)
-  $2.InvoiceList get invoiceList => $_getN(4);
+  $3.InvoiceList get invoiceList => $_getN(4);
   @$pb.TagNumber(5)
-  set invoiceList($2.InvoiceList v) { setField(5, v); }
+  set invoiceList($3.InvoiceList v) { setField(5, v); }
   @$pb.TagNumber(5)
   $core.bool hasInvoiceList() => $_has(4);
   @$pb.TagNumber(5)
   void clearInvoiceList() => clearField(5);
   @$pb.TagNumber(5)
-  $2.InvoiceList ensureInvoiceList() => $_ensure(4);
+  $3.InvoiceList ensureInvoiceList() => $_ensure(4);
 }
 
 class Cursor extends $pb.GeneratedMessage {
@@ -462,23 +461,5 @@ class Cursor extends $pb.GeneratedMessage {
   $core.bool hasValue() => $_has(0);
   @$pb.TagNumber(1)
   void clearValue() => clearField(1);
-}
-
-class TransactionApi {
-  $pb.RpcClient _client;
-  TransactionApi(this._client);
-
-  $async.Future<GetHistoryResponse> getHistory($pb.ClientContext ctx, GetHistoryRequest request) {
-    var emptyResponse = GetHistoryResponse();
-    return _client.invoke<GetHistoryResponse>(ctx, 'Transaction', 'GetHistory', request, emptyResponse);
-  }
-  $async.Future<SubmitTransactionResponse> submitTransaction($pb.ClientContext ctx, SubmitTransactionRequest request) {
-    var emptyResponse = SubmitTransactionResponse();
-    return _client.invoke<SubmitTransactionResponse>(ctx, 'Transaction', 'SubmitTransaction', request, emptyResponse);
-  }
-  $async.Future<GetTransactionResponse> getTransaction($pb.ClientContext ctx, GetTransactionRequest request) {
-    var emptyResponse = GetTransactionResponse();
-    return _client.invoke<GetTransactionResponse>(ctx, 'Transaction', 'GetTransaction', request, emptyResponse);
-  }
 }
 

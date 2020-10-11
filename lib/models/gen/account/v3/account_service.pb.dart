@@ -5,13 +5,12 @@
 // @dart = 2.3
 // ignore_for_file: camel_case_types,non_constant_identifier_names,library_prefixes,unused_import,unused_shown_name,return_of_invalid_type
 
-import 'dart:async' as $async;
 import 'dart:core' as $core;
 
 import 'package:fixnum/fixnum.dart' as $fixnum;
 import 'package:protobuf/protobuf.dart' as $pb;
 
-import '../../common/v3/model.pb.dart' as $2;
+import '../../common/v3/model.pb.dart' as $3;
 
 import 'account_service.pbenum.dart';
 
@@ -19,7 +18,7 @@ export 'account_service.pbenum.dart';
 
 class AccountInfo extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo('AccountInfo', package: const $pb.PackageName('kin.agora.account.v3'), createEmptyInstance: create)
-    ..aOM<$2.StellarAccountId>(1, 'accountId', subBuilder: $2.StellarAccountId.create)
+    ..aOM<$3.StellarAccountId>(1, 'accountId', subBuilder: $3.StellarAccountId.create)
     ..aInt64(2, 'sequenceNumber')
     ..aInt64(3, 'balance')
     ..hasRequiredFields = false
@@ -41,15 +40,15 @@ class AccountInfo extends $pb.GeneratedMessage {
   static AccountInfo _defaultInstance;
 
   @$pb.TagNumber(1)
-  $2.StellarAccountId get accountId => $_getN(0);
+  $3.StellarAccountId get accountId => $_getN(0);
   @$pb.TagNumber(1)
-  set accountId($2.StellarAccountId v) { setField(1, v); }
+  set accountId($3.StellarAccountId v) { setField(1, v); }
   @$pb.TagNumber(1)
   $core.bool hasAccountId() => $_has(0);
   @$pb.TagNumber(1)
   void clearAccountId() => clearField(1);
   @$pb.TagNumber(1)
-  $2.StellarAccountId ensureAccountId() => $_ensure(0);
+  $3.StellarAccountId ensureAccountId() => $_ensure(0);
 
   @$pb.TagNumber(2)
   $fixnum.Int64 get sequenceNumber => $_getI64(1);
@@ -72,7 +71,7 @@ class AccountInfo extends $pb.GeneratedMessage {
 
 class CreateAccountRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo('CreateAccountRequest', package: const $pb.PackageName('kin.agora.account.v3'), createEmptyInstance: create)
-    ..aOM<$2.StellarAccountId>(1, 'accountId', subBuilder: $2.StellarAccountId.create)
+    ..aOM<$3.StellarAccountId>(1, 'accountId', subBuilder: $3.StellarAccountId.create)
     ..hasRequiredFields = false
   ;
 
@@ -92,15 +91,15 @@ class CreateAccountRequest extends $pb.GeneratedMessage {
   static CreateAccountRequest _defaultInstance;
 
   @$pb.TagNumber(1)
-  $2.StellarAccountId get accountId => $_getN(0);
+  $3.StellarAccountId get accountId => $_getN(0);
   @$pb.TagNumber(1)
-  set accountId($2.StellarAccountId v) { setField(1, v); }
+  set accountId($3.StellarAccountId v) { setField(1, v); }
   @$pb.TagNumber(1)
   $core.bool hasAccountId() => $_has(0);
   @$pb.TagNumber(1)
   void clearAccountId() => clearField(1);
   @$pb.TagNumber(1)
-  $2.StellarAccountId ensureAccountId() => $_ensure(0);
+  $3.StellarAccountId ensureAccountId() => $_ensure(0);
 }
 
 class CreateAccountResponse extends $pb.GeneratedMessage {
@@ -148,7 +147,7 @@ class CreateAccountResponse extends $pb.GeneratedMessage {
 
 class GetAccountInfoRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo('GetAccountInfoRequest', package: const $pb.PackageName('kin.agora.account.v3'), createEmptyInstance: create)
-    ..aOM<$2.StellarAccountId>(1, 'accountId', subBuilder: $2.StellarAccountId.create)
+    ..aOM<$3.StellarAccountId>(1, 'accountId', subBuilder: $3.StellarAccountId.create)
     ..hasRequiredFields = false
   ;
 
@@ -168,15 +167,15 @@ class GetAccountInfoRequest extends $pb.GeneratedMessage {
   static GetAccountInfoRequest _defaultInstance;
 
   @$pb.TagNumber(1)
-  $2.StellarAccountId get accountId => $_getN(0);
+  $3.StellarAccountId get accountId => $_getN(0);
   @$pb.TagNumber(1)
-  set accountId($2.StellarAccountId v) { setField(1, v); }
+  set accountId($3.StellarAccountId v) { setField(1, v); }
   @$pb.TagNumber(1)
   $core.bool hasAccountId() => $_has(0);
   @$pb.TagNumber(1)
   void clearAccountId() => clearField(1);
   @$pb.TagNumber(1)
-  $2.StellarAccountId ensureAccountId() => $_ensure(0);
+  $3.StellarAccountId ensureAccountId() => $_ensure(0);
 }
 
 class GetAccountInfoResponse extends $pb.GeneratedMessage {
@@ -224,7 +223,7 @@ class GetAccountInfoResponse extends $pb.GeneratedMessage {
 
 class GetEventsRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo('GetEventsRequest', package: const $pb.PackageName('kin.agora.account.v3'), createEmptyInstance: create)
-    ..aOM<$2.StellarAccountId>(1, 'accountId', subBuilder: $2.StellarAccountId.create)
+    ..aOM<$3.StellarAccountId>(1, 'accountId', subBuilder: $3.StellarAccountId.create)
     ..hasRequiredFields = false
   ;
 
@@ -244,15 +243,15 @@ class GetEventsRequest extends $pb.GeneratedMessage {
   static GetEventsRequest _defaultInstance;
 
   @$pb.TagNumber(1)
-  $2.StellarAccountId get accountId => $_getN(0);
+  $3.StellarAccountId get accountId => $_getN(0);
   @$pb.TagNumber(1)
-  set accountId($2.StellarAccountId v) { setField(1, v); }
+  set accountId($3.StellarAccountId v) { setField(1, v); }
   @$pb.TagNumber(1)
   $core.bool hasAccountId() => $_has(0);
   @$pb.TagNumber(1)
   void clearAccountId() => clearField(1);
   @$pb.TagNumber(1)
-  $2.StellarAccountId ensureAccountId() => $_ensure(0);
+  $3.StellarAccountId ensureAccountId() => $_ensure(0);
 }
 
 class Events extends $pb.GeneratedMessage {
@@ -422,23 +421,5 @@ class TransactionEvent extends $pb.GeneratedMessage {
   $core.bool hasResultXdr() => $_has(1);
   @$pb.TagNumber(2)
   void clearResultXdr() => clearField(2);
-}
-
-class AccountApi {
-  $pb.RpcClient _client;
-  AccountApi(this._client);
-
-  $async.Future<CreateAccountResponse> createAccount($pb.ClientContext ctx, CreateAccountRequest request) {
-    var emptyResponse = CreateAccountResponse();
-    return _client.invoke<CreateAccountResponse>(ctx, 'Account', 'CreateAccount', request, emptyResponse);
-  }
-  $async.Future<GetAccountInfoResponse> getAccountInfo($pb.ClientContext ctx, GetAccountInfoRequest request) {
-    var emptyResponse = GetAccountInfoResponse();
-    return _client.invoke<GetAccountInfoResponse>(ctx, 'Account', 'GetAccountInfo', request, emptyResponse);
-  }
-  $async.Future<Events> getEvents($pb.ClientContext ctx, GetEventsRequest request) {
-    var emptyResponse = Events();
-    return _client.invoke<Events>(ctx, 'Account', 'GetEvents', request, emptyResponse);
-  }
 }
 

@@ -5,8 +5,6 @@
 // @dart = 2.3
 // ignore_for_file: camel_case_types,non_constant_identifier_names,library_prefixes,unused_import,unused_shown_name,return_of_invalid_type
 
-import '../../common/v3/model.pbjson.dart' as $2;
-
 const GetHistoryRequest$json = const {
   '1': 'GetHistoryRequest',
   '2': const [
@@ -148,31 +146,5 @@ const Cursor$json = const {
   '2': const [
     const {'1': 'value', '3': 1, '4': 1, '5': 12, '8': const {}, '10': 'value'},
   ],
-};
-
-const TransactionServiceBase$json = const {
-  '1': 'Transaction',
-  '2': const [
-    const {'1': 'GetHistory', '2': '.kin.agora.transaction.v3.GetHistoryRequest', '3': '.kin.agora.transaction.v3.GetHistoryResponse'},
-    const {'1': 'SubmitTransaction', '2': '.kin.agora.transaction.v3.SubmitTransactionRequest', '3': '.kin.agora.transaction.v3.SubmitTransactionResponse'},
-    const {'1': 'GetTransaction', '2': '.kin.agora.transaction.v3.GetTransactionRequest', '3': '.kin.agora.transaction.v3.GetTransactionResponse'},
-  ],
-};
-
-const TransactionServiceBase$messageJson = const {
-  '.kin.agora.transaction.v3.GetHistoryRequest': GetHistoryRequest$json,
-  '.kin.agora.common.v3.StellarAccountId': $2.StellarAccountId$json,
-  '.kin.agora.transaction.v3.Cursor': Cursor$json,
-  '.kin.agora.transaction.v3.GetHistoryResponse': GetHistoryResponse$json,
-  '.kin.agora.transaction.v3.HistoryItem': HistoryItem$json,
-  '.kin.agora.common.v3.TransactionHash': $2.TransactionHash$json,
-  '.kin.agora.common.v3.InvoiceList': $2.InvoiceList$json,
-  '.kin.agora.common.v3.Invoice': $2.Invoice$json,
-  '.kin.agora.common.v3.Invoice.LineItem': $2.Invoice_LineItem$json,
-  '.kin.agora.transaction.v3.SubmitTransactionRequest': SubmitTransactionRequest$json,
-  '.kin.agora.transaction.v3.SubmitTransactionResponse': SubmitTransactionResponse$json,
-  '.kin.agora.transaction.v3.SubmitTransactionResponse.InvoiceError': SubmitTransactionResponse_InvoiceError$json,
-  '.kin.agora.transaction.v3.GetTransactionRequest': GetTransactionRequest$json,
-  '.kin.agora.transaction.v3.GetTransactionResponse': GetTransactionResponse$json,
 };
 

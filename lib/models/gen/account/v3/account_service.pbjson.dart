@@ -5,8 +5,6 @@
 // @dart = 2.3
 // ignore_for_file: camel_case_types,non_constant_identifier_names,library_prefixes,unused_import,unused_shown_name,return_of_invalid_type
 
-import '../../common/v3/model.pbjson.dart' as $2;
-
 const AccountInfo$json = const {
   '1': 'AccountInfo',
   '2': const [
@@ -126,28 +124,5 @@ const TransactionEvent$json = const {
     const {'1': 'envelope_xdr', '3': 1, '4': 1, '5': 12, '8': const {}, '10': 'envelopeXdr'},
     const {'1': 'result_xdr', '3': 2, '4': 1, '5': 12, '8': const {}, '10': 'resultXdr'},
   ],
-};
-
-const AccountServiceBase$json = const {
-  '1': 'Account',
-  '2': const [
-    const {'1': 'CreateAccount', '2': '.kin.agora.account.v3.CreateAccountRequest', '3': '.kin.agora.account.v3.CreateAccountResponse'},
-    const {'1': 'GetAccountInfo', '2': '.kin.agora.account.v3.GetAccountInfoRequest', '3': '.kin.agora.account.v3.GetAccountInfoResponse'},
-    const {'1': 'GetEvents', '2': '.kin.agora.account.v3.GetEventsRequest', '3': '.kin.agora.account.v3.Events', '6': true},
-  ],
-};
-
-const AccountServiceBase$messageJson = const {
-  '.kin.agora.account.v3.CreateAccountRequest': CreateAccountRequest$json,
-  '.kin.agora.common.v3.StellarAccountId': $2.StellarAccountId$json,
-  '.kin.agora.account.v3.CreateAccountResponse': CreateAccountResponse$json,
-  '.kin.agora.account.v3.AccountInfo': AccountInfo$json,
-  '.kin.agora.account.v3.GetAccountInfoRequest': GetAccountInfoRequest$json,
-  '.kin.agora.account.v3.GetAccountInfoResponse': GetAccountInfoResponse$json,
-  '.kin.agora.account.v3.GetEventsRequest': GetEventsRequest$json,
-  '.kin.agora.account.v3.Events': Events$json,
-  '.kin.agora.account.v3.Event': Event$json,
-  '.kin.agora.account.v3.AccountUpdateEvent': AccountUpdateEvent$json,
-  '.kin.agora.account.v3.TransactionEvent': TransactionEvent$json,
 };
 

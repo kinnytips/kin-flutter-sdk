@@ -20,10 +20,10 @@ class Duration extends $pb.GeneratedMessage {
   Duration._() : super();
   factory Duration() => create();
   factory Duration.fromBuffer($core.List<$core.int> i,
-          [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
+      [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromBuffer(i, r);
   factory Duration.fromJson($core.String i,
-          [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
+      [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromJson(i, r);
   Duration clone() => Duration()..mergeFromMessage(this);
   Duration copyWith(void Function(Duration) updates) =>

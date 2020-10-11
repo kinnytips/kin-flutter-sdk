@@ -22,10 +22,10 @@ class Timestamp extends $pb.GeneratedMessage {
   Timestamp._() : super();
   factory Timestamp() => create();
   factory Timestamp.fromBuffer($core.List<$core.int> i,
-          [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
+      [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromBuffer(i, r);
   factory Timestamp.fromJson($core.String i,
-          [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
+      [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) =>
       create()..mergeFromJson(i, r);
   Timestamp clone() => Timestamp()..mergeFromMessage(this);
   Timestamp copyWith(void Function(Timestamp) updates) =>

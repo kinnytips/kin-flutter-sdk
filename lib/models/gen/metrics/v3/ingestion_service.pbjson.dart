@@ -24,15 +24,3 @@ const SubmitResponse_Result$json = const {
   ],
 };
 
-const IngestionServiceBase$json = const {
-  '1': 'Ingestion',
-  '2': const [
-    const {'1': 'Submit', '2': '.kin.agora.metrics.v3.SubmitRequest', '3': '.kin.agora.metrics.v3.SubmitResponse'},
-  ],
-};
-
-const IngestionServiceBase$messageJson = const {
-  '.kin.agora.metrics.v3.SubmitRequest': SubmitRequest$json,
-  '.kin.agora.metrics.v3.SubmitResponse': SubmitResponse$json,
-};
-
