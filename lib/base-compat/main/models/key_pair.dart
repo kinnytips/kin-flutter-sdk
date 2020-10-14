@@ -1,17 +1,13 @@
 import 'dart:typed_data';
 import 'package:fixnum/fixnum.dart' as fixNum;
-import 'package:tweetnacl/tweetnacl.dart' as ed25519;
-import 'dart:typed_data';
 import "../util.dart";
-import 'network.dart';
+import '../network.dart';
 import 'transaction.dart';
-import 'xdr/xdr_data_io.dart';
-import 'xdr/xdr_signing.dart';
-import 'xdr/xdr_type.dart';
-import 'xdr/xdr_account.dart';
+import '../xdr/xdr_data_io.dart';
+import '../xdr/xdr_signing.dart';
+import '../xdr/xdr_type.dart';
+import '../xdr/xdr_account.dart';
 import 'package:collection/collection.dart';
-import 'decorated_signature.dart';
-import 'signature_hint.dart';
 
 class VersionByte {
   final _value;
