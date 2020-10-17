@@ -18,21 +18,21 @@ class BackupRestoreImpl extends BackupRestore {
 
 }
 
-  class AccountBackup {
-    String _publicAddress; 
-    String _saltHexString; 
-    String _encryptedSeedHexString;
-    
-    AccountBackup(String publicAddress, String saltHexString, String encryptedSeedHexString){
-      _publicAddress = publicAddress;
-      _saltHexString = saltHexString;
-      _encryptedSeedHexString = encryptedSeedHexString;
-    }
-
-    AccountBackup.fromJsonString(String jsonString) {
-      Map<String, dynamic> json = jsonDecode(jsonString);
-      _publicAddress = json['JSON_KEY_PUBLIC_KEY'];
-      _saltHexString = json['JSON_KEY_SALT'];
-      _encryptedSeedHexString = json['JSON_KEY_SEED'];
-    }
+class AccountBackup {
+  String _publicAddress; 
+  String _saltHexString; 
+  String _encryptedSeedHexString;
+  
+  AccountBackup(String publicAddress, String saltHexString, String encryptedSeedHexString){
+    _publicAddress = publicAddress;
+    _saltHexString = saltHexString;
+    _encryptedSeedHexString = encryptedSeedHexString;
   }
+
+  AccountBackup.fromJsonString(String jsonString) {
+    Map<String, dynamic> json = jsonDecode(jsonString);
+    _publicAddress = json['JSON_KEY_PUBLIC_KEY'];
+    _saltHexString = json['JSON_KEY_SALT'];
+    _encryptedSeedHexString = json['JSON_KEY_SEED'];
+  }
+}
