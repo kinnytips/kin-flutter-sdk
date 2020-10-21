@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:fixnum/fixnum.dart';
 import 'package:flutter/services.dart';
 
@@ -35,7 +37,24 @@ class Builder {
   }
 
   setForeginKey(ByteData foreignKeyBytes) {
-    this._foreignKeyBytes = foreignKeyBytes
+    this._foreignKeyBytes = foreignKeyBytes;
+  }
+
+  KinBinaryMemo build() {
+    if (_typeId == null) {
+      throw KinBinaryMemoFormatException("typeId must not be null!");
+    }
+
+    if (_foreignKeyBytes == null) {
+      _foreignKeyBytes = ByteData(0);
+    }
+
+    int _typeIdMaxSize = pow(2, 5).toInt();
+    if(_typeId.value < 0 || _typeId.value >= _typeIdMaxSize) {
+      throw KinBinaryMemoFormatException(                    
+        "typeId of ${_typeId.value} invalid! must be " +
+        "larger than zero and less than $_typeIdMaxSize");
+    }
   }
 
 }
