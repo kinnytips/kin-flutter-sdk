@@ -2,36 +2,15 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:kin_sdk/base-compat/main/models/key_pair.dart';
 
-class _BackupRestoreState extends State<BackupRestore>  {
-  static const platform = const MethodChannel('com.kinecosystem.kin-sdk/BackupRestore');
-  // Backup and Restore
-  String _exportWalletResult = 'awaiting wallet to export.';
-  Future<void> _exportWallet() async {
-    String exportWalletResult;
-    try {
-      exportWalletResult = await platform.invokeMethod('exportWallet');
-    } on PlatformException catch (e) {
-      exportWalletResult = "Failed to export wallet: '${e.message}'.";
-    }
+class BackupRestore {
+  String exportWallet (KeyPair keyPair, String passphrase) {
+    //TODO - Export wallet logic
+    return "";
+  } 
 
-   setState(() {
-      _exportWalletResult = exportWalletResult;
-    });
-  }
-
-  String _importWalletResult;
-  Future<void> _importWallet() async {
-    String importWalletResult;
-    try {
-      importWalletResult = await platform.invokeMethod('importWallet');
-    } on PlatformException catch (e) {
-      importWalletResult = "Failed to import wallet: '${e.message}'.";
-    }
-
-   setState(() {
-      _importWalletResult = importWalletResult;
-    });
-  }
-
+  KeyPair importWallet (String exportedJson, String passphrase) {
+    return KeyPair();
+  }   
 }

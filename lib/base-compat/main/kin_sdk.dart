@@ -8,7 +8,7 @@ import 'dart:convert';
 import 'assets.dart';
 import 'requests/request_builder.dart';
 import 'responses/response.dart';
-import './responses/root_response.dart';
+import 'responses/root_response.dart';
 import './responses/submit_transaction_response.dart';
 import 'transaction.dart';
 import './requests/accounts_request_builder.dart';

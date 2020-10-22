@@ -8,17 +8,28 @@ class KinBinaryMemo {
 }
 
 class TransferType {
-  TransferType(int value) {}
+  int value;
+  TransferType(int val) {
+    value = val;
+  }
 
-  //TODO: if -1 return type Unknown
-
-  //TODO: if 0 return type none
-
-  //TODO: if 1 return type earn
-
-  //TODO: if 2 return type spend
-
-  //TODO: if 3 return type P2P
+  fromValue(int val) {
+    if (value == -1) {
+      return Unknown;
+    }
+    else if (value == 0) {
+      return None;
+    } 
+    else if (value == 1) {
+      return Earn;
+    }
+    else if (value == 2) {
+      return Spend;
+    }
+    else if (value == 3) {
+      return P2P;
+    }
+  }
 }
 
 class Builder {

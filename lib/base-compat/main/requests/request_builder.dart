@@ -1,7 +1,7 @@
 import 'package:http/http.dart' as http;
-import 'package:stellar_flutter_sdk/src/asset_type_credit_alphanum.dart';
-import 'package:stellar_flutter_sdk/src/asset_type_native.dart';
-import 'package:stellar_flutter_sdk/src/stellar_sdk.dart';
+import '../asset_type_credit_alphanum.dart';
+import "../asset_type_native.dart";
+import '../stellar_sdk.dart';
 import 'dart:convert';
 import '../responses/response.dart';
 import '../assets.dart';
