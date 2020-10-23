@@ -9,21 +9,21 @@ import 'assets.dart';
 import 'requests/request_builder.dart';
 import 'responses/response.dart';
 import 'responses/root_response.dart';
-import './responses/submit_transaction_response.dart';
+import 'responses/submit_transaction_response.dart';
 import 'transaction.dart';
-import './requests/accounts_request_builder.dart';
-import './requests/assets_request_builder.dart';
-import './requests/effects_request_builder.dart';
-import './requests/ledgers_request_builder.dart';
-import './requests/offers_request_builder.dart';
-import './requests/fee_stats_request_builder.dart';
-import './requests/operations_request_builder.dart';
-import './requests/transactions_request_builder.dart';
-import './requests/order_book_request_builder.dart';
-import './requests/path_request_builder.dart';
-import './requests/payments_request_builder.dart';
-import './requests/trade_aggregations_request_builder.dart';
-import './requests/trades_request_builder.dart';
+import 'requests/accounts_request_builder.dart';
+import 'requests/assets_request_builder.dart';
+import 'requests/effects_request_builder.dart';
+import 'requests/ledgers_request_builder.dart';
+import 'requests/offers_request_builder.dart';
+import 'requests/fee_stats_request_builder.dart';
+import 'requests/operations_request_builder.dart';
+import 'requests/transactions_request_builder.dart';
+import 'requests/order_book_request_builder.dart';
+import 'requests/path_request_builder.dart';
+import 'requests/payments_request_builder.dart';
+import 'requests/trade_aggregations_request_builder.dart';
+import 'requests/trades_request_builder.dart';
 
 /// Main class of the flutter stellar sdk.
 class StellarSDK {

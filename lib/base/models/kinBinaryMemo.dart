@@ -1,33 +1,36 @@
 import 'dart:math';
-
-import 'package:fixnum/fixnum.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 
 class KinBinaryMemo {
   KinBinaryMemo(int magicByteIndicator, int version, TransferType typeId, int appIdx, String foreignKey) {}
 }
 
-class TransferType {
-  int value;
-  TransferType(int val) {
-    value = val;
+enum TransferType {
+  unknown,
+  none,
+  earn,
+  spend,
+  p2p
+}
+
+extension TransferTypeUtil on TransferType {
+  static TransferType getType(int value) {
+    switch(value) {
+      case -1: return TransferType.unknown;
+      case 1: return TransferType.earn;
+      case 2: return TransferType.spend;
+      case 3: return TransferType.p2p;
+    }
   }
 
-  fromValue(int val) {
-    if (value == -1) {
-      return Unknown;
-    }
-    else if (value == 0) {
-      return None;
-    } 
-    else if (value == 1) {
-      return Earn;
-    }
-    else if (value == 2) {
-      return Spend;
-    }
-    else if (value == 3) {
-      return P2P;
+    static int getValue(TransferType type) {
+    switch(type) {
+      case TransferType.unknown: return -1;
+      case TransferType.none: return 0;
+      case TransferType.earn: return 1;
+      case TransferType.spend: return 2;
+      case TransferType.p2p: return 3;
     }
   }
 }
@@ -61,11 +64,16 @@ class Builder {
     }
 
     int _typeIdMaxSize = pow(2, 5).toInt();
-    if(_typeId.value < 0 || _typeId.value >= _typeIdMaxSize) {
-      throw KinBinaryMemoFormatException(                    
-        "typeId of ${_typeId.value} invalid! must be " +
+    if(TransferTypeUtil.getValue(_typeId) < 0 || TransferTypeUtil.getValue(_typeId) >= _typeIdMaxSize) {
+      int typeValue = TransferTypeUtil.getValue(_typeId);
+      throw KinBinaryMemoFormatException(
+        "typeId of $typeValue invalid! must be " +
         "larger than zero and less than $_typeIdMaxSize");
     }
   }
+}
 
+class KinBinaryMemoFormatException implements Exception {
+  String message;
+  KinBinaryMemoFormatException(this.message);
 }
