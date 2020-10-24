@@ -5,7 +5,7 @@ Plugin Package for using [Kin Cryptocurrency](https://www.kin.org/) Official SDK
 ## Documentation
 [API](https://docs.kin.org/agora/api) <br/>
 [TECHNICAL ARCHITECTURE](https://docs.kin.org/how-it-works#kin-binary-memo-format)
-
+[KIN MEMO FORMAT](https://github.com/kinecosystem/agora-api/blob/master/spec/memo.md)
 
 ## How to use the SDK
 ### Initiate the sdk
