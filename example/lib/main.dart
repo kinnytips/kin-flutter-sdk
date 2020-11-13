@@ -3,6 +3,7 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:kin_sdk/kin_sdk.dart';
+import 'package:kin_sdk/models/application/kin_helper.dart';
 
 void main() {
   runApp(MyApp());
@@ -41,6 +42,8 @@ class _MyAppState extends State<MyApp> {
     setState(() {
       _accountId = accountId;
     });
+
+    KinHelper.encode();
   }
 
   @override
