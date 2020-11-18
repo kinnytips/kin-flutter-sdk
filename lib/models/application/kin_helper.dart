@@ -4,6 +4,8 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:convert' show utf8;
 
+import 'package:kin_sdk/codec/base_64.dart';
+
 const MASK_MAGIC_BYTE_INDICATOR = 3;
 const BIT_OFFSET_MAGIC_BYTE_INDICATOR = 0;
 const MASK_VERSION = 0x1C;
@@ -30,12 +32,141 @@ const BIT_OFFSET_FOREIGN_KEY = BIT_OFFSET_APP_IDX + BIT_LENGTH_APP_IDX;
 Uint8List int32bytes(int value) =>
     Uint8List(4)..buffer.asInt32List()[0] = value;
 
+const DECODE_TABLE = [
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  62,
+  -1,
+  62,
+  -1,
+  63,
+  52,
+  53,
+  54,
+  55,
+  56,
+  57,
+  58,
+  59,
+  60,
+  61,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  -1,
+  0,
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15,
+  16,
+  17,
+  18,
+  19,
+  20,
+  21,
+  22,
+  23,
+  24,
+  25,
+  -1,
+  -1,
+  -1,
+  -1,
+  63,
+  -1,
+  26,
+  27,
+  28,
+  29,
+  30,
+  31,
+  32,
+  33,
+  34,
+  35,
+  36,
+  37,
+  38,
+  39,
+  40,
+  41,
+  42,
+  43,
+  44,
+  45,
+  46,
+  47,
+  48,
+  49,
+  50,
+  51
+];
+
 abstract class KinHelper {
   static Uint8List getForeignKeyBytes(String foreignKey) {
-    var bytes = base64Decode(foreignKey);
+    Uint8List bytes = Base64(
+            lineSeparator: Uint8List.fromList([13, 10]),
+            decodeTable: Uint8List.fromList(DECODE_TABLE))
+        .decode(foreignKey);
     List result = bytes.sublist(0, 29);
     result[28] = result[28] & int.parse("0x3F");
-    return Uint8List(0);
+    return result;
   }
 
   //
@@ -101,6 +232,10 @@ abstract class KinHelper {
     //[65, 4, 0, -72, 80, -115, 102, 17, -32, 23, 112, 29, 12, 76, -3, -93, -98, -74, 58, -64, -21, 71, 121, -19, -45, -49, -81, -110, -42, 19, 32, 0]
     print("result $typeArray");
 
-    return Uint8List(20);
+    return Uint8List.fromList(typeArray);
+  }
+
+  void decode(Uint8List bytes){
+
   }
 }
