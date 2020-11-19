@@ -132,4 +132,8 @@ abstract class BaseNCodec extends BinaryCoder {
   Uint8List byteArrayFromString(String params) {
     return Utf8Encoder().convert(params);
   }
+
+  String encodeAsString(Uint8List pArray) {
+    return StringUtils.newStringUtf8(encode(pArray));
+  }
 }

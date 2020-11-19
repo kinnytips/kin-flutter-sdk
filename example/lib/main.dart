@@ -3,6 +3,8 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:kin_sdk/kin_sdk.dart';
+import 'package:kin_sdk/models/application/kin_binary_memo.dart';
+import 'package:kin_sdk/models/application/kin_binary_memo.dart';
 import 'package:kin_sdk/models/application/kin_helper.dart';
 
 void main() {
@@ -42,6 +44,9 @@ class _MyAppState extends State<MyApp> {
     setState(() {
       _accountId = accountId;
     });
+
+    KinBinaryMemo memo =
+        (KinBuilder(1)..setTransferType(TransferType.earn)).build();
 
     KinHelper.encode();
   }

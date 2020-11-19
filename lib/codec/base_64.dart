@@ -18,7 +18,7 @@ const STANDARD_ENCODE_TABLE =
 
 const encodeSize = 0;
 const decodeSize = 0;
-const DECODE_TABLE = [
+final DECODE_TABLE = Uint8List.fromList([
   -1,
   -1,
   -1,
@@ -142,7 +142,7 @@ const DECODE_TABLE = [
   49,
   50,
   51
-];
+]);
 
 class Base64 extends BaseNCodec {
   Uint8List encodeTable;
