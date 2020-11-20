@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'dart:async';
 
@@ -6,6 +8,7 @@ import 'package:kin_sdk/kin_sdk.dart';
 import 'package:kin_sdk/models/application/kin_binary_memo.dart';
 import 'package:kin_sdk/models/application/kin_binary_memo.dart';
 import 'package:kin_sdk/models/application/kin_helper.dart';
+import 'package:kin_sdk/models/kin_memo.dart';
 
 void main() {
   runApp(MyApp());
@@ -45,8 +48,14 @@ class _MyAppState extends State<MyApp> {
       _accountId = accountId;
     });
 
-    KinBinaryMemo memo =
-        (KinBuilder(1)..setTransferType(TransferType.earn)).build();
+    KinMemo memo = (KinBuilder(1)
+          ..setForeginKey(Base64Decoder()
+              .convert("LlGNZRHhFnMcDk3/oZ62OsPrRXjv0M2sk9YTIAA="))
+          ..setTransferType(TransferType.earn))
+        .build()
+        .toKinMemo();
+
+    print(memo.toString());
 
     KinHelper.encode();
   }

@@ -60,7 +60,10 @@ class KinBinaryMemo {
         version = builder.version,
         typeId = builder._typeId,
         appIdx = builder.appIdx,
-        foreignKey = Base64().encodeAsString(builder._foreignKeyBytes),
+        foreignKey = Base64(
+          lineSeparator: Uint8List.fromList([13, 10]),
+          decodeTable: Uint8List.fromList(DECODE_TABLE),
+        ).encodeAsString(builder._foreignKeyBytes),
         rawBytes = builder._foreignKeyBytes;
 
   Uint8List getForeignKeyBytes() {
@@ -86,18 +89,17 @@ class KinBinaryMemo {
     Uint8List foreignKeyBytes = getForeignKeyBytes();
 
     typeArray[BYTE_OF_FK_START] = typeArray[BYTE_OF_FK_START] |
-        ((foreignKeyBytes[0] & int.parse("0x3F")) << 2).toSigned(8);
+        ((foreignKeyBytes[0] & 0x3F) << 2).toSigned(8);
 
     for (var i = BYTE_OF_FK_START + 1; i < 2 + foreignKeyBytes.length; i++) {
       typeArray[i] =
-          typeArray[i] | ((foreignKeyBytes[i - 4] >> 6) & int.parse("0x3"));
-      typeArray[i] = typeArray[i] |
-          ((foreignKeyBytes[i - 3] & int.parse("0x3F") << 2).toSigned(8));
+          typeArray[i] | ((foreignKeyBytes[i - 4] >> 6) & 0x3);
+      typeArray[i] =
+          typeArray[i] | ((foreignKeyBytes[i - 3] & 0x3F << 2).toSigned(8));
     }
     if (foreignKeyBytes.length < 29) {
       typeArray[BYTE_OF_FK_START + foreignKeyBytes.length] =
-          ((foreignKeyBytes[foreignKeyBytes.length - 1]) >> 6) &
-              int.parse("0x3");
+          ((foreignKeyBytes[foreignKeyBytes.length - 1]) >> 6) & 0x3;
     }
 
     return Uint8List.fromList(typeArray);
@@ -235,8 +237,7 @@ class KinBuilder {
         min(foreignKeyBytesPadded.lengthInBytes,
             _foreignKeyBytes.lengthInBytes));
 
-    foreignKeyBytesPadded[28] =
-        foreignKeyBytesPadded[28] & int.parse("0x3F").toSigned(8);
+    foreignKeyBytesPadded[28] = foreignKeyBytesPadded[28] & 0x3F;
 
     return KinBinaryMemo._builder(this);
   }

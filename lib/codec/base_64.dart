@@ -145,7 +145,7 @@ final DECODE_TABLE = Uint8List.fromList([
 ]);
 
 class Base64 extends BaseNCodec {
-  Uint8List encodeTable;
+  Uint8List encodeTable = Uint8List(124);
   Uint8List lineSeparator;
   int bitWorkArea = 0;
 
