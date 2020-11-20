@@ -55,9 +55,11 @@ class _MyAppState extends State<MyApp> {
         .build()
         .toKinMemo();
 
+
+
     print(memo.toString());
 
-    KinHelper.encode();
+    // KinHelper.encode();
   }
 
   @override
