@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'dart:math';
-import 'package:flutter/cupertino.dart';
+import 'dart:scalarlist';
 import 'package:flutter/services.dart';
 
 class KinBinaryMemo {
@@ -90,11 +90,12 @@ class KinBinaryMemo {
   //     )
   //   }
 
-  //   val foreignKeyBytes: ByteArray by lazy {
-  //       Base64().decode(foreignKey)!!
-  //           .subByteArray(0, 29)
-  //           .apply { set(28, get(28) and 0x3F.toByte()) }
-  //   }
+    ByteData foreignKeyBytes() {
+        base64.decode(foreignKey)
+        
+            subByteArray(0, 29)
+            .apply { set(28, get(28) and 0x3F.toByte()) }
+    }
 
   //   /**
   //    * Fields below are packed from LSB to MSB order:
@@ -129,15 +130,17 @@ class KinBinaryMemo {
   //       }
   //   }
 
-  //   fun toKinMemo(): KinMemo = KinMemo(encode())
+  toKinMemo(){
+    return KinMemo(encode());
+  } 
 
-  //   String toString() {
-  //       return "AgoraMemo(magicByteIndicator=$magicByteIndicator, " +
-  //               "version=$version, " +
-  //               "typeId=${typeId.value}, " +
-  //               "appIdx=$appIdx, " +
-  //               "foreignKey='$foreignKey')"
-  //   }
+  String toString() {
+      return "AgoraMemo(magicByteIndicator=$magicByteIndicator, " +
+              "version=$version, " +
+              "typeId=${typeId.value}, " +
+              "appIdx=$appIdx, " +
+              "foreignKey='$foreignKey')"
+  }
 }
 
 enum TransferType {
@@ -234,13 +237,13 @@ class Builder {
 
     //TODO: IDK HOW TO DO THIS
       // Pad with zeros or truncate foreignKeyBytes
-      // val foreignKeyBytesPadded = ByteArray(BYTE_COUNT_FOREIGN_KEY)
+      // ByteData foreignKeyBytesPadded = ByteData(BYTE_COUNT_FOREIGN_KEY)
       // System.arraycopy(
       //     foreignKeyBytes!!, 0, foreignKeyBytesPadded, 0,
       //     min(foreignKeyBytesPadded.size, foreignKeyBytes!!.size)
       // )
-      // // trim last two bits, they don't fit
-      // foreignKeyBytesPadded[28] = foreignKeyBytesPadded[28] and 0x3F.toByte()
+      // trim last two bits, they don't fit
+      // foreignKeyBytesPadded. = foreignKeyBytesPadded[28] + 0x3F.toByte()
 
     return KinBinaryMemo(
         magicByteIndicator,
