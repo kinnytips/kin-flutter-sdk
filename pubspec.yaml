@@ -2,7 +2,7 @@ name: kin_sdk
 description: A new flutter plugin project.
 version: 0.0.1
 author:
-homepage:
+homepage: "https://www.kinny.io"
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -12,12 +12,15 @@ dependencies:
   flutter:
     sdk: flutter
   http: ^0.12.2
+  protobuf: ^1.0.1
+  grpc: ^2.3.0
+  logging: ^0.11.4
   fixnum: ^0.10.11
   crypto: ^2.1.5
   decimal: ^0.3.5
   flutter_sodium: ^0.1.8
   pointycastle: ^2.0.0
-  
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
