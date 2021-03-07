@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+package kin.agora.common.v3;
+
+option go_package = "github.com/kinecosystem/agora-api/genproto/common/v3;common";
+option java_package = "org.kin.agora.gen.common.v3";
+option objc_class_prefix = "APBCommonV3";
+
+import "validate/validate.proto";
+
+message StellarAccountId {
+    // The public key of accounts always starts with a G, so we
+    // ensure that the value starts with a G to prevent the secret
+    // key from being used.
+    string value = 1 [(validate.rules).string = {
+        pattern: "^G[a-zA-Z0-9]*$"
+        min_bytes: 56
+        max_bytes: 56
+    }];
+}
+
+message TransactionHash {
+    // The sha256 hash of a transaction.
+    bytes value = 1 [(validate.rules).bytes = {
+        min_len: 32
+        max_len: 32
+    }];
+}
+
+message InvoiceHash {
+    // The SHA-224 hash of the invoice.
+    bytes value = 1 [(validate.rules).bytes = {
+        min_len: 28
+        max_len: 28
+    }];
+}
+
+message Invoice {
+    repeated LineItem items = 1 [(validate.rules).repeated = {
+        min_items: 1
+        max_items: 1024
+    }];
+    message LineItem {
+        string title = 1 [(validate.rules).string = {
+            min_len: 1
+            max_len: 128
+        }];
+        string description = 2 [(validate.rules).string = {
+            min_len: 0
+            max_len: 256
+        }];
+
+        // The amount in quarks.
+        int64 amount = 3 [jstype = JS_STRING];
+
+        // The app SKU related to this line item, if applicable.
+        bytes sku = 4 [(validate.rules).bytes = {
+            max_len: 128
+        }];
+    }
+}
+
+message InvoiceList {
+    repeated Invoice invoices = 1 [(validate.rules).repeated = {
+        min_items: 1
+        max_items: 100
+    }];
+}
