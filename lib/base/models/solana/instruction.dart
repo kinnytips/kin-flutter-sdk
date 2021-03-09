@@ -1,5 +1,4 @@
-import 'org.kin.sdk.base.models.Key';
-import 'package:kin-flutter-sdk/base/models/key.dart';
+import 'package:kin_sdk/base/models/key.dart';
 
 /// AccountMeta represents the account information required
 /// for building transactions.
@@ -18,6 +17,7 @@ class AccountMeta implements Comparable<AccountMeta> {
     this.isProgram = false,
   ]);
 
+// todo make sure this is as close to a companion object in Kotlin
   static AccountMeta newAccountMeta(
     Key.PublicKey publicKey,
     bool isSigner, [
@@ -69,6 +69,7 @@ class Instruction {
     this.data,
   );
 
+// todo make sure this is as close to a companion object in Kotlin
   static Instruction newInstruction(
       Key.PublicKey program, List<int> data, List<AccountMeta> accounts) {
     return Instruction(program, accounts, data);
@@ -92,7 +93,8 @@ class Instruction {
   int get hashCode {
     var result = program.hashCode();
     result = 31 * result + accounts.hashCode;
-    result = 31 * result + data.contentHashCode();
+    // todo: contentHashCode vs hashcode
+    result = 31 * result + data.hashCode;
     return result;
   }
 }
@@ -122,8 +124,9 @@ class CompiledInstruction {
   @override
   int get hashCode {
     var result = programIndex.toInt();
-    result = 31 * result + accounts.contentHashCode();
-    result = 31 * result + data.contentHashCode();
+    // todo: contentHashCode vs hashcode
+    result = 31 * result + accounts.hashCode;
+    result = 31 * result + data.hashCode;
     return result;
   }
 }
