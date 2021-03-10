@@ -1,3 +1,5 @@
+import 'package:collection/collection.dart';
+
 import 'package:kin_sdk/base/models/key.dart';
 
 /// AccountMeta represents the account information required
@@ -82,7 +84,7 @@ class Instruction {
     if (other is Instruction) {
       if (program != other.program) return false;
       if (accounts != other.accounts) return false;
-      if (!data.every((item) => other.data.contains(item))) return false;
+      if (!ListEquality().equals(data, other.data)) return false;
     } else {
       return false;
     }
@@ -112,13 +114,16 @@ class CompiledInstruction {
 //    if (other is! CompiledInstruction) return false;
     if (other is CompiledInstruction) {
       if (programIndex != other.programIndex) return false;
-      if (!accounts.every((item) => other.accounts.contains(item)))
-        return false;
-      if (!data.every((item) => other.data.contains(item))) return false;
+      if (!ListEquality().equals(accounts, other.accounts)) return false;
+      if (!ListEquality().equals(data, other.data)) return false;
 
       return true;
     }
     return false;
+  }
+
+  contentEquals(List list1, List list2) {
+    if (list1.length != list2.length) return false;
   }
 
   @override
