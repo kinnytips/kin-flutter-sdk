@@ -1,8 +1,8 @@
 name: kin_sdk
-description: A new flutter plugin project.
+description: Flutter SDK for kin
 version: 0.0.1
-author:
-homepage:
+author: Kinny.io development team 
+homepage: https://kinny.io
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
