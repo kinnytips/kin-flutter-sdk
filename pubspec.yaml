@@ -17,7 +17,10 @@ dependencies:
   decimal: ^0.3.5
   flutter_sodium: ^0.1.8
   pointycastle: ^2.0.0
-  
+  protobuf: ^1.0.1
+  grpc: ^2.3.0
+  logging: ^0.11.4
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
