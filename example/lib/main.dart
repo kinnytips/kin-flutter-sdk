@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'package:flutter/services.dart';
-import 'package:kin_sdk/kin_sdk.dart';
+import 'package:kinny/kin.dart';
 
 void main() {
   runApp(MyApp());
@@ -27,7 +27,7 @@ class _MyAppState extends State<MyApp> {
     String platformVersion;
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
-      platformVersion = await KinSdk.platformVersion;
+      platformVersion = await Kin.platformVersion;
     } on PlatformException {
       platformVersion = 'Failed to get platform version.';
     }
