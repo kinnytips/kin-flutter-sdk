@@ -3,6 +3,7 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:kinny/kin.dart';
+import 'package:kinny/models/app/interfaces/status.dart';
 
 void main() {
   runApp(MyApp());
@@ -14,7 +15,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String _accountId = 'Unknown';
+  String _output = 'Unknown';
   Kin kin = Kin(isProduction: false);
   @override
   void initState() {
@@ -23,11 +24,16 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> createAccountOnBlocChain() async {
-    await kin.createAccount();
-    String accountId = kin.accountId;
+    var response = await kin.createAccount();
+    String output;
+    if (response.operationStatus.result == Result.FAIL) {
+      output = response.operationStatus.message;
+    } else {
+      output = kin.accountId;
+    }
     if (!mounted) return;
     setState(() {
-      _accountId = accountId;
+      _output = output;
     });
   }
 
@@ -39,7 +45,7 @@ class _MyAppState extends State<MyApp> {
           title: const Text('Example app to test Kin SDK'),
         ),
         body: Center(
-          child: Text('Running on: $_accountId\n'),
+          child: Text('Result : $_output\n'),
         ),
       ),
     );
