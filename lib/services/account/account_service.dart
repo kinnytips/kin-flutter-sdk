@@ -14,7 +14,7 @@ class AccountService {
   AccountService(this.endpoint);
 
   Future<CreateKinAccountResponse> createAccount() async {
-    Transaction transaction = Transaction()..value = [1];
+    Transaction transaction = Transaction.create();
     var createAccountRequest = CreateAccountRequest()
       ..transaction = transaction;
     try {
