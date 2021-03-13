@@ -17,7 +17,9 @@ void main() {
     channel.setMockMethodCallHandler(null);
   });
 
-  test('getPlatformVersion', () async {
-    expect(await Kin.platformVersion, '42');
+  /// This is a placeholder test
+  /// More tests would follow
+  test('Placeholder tests', () async {
+    expect(true, 2 > 1);
   });
 }
