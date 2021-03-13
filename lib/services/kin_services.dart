@@ -1,4 +1,4 @@
-import 'package:kinny/models/app/account/account_response.dart';
+import 'package:kinny/models/app/account/create_kin_account_response.dart';
 import 'package:kinny/models/app/agora/agora_environment.dart';
 import 'package:kinny/services/account/account_service.dart';
 
@@ -17,7 +17,7 @@ class KinService {
   }
 
   /// To create a fresh new account/wallet on the Kin blockchain
-  Future<AccountResponse> createAccount() async {
+  Future<CreateKinAccountResponse> createAccount() async {
     return this._accountService.createAccount();
   }
 }
