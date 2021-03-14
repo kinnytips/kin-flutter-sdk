@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:collection/collection.dart';
 
 import 'package:kin_sdk/base/tools/byte_utils.dart';
@@ -40,7 +42,7 @@ abstract class FixedByteArray {
   }
 
   @override
-  int get hashCode => byteArray.hashCode;
+  int get hashCode => hashList(byteArray);
 }
 
 // TODO: need to convert below lines
