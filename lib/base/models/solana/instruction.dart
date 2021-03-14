@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'dart:ui';
 
 import 'package:kin_sdk/base/models/key.dart';
 
@@ -96,7 +97,7 @@ class Instruction {
     var result = program.hashCode();
     result = 31 * result + accounts.hashCode;
     // todo: contentHashCode vs hashcode
-    result = 31 * result + data.hashCode;
+    result = 31 * result + hashList(data);
     return result;
   }
 }
@@ -130,8 +131,8 @@ class CompiledInstruction {
   int get hashCode {
     var result = programIndex.toInt();
     // todo: contentHashCode vs hashcode
-    result = 31 * result + accounts.hashCode;
-    result = 31 * result + data.hashCode;
+    result = 31 * result + hashList(accounts);
+    result = 31 * result + hashList(data);
     return result;
   }
 }
