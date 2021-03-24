@@ -34,9 +34,22 @@ class Base58 {
       encoded[outputStart--] = ENCODED_ZERO;
     }
 
-    return String(encoded, outputStart, encoded.length - outputStart);
+    formatString(List<String> encoded, int outputStart, int length){
+      String encodedString;
+      for(var i = outputStart; i < (length + outputStart); i++) {
+        var thisString = encoded[i];
+
+        encodedString += thisString;
+      }
+
+      return encodedString;
+    }
+
+    return formatString(encoded, outputStart, encoded.length - outputStart);
   }
 }
+
+
 
 class AddressFormatException extends FormatException {
   AddressFormatException(String message) : super(message);
