@@ -44,6 +44,18 @@ class Base58 {
 
       return encodedString;
     }
+    
+    ByteData divmod(Uint8List number, int firstDigit, int base, int divisor) {
+        // this is just long division which accounts for the base of the input digits
+        var remainder = 0;
+        for (var i = firstDigit; i < number.length; i++) {
+            var digit = number[i].toInt();
+            var temp = remainder * base + digit;
+            number[i] = (Uint8List(100)..buffer.asInt32List()[((temp / divisor) as int)]) as int;
+            remainder = temp % divisor;
+        }
+        return (Uint8List(4)..buffer.asByteData().setInt32(0, remainder, Endian.big)).buffer.asByteData();
+    }
 
     return formatString(encoded, outputStart, encoded.length - outputStart);
   }
