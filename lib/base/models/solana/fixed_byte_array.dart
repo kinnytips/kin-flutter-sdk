@@ -1,24 +1,20 @@
+import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:collection/collection.dart';
-
 import 'package:kin_sdk/base/tools/byte_utils.dart';
 
-
-// TODO: This is an incomplete file!
-
 abstract class FixedByteArray {
-  final List<int> byteArray;
+  final Uint8List byteArray;
 
-  // todo can this be abstract?
-  abstract final int size;
+  int size();
 
   FixedByteArray(this.byteArray) {
     check();
   }
 
   bool check() {
-    if (byteArray.length == size) return true;
+    if (byteArray.length == size()) return true;
     throw Exception('Illegal Argument Exception');
   }
 
@@ -34,18 +30,17 @@ abstract class FixedByteArray {
     if (this.runtimeType != other?.runtimeType) return false;
     if (other is FixedByteArray) {
       if (!ListEquality().equals(byteArray, other.byteArray)) return false;
-
-      return true;
+    } else {
+      return false;
     }
 
-    return false;
+    return true;
   }
 
   @override
   int get hashCode => hashList(byteArray);
 }
 
-// TODO: need to convert below lines
 ///@JvmName("contentHashCodeNullable")
 ///fun FixedByteArray?.contentHashCode(): Int = java.util.Arrays.hashCode(this?.byteArray)
 ///
@@ -54,28 +49,28 @@ abstract class FixedByteArray {
 ///java.util.Arrays.equals(this?.byteArray, other?.byteArray)
 
 class FixedByteArray32 extends FixedByteArray {
-  List<int> byteArray;
+  Uint8List byteArray;
 
   FixedByteArray32(this.byteArray) : super(byteArray) {
-    this.byteArray = []..length = 32;
+    this.byteArray = Uint8List(32);
   }
 
   @override
-  final int size;
+  int size() => 32;
 
   @override
   String toString() => "FixedByteArray32(bytes=${byteArray.toHexString()})";
 }
 
 class FixedByteArray64 extends FixedByteArray {
-  List<int> byteArray;
+  Uint8List byteArray;
 
-  FixedByteArray64(this.byteArray, this.size) : super(byteArray) {
-    this.byteArray = []..length = 64;
+  FixedByteArray64(this.byteArray) : super(byteArray) {
+    this.byteArray = Uint8List(64);
   }
 
   @override
-  final int size;
+  int size() => 64;
 
   @override
   String toString() => "FixedByteArray64(bytes=${byteArray.toHexString()})";
