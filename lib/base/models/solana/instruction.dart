@@ -80,7 +80,6 @@ class Instruction {
     this.data,
   );
 
-// todo make sure this is as close to a companion object in Kotlin
   static Instruction newInstruction(
       Key.PublicKey program, Uint8List data, List<AccountMeta> accounts) {
     return Instruction(program, accounts, data);
@@ -110,7 +109,7 @@ class Instruction {
 }
 
 class CompiledInstruction {
-  final int programIndex;
+  final ByteData programIndex;
   final Uint8List accounts;
   final Uint8List data;
 
