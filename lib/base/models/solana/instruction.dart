@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:collection/collection.dart';
@@ -110,8 +111,8 @@ class Instruction {
 
 class CompiledInstruction {
   final int programIndex;
-  final List<int> accounts;
-  final List<int> data;
+  final Uint8List accounts;
+  final Uint8List data;
 
   CompiledInstruction({
     @required this.programIndex,
