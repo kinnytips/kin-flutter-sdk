@@ -72,7 +72,7 @@ class AccountMeta implements Comparable<AccountMeta> {
 class Instruction {
   final Key.PublicKey program;
   final List<AccountMeta> accounts;
-  final List<int> data;
+  final Uint8List data;
 
   Instruction(
     this.program,
@@ -82,7 +82,7 @@ class Instruction {
 
 // todo make sure this is as close to a companion object in Kotlin
   static Instruction newInstruction(
-      Key.PublicKey program, List<int> data, List<AccountMeta> accounts) {
+      Key.PublicKey program, Uint8List data, List<AccountMeta> accounts) {
     return Instruction(program, accounts, data);
   }
 
