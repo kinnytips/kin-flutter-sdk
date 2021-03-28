@@ -1,7 +1,8 @@
-import 'package:collection/collection.dart';
 import 'dart:ui';
 
+import 'package:collection/collection.dart';
 import 'package:kin_sdk/base/models/key.dart';
+import 'package:meta/meta.dart';
 
 /// AccountMeta represents the account information required
 /// for building transactions.
@@ -12,37 +13,43 @@ class AccountMeta implements Comparable<AccountMeta> {
   final bool isPayer;
   final bool isProgram;
 
-  AccountMeta(
-    this.publicKey, [
+  AccountMeta({
+    @required this.publicKey,
     this.isSigner = false,
     this.isWritable = false,
     this.isPayer = false,
     this.isProgram = false,
-  ]);
+  });
 
 // todo make sure this is as close to a companion object in Kotlin
-  static AccountMeta newAccountMeta(
+  static AccountMeta newAccountMeta({
     Key.PublicKey publicKey,
-    bool isSigner, [
+    bool isSigner,
     bool isPayer = false,
     bool isProgram = false,
-  ]) {
+  }) {
     return AccountMeta(
-      publicKey,
-      isSigner,
-      true,
-      isPayer,
-      isProgram,
+      publicKey: publicKey,
+      isSigner: isSigner,
+      isWritable: true,
+      isPayer: isPayer,
+      isProgram: isProgram,
     );
   }
 
-  AccountMeta newReadonlyAccountMeta(
-    Key.PublicKey publicKey,
-    bool isSigner, [
+  AccountMeta newReadonlyAccountMeta({
+    @required Key.PublicKey publicKey,
+    @required bool isSigner,
     bool isPayer = false,
     bool isProgram = false,
-  ]) {
-    return AccountMeta(publicKey, isSigner, false, isPayer, isProgram);
+  }) {
+    return AccountMeta(
+      publicKey: publicKey,
+      isSigner: isSigner,
+      isWritable: false,
+      isPayer: isPayer,
+      isProgram: isProgram,
+    );
   }
 
   @override
@@ -96,7 +103,6 @@ class Instruction {
   int get hashCode {
     var result = program.hashCode();
     result = 31 * result + accounts.hashCode;
-    // todo: contentHashCode vs hashcode
     result = 31 * result + hashList(data);
     return result;
   }
@@ -107,7 +113,11 @@ class CompiledInstruction {
   final List<int> accounts;
   final List<int> data;
 
-  CompiledInstruction(this.programIndex, this.accounts, this.data);
+  CompiledInstruction({
+    @required this.programIndex,
+    @required this.accounts,
+    @required this.data,
+  });
 
   @override
   bool operator ==(Object other) {
@@ -117,20 +127,16 @@ class CompiledInstruction {
       if (programIndex != other.programIndex) return false;
       if (!ListEquality().equals(accounts, other.accounts)) return false;
       if (!ListEquality().equals(data, other.data)) return false;
-
-      return true;
+    } else {
+      return false;
     }
-    return false;
-  }
 
-  contentEquals(List list1, List list2) {
-    if (list1.length != list2.length) return false;
+    return true;
   }
 
   @override
   int get hashCode {
     var result = programIndex.toInt();
-    // todo: contentHashCode vs hashcode
     result = 31 * result + hashList(accounts);
     result = 31 * result + hashList(data);
     return result;
