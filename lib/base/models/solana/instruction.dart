@@ -24,8 +24,8 @@ class AccountMeta implements Comparable<AccountMeta> {
 
 // todo make sure this is as close to a companion object in Kotlin
   static AccountMeta newAccountMeta({
-    Key.PublicKey publicKey,
-    bool isSigner,
+    @required Key.PublicKey publicKey,
+    @required bool isSigner,
     bool isPayer = false,
     bool isProgram = false,
   }) {
