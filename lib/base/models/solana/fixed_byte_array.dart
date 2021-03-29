@@ -20,7 +20,7 @@ abstract class FixedByteArray {
 
   operator [](int i) => byteArray[i];
 
-  operator []=(int i, int val) => byteArray[i] = val;
+  operator []=(int i, ByteData b) => byteArray[i] = b.getUint8(0);
 
   @override
   bool operator ==(Object other) {
