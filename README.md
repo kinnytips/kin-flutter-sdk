@@ -1,6 +1,28 @@
 # Kin Flutter SDK (Unofficial)
 
-Plugin Package for using [Kin Cryptocurrency](https://www.kin.org/) Official SDK within Flutter. currently supporting [IOS](https://github.com/kinecosystem/kin-ios) and [Android](https://github.com/kinecosystem/kin-android) Implmentations.
+Flutter Package for using [Kin Cryptocurrency](https://www.kin.org/). Based on the [Kin Android SDK](https://github.com/kinecosystem/kin-android).
+
+Library&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Path                                                                                   | Description&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;                                                                                                                                                                                                                                                                             |
+|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:------------------------------------------------------------------------------------------|:-----------------------------------------------------------------------------------------------------------------------------|
+| `base`                                                                                                                   | [`/base`](base)| The foundation library used by all other libraries in the system to support basic Kin operations: <ul><li>Wallet creation and management</li><li>Send and receive Kin</li><li>Metrics interfaces</li></ul>                                                                                |
+| `base-compat`                                                                                                             | [`/base-compat`](base-compat)                                                                                                | The [:base-compat](base-compat) library implements the public surface layer to be a drop in replacement of the, now deprecated, [kin-sdk-android](https://github.com/kinecosystem/kin-sdk-android) library. Just update your version in gradle and have better performance and stability.                                                                                                       
+
+## Installation
+
+### From pub.dev
+1. Add the dependency to your pubspec.yaml file:
+```
+dependencies:
+  kin_sdk: x.x.x
+```
+2. Install it (command line or IDE):
+```
+flutter pub get
+```
+3. In your source file import the SDK, initialize and use it:
+```dart
+import 'package:kinny.io/kin_sdk.dart';
+```
 
 ## Documentation
 [API](https://docs.kin.org/agora/api) <br/>
