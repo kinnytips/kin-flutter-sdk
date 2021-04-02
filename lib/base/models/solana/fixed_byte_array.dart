@@ -51,7 +51,7 @@ abstract class FixedByteArray {
 class FixedByteArray32 extends FixedByteArray {
   Uint8List byteArray;
 
-  FixedByteArray32(this.byteArray) : super(byteArray) {
+  FixedByteArray32({this.byteArray}) : super(byteArray) {
     this.byteArray = Uint8List(32);
   }
 
@@ -65,7 +65,7 @@ class FixedByteArray32 extends FixedByteArray {
 class FixedByteArray64 extends FixedByteArray {
   Uint8List byteArray;
 
-  FixedByteArray64(this.byteArray) : super(byteArray) {
+  FixedByteArray64({this.byteArray}) : super(byteArray) {
     this.byteArray = Uint8List(64);
   }
 
