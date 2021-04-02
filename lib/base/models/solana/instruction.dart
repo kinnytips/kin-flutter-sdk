@@ -22,6 +22,20 @@ class AccountMeta implements Comparable<AccountMeta> {
     this.isProgram = false,
   });
 
+  AccountMeta copyWith({
+    isSigner,
+    isWritable,
+    isPayer,
+    isProgram,
+  }) =>
+      AccountMeta(
+        publicKey: this.publicKey,
+        isSigner: isSigner ?? this.isSigner,
+        isWritable: isWritable ?? this.isWritable,
+        isPayer: isPayer ?? this.isPayer,
+        isProgram: isProgram ?? this.isProgram,
+      );
+
 // todo make sure this is as close to a companion object in Kotlin
   static AccountMeta newAccountMeta({
     @required Key.PublicKey publicKey,
