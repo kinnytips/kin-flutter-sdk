@@ -7,8 +7,8 @@ protoc -I $SRC_DIR --dart_out=grpc:lib/models/agora/protobuf  $SRC_DIR/metrics/v
 echo "Generating models for v4"
 protoc -I $SRC_DIR  --dart_out=grpc:lib/models/agora/protobuf  $SRC_DIR/account/v4/*.proto $SRC_DIR/validate/validate.proto
 protoc -I $SRC_DIR  --dart_out=grpc:lib/models/agora/protobuf  $SRC_DIR/common/v4/*.proto $SRC_DIR/validate/validate.proto
-protoc -I $SRC_DIR  --dart_out=grpc:lib/models/agora/protobuf  $SRC_DIR/transaction/v4/*.proto $SRC_DIR/validate/validate.proto
 protoc -I $SRC_DIR  --dart_out=grpc:lib/models/agora/protobuf  $SRC_DIR/airdrop/v4/*.proto $SRC_DIR/validate/validate.proto
+protoc -I $SRC_DIR  --dart_out=grpc:lib/models/agora/protobuf  $SRC_DIR/transaction/v4/*.proto $SRC_DIR/validate/validate.proto
 
 echo "Generating Google protos"
 protoc -I $SRC_DIR --dart_out=grpc:lib/models/agora/protobuf/google/protobuf  $SRC_DIR/duration.proto
