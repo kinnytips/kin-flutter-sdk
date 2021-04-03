@@ -1,1 +1,3 @@
-//Placeholder
+// class KinEnvironment {
+//   abstract Network
+// }
