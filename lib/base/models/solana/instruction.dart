@@ -52,7 +52,7 @@ class AccountMeta implements Comparable<AccountMeta> {
     );
   }
 
-  AccountMeta newReadonlyAccountMeta({
+  static AccountMeta newReadonlyAccountMeta({
     @required Key.PublicKey publicKey,
     @required bool isSigner,
     bool isPayer = false,
@@ -95,7 +95,7 @@ class Instruction {
   );
 
   static Instruction newInstruction(
-      Key.PublicKey program, Uint8List data, List<AccountMeta> accounts) {
+      Key.PublicKey program, Uint8List data, [List<AccountMeta> accounts]) {
     return Instruction(program, accounts, data);
   }
 
