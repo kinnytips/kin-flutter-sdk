@@ -8,6 +8,8 @@ import 'package:meta/meta.dart';
 // import 'package:kin_sdk/base/tools/sort.dart';
 import 'package:kinny/base/models/solana/fixed_byte_array.dart';
 import 'package:kinny/base/models/solana/instruction.dart';
+import 'package:kinny/base/tools/extensions.dart';
+
 
 class Signature {
   final FixedByteArray64 value;
