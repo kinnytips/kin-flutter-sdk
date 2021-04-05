@@ -6,6 +6,7 @@ import 'package:http/http.dart';
 import 'package:kinny/base/models/solana/instruction.dart';
 import 'package:kinny/base/models/token_command.dart' as TokenCommand;
 import 'package:kinny/base/tools/base58.dart';
+import 'package:kinny/base/tools/extensions.dart';
 
 class SystemProgram {
   static const PROGRAM_KEY = Key.PublicKey(Uint8List(32));
@@ -74,7 +75,7 @@ class TokenProgram {
     6, 221, 246, 225, 215, 101, 161, 147, 217, 203, 225,
     70, 206, 235, 121, 172, 28, 180, 133, 237, 95, 91, 55,
     145, 58, 140, 245, 133, 126, 255, 0, 169
-  ].toByte()));
+  ]).toByte());
 
   static final SYS_VAR_RENT = Base58().decode(
       "SysvarRent111111111111111111111111111111111");
