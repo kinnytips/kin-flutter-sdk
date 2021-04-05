@@ -14,3 +14,13 @@ extension Uint8ListExtension on Uint8List {
 
   ByteData toByte() => ByteData.sublistView(this);
 }
+
+extension ListIntExtension on List<int> {
+  int computeHashCode() {
+    var h = 0;
+    for (var e in this) {
+      h = 31 * h + e;
+    }
+    return h;
+  }
+}
