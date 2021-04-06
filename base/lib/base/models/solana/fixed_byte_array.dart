@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:collection/collection.dart';
 import 'package:kin_sdk/base/tools/byte_utils.dart';
+import 'package:kinny/base/tools/extensions.dart';
 
 abstract class FixedByteArray {
   final Uint8List byteArray;

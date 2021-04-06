@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:collection/collection.dart';
 import 'package:kin_sdk/base/models/key.dart';
 import 'package:meta/meta.dart';
+import 'package:kinny/base/tools/extensions.dart';
 
 /// AccountMeta represents the account information required
 /// for building transactions.
@@ -138,7 +139,7 @@ class CompiledInstruction {
     if (this == other) return true;
 //    if (other is! CompiledInstruction) return false;
     if (other is CompiledInstruction) {
-      if (programIndex != other.programIndex) return false;
+      if (programIndex.toInt() != other.programIndex.toInt()) return false;
       if (!ListEquality().equals(accounts, other.accounts)) return false;
       if (!ListEquality().equals(data, other.data)) return false;
     } else {
