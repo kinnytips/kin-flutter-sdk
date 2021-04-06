@@ -2,14 +2,14 @@ import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:collection/collection.dart';
-import 'package:kin_sdk/base/models/key.dart';
+import 'package:kinny/base/models/key.dart';
 import 'package:meta/meta.dart';
 import 'package:kinny/base/tools/extensions.dart';
 
 /// AccountMeta represents the account information required
 /// for building transactions.
 class AccountMeta implements Comparable<AccountMeta> {
-  final Key.PublicKey publicKey;
+  final PublicKey publicKey;
   final bool isSigner;
   final bool isWritable;
   final bool isPayer;
@@ -39,7 +39,7 @@ class AccountMeta implements Comparable<AccountMeta> {
 
 // todo make sure this is as close to a companion object in Kotlin
   static AccountMeta newAccountMeta({
-    @required Key.PublicKey publicKey,
+    @required PublicKey publicKey,
     @required bool isSigner,
     bool isPayer = false,
     bool isProgram = false,
@@ -54,7 +54,7 @@ class AccountMeta implements Comparable<AccountMeta> {
   }
 
   static AccountMeta newReadonlyAccountMeta({
-    @required Key.PublicKey publicKey,
+    @required PublicKey publicKey,
     @required bool isSigner,
     bool isPayer = false,
     bool isProgram = false,
@@ -85,7 +85,7 @@ class AccountMeta implements Comparable<AccountMeta> {
 
 /// Instruction represents a transaction instruction.
 class Instruction {
-  final Key.PublicKey program;
+  final PublicKey program;
   final List<AccountMeta> accounts;
   final Uint8List data;
 
@@ -96,7 +96,7 @@ class Instruction {
   );
 
   static Instruction newInstruction(
-      Key.PublicKey program, Uint8List data, [List<AccountMeta> accounts]) {
+      PublicKey program, Uint8List data, [List<AccountMeta> accounts]) {
     return Instruction(program, accounts, data);
   }
 
@@ -116,7 +116,7 @@ class Instruction {
 
   @override
   int get hashCode {
-    var result = program.hashCode();
+    var result = program.hashCode;
     result = 31 * result + accounts.hashCode;
     result = 31 * result + hashList(data);
     return result;
