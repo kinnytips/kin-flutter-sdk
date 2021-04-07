@@ -1,15 +1,17 @@
 import 'dart:typed_data';
-import 'dart:convert' show utf8;
+import 'dart:convert';
 
-import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:kinny/base/models/solana/authority_type.dart';
 import 'package:kinny/base/models/solana/instruction.dart';
+import 'package:kinny/base/models/key.dart';
+import 'package:kinny/base/models/quark_amount.dart';
 import 'package:kinny/base/models/token_command.dart' as TokenCommand;
 import 'package:kinny/base/tools/base58.dart';
 import 'package:kinny/base/tools/extensions.dart';
 
 class SystemProgram {
-  static const PROGRAM_KEY = Key.PublicKey(Uint8List(32));
+  static final PublicKey PROGRAM_KEY = PublicKey.fromBytes(Uint8List(32));
 
   static final SystemProgram _systemProgram = SystemProgram._internal();
 
@@ -19,9 +21,9 @@ class SystemProgram {
 
   // Reference: https://github.com/solana-labs/solana/blob/f02a78d8fff2dd7297dc6ce6eb5a68a3002f5359/sdk/src/system_instruction.rs#L58-L72
   static Instruction createAccount(
-      Key.PublicKey subsidizer,
-      Key.PublicKey address,
-      Key.PublicKey owner,
+      PublicKey subsidizer,
+      PublicKey address,
+      PublicKey owner,
       int lamports,
       int size,
       ) {
@@ -71,20 +73,20 @@ class TokenProgram {
   // todo: lock this in, or make configurable.
   // TODO: should be using ServiceConfig for now...this may not be the final one, use ServiceConfig instead - USE THIS IN TESTS ONLY UNTIL FINAL!
 
-  final Key.PublicKey PROGRAM_KEY = Key.PublicKey(Uint8List.fromList([
+  final PublicKey PROGRAM_KEY = PublicKey.fromBytes(Uint8List.fromList([
     6, 221, 246, 225, 215, 101, 161, 147, 217, 203, 225,
     70, 206, 235, 121, 172, 28, 180, 133, 237, 95, 91, 55,
     145, 58, 140, 245, 133, 126, 255, 0, 169
-  ]).toByte());
+  ]));
 
   static final SYS_VAR_RENT = Base58().decode(
       "SysvarRent111111111111111111111111111111111");
 
   // Reference: https://github.com/solana-labs/solana-program-library/blob/b011698251981b5a12088acba18fad1d41c3719a/token/program/src/instruction.rs#L41-L55
-  static Instruction initializeAccount(Key.PublicKey account,
-      Key.PublicKey mint,
-      Key.PublicKey owner,
-      Key.PublicKey programKey,) {
+  static Instruction initializeAccount(PublicKey account,
+      PublicKey mint,
+      PublicKey owner,
+      PublicKey programKey,) {
     return Instruction.newInstruction(
       programKey,
       Uint8List(1)..[0] = TokenCommand.InitializeAccount().value,
@@ -93,7 +95,7 @@ class TokenProgram {
         AccountMeta.newReadonlyAccountMeta(publicKey: mint, isSigner: false),
         AccountMeta.newReadonlyAccountMeta(publicKey: owner, isSigner: false),
         AccountMeta.newReadonlyAccountMeta(
-            publicKey: Key.PublicKey(SYS_VAR_RENT), isSigner: false),
+            publicKey: PublicKey.fromBytes(SYS_VAR_RENT), isSigner: false),
       ],
     );
   }
@@ -101,11 +103,13 @@ class TokenProgram {
   // todo(feature): support multi-sig
   //
   // Reference: https://github.com/solana-labs/solana-program-library/blob/b011698251981b5a12088acba18fad1d41c3719a/token/program/src/instruction.rs#L76-L91
-  static Instruction transfer(Key.PublicKey source,
-      Key.PublicKey destination,
-      Key.PublicKey owner,
-      Key.PublicKey amount,
-      Key.PublicKey programKey,) {
+  static Instruction transfer(
+      PublicKey source,
+      PublicKey destination,
+      PublicKey owner,
+      KinAmount amount,
+      PublicKey programKey,
+      ) {
     // Accounts expected by this instruction:
     //
     //   * Single owner/delegate
@@ -119,12 +123,14 @@ class TokenProgram {
     //   2. `[]` The source account's multisignature owner/delegate.
     //   3. ..3+M `[signer]` M signer accounts.
 
+    var byteAmountQuarks = Uint8List(8);
+    ByteData.view(byteAmountQuarks.buffer)..setInt64(0, amount.toQuarks().value);
+
     return Instruction.newInstruction(
       programKey,
       Uint8List.fromList([
         TokenCommand.Transfer().value,
-        // TODO: convert below line
-        // *amount.toQuarks().value.longToByteArray().subByteArray(0, 8),
+        ...byteAmountQuarks,
       ]),
       [
         AccountMeta.newAccountMeta(publicKey: source, isSigner: false),
@@ -135,11 +141,11 @@ class TokenProgram {
   }
 
   static Instruction setAuthority(
-      Key.PublicKey account,
-      Key.PublicKey currentAuthority,
-      Key.PublicKey newAuthority,
-      Key.PublicKey authorityType,
-      Key.PublicKey programKey,
+      PublicKey account,
+      PublicKey currentAuthority,
+      PublicKey newAuthority,
+      AuthorityType authorityType,
+      PublicKey programKey,
       ) {
     var data = Uint8List.fromList([
       TokenCommand.SetAuthority().value,
@@ -172,14 +178,14 @@ class MemoProgram {
   // Current key: Memo1UhkJRfHyvLMcVucJwxXeuD728EqVDDwQDxFMNo
   //
   // todo: lock this in, or make configurable
-  static final Key.PublicKey PROGRAM_KEY = Uint8List.fromList([
+  static final PublicKey PROGRAM_KEY = PublicKey.fromBytes(Uint8List.fromList([
     5, 74, 83, 80, 248, 93, 200, 130, 214, 20, 165, 86, 114, 120, 138, 41, 109, 223,
     30, 171, 171, 208, 166, 6, 120, 136, 73, 50, 244, 238, 246, 160
-  ]);
+  ]));
 
   static Instruction fromBytes(Uint8List bytes) {
     // TODO: need this class/function
-    return base64EncodedMemo(Base64.encodeBase64String(bytes) ?? null);
+    return base64EncodedMemo(base64.encode(bytes) ?? null);
   }
 
   static Instruction base64EncodedMemo(String base64value) {
