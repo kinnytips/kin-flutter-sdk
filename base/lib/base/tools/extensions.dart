@@ -1,5 +1,7 @@
 import 'dart:typed_data';
 
+import 'package:collection/collection.dart' show ListEquality;
+
 extension IntExtension on int {
   ByteData toByte() => ByteData(1)..setInt8(0, this);
 }
@@ -15,12 +17,10 @@ extension Uint8ListExtension on Uint8List {
   ByteData toByte() => ByteData.sublistView(this);
 }
 
-extension ListIntExtension on List<int> {
-  int computeHashCode() {
-    var h = 0;
-    for (var e in this) {
-      h = 31 * h + e;
-    }
-    return h;
-  }
+extension ListExtension<T> on List<T> {
+  static const ListEquality _listEquality = ListEquality();
+
+  int computeHashCode() => _listEquality.hash(this);
+
+  bool equalsContent(List<T> other) => _listEquality.equals(this, other);
 }

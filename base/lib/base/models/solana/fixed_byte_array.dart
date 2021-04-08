@@ -1,8 +1,7 @@
 import 'dart:typed_data';
 import 'dart:ui';
 
-import 'package:collection/collection.dart';
-import 'package:kin_sdk/base/tools/byte_utils.dart';
+import 'package:kinny/base/tools/byte_utils.dart';
 import 'package:kinny/base/tools/extensions.dart';
 
 abstract class FixedByteArray {
@@ -30,7 +29,7 @@ abstract class FixedByteArray {
     ///kotlin: if (javaClass != other?.javaClass) return false
     if (this.runtimeType != other?.runtimeType) return false;
     if (other is FixedByteArray) {
-      if (!ListEquality().equals(byteArray, other.byteArray)) return false;
+      if (!byteArray.equalsContent(other.byteArray)) return false;
     } else {
       return false;
     }

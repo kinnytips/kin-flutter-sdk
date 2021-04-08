@@ -1,10 +1,9 @@
 import 'dart:typed_data';
 import 'dart:ui';
 
-import 'package:collection/collection.dart';
 import 'package:kinny/base/models/key.dart';
-import 'package:meta/meta.dart';
 import 'package:kinny/base/tools/extensions.dart';
+import 'package:meta/meta.dart';
 
 /// AccountMeta represents the account information required
 /// for building transactions.
@@ -95,8 +94,8 @@ class Instruction {
     this.data,
   );
 
-  static Instruction newInstruction(
-      PublicKey program, Uint8List data, [List<AccountMeta> accounts]) {
+  static Instruction newInstruction(PublicKey program, Uint8List data,
+      [List<AccountMeta> accounts]) {
     return Instruction(program, accounts, data);
   }
 
@@ -106,8 +105,8 @@ class Instruction {
 //    if (other is! Instruction) return false;
     if (other is Instruction) {
       if (program != other.program) return false;
-      if (accounts != other.accounts) return false;
-      if (!ListEquality().equals(data, other.data)) return false;
+      if (!accounts.equalsContent(other.accounts)) return false;
+      if (!data.equalsContent(other.data)) return false;
     } else {
       return false;
     }
@@ -140,8 +139,8 @@ class CompiledInstruction {
 //    if (other is! CompiledInstruction) return false;
     if (other is CompiledInstruction) {
       if (programIndex.toInt() != other.programIndex.toInt()) return false;
-      if (!ListEquality().equals(accounts, other.accounts)) return false;
-      if (!ListEquality().equals(data, other.data)) return false;
+      if (!accounts.equalsContent(other.accounts)) return false;
+      if (!data.equalsContent(other.data)) return false;
     } else {
       return false;
     }
