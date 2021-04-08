@@ -12,7 +12,7 @@ class ShortVec {
   ShortVec._internal();
 
   // custom todo: make sure function is right (byteTransform: (T) -> ByteArray)
-  static encodeShortVecOf(Uint8List output, List elements, Function byteTransform) {
+  static encodeShortVecOf<T>(Uint8List output, List elements, Function byteTransform) {
     encodeLen(output, elements.length);
     elements.forEach((element) {
       output.addAll(byteTransform(element));
@@ -20,7 +20,7 @@ class ShortVec {
   }
 
   // custom todo: make sure function is right (newInstance: (ByteArray) -> T? = { null })
-  static List decodeShortVecOf(Uint8List input, int sizeOfElement, [Function newInstance]) {
+  static List decodeShortVecOf<T>(Uint8List input, int sizeOfElement, [Function newInstance]) {
     final vecLength = decodeLen(input);
     final elements = [];
 
