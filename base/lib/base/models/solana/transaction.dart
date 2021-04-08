@@ -2,8 +2,8 @@ import 'dart:typed_data';
 import 'package:collection/collection.dart';
 import 'package:meta/meta.dart';
 
-// import 'package:kin_sdk/base/models/as_public_key.dart'; // can't find this file
-// import 'package:kin_sdk/base/models/key.dart';
+import 'package:kinny/base/models/stellar_base_type_conversions.dart';
+import 'package:kinny/base/models/key.dart';
 // import 'package:kin_sdk/base/tools/byte_utils.dart';
 // import 'package:kin_sdk/base/tools/sort.dart';
 import 'package:kinny/base/models/solana/fixed_byte_array.dart';
@@ -37,7 +37,7 @@ class Header {
 
 class Message {
   final Header header;
-  final List<Key.PublicKey> accounts;
+  final List<PublicKey> accounts;
   final List<CompiledInstruction> instructions;
   final Hash recentBlockhash;
 
@@ -78,7 +78,7 @@ class Transaction {
         signatures: signatures ?? this.signatures,
       );
 
-  static Transaction newTransaction(Key.PublicKey payer,
+  static Transaction newTransaction(PublicKey payer,
       List<Instruction> instructions) {
     final accounts = [
       AccountMeta(
@@ -113,7 +113,7 @@ class Transaction {
           .where((element) => !element.isWritable && !element.isSigner)
           .length,
     );
-    final List<AccountMeta> accountPublicKeys = uniqueAccounts.map((e) =>
+    final List<PublicKey> accountPublicKeys = uniqueAccounts.map((e) =>
     e.publicKey).toList();
     final messageInstructions = instructions.map((e) =>
         CompiledInstruction(
@@ -121,20 +121,20 @@ class Transaction {
             data: e.data,
             accounts: Uint8List.fromList(e.accounts
                 .map((e2) =>
-                _indexOf(accountPublicKeys, e2.publicKey).toByte()))));
+                _indexOf(accountPublicKeys, e2.publicKey)))));
 
     final Message message = Message(
         header: header,
         accounts: accountPublicKeys,
         instructions: messageInstructions,
-        recentBlockhash: Hash(FixedByteArray32());
+        recentBlockhash: Hash(FixedByteArray32()),
       /** Empty unless set with [copyAndSetRecentBlockhash] **/
     );
 
     return Transaction(message: message);
   }
 
-  static int _indexOf(List<Key.PublicKey> slice, Key.PublicKey item) {
+  static int _indexOf(List<PublicKey> slice, PublicKey item) {
     slice.asMap().forEach((i, publicKey) {
       if (ListEquality().equals(publicKey.value, item.value)) {
         return i;
@@ -149,7 +149,7 @@ class Transaction {
         message: message.copyWith(recentBlockhash: recentBlockhash));
   }
 
-  Transaction copyAndSign(List<Key.PrivateKey> signers) {
+  Transaction copyAndSign(List<PrivateKey> signers) {
     if (signers.length > numRequiredSignatures) {
       throw Exception("IllegalArgumentException: too many signers");
     }
