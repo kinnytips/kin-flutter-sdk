@@ -19,8 +19,7 @@ class KinAmount {
   KinAmount.fromDouble(double amount) : this(Decimal.parse(amount.toString()));
 
   static KinAmount max(KinAmount a, KinAmount b) {
-    var cmp = a.amount.compareTo(b.amount);
-    var max = cmp > 0 ? b.amount : a.amount;
+    var max = a.amount > b.amount ? a.amount : b.amount ;
     return KinAmount(max);
   }
 
