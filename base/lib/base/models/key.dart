@@ -10,6 +10,14 @@ abstract class Key {
 
   Key(this.value);
 
+  PublicKey asPublicKey() {
+    if (this is PrivateKey) {
+      return PublicKey.fromBytes(KeyPair.fromSecretSeedList(value).publicKey);
+    } else {
+      return this as PublicKey;
+    }
+  }
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
