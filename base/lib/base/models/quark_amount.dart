@@ -1,5 +1,7 @@
 import 'package:decimal/decimal.dart';
 
+import 'kin_amount.dart';
+
 class QuarkAmount {
   final int value;
 

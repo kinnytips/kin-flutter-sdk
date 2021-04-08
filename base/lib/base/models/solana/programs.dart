@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import 'dart:convert';
 
 import 'package:http/http.dart';
+import 'package:kinny/base/models/kin_amount.dart';
 import 'package:kinny/base/models/solana/authority_type.dart';
 import 'package:kinny/base/models/solana/instruction.dart';
 import 'package:kinny/base/models/key.dart';
