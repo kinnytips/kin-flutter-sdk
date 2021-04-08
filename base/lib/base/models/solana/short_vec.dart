@@ -2,6 +2,7 @@ import 'dart:ffi';
 import 'dart:typed_data';
 
 import 'package:fixnum/fixnum.dart';
+import 'package:kinny/base/models/solana/byte_utils.dart';
 
 class ShortVec {
   static final ShortVec _shortVec = ShortVec._internal();
@@ -19,7 +20,7 @@ class ShortVec {
   }
 
   // custom todo: make sure function is right (newInstance: (ByteArray) -> T? = { null })
-  static List decodeShortVecOf(Uint8List input, int sizeOfElement, [Function newInstance(Uint8List l)]) {
+  static List decodeShortVecOf(Uint8List input, int sizeOfElement, [Function newInstance]) {
     final vecLength = decodeLen(input);
     final elements = [];
 
