@@ -1,0 +1,10 @@
+.dart_tool
+.idea
+.packages
+build
+.gradle
+.settings
+.project
+.classpath
+.flutter-plugins
+.flutter-plugins-dependencies
