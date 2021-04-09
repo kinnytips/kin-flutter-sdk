@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 
-import 'package:collection/collection.dart';
 import 'package:kinny/base/tools/base58.dart';
 import 'package:kinny/base/tools/extensions.dart';
 import 'package:kinny/stellarfork/key_pair.dart';
@@ -23,7 +22,7 @@ abstract class Key {
       identical(this, other) ||
       other is Key &&
           runtimeType == other.runtimeType &&
-          ListEquality().equals(value, other.value);
+          value.equalsContent(other.value);
 
   @override
   int get hashCode => value.computeHashCode();

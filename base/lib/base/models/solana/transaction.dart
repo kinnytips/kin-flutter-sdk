@@ -100,7 +100,7 @@ class Transaction {
     //   2. Writable accounts before read-only accounts.
     //   3. Programs last
     final List<AccountMeta> uniqueAccounts =
-    accounts.filterUnique().toList().quickSort();
+    accounts.filterUnique().toList()..sort();
 
     final header = Header(
       numSignatures: uniqueAccounts
@@ -136,7 +136,7 @@ class Transaction {
 
   static int _indexOf(List<PublicKey> slice, PublicKey item) {
     slice.asMap().forEach((i, publicKey) {
-      if (ListEquality().equals(publicKey.value, item.value)) {
+      if (publicKey.value.equalsContent(item.value)) {
         return i;
       }
     });
@@ -188,8 +188,7 @@ extension on List<AccountMeta> {
     for (var element in this) {
       for (int i = 0; i < filtered.length; i++) {
         final accountMeta = filtered[i];
-        if (ListEquality().equals(
-            element.publicKey.value, accountMeta.publicKey.value)) {
+        if (element.publicKey.value.equalsContent(accountMeta.publicKey.value)) {
           // Promote the existing account to writable if applicable
           if (element.isSigner)
             filtered[i] = filtered[i].copyWith(isSigner: true);

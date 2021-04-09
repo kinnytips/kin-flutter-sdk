@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:kinny/base/tools/base58.dart';
+import 'package:kinny/base/tools/extensions.dart';
 import 'package:kinny/stellarfork/key_pair.dart';
 
 import 'key.dart';
@@ -17,10 +18,12 @@ class KinAccountId {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is KinAccountId && runtimeType == other.runtimeType && value == other.value;
+      other is KinAccountId &&
+          runtimeType == other.runtimeType &&
+          value.equalsContent(other.value);
 
   @override
-  int get hashCode => value.hashCode;
+  int get hashCode => value.computeHashCode();
 
   String toString() {
     return "Id(value=${stellarBase32Encode()}, b58=${base58Encode()})";
@@ -40,7 +43,8 @@ class KinAccountStatus {
 }
 
 class KinAccountStatusUnregistered extends KinAccountStatus {
-  static final KinAccountStatusUnregistered instance = KinAccountStatusUnregistered._();
+  static final KinAccountStatusUnregistered instance =
+      KinAccountStatusUnregistered._();
 
   KinAccountStatusUnregistered._() : super._(0);
 
@@ -61,7 +65,10 @@ class KinAccount {
   final KinAccountStatus status;
 
   KinAccount(this.key,
-      {KinAccountId id, List<PublicKey> tokenAccounts, KinBalance balance, KinAccountStatus status})
+      {KinAccountId id,
+      List<PublicKey> tokenAccounts,
+      KinBalance balance,
+      KinAccountStatus status})
       : id = id ?? KinAccountId(key.asPublicKey().value),
         tokenAccounts = tokenAccounts ?? <PublicKey>[],
         balance = balance ?? KinBalance(),
