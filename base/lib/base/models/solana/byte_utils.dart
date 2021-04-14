@@ -1,36 +1,19 @@
 import 'dart:typed_data';
 
 extension Uint8ListExtension on Uint8List {
-  Uint8List read(int numBytes) {
-    var i = 0;
-    Uint8List bytesList = Uint8List(numBytes);
-    bytesList.forEach((element) {
-      while (i < numBytes) {
-        // todo: calling read from java.io.ByteArrayInputStream
-        this[i++] = read();
-      }
-    });
+  // A Uint8List is a fixed-length (immutable) array of bytes, and can't
+  // represent a `ByteArrayInputStream`
+  // The class `ByteInputBuffer` does what a `ByteArrayInputStream` should do.
+  //Uint8List read(int numBytes) ;
 
-    return bytesList;
-  }
+  // The class `ByteInputBuffer` does what a `ByteArrayInputStream` should do.
+  //Uint8List readRemainingBytes() ;
 
-  Uint8List readRemainingBytes() {
-    var i = 0;
-    // todo: calling available from java.io.ByteArrayInputStream
-    Uint8List bytesList = Uint8List(available());
-    bytesList.forEach((element) {
-      while (available() != 0) {
-        this[i++] = read();
-      }
-    });
-
-    return bytesList;
-  }
-
-  toModel(Function newInstance) {
-    newInstance(this) ??
-        // todo: how to do this in dart?
-        T::class.java.getConstructor(ByteArray::class.java).newInstance(this);
+  T toModel<T>(T Function(Uint8List) newInstance) {
+    return newInstance(this) ?? Uint8List.fromList(this) ;
+        // The Kotlin code was creating a ByteArray with bytes from this.
+        // In Dart is an Uint8List.
+        //T::class.java.getConstructor(ByteArray::class.java).newInstance(this);
   }
 }
 

@@ -7,6 +7,11 @@ import 'package:kinny/base/models/kin_amount.dart';
 import 'package:kinny/base/models/sha_224_hash.dart';
 import 'package:kinny/models/agora/protobuf/common/v3/model.pb.dart' as Model;
 
+extension ListTypedExtension<T> on List<T> {
+  /// Provide access to the generic type at runtime.
+  Type get genericType => T;
+}
+
 extension IntExtension on int {
   ByteData toByte() => ByteData(1)..setInt8(0, this);
 

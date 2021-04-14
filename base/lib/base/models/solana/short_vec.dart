@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:fixnum/fixnum.dart';
 import 'package:kinny/base/models/solana/byte_utils.dart';
+import 'package:kinny/base/tools/byte_in_out_buffer.dart';
 
 class ShortVec {
   static final ShortVec _shortVec = ShortVec._internal();
@@ -11,26 +12,22 @@ class ShortVec {
 
   ShortVec._internal();
 
-  // custom todo: make sure function is right (byteTransform: (T) -> ByteArray)
-  static encodeShortVecOf<T>(Uint8List output, List elements, Function byteTransform) {
+  static encodeShortVecOf<T>(ByteOutputBuffer output, List<T> elements,
+      Uint8List Function(T) byteTransform) {
     encodeLen(output, elements.length);
-    elements.forEach((element) {
-      output.addAll(byteTransform(element));
-    });
+    for (var element in elements) {
+      output.writeAll(byteTransform(element));
+    }
   }
 
-  // custom todo: make sure function is right (newInstance: (ByteArray) -> T? = { null })
-  static List decodeShortVecOf<T>(Uint8List input, int sizeOfElement, [Function newInstance]) {
+  static List<T> decodeShortVecOf<T>(ByteInputBuffer input, int sizeOfElement,
+      [T Function(Uint8List) newInstance]) {
     final vecLength = decodeLen(input);
     final elements = [];
 
     for (int i = 0; i < vecLength; i++) {
-       Uint8List elemBytes = Uint8List(sizeOfElement);
-      try {
-        elemBytes = input.sublist(0, sizeOfElement);
-      } catch (e) {
-        throw Exception('RuntimeException: failed to read ${input.genericType} at $i');
-      }
+      Uint8List elemBytes = Uint8List(sizeOfElement);
+      input.readTo(elemBytes, 0, sizeOfElement);
       elements.add(elemBytes.toModel(newInstance));
     }
 
@@ -45,7 +42,7 @@ class ShortVec {
   /// @param output - the outputStream the length, of the ShortVec. is to be encoded in
   /// @return - the number of bytes written. If length > UShort.MAX_VALUE.toInt() , a [RuntimeException] is thrown
   ///
-  static int encodeLen(Uint8List output, int length) {
+  static int encodeLen(ByteOutputBuffer output, int length) {
     if (length > MAX_VALUE) {
       throw Exception('RuntimeException: length exceeds $MAX_VALUE');
     }
@@ -59,13 +56,13 @@ class ShortVec {
       lengthLocal >>= 7;
 
       if (lengthLocal == 0) {
-        output.addAll(valBuf);
+        output.write(valBuf.first);
         ++written;
         return written;
       }
 
       valBuf.first |= 0x80;
-      output.addAll(valBuf);
+      output.write(valBuf.first);
       ++written;
     }
   }
@@ -76,13 +73,13 @@ class ShortVec {
   /// @param input - the input stream that the length is encoded in
   /// @return - returns the decoded length of the ShortVec
   ///
-  static int decodeLen(Uint8List input) {
+  static int decodeLen(ByteInputBuffer input) {
     var offset = 0;
     final Uint8List valBuf = Uint8List(1);
     var value = 0;
 
     while (true) {
-      valBuf.first = input.first;
+      valBuf.first = input.read();
 
       value |= (valBuf.first & 0x7f << (offset * 7));
       ++offset;
@@ -96,9 +93,4 @@ class ShortVec {
 
     return value;
   }
-}
-
-extension ListTypedExtension<T> on List<T> {
-  /// Provide access to the generic type at runtime.
-  Type get genericType => T;
 }
