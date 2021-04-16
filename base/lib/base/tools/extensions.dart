@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:collection/collection.dart' show ListEquality;
@@ -15,11 +16,25 @@ extension ListTypedExtension<T> on List<T> {
 extension IntExtension on int {
   ByteData toByte() => ByteData(1)..setInt8(0, this);
 
+  ByteData toInt32Bytes() => ByteData(4)..setInt32(0, this);
+
+  ByteData toInt64Bytes() => ByteData(8)..setInt64(0, this);
+
+  Uint8List toInt32Uint8List() => toInt32Bytes().buffer.asUint8List();
+
+  Uint8List toInt64Uint8List() => toInt64Bytes().buffer.asUint8List();
+
   Uint8List toUint8List() {
     var l = Uint8List(1);
     l[0] = this;
     return l;
   }
+}
+
+extension StringExtension on String {
+  Uint8List toBytesUTF8() => utf8.encode(this);
+
+  Uint8List toBytesLatin1() => latin1.encode(this);
 }
 
 extension ByteDataExtension on ByteData {

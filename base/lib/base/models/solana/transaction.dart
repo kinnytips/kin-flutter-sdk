@@ -10,6 +10,8 @@ import 'package:kinny/base/models/solana/fixed_byte_array.dart';
 import 'package:kinny/base/models/solana/instruction.dart';
 import 'package:kinny/base/tools/extensions.dart';
 
+import 'encoding.dart';
+
 
 class Signature {
   final FixedByteArray64 value;
@@ -117,7 +119,7 @@ class Transaction {
     e.publicKey).toList();
     final messageInstructions = instructions.map((e) =>
         CompiledInstruction(
-            programIndex: _indexOf(accountPublicKeys, e.program).toByte(),
+            programIndex: _indexOf(accountPublicKeys, e.program) ,
             data: e.data,
             accounts: Uint8List.fromList(e.accounts
                 .map((e2) =>

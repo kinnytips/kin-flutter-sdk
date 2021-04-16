@@ -6,25 +6,26 @@ import 'package:kinny/base/models/solana/short_vec.dart';
 import 'package:kinny/base/models/solana/transaction.dart';
 import 'package:kinny/base/models/solana/fixed_byte_array.dart';
 import 'package:kinny/base/models/solana/byte_utils.dart';
+import 'package:kinny/base/tools/byte_in_out_buffer.dart';
 
 extension TransactionMarshal on Transaction {
   Uint8List marshal() {
-    final output = Uint8List(0);
+    final output = ByteOutputBuffer(32);
 
     // Signatures
-    ShortVec.encodeShortVecOf(output, signatures, SignatureMarshal().marshal);
+    ShortVec.encodeShortVecOf<Signature>(output, signatures, (s) => s.marshal() );
 
     // Message
-    output.addAll(message.marshal());
+    output.writeAll(message.marshal());
 
-    return output;
+    return output.toBytes();
   }
 
   Transaction unmarshal(Uint8List bytes) {
-    final input = Uint8List.fromList(bytes);
+    final input = ByteInputBuffer(bytes);
 
     final signatures = ShortVec.decodeShortVecOf(
-        input, Signature.SIZE_OF, SignatureMarshal().unmarshal);
+        input, Signature.SIZE_OF, (bytes) => SignatureMarshal.unmarshal(bytes) );
 
     return Transaction(
       message: message.unmarshal(input.readRemainingBytes()),
@@ -36,24 +37,24 @@ extension TransactionMarshal on Transaction {
 extension SignatureMarshal on Signature {
   Uint8List marshal() => value.byteArray;
 
-  Signature unmarshal(Uint8List bytes) => Signature(value: FixedByteArray64(byteArray: bytes));
+  static Signature unmarshal(Uint8List bytes) => Signature(value: FixedByteArray64(byteArray: bytes));
 }
 
 extension CompiledInstructionMarshal on CompiledInstruction {
   Uint8List marshal() {
-    final output = Uint8List(0);
+    final output = ByteOutputBuffer(32);
 
-    output.addAll(programIndex.buffer.asUint8List());
+    output.write(programIndex);
 
     // Accounts
     ShortVec.encodeLen(output, accounts.length);
-    output.addAll(accounts);
+    output.writeAll(accounts);
 
     // Data
     ShortVec.encodeLen(output, data.length);
-    output.addAll(data);
+    output.writeAll(data);
 
-    return output;
+    return output.toBytes();
   }
 }
 
@@ -67,36 +68,32 @@ extension HashMarshal on Hash {
 
 extension MessageMarshal on Message {
   Uint8List marshal() {
-    final output = Uint8List(0);
+    final output = ByteOutputBuffer(32);
 
     // Header
-    output.add(header.numSignatures);
-    output.add(header.numReadOnlySigned);
-    output.add(header.numReadOnly);
+    output.write(header.numSignatures);
+    output.write(header.numReadOnlySigned);
+    output.write(header.numReadOnly);
 
     // Accounts (panic?)
-    ShortVec.encodeShortVecOf(output, accounts, KeyMarshal().marshal);
+    ShortVec.encodeShortVecOf(output, accounts, (bytes) => PublicKey(bytes).marshal());
 
     // Recent Blockhash
-    output.addAll(recentBlockhash.marshal());
+    output.writeAll(recentBlockhash.marshal());
 
     // Instructions
-    ShortVec.encodeShortVecOf(output, instructions, CompiledInstructionMarshal().marshal);
+    ShortVec.encodeShortVecOf<CompiledInstruction>(output, instructions, (e) => e.marshal());
 
-    return output;
+    return output.toBytes();
   }
 
   Message unmarshal(Uint8List bytes) {
-    final input = Uint8List.fromList(bytes);
-    var readInput = () {
-      input.iterator.moveNext();
-      return input.iterator.current;
-    };
+    final input = ByteInputBuffer(bytes);
 
     // Header
-    final numSignatures = wrapError("failed to read num signatures", readInput);
-    final numReadOnlySigned = wrapError("failed to read num readonly signatures", readInput);
-    final numReadOnly = wrapError("failed to read num readonly", readInput);
+    final numSignatures = wrapError("failed to read num signatures", () => input.read());
+    final numReadOnlySigned = wrapError("failed to read num readonly signatures", () => input.read());
+    final numReadOnly = wrapError("failed to read num readonly", () => input.read());
     final Header header = Header(
         numSignatures: numSignatures,
         numReadOnlySigned: numReadOnlySigned,
@@ -109,24 +106,22 @@ extension MessageMarshal on Message {
     // Recent Block Hash
     final recentBlockHash =
       wrapError("failed to read block hash", () {
-        input.read(Hash.SIZE_OF).toModel<Hash>(() {
-          Hash(FixedByteArray32(byteArray: input));
-        });
+        input.readBytes(Hash.SIZE_OF).toModel<Hash>((bytes) => Hash(FixedByteArray32(bytes)));
       });
 
     // Instructions
-    final instructions = List<CompiledInstruction>();
+    final instructions = <CompiledInstruction>[];
     final instructionsLength = ShortVec.decodeLen(input);
     for (int i = 0; i < instructionsLength; i++) {
       // Program Index
-      final programIndex = wrapError("failed to read instruction[$i] program index", () => input.read().toByte());
+      final programIndex = wrapError<int>("failed to read instruction[$i] program index", () => input.read());
       if (programIndex < 0 || programIndex >= accounts.length) {
         throw Exception("RuntimeException: program index out of range: $i:$programIndex");
       }
 
       // Account Indexes
       final accountIndexesLength = ShortVec.decodeLen(input);
-      final accountIndexesBytes = wrapError("failed to read instruction[$i] accounts", () => input.read(accountIndexesLength));
+      final accountIndexesBytes = wrapError("failed to read instruction[$i] accounts", () => input.readBytes(accountIndexesLength));
 
 
       accountIndexesBytes.forEach((element) {
@@ -137,7 +132,7 @@ extension MessageMarshal on Message {
 
       // Data
       final dataLength = wrapError("failed to read instruction[$i] data", () => ShortVec.decodeLen(input));
-      final dataBytes = input.read(dataLength);
+      final dataBytes = input.readBytes(dataLength);
 
       final instruction = CompiledInstruction(
         programIndex: programIndex,

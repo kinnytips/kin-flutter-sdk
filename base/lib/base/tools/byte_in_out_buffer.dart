@@ -30,6 +30,12 @@ class ByteInputBuffer {
     return b;
   }
 
+  Uint8List readBytes(int length) {
+    var bytes = Uint8List(length);
+    readTo(bytes, 0, length);
+    return bytes ;
+  }
+
   void seek(int position) {
     if (position < 0 || position > length)
       throw ArgumentError("Invalid position: $position / $length");
@@ -41,6 +47,13 @@ class ByteInputBuffer {
       var b = read() ;
       dest[offset+i] = b ;
     }
+  }
+
+  Uint8List readRemainingBytes() {
+    var remaining = this.remaining ;
+    var bytes = Uint8List(remaining);
+    readTo(bytes, 0, remaining);
+    return bytes;
   }
 }
 
@@ -61,6 +74,16 @@ class ByteOutputBuffer {
     var p = _position++;
     ensureCapacity(_position);
     _bytes[p] = b;
+  }
+
+  void writeBytes(ByteData data) {
+    ensureCapacity(_position+data.lengthInBytes);
+
+    for (var i = 0; i < data.lengthInBytes; ++i) {
+      var b = data.getUint8(i);
+      _bytes[_position++] = b;
+    }
+
   }
 
   void writeAll(List<int> bs) {
