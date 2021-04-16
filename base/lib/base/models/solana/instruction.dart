@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 import 'dart:ui';
 
+import 'package:flutter/foundation.dart';
 import 'package:kinny/base/models/key.dart';
 import 'package:kinny/base/tools/extensions.dart';
 import 'package:meta/meta.dart';
@@ -36,10 +37,9 @@ class AccountMeta implements Comparable<AccountMeta> {
         isProgram: isProgram ?? this.isProgram,
       );
 
-// todo make sure this is as close to a companion object in Kotlin
-  static AccountMeta newAccountMeta({
-    @required PublicKey publicKey,
-    @required bool isSigner,
+  factory AccountMeta.newAccountMeta(
+    PublicKey publicKey,
+    bool isSigner, {
     bool isPayer = false,
     bool isProgram = false,
   }) {
@@ -52,9 +52,9 @@ class AccountMeta implements Comparable<AccountMeta> {
     );
   }
 
-  static AccountMeta newReadonlyAccountMeta({
-    @required PublicKey publicKey,
-    @required bool isSigner,
+  static AccountMeta newReadonlyAccountMeta(
+    PublicKey publicKey,
+    bool isSigner, {
     bool isPayer = false,
     bool isProgram = false,
   }) {
@@ -123,7 +123,7 @@ class Instruction {
 }
 
 class CompiledInstruction {
-  final ByteData programIndex;
+  final int programIndex;
   final Uint8List accounts;
   final Uint8List data;
 

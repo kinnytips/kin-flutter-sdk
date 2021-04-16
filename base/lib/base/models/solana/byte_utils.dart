@@ -17,7 +17,7 @@ extension Uint8ListExtension on Uint8List {
   }
 }
 
-wrapError<T>(String msg, Function wrapped) {
+T wrapError<T>(String msg, T Function() wrapped) {
   T value;
   try {
     value = wrapped();

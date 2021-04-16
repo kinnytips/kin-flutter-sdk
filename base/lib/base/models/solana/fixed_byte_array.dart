@@ -49,11 +49,7 @@ abstract class FixedByteArray {
 ///java.util.Arrays.equals(this?.byteArray, other?.byteArray)
 
 class FixedByteArray32 extends FixedByteArray {
-  Uint8List byteArray;
-
-  FixedByteArray32({this.byteArray}) : super(byteArray) {
-    this.byteArray = Uint8List(32);
-  }
+  FixedByteArray32([Uint8List byteArray]) : super(byteArray ?? Uint8List(32)) ;
 
   @override
   int size() => 32;
