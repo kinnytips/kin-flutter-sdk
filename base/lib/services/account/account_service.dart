@@ -3,6 +3,7 @@ import 'package:kinny/models/agora/protobuf/account/v4/account_service.pb.dart';
 import 'package:kinny/models/agora/protobuf/account/v4/account_service.pbgrpc.dart';
 import 'package:kinny/models/agora/protobuf/common/v4/model.pb.dart';
 import 'package:kinny/models/app/account/create_kin_account_response.dart';
+import 'package:kinny/models/app/account/retrieve_kin_account_response.dart';
 import 'package:kinny/models/app/interfaces/status.dart';
 import 'package:kinny/models/app/sdk/constants.dart';
 import 'package:logging/logging.dart';
@@ -34,6 +35,35 @@ class AccountService {
       return CreateKinAccountResponse(
           null,
           CreateAccountResponse_Result.BAD_NONCE,
+          Status(
+            Result.FAIL,
+            e.toString(),
+          ),
+          Constants.meta);
+    }
+  }
+
+  Future<RetrieveKinAccountResponse> getAccountInfo(String id) async {
+    // TODO Convert String id to byte array
+    // TODO SolanaAccountId needs string id converted to ByteArray
+    var accountId = SolanaAccountId();
+    var getAccountRequest = GetAccountInfoRequest()..accountId = accountId;
+
+    try {
+      var response = await AccountClient(ClientChannel(endpoint))
+          .getAccountInfo(getAccountRequest)
+          .timeout(Duration(seconds: 10));
+      return RetrieveKinAccountResponse(
+        response.accountInfo,
+        response.result,
+        Status(Result.SUCCESS, "Account is retrieved."),
+        Constants.meta,
+      );
+    } catch (e) {
+      log.severe("Error fetching account information : " + e.toString());
+      return RetrieveKinAccountResponse(
+          null,
+          GetAccountInfoResponse_Result.NOT_FOUND,
           Status(
             Result.FAIL,
             e.toString(),
