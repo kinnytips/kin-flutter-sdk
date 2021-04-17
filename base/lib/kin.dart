@@ -36,7 +36,7 @@ class Kin {
 
   set accountId(String id) => this._accountId = id;
 
-  /// To create a account on the Kin blockchain
+  /// Creates an account on the Kin blockchain
   /// If account is found, the account id is added to the instance
   /// If account id already exists on the instance, this operation will override the existing accountId
   Future<CreateKinAccountResponse> createAccount() async {
@@ -48,7 +48,7 @@ class Kin {
     return response;
   }
 
-  /// To retrieve an exisint wallet on the blockchain
+  /// Retrieves an existing wallet on the blockchain
   /// `accountId` must be present for retrieving the account details
   /// Either the `accountId` can be present because an account was created
   /// or the `accountId` must be set using `setAccountId`
@@ -62,5 +62,13 @@ class Kin {
           'Account is not set in the context. Either create an account using `createAccount` or set the account id using `setAccountId`.');
     }
     return await _service.retrieveAccount(this.accountId);
+  }
+
+
+  /// Loads account from disk
+  /// If account is not available, this method will create an account on the blockchain and
+  /// and set the `accountId` in the context
+  void loadAccountOnDevice() async { 
+    // TODO add implementation to load account from the disk
   }
 }
