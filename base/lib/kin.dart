@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:kinny/models/app/account/create_kin_account_response.dart';
+import 'package:kinny/models/app/account/retrieve_kin_account_response.dart';
+import 'package:kinny/models/app/exceptions/account_id_not_set_exception.dart';
 import 'package:kinny/models/app/interfaces/status.dart';
 import 'package:kinny/services/kin_services.dart';
 import 'package:logging/logging.dart';
@@ -44,5 +46,21 @@ class Kin {
       this.accountId = response.accountInfo.accountId.toString();
     }
     return response;
+  }
+
+  /// To retrieve an exisint wallet on the blockchain
+  /// `accountId` must be present for retrieving the account details
+  /// Either the `accountId` can be present because an account was created
+  /// or the `accountId` must be set using `setAccountId`
+  /// If `accountId` is not present, then the method will throw an exception
+  /// If `accountId` is present, the account details will be fetched from the blockchain
+  ///
+  /// throws `AccountIdNotSetException`
+  Future<RetrieveKinAccountResponse> retrieveAccount() async {
+    if (this._accountId == null) {
+      throw new AccountIdNotSetException(
+          'Account is not set in the context. Either create an account using `createAccount` or set the account id using `setAccountId`.');
+    }
+    return await _service.retrieveAccount(this.accountId);
   }
 }
