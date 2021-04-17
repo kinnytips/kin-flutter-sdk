@@ -1,4 +1,5 @@
 import 'package:kinny/models/app/account/create_kin_account_response.dart';
+import 'package:kinny/models/app/account/retrieve_kin_account_response.dart';
 import 'package:kinny/models/app/agora/agora_environment.dart';
 import 'package:kinny/services/account/account_service.dart';
 
@@ -11,6 +12,7 @@ class KinService {
   /// To create the services pass whether the sdk is being used in production or for development
   /// Operations possible are :
   /// 1) CreateAccount
+  /// 2) RetrieveAccount
   KinService({bool isProduction = false}) {
     this._accountService =
         AccountService(AgoraEnvironment.getEndpoint(isProduction));
@@ -19,5 +21,10 @@ class KinService {
   /// To create a fresh new account/wallet on the Kin blockchain
   Future<CreateKinAccountResponse> createAccount() async {
     return this._accountService.createAccount();
+  }
+
+  /// Retrieves an existing wallet on the blockchain  
+  Future<RetrieveKinAccountResponse> retrieveAccount(String accountId) async {
+    return this._accountService.getAccountInfo(accountId);
   }
 }
