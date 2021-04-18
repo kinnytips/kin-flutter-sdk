@@ -1,5 +1,5 @@
-import 'package:kinny/base/models/appidx.dart';
-import 'package:kinny/base/models/kin_account.dart';
+import 'package:kin_base/base/models/appidx.dart';
+import 'package:kin_base/base/models/kin_account.dart';
 
 ///
 /// @param appIndex - An assigned integer for this application. Make sure you are using the correct one for your app!

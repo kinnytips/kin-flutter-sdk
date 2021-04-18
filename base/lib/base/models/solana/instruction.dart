@@ -2,8 +2,8 @@ import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
-import 'package:kinny/base/models/key.dart';
-import 'package:kinny/base/tools/extensions.dart';
+import 'package:kin_base/base/models/key.dart';
+import 'package:kin_base/base/tools/extensions.dart';
 import 'package:meta/meta.dart';
 
 /// AccountMeta represents the account information required

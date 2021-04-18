@@ -1,11 +1,11 @@
 import 'package:grpc/grpc.dart';
-import 'package:kinny/models/agora/protobuf/account/v4/account_service.pb.dart';
-import 'package:kinny/models/agora/protobuf/account/v4/account_service.pbgrpc.dart';
-import 'package:kinny/models/agora/protobuf/common/v4/model.pb.dart';
-import 'package:kinny/models/app/account/create_kin_account_response.dart';
-import 'package:kinny/models/app/account/retrieve_kin_account_response.dart';
-import 'package:kinny/models/app/interfaces/status.dart';
-import 'package:kinny/models/app/sdk/constants.dart';
+import 'package:kin_base/models/agora/protobuf/account/v4/account_service.pb.dart';
+import 'package:kin_base/models/agora/protobuf/account/v4/account_service.pbgrpc.dart';
+import 'package:kin_base/models/agora/protobuf/common/v4/model.pb.dart';
+import 'package:kin_base/models/app/account/create_kin_account_response.dart';
+import 'package:kin_base/models/app/account/retrieve_kin_account_response.dart';
+import 'package:kin_base/models/app/interfaces/status.dart';
+import 'package:kin_base/models/app/sdk/constants.dart';
 import 'package:logging/logging.dart';
 
 class AccountService {

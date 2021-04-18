@@ -1,8 +1,7 @@
 import 'dart:typed_data';
 import 'dart:ui';
 
-import 'package:kinny/base/tools/byte_utils.dart';
-import 'package:kinny/base/tools/extensions.dart';
+import 'package:kin_base/base/tools/extensions.dart';
 
 abstract class FixedByteArray {
   final Uint8List byteArray;

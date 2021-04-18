@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
-import 'package:kinny/base/tools/extensions.dart';
-import 'package:kinny/base/tools/hex.dart';
+import 'package:kin_base/base/tools/extensions.dart';
+import 'package:kin_base/base/tools/hex.dart';
 
 class TransactionHash {
   final Uint8List rawValue;

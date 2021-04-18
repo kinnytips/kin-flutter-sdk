@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:kinny/base/models/key.dart';
-import 'package:kinny/base/models/kin_amount.dart';
-import 'package:kinny/base/models/quark_amount.dart';
-import 'package:kinny/base/tools/base58.dart';
-import 'package:kinny/base/tools/byte_in_out_buffer.dart';
-import 'package:kinny/base/tools/extensions.dart';
+import 'package:kin_base/base/models/key.dart';
+import 'package:kin_base/base/models/kin_amount.dart';
+import 'package:kin_base/base/models/quark_amount.dart';
+import 'package:kin_base/base/tools/base58.dart';
+import 'package:kin_base/base/tools/byte_in_out_buffer.dart';
+import 'package:kin_base/base/tools/extensions.dart';
 
 import 'instruction.dart';
 

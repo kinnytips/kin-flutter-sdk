@@ -1,7 +1,7 @@
 import 'dart:convert' as _convert;
 import 'dart:typed_data';
 
-import 'package:kinny/base/tools/extensions.dart';
+import 'package:kin_base/base/tools/extensions.dart';
 
 class Charset {
   static final Charset utf8 = Charset('utf8');

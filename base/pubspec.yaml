@@ -1,4 +1,4 @@
-name: kinny
+name: kin_base
 description: Flutter SDK for kin
 version: 0.0.1
 author: Kinny.io development team 
@@ -24,6 +24,7 @@ dependencies:
   protobuf: ^1.0.1
   grpc: ^2.3.0
   logging: ^0.11.4
+  toml: ^0.6.0
 
 dev_dependencies:
   flutter_test:

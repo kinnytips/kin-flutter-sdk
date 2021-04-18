@@ -1,6 +1,8 @@
+import 'package:kin_base/stellarfork/key_pair.dart';
+
 abstract class  NetworkEnvironment {
   String _networkPassphrase;
-  NetworkEnvironment(String networkPassphrase, [KeyPair? issuer]){
+  NetworkEnvironment(String networkPassphrase, [KeyPair issuer]){
     _networkPassphrase = networkPassphrase;
   }
 

@@ -2,8 +2,8 @@ import 'dart:ffi';
 import 'dart:typed_data';
 
 import 'package:fixnum/fixnum.dart';
-import 'package:kinny/base/models/solana/byte_utils.dart';
-import 'package:kinny/base/tools/byte_in_out_buffer.dart';
+import 'package:kin_base/base/models/solana/byte_utils.dart';
+import 'package:kin_base/base/tools/byte_in_out_buffer.dart';
 
 class ShortVec {
   static final ShortVec _shortVec = ShortVec._internal();

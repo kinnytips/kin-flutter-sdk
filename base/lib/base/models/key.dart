@@ -1,8 +1,8 @@
 import 'dart:typed_data';
 
-import 'package:kinny/base/tools/base58.dart';
-import 'package:kinny/base/tools/extensions.dart';
-import 'package:kinny/stellarfork/key_pair.dart';
+import 'package:kin_base/base/tools/base58.dart';
+import 'package:kin_base/base/tools/extensions.dart';
+import 'package:kin_base/stellarfork/key_pair.dart';
 
 abstract class Key {
   Uint8List value;
