@@ -27,19 +27,25 @@ class AccountService {
       return CreateKinAccountResponse(
         response.accountInfo,
         response.result,
-        Status(Result.SUCCESS, "Account is retrieved."),
+        Status(
+          Result.SUCCESS,
+          "Account is retrieved.",
+        ),
         Constants.meta,
       );
     } catch (e) {
-      log.severe("Error creating account :" + e.toString());
+      log.severe(
+        "Error creating account :" + e.toString(),
+      );
       return CreateKinAccountResponse(
-          null,
-          CreateAccountResponse_Result.BAD_NONCE,
-          Status(
-            Result.FAIL,
-            e.toString(),
-          ),
-          Constants.meta);
+        null,
+        CreateAccountResponse_Result.BAD_NONCE,
+        Status(
+          Result.FAIL,
+          e.toString(),
+        ),
+        Constants.meta,
+      );
     }
   }
 
@@ -62,13 +68,14 @@ class AccountService {
     } catch (e) {
       log.severe("Error fetching account information : " + e.toString());
       return RetrieveKinAccountResponse(
-          null,
-          GetAccountInfoResponse_Result.NOT_FOUND,
-          Status(
-            Result.FAIL,
-            e.toString(),
-          ),
-          Constants.meta);
+        null,
+        GetAccountInfoResponse_Result.NOT_FOUND,
+        Status(
+          Result.FAIL,
+          e.toString(),
+        ),
+        Constants.meta,
+      );
     }
   }
 }

@@ -4,6 +4,8 @@ import 'package:kinny/models/app/account/create_kin_account_response.dart';
 import 'package:kinny/models/app/account/retrieve_kin_account_response.dart';
 import 'package:kinny/models/app/exceptions/account_id_not_set_exception.dart';
 import 'package:kinny/models/app/interfaces/status.dart';
+import 'package:kinny/models/app/transaction/submit_kin_transaction_response.dart';
+import 'package:kinny/models/app/transaction/transaction_history_response.dart';
 import 'package:kinny/services/kin_services.dart';
 import 'package:logging/logging.dart';
 
@@ -64,11 +66,28 @@ class Kin {
     return await _service.retrieveAccount(this.accountId);
   }
 
-
   /// Loads account from disk
   /// If account is not available, this method will create an account on the blockchain and
   /// and set the `accountId` in the context
-  void loadAccountOnDevice() async { 
+  void loadAccountOnDevice() async {
     // TODO add implementation to load account from the disk
+  }
+
+  /// Submits the transaction to the blockchain
+  Future<SubmitKinTransactionResponse> submitTransaction(
+    double amount,
+    String destinationAddress,
+    double fee,
+  ) async {
+    return this._service.submitTransaction(
+          amount,
+          destinationAddress,
+          fee,
+        );
+  }
+
+  /// Fetches the transaction history of the account
+  Future<TransactionHistoryResponse> getTransactionHistory() async {
+    return this._service.getTransactionHistory(this._accountId);
   }
 }
