@@ -1,14 +1,12 @@
 import 'dart:typed_data';
-import 'package:collection/collection.dart';
 import 'package:meta/meta.dart';
 
-import 'package:kinny/base/models/stellar_base_type_conversions.dart';
-import 'package:kinny/base/models/key.dart';
+import 'package:kin_base/base/models/key.dart';
 // import 'package:kin_sdk/base/tools/byte_utils.dart';
 // import 'package:kin_sdk/base/tools/sort.dart';
-import 'package:kinny/base/models/solana/fixed_byte_array.dart';
-import 'package:kinny/base/models/solana/instruction.dart';
-import 'package:kinny/base/tools/extensions.dart';
+import 'package:kin_base/base/models/solana/fixed_byte_array.dart';
+import 'package:kin_base/base/models/solana/instruction.dart';
+import 'package:kin_base/base/tools/extensions.dart';
 
 import 'encoding.dart';
 

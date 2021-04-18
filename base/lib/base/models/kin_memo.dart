@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
-import 'package:kinny/base/tools/charsets.dart';
-import 'package:kinny/base/tools/extensions.dart';
+import 'package:kin_base/base/tools/charsets.dart';
+import 'package:kin_base/base/tools/extensions.dart';
 
 import 'kin_binary_memo.dart';
 

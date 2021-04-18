@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:kinny/base/tools/extensions.dart';
+import 'package:kin_base/base/tools/extensions.dart';
 
 class SHA224Hash {
   final String encodedValue;

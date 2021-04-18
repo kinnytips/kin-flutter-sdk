@@ -4,8 +4,8 @@
 
 import 'package:http/http.dart' as http;
 
-import 'package:kinny/stellarfork/asset_type_credit_alphanum.dart';
-import 'package:kinny/stellarfork/asset_type_native.dart';
+import 'package:kin_base/stellarfork/asset_type_credit_alphanum.dart';
+import 'package:kin_base/stellarfork/asset_type_native.dart';
 
 import 'dart:convert';
 import '../responses/response.dart';

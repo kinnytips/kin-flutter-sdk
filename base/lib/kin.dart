@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:kinny/models/app/account/create_kin_account_response.dart';
-import 'package:kinny/models/app/interfaces/status.dart';
-import 'package:kinny/services/kin_services.dart';
+import 'package:kin_base/models/app/account/create_kin_account_response.dart';
+import 'package:kin_base/models/app/interfaces/status.dart';
+import 'package:kin_base/services/kin_services.dart';
 import 'package:logging/logging.dart';
 
 import 'models/agora/protobuf/account/v4/account_service.pbenum.dart';

@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
-import 'package:kinny/base/network/api/kin_account_creation_api.dart';
-import 'package:kinny/base/tools/extensions.dart';
+import 'package:kin_base/base/network/api/kin_account_creation_api.dart';
+import 'package:kin_base/base/tools/extensions.dart';
 
 import 'invoices.dart';
 import 'kin_amount.dart';

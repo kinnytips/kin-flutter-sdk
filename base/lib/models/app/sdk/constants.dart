@@ -1,4 +1,4 @@
-import 'package:kinny/models/app/interfaces/meta.dart';
+import 'package:kin_base/models/app/interfaces/meta.dart';
 
 class Constants {
   static String sdkVersion = "0.0.1";

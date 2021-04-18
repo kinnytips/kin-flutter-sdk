@@ -1,6 +1,6 @@
-import 'package:kinny/models/app/account/create_kin_account_response.dart';
-import 'package:kinny/models/app/agora/agora_environment.dart';
-import 'package:kinny/services/account/account_service.dart';
+import 'package:kin_base/models/app/account/create_kin_account_response.dart';
+import 'package:kin_base/models/app/agora/agora_environment.dart';
+import 'package:kin_base/services/account/account_service.dart';
 
 /// Services aggregator for the all the operations possible on the Kin blockchain
 class KinService {

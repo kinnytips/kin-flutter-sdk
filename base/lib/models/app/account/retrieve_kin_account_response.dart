@@ -1,7 +1,7 @@
-import 'package:kinny/models/agora/protobuf/account/v4/account_service.pb.dart';
-import 'package:kinny/models/app/account/account_response.dart';
-import 'package:kinny/models/app/interfaces/meta.dart';
-import 'package:kinny/models/app/interfaces/status.dart';
+import 'package:kin_base/models/agora/protobuf/account/v4/account_service.pb.dart';
+import 'package:kin_base/models/app/account/account_response.dart';
+import 'package:kin_base/models/app/interfaces/meta.dart';
+import 'package:kin_base/models/app/interfaces/status.dart';
 
 class GetKinAccountResponse extends AccountResponse {
   final GetAccountInfoResponse_Result result;
