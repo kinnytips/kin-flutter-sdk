@@ -3,10 +3,10 @@ import 'package:kin_base/models/app/account/account_response.dart';
 import 'package:kin_base/models/app/interfaces/meta.dart';
 import 'package:kin_base/models/app/interfaces/status.dart';
 
-class GetKinAccountResponse extends AccountResponse {
+class RetrieveKinAccountResponse extends AccountResponse {
   final GetAccountInfoResponse_Result result;
 
-  GetKinAccountResponse(AccountInfo accountInfo, this.result,
+  RetrieveKinAccountResponse(AccountInfo accountInfo, this.result,
       Status operationStatus, MetaInformation meta)
       : super(accountInfo, operationStatus, meta);
 }
