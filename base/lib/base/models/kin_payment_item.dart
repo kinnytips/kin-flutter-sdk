@@ -11,7 +11,7 @@ import 'package:kin_base/base/tools/optional.dart';
 class KinPaymentItem {
   final KinAmount amount;
   final KinAccountId destinationAccount;
-  final Optional<Invoice> invoice;
+  final Invoice invoice;
 
-  KinPaymentItem(this.amount, this.destinationAccount, [this.invoice = Optional.empty()]);
+  KinPaymentItem(this.amount, this.destinationAccount, [this.invoice]);
 }
