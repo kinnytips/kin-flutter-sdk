@@ -1,10 +1,10 @@
 import 'package:grpc/grpc.dart';
-import 'package:kinny/models/agora/protobuf/common/v4/model.pb.dart';
-import 'package:kinny/models/agora/protobuf/transaction/v4/transaction_service.pbgrpc.dart';
-import 'package:kinny/models/app/interfaces/status.dart';
-import 'package:kinny/models/app/sdk/constants.dart';
-import 'package:kinny/models/app/transaction/submit_kin_transaction_response.dart';
-import 'package:kinny/models/app/transaction/transaction_history_response.dart';
+import 'package:kin_base/models/agora/protobuf/common/v4/model.pb.dart';
+import 'package:kin_base/models/agora/protobuf/transaction/v4/transaction_service.pbgrpc.dart';
+import 'package:kin_base/models/app/interfaces/status.dart';
+import 'package:kin_base/models/app/sdk/constants.dart';
+import 'package:kin_base/models/app/transaction/submit_kin_transaction_response.dart';
+import 'package:kin_base/models/app/transaction/transaction_history_response.dart';
 import 'package:logging/logging.dart';
 
 class TransactionService {
