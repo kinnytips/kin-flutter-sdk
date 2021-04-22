@@ -12,7 +12,7 @@ dependencies:
   flutter:
     sdk: flutter
   #stellar_flutter_sdk: ^1.1.2
-  tweetnacl: ^0.3.2 # Just to make 'stellarfork' work. Maybe remove in the future.
+  tweetnacl: ^0.3.2 # Just to make 'stellarfork'  work. Maybe remove in the future.
   eventsource: ^0.2.3 # Should be substituted, not maintained package.
   base32: ^1.1.2
   http: ^0.12.2
