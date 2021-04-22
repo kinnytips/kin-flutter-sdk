@@ -1,5 +1,5 @@
-import 'package:kin_sdk/base/network/models/AppInfo.dart';
-import 'package:kin_sdk/base/network/models/AppUserCreds.dart';
+import 'package:kin_base/network/models/AppInfo.dart';
+import 'package:kin_base/network/models/AppUserCreds.dart';
 
 class AppInfoProvider {
   AppInfo appInfo;
