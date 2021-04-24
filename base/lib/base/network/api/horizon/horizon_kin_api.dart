@@ -1,17 +1,13 @@
-abstract class KinJsonApi {
-  KinJsonApi(ApiConfig environment, OkHttpClient okHttpClient, [KinServer server = Server(environment.networkEndpoint, okHttpClient)]) { }
-}
+import 'dart:io';
 
-class MalformedBodyExcpetion implements Exception {
-  String _message;
-  MalformedBodyExcpetion([String message = 'Malformed Body']) {
-    this._message = message;
-  }
-}
+import 'package:kin_base/base/models/kin_account.dart';
+import 'package:kin_base/base/tools/managed_server_sent_event_stream.dart';
+import 'package:kin_base/stellarfork/responses/account_response.dart';
 
-class TimeoutException implements Exception {
-  String _message;
-  TimeoutException([String message = 'Timed Out']) {
-    this._message = message;
-  }
+class HorizonKinApi {
+  HorizonKinApi(ApiConfig environment, HttpClient httpClient) {}
+
+  static const CURSOR_FUTURE_ONLY = "now";
+
+  _accountStreams = new Map<KinAccountId, ManagedServerSentEventStream<AccountResponse>>();
 }
