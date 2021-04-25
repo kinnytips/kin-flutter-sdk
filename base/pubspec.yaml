@@ -16,6 +16,7 @@ dependencies:
   eventsource: ^0.2.3 # Should be substituted, not maintained package.
   base32: ^1.1.2
   http: ^0.12.2
+  sse: ^3.8.1
   fixnum: ^0.10.11
   crypto: ^2.1.5
   decimal: ^0.3.5
