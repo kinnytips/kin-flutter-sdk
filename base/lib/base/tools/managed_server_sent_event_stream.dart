@@ -12,24 +12,48 @@ class ManagedServerSentEventStream<ResponseType> {
 
   addListener(EventListener<ResponseType> listener) {
     listeners.add(listener);
-    _lastReceivedResponse
-      ..{ listener.onEvent(this) };
+    if (_lastReceivedResponse != null) {
+        listener.onEvent(_lastReceivedResponse);
+    }
+
+    connectIfNecessary();
+    return this;
+  }
+
+  removeListener(EventListener<ResponseType> listener) {
+    listeners.remove(listener);
+    closeIfNecessary();
+    return this;
+  }
+
+  bool hasConnection() {
+    return _connection != null;
+  }
+
+  connectIfNecessary() {
+    synchronized(_lock) {
+      if(_connection == null && listeners.isNotEmpty()) {
+        _connection = requestBuilder.stream(listener);
+      }
+    }
+  }
+
+  closeIfNecessary() {
+    synchronized(_lock) {
+      if(_connection == null) {
+        if(listeners.isEmpty()) {
+          _connection.close();
+          connection = null;
+        }
+      }
+    }
   }
 }
 
 class ResponseTypeEventListener implements EventListener<ResponseType> {
   onEvent(ResponseType data){
-                // listeners.indices
-                // .asSequence()
-                // .map { listeners[it] }
-                // .forEach { it.onEvent(data) }
-  }
-}
-
-typedef T LetCallback<T>(T value);
-
-T let<T>(T value, LetCallback<T> cb) {
-  if (value != null) {
-    return cb(value);
+    synchronized(_lock) {
+      _lastReceivedResp
+    }
   }
 }
