@@ -42,18 +42,19 @@ class ManagedServerSentEventStream<ResponseType> {
     synchronized(_lock) {
       if(_connection == null) {
         if(listeners.isEmpty()) {
-          _connection.close();
-          connection = null;
+          _connection.shutdown();
+          _connection = null;
         }
       }
     }
   }
 }
 
-class ResponseTypeEventListener implements EventListener<ResponseType> {
+extension ResponseTypeEventListener on ManagedServerSentEventStream<ResponseType> {
   onEvent(ResponseType data){
     synchronized(_lock) {
-      _lastReceivedResp
+      _lastReceivedResponse = data;
     }
+
   }
 }
