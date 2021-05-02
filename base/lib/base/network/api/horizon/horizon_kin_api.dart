@@ -24,6 +24,21 @@ class HorizonKinApi implements KinJsonApi {
 
     EventListener<AccountResponse> listener = null;
 
-    return ValueSubject<KinAccount>()
+    var subject = ValueSubject<KinAccount>();
+
+    listener = EventListener<TransactionResponse>() {
+      onEvent(TransactionResponse data) {
+        subject.onNext(data.asKinTransaction(environment.networkEnv));
+      }
+    };
+
+    _transactionStreams.addListener(listener);
+
+    subject.doOnDisposed(() { 
+      _transactionStreams.removeListener(listener);
+      _accountStreams[kinAccountId] = null;
+    });
+      
+    return subject;
   }
 }
