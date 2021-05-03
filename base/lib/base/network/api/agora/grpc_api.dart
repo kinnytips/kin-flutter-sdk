@@ -1,8 +1,9 @@
   
+import 'package:grpc/grpc.dart';
 import 'package:grpc/src/shared/status.dart';
 
 abstract class GrpcApi {
-  GrpcApi(ManagedChannel managedChannel)
+  GrpcApi(ClientChannel managedChannel)
 
   void RETRYABLE_STATUS = setOf(
       StatusCode.unknown,

@@ -1,5 +1,7 @@
 import 'package:kin_base/base/models/kin_balance.dart';
+import 'package:kin_base/base/tools/kin_logger.dart';
 import 'package:kin_base/base/tools/observers.dart';
+import 'package:kin_base/services/kin_services.dart';
 import 'package:kin_base/stellarfork/xdr/xdr_signing.dart';
 
 import 'models/account_spec.dart';
@@ -14,6 +16,7 @@ import 'models/kin_payment_item.dart';
 import 'models/quark_amount.dart';
 import 'models/transaction_hash.dart';
 import 'network/services/app_info_providers.dart';
+import 'storage/storage.dart';
 
 enum ObservationMode {
   Passive,
@@ -55,7 +58,7 @@ abstract class KinPaymentReadOperationsAltIdioms {
 }
 
 
-abstract class  KinPaymentReadOperations extends KinPaymentReadOperationsAltIdioms {
+abstract class  KinPaymentReadOperations implements KinPaymentReadOperationsAltIdioms {
 
   Future<QuarkAmount> calculateFee(int numberOfOperations);
 
@@ -79,7 +82,7 @@ abstract class KinPaymentWriteOperationsAltIdioms {
 }
 
 
-abstract class KinPaymentWriteOperations extends KinPaymentWriteOperationsAltIdioms {
+abstract class KinPaymentWriteOperations implements KinPaymentWriteOperationsAltIdioms {
 
   AppInfoProvider appInfoProvider ;
 
@@ -118,3 +121,28 @@ abstract class KinPaymentWriteOperations extends KinPaymentWriteOperationsAltIdi
 abstract class  KinAccountContextReadOnly extends KinAccountReadOperations implements KinPaymentReadOperations {
   KinAccountId accountId ;
 }
+
+
+abstract class KinAccountContext implements KinAccountContextReadOnly , KinPaymentWriteOperations {
+
+}
+
+class KinAccountContextReadOnlyImpl extends KinAccountContextBase , KinAccountContextReadOnly {
+
+}
+
+
+class KinAccountContextBase implements KinAccountReadOperations , KinPaymentReadOperations {
+
+  ExecutorServices executors;
+  KinService service;
+  Storage storage;
+  KinAccountId accountId;
+  KinLoggerFactory logger;
+
+
+}
+
+
+
+
