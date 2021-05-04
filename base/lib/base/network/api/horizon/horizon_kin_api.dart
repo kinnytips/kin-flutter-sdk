@@ -68,8 +68,38 @@ class HorizonKinApi implements KinJsonApi {
   getAccount(GetAccountRequest request, GetAccountResponse onCompleted) {
     KinAccount account = null;
     var result = try {
-      server.accounts()
-        .account(request.accountId.toKeyPair());
+      account = server.accounts().account(request.accountId.toKeyPair());
+      if(account == null) {
+        onCompleted = GetAccountResult.TransientFailure(MalformedBodyException);
+      }
+      else {
+        onCompleted = GetAccountResult.Ok;
+      }
+    }
+    catch (e) {
+      if(e is HttpResponseException) {
+        if(e.statusCode == 400) {
+          onCompleted = GetAccountResult.NotFound;
+        }
+        else if (e.statusCode >= 500) {
+          onCompleted = GetAccountResult.TransientFailure(e);
+        }
+        else {
+          onCompleted = GetAccountResult.UndefinedError(e);
+        }
+      }
+      else if (e is SocketTimeoutExcpetion || e is OperationTimeoutException) {
+        onCompleted = GetAccountResult.TransientFailure(TimeoutException);
+      }
+      else if (e is TooManyRequestsException) {
+        onCompleted = GetAccountResult.TransientFailure(e);
+      }
+      else if (e is ServerGoneException) {
+        onCompleted = GetAccountResult.UpgradeRequiredError;
+      }
+      else {
+        onCompleted = GetAccountResult.UndefinedError(e);
+      }
     }
   }
 }
