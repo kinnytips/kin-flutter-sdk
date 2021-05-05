@@ -151,6 +151,19 @@ class NetworkOperation<T> {
   })  : onCompleted = onCompleted ?? PromisedCallback(onSuccess, onError),
         id = id ?? generateRandomId(),
         backoffStrategy = BackoffStrategyExponential(maximumWaitTime: timeout);
+
+
+  NetworkOperationState _state = NetworkOperationState.init ;
+
+  NetworkOperationState get state => _state;
+
+  set state(NetworkOperationState value) {
+    var prevState = _state ;
+    if (prevState is NetworkOperationStateScheduled) {
+      prevState.cancellable?.cancel();
+    }
+    _state = value;
+  }
 }
 
 class NetworkOperationState {
@@ -177,18 +190,5 @@ class NetworkOperationStateErrored extends NetworkOperationState {
 }
 
 abstract class NetworkOperationsHandler {
-
-  NetworkOperationState _state = NetworkOperationState.init ;
-
-  NetworkOperationState get state => _state;
-
-  set state(NetworkOperationState value) {
-    var prevState = _state ;
-    if (prevState is NetworkOperationStateScheduled) {
-      prevState.cancellable?.cancel();
-    }
-    _state = value;
-  }
-
   NetworkOperation<T> queueOperation<T>(NetworkOperation<T> op) ;
 }
