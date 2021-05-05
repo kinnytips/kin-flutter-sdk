@@ -3,10 +3,16 @@ import 'dart:async';
 typedef Runnable = void Function();
 
 abstract class ExecutorService {
+  static ExecutorService createSequencial() => _ExecutorServiceSequential() ;
+  static ExecutorService createParallel() => _ExecutorServiceParallel();
+  static ScheduledExecutorService createScheduled() => ScheduledExecutorService.create();
+
   Future execute(Runnable task);
 }
 
 abstract class ScheduledExecutorService extends ExecutorService {
+  static ScheduledExecutorService create() => _ExecutorServiceScheduled();
+
   ScheduledFuture schedule(Runnable task, Duration delay);
 }
 
@@ -95,10 +101,10 @@ class _ExecutorServiceScheduled extends ScheduledExecutorService {
 }
 
 class ExecutorServices {
-  static ExecutorService sequentialIO = _ExecutorServiceSequential();
+  static ExecutorService sequentialIO = ExecutorService.createSequencial();
 
-  static ExecutorService parallelIO = _ExecutorServiceParallel();
+  static ExecutorService parallelIO = ExecutorService.createParallel();
 
   static ScheduledExecutorService sequentialScheduled =
-      _ExecutorServiceScheduled();
+      ExecutorService.createScheduled();
 }
