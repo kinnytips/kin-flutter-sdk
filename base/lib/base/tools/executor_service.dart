@@ -7,7 +7,28 @@ abstract class ExecutorService {
 }
 
 abstract class ScheduledExecutorService extends ExecutorService {
-  Future schedule(Runnable task, Duration delay);
+  ScheduledFuture schedule(Runnable task, Duration delay);
+}
+
+class ScheduledFuture<T> {
+  final Duration delay;
+  Runnable _task;
+
+  Future<T> _future;
+
+  Future<T> get future => _future;
+
+  ScheduledFuture(this.delay, this._task);
+
+  void executeTask() {
+    if (_task == null) return;
+    _task();
+    _task = null;
+  }
+
+  void cancel() {
+    _task = null;
+  }
 }
 
 class _ExecutorServiceSequential extends ExecutorService {
@@ -66,8 +87,10 @@ class _ExecutorServiceScheduled extends ScheduledExecutorService {
   }
 
   @override
-  Future schedule(Runnable task, Duration delay) {
-    return Future.delayed(delay, task);
+  ScheduledFuture schedule(Runnable task, Duration delay) {
+     var scheduledFuture = ScheduledFuture(delay, task) ;
+     scheduledFuture._future = Future.delayed(delay, scheduledFuture.executeTask);
+    return scheduledFuture ;
   }
 }
 
