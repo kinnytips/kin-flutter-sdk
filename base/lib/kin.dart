@@ -9,6 +9,14 @@ import 'package:kin_base/models/app/transaction/transaction_history_response.dar
 import 'package:kin_base/services/kin_services.dart';
 import 'package:logging/logging.dart';
 
+import 'package:kin_base/base/tools/observers.dart';
+
+import 'base/kin_account_context.dart';
+import 'base/kin_environment.dart';
+import 'base/models/kin_balance.dart';
+import 'base/models/kin_payment.dart';
+import 'base/stellar/models/network_environment.dart';
+import 'base/tools/observers.dart';
 import 'models/agora/protobuf/account/v4/account_service.pbenum.dart';
 
 /// KinSDK allows the user to interact with the Kin blockchain
@@ -18,76 +26,110 @@ import 'models/agora/protobuf/account/v4/account_service.pbenum.dart';
 /// Environment must be indicated either eith `true` or with `false` while instantiating the instance.
 /// SDK can also be instantiated by setting an `accountId`
 class Kin {
-  String _accountId;
-  KinService _service;
 
-  Kin({bool isProduction = false}) {
-    this._service = KinService(isProduction: isProduction);
-    if (isProduction) {
-      Logger.root.level = Level.SEVERE;
-    } else {
-      Logger.root.level = Level.ALL;
+  final bool _production;
+  final int _appIndex;
+  final String _appAddress;
+  final String _credentialsUser;
+  final String _credentialsPass;
+  final void Function(KinBalance kinBalance) _onBalanceChange;
+  final void Function(List<KinPayment> payments) _onPayment;
+  final void Function(Kin kin) _onAccountContext;
+
+  final DisposeBag _lifecycle;
+
+  KinEnvironmentAgora _environment;
+  KinAccountContext _context;
+  Observer<List<KinPayment>> _observerPayments;
+  Observer<KinBalance> _observerBalance;
+
+   Kin(
+            this._production,
+  this._appIndex,
+  this._appAddress,
+  this._credentialsUser,
+  this._credentialsPass,
+  this._onBalanceChange,
+       this._onPayment,
+       this._onAccountContext
+    ) : _lifecycle = DisposeBag() {
+
+
+        //fetch the account and set the context
+        this._environment = this.getEnvironment();
+
+        this._environment.allAccountIds().then(it -> {
+            //First get (or create) an account id for this device
+            String accountId = it.size() == 0 ? createAccount() : ((KinAccountId) it.get(0)).stellarBase32Encode();
+
+            //Then set the context with that single account
+            this.context = this.getKinContext(accountId);
+
+            if (onAccountContext != null) {
+                onAccountContext.invoke(this);
+            }
+
+            return null;
+        });
+
+        //handle listeners
+        if (this._balanceChanged != null) {
+            this._watchBalance(); //watch for changes in balance
+        }
+
+        if (this._paymentHappened != null) {
+            this._watchPayments(); //watch for changes in payments
+        }
     }
 
-    Logger.root.onRecord.listen((record) {
-      print('${record.level.name}: ${record.time}: ${record.message}');
-    });
+  KinEnvironmentAgora _getEnvironment() {
+    String storageLoc = "/tmp/kin";
+
+    NetworkEnvironment networkEnv = _production ? KinStellarMainNetKin3.instance : KinStellarTestNetKin3.instance;
+
+    KinEnvironmentAgora();
+
   }
 
-  String get accountId => _accountId;
+    /*
 
-  set accountId(String id) => this._accountId = id;
+    private KinEnvironment.Agora getEnvironment() {
+        String storageLoc = "/tmp/kin";
 
-  /// Creates an account on the Kin blockchain
-  /// If account is found, the account id is added to the instance
-  /// If account id already exists on the instance, this operation will override the existing accountId
-  Future<CreateKinAccountResponse> createAccount() async {
-    var response = await _service.createAccount();
-    if (response.operationStatus.result == Result.SUCCESS &&
-        response.result == CreateAccountResponse_Result.OK) {
-      this.accountId = response.accountInfo.accountId.toString();
+        NetworkEnvironment networkEnv = this.production ? NetworkEnvironment.KinStellarMainNetKin3.INSTANCE :
+                NetworkEnvironment.KinStellarTestNetKin3.INSTANCE;
+
+        return (new KinEnvironment.Agora.Builder(networkEnv))
+                .setAppInfoProvider(new AppInfoProvider() {
+                    @NotNull
+                    private final AppInfo appInfo;
+
+                    @NotNull
+                    public AppInfo getAppInfo() {
+                        return this.appInfo;
+                    }
+
+                    @NotNull
+                    public AppUserCreds getPassthroughAppUserCredentials() {
+                        return new AppUserCreds(
+                                credentialsUser,
+                                credentialsPass
+                        );
+                    }
+
+                    {
+                        this.appInfo = new AppInfo(
+                                new AppIdx(appIndex),
+                                new KinAccount.Id(appAddress),
+                                "Example",
+                                0
+                        );
+                    }
+                })
+                .setMinApiVersion(4) //make sure we're on the Agora chain (not the former stellar)
+                .setStorage(new KinFileStorage.Builder(storageLoc))
+                .build();
     }
-    return response;
-  }
+     */
 
-  /// Retrieves an existing wallet on the blockchain
-  /// `accountId` must be present for retrieving the account details
-  /// Either the `accountId` can be present because an account was created
-  /// or the `accountId` must be set using `setAccountId`
-  /// If `accountId` is not present, then the method will throw an exception
-  /// If `accountId` is present, the account details will be fetched from the blockchain
-  ///
-  /// throws `AccountIdNotSetException`
-  Future<RetrieveKinAccountResponse> retrieveAccount() async {
-    if (this._accountId == null) {
-      throw new AccountIdNotSetException(
-          'Account is not set in the context. Either create an account using `createAccount` or set the account id using `setAccountId`.');
-    }
-    return await _service.retrieveAccount(this.accountId);
-  }
-
-  /// Loads account from disk
-  /// If account is not available, this method will create an account on the blockchain and
-  /// and set the `accountId` in the context
-  void loadAccountOnDevice() async {
-    // TODO add implementation to load account from the disk
-  }
-
-  /// Submits the transaction to the blockchain
-  Future<SubmitKinTransactionResponse> submitTransaction(
-    double amount,
-    String destinationAddress,
-    double fee,
-  ) async {
-    return this._service.submitTransaction(
-          amount,
-          destinationAddress,
-          fee,
-        );
-  }
-
-  /// Fetches the transaction history of the account
-  Future<TransactionHistoryResponse> getTransactionHistory() async {
-    return this._service.getTransactionHistory(this._accountId);
-  }
 }

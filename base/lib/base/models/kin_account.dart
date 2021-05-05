@@ -46,15 +46,19 @@ class KinAccountStatusUnregistered extends KinAccountStatus {
   static final KinAccountStatusUnregistered instance =
       KinAccountStatusUnregistered._();
 
-  KinAccountStatusUnregistered._() : super._(0);
+  static final int defaultValue = 0 ;
+
+  KinAccountStatusUnregistered._() : super._(defaultValue);
 
   factory KinAccountStatusUnregistered() => instance;
 }
 
 class KinAccountStatusRegistered extends KinAccountStatus {
+  static final int defaultValue = 1 ;
+
   int sequence;
 
-  KinAccountStatusRegistered(this.sequence) : super._(1);
+  KinAccountStatusRegistered(this.sequence) : super._(defaultValue);
 }
 
 class KinAccount {
