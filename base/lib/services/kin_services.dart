@@ -1,4 +1,4 @@
-:import 'package:kin_base/base/models/key.dart';
+import 'package:kin_base/base/models/key.dart';
 import 'package:kin_base/base/models/kin_account.dart';
 import 'package:kin_base/base/models/kin_balance.dart';
 import 'package:kin_base/base/models/quark_amount.dart';

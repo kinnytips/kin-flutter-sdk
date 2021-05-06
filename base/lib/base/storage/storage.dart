@@ -1,6 +1,8 @@
 import 'package:kin_base/base/models/invoices.dart';
 import 'package:kin_base/base/models/kin_account.dart';
 import 'package:kin_base/base/models/quark_amount.dart';
+import 'package:kin_base/base/models/kin_balance.dart';
+
 
 abstract class Storage {
   bool addAccount(KinAccount account);
@@ -58,9 +60,7 @@ abstract class Storage {
 
   Future<QuarkAmount> getMinFee();
 
-  Future<bool> deleteAllStorage(KinAccountId accountId);
-
-  Future<bool> deleteAllStorage();
+  Future<bool> deleteAllStorage([KinAccountId accountId]);
 
   Future<int> setMinApiVersion(int apiVersion);
 

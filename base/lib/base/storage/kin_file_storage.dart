@@ -139,7 +139,7 @@ class KinFileStorage implements Storage {
   }
 
   @override
-  Future<bool> deleteAllStorage() {
+  Future<bool> deleteAllStorage([KinAccountId accountId]) {
     // TODO: implement deleteAllStorage
     throw UnimplementedError();
   }

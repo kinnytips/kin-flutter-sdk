@@ -1,8 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:flutter/services.dart';
-import 'package:pointycastle/api.dart';
-import 'package:pointycastle/digests/sha256.dart';
+import 'package:crypto/crypto.dart' show sha256 ;
 
 class Base58 {
   static final List<String> ALPHABET = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz".split('');
@@ -127,13 +125,13 @@ class Base58 {
   }
 
   Uint8List hashTwice(Uint8List input, [int offset = 0, int length]) {
-    if(length == null) { length = input.length; }
-    SHA256Digest digest;
-    final hash = Uint8List(digest.digestSize);
-    digest.update(input, offset, length);
-    digest.doFinal(hash, 0);
-    digest.doFinal(hash, 0);
-    return hash;
+    if ( ( offset != null && offset > 0 ) || (length != null) ) {
+      input = input.sublist(offset, offset + length);
+    }
+
+    var hash1 = sha256.convert(input);
+    var hash2 = sha256.convert(hash1.bytes);
+    return Uint8List.fromList(hash2.bytes );
   }
 }
 
