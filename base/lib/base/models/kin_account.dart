@@ -15,6 +15,10 @@ class KinAccountId {
   KinAccountId.fromIdString(String accountId)
       : this(KeyPair.fromAccountId(accountId).publicKey);
 
+  KinAccountId.fromPrivateKey(PrivateKey privateKey) : this.fromPublicKey(privateKey.asPublicKey());
+
+  KinAccountId.fromPublicKey(PublicKey publicKey) : this(publicKey.value);
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||

@@ -4,4 +4,6 @@ class KinBalance {
   KinAmount amount = KinAmount.zero;
 
   KinAmount pendingAmount = KinAmount.zero;
+
+  KinBalance(this.amount, [this.pendingAmount]);
 }
