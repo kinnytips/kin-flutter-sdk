@@ -1,23 +1,12 @@
-import 'dart:async';
-
-import 'package:kin_base/models/app/account/create_kin_account_response.dart';
-import 'package:kin_base/models/app/account/retrieve_kin_account_response.dart';
-import 'package:kin_base/models/app/exceptions/account_id_not_set_exception.dart';
-import 'package:kin_base/models/app/interfaces/status.dart';
-import 'package:kin_base/models/app/transaction/submit_kin_transaction_response.dart';
-import 'package:kin_base/models/app/transaction/transaction_history_response.dart';
-import 'package:kin_base/services/kin_services.dart';
-import 'package:logging/logging.dart';
-
 import 'package:kin_base/base/tools/observers.dart';
 
 import 'base/kin_account_context.dart';
 import 'base/kin_environment.dart';
+import 'base/models/kin_account.dart';
 import 'base/models/kin_balance.dart';
 import 'base/models/kin_payment.dart';
 import 'base/stellar/models/network_environment.dart';
 import 'base/tools/observers.dart';
-import 'models/agora/protobuf/account/v4/account_service.pbenum.dart';
 
 /// KinSDK allows the user to interact with the Kin blockchain
 /// SDK can be instantiated either in production mode or development mode
@@ -29,9 +18,8 @@ class Kin {
 
   final bool _production;
   final int _appIndex;
-  final String _appAddress;
-  final String _credentialsUser;
-  final String _credentialsPass;
+  final String _credentialUser;
+  final String _credentialPass;
   final void Function(KinBalance kinBalance) _onBalanceChange;
   final void Function(List<KinPayment> payments) _onPayment;
   final void Function(Kin kin) _onAccountContext;
@@ -43,55 +31,94 @@ class Kin {
   Observer<List<KinPayment>> _observerPayments;
   Observer<KinBalance> _observerBalance;
 
-   Kin(
-            this._production,
-  this._appIndex,
-  this._appAddress,
-  this._credentialsUser,
-  this._credentialsPass,
-  this._onBalanceChange,
-       this._onPayment,
-       this._onAccountContext
-    ) : _lifecycle = DisposeBag() {
+  Kin(this._production,
+      this._appIndex,
+      this._credentialUser,
+      this._credentialPass,
+      this._onBalanceChange,
+      this._onPayment,
+      this._onAccountContext) : _lifecycle = DisposeBag() {
+    //fetch the account and set the context
+    this._environment = this._getEnvironment();
 
+    this._environment.allAccountIds().then((ids) {
+      //First get (or create) an account id for this device
+      String accountId =
+          ids.isEmpty ? createAccount() : ids[0].stellarBase32Encode();
 
-        //fetch the account and set the context
-        this._environment = this.getEnvironment();
+      //Then set the context with that single account
+      this._context = this.getKinContext(accountId);
 
-        this._environment.allAccountIds().then(it -> {
-            //First get (or create) an account id for this device
-            String accountId = it.size() == 0 ? createAccount() : ((KinAccountId) it.get(0)).stellarBase32Encode();
+      if (_onAccountContext != null) {
+        _onAccountContext(this);
+      }
 
-            //Then set the context with that single account
-            this.context = this.getKinContext(accountId);
+      return null;
+    });
 
-            if (onAccountContext != null) {
-                onAccountContext.invoke(this);
-            }
-
-            return null;
-        });
-
-        //handle listeners
-        if (this._balanceChanged != null) {
-            this._watchBalance(); //watch for changes in balance
-        }
-
-        if (this._paymentHappened != null) {
-            this._watchPayments(); //watch for changes in payments
-        }
+    //handle listeners
+    if (this._onBalanceChange != null) {
+      this._watchBalance(); //watch for changes in balance
     }
+
+    if (this._onPayment != null) {
+      this._watchPayments(); //watch for changes in payments
+    }
+  }
+
+  String get address {
+    return this._context.accountId.base58Encode();
+  }
+
+  void _watchPayments() {
+    //watch for changes to this account
+    _observerPayments = _context.observePayments(mode: ObservationMode.Passive);
+
+    _observerPayments.add((payments) {
+      if (_onPayment != null) {
+        _onPayment(payments);
+      }
+    });
+
+    _observerPayments.disposedBy(_lifecycle);
+  }
+
+  void _watchBalance() {
+    //watch for changes to this account
+    _observerBalance = _context.observeBalance(mode: ObservationMode.Passive);
+
+    _observerBalance.add((kinBalance) {
+      if (_onBalanceChange != null) {
+        _onBalanceChange(kinBalance);
+      }
+    });
+
+    _observerBalance.disposedBy(_lifecycle);
+  }
+
+  KinAccountContext getKinContext(String accountId) {
+    return new KinAccountContext.useExistingAccount(
+        _environment, KinAccountId.fromIdString(accountId));
+  }
+
+  String createAccount() {
+    var kinContext = KinAccountContext.newAccount(_environment);
+    return kinContext.accountId.stellarBase32Encode();
+  }
 
   KinEnvironmentAgora _getEnvironment() {
     String storageLoc = "/tmp/kin";
 
-    NetworkEnvironment networkEnv = _production ? KinStellarMainNetKin3.instance : KinStellarTestNetKin3.instance;
+    NetworkEnvironment networkEnv = _production
+        ? KinStellarMainNetKin3.instance
+        : KinStellarTestNetKin3.instance;
 
-    KinEnvironmentAgora();
+    var env = KinEnvironmentAgora(networkEnv);
 
+    return env;
   }
 
-    /*
+/*
 
     private KinEnvironment.Agora getEnvironment() {
         String storageLoc = "/tmp/kin";
