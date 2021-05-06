@@ -1,9 +1,15 @@
+:import 'package:kin_base/base/models/key.dart';
+import 'package:kin_base/base/models/kin_account.dart';
+import 'package:kin_base/base/models/kin_balance.dart';
+import 'package:kin_base/base/models/quark_amount.dart';
+import 'package:kin_base/base/tools/observers.dart';
 import 'package:kin_base/models/app/account/create_kin_account_response.dart';
 import 'package:kin_base/models/app/account/retrieve_kin_account_response.dart';
 import 'package:kin_base/models/app/agora/agora_environment.dart';
 import 'package:kin_base/models/app/transaction/submit_kin_transaction_response.dart';
 import 'package:kin_base/models/app/transaction/transaction_history_response.dart';
 import 'package:kin_base/services/account/account_service.dart';
+import 'package:kin_base/base/tools/extensions.dart';
 import 'package:kin_base/services/transaction/transaction_service.dart';
 
 /// Services aggregator for the all the operations possible on the Kin blockchain
@@ -31,7 +37,20 @@ class KinService {
     return this._accountService.createAccount();
   }
 
+  Future<KinAccount> getAccount(KinAccountId accountId) async {
+    var response = await retrieveAccount(accountId.stellarBase32Encode()) ;
+
+    var key = PublicKey.fromBytes( response.accountInfo.accountId.value );
+    var amount = QuarkAmount(response.accountInfo.balance.toInt()).toKin() ;
+    var balance = KinBalance(amount);
+    var kinAccount = KinAccount(key, balance: balance, status:  KinAccountStatusRegistered(0) );
+
+    return kinAccount ;
+  }
+
   /// Retrieves an existing wallet on the blockchain
+  ///
+  /// - [accountId] stellarBase32Encode
   Future<RetrieveKinAccountResponse> retrieveAccount(String accountId) async {
     return this._accountService.getAccountInfo(accountId);
   }
@@ -53,6 +72,10 @@ class KinService {
           destinationAddress,
           fee,
         );
+  }
+
+  Observer<KinAccount> streamAccount(KinAccountId kinAccountId) {
+    //TODO
   }
 
   /// Fetches the transaction history of the account
