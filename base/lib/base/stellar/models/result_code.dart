@@ -3,7 +3,6 @@ class ResultCode {
   ResultCode(this.value);
 }
 
-
 class Success extends ResultCode {
   Success(): super(0);
 }
