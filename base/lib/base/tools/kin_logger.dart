@@ -18,23 +18,24 @@ abstract class KinLoggerFactory {
 
 /// Basic logging implementation (prints to console).
 class KinLoggerImpl implements KinLogger {
+  final String name;
 
-  final String name ;
   @override
   bool isLoggingEnabled;
 
-  KinLoggerImpl(this.name, [ this.isLoggingEnabled = false ]);
+  KinLoggerImpl(this.name, [bool isLoggingEnabled])
+      : isLoggingEnabled = isLoggingEnabled ?? true ;
 
   @override
   void error(String msg, [Error throwable]) {
-    if (!isLoggingEnabled) return ;
+    if (!isLoggingEnabled) return;
     print('[ERROR] $name> $msg');
     print(error);
   }
 
   @override
   void log(String msg) {
-    if (!isLoggingEnabled) return ;
+    if (!isLoggingEnabled) return;
     print('[INFO] $name> $msg');
   }
 
@@ -45,17 +46,16 @@ class KinLoggerImpl implements KinLogger {
 
   @override
   void warning(String msg) {
-    if (!isLoggingEnabled) return ;
+    if (!isLoggingEnabled) return;
     print('[WARN] $name> $msg');
   }
-
 }
 
 class KinLoggerFactoryImpl implements KinLoggerFactory {
   @override
   bool isLoggingEnabled;
 
-  KinLoggerFactoryImpl([ this.isLoggingEnabled = false ]);
+  KinLoggerFactoryImpl([this.isLoggingEnabled = false]);
 
   @override
   KinLogger getLogger(String name) {
