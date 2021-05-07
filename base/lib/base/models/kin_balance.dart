@@ -1,7 +1,10 @@
 import 'kin_amount.dart';
 
 class KinBalance {
-  KinAmount amount = KinAmount.zero;
+  final KinAmount amount ;
+  final KinAmount pendingAmount ;
 
-  KinAmount pendingAmount = KinAmount.zero;
+  KinBalance([KinAmount amount, KinAmount pendingAmount])
+      : amount = amount ?? KinAmount.zero,
+        pendingAmount = pendingAmount ?? amount ?? KinAmount.zero ;
 }

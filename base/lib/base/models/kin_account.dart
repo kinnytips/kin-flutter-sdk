@@ -15,6 +15,10 @@ class KinAccountId {
   KinAccountId.fromIdString(String accountId)
       : this(KeyPair.fromAccountId(accountId).publicKey);
 
+  KinAccountId.fromPrivateKey(PrivateKey privateKey) : this.fromPublicKey(privateKey.asPublicKey());
+
+  KinAccountId.fromPublicKey(PublicKey publicKey) : this(publicKey.value);
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -46,15 +50,19 @@ class KinAccountStatusUnregistered extends KinAccountStatus {
   static final KinAccountStatusUnregistered instance =
       KinAccountStatusUnregistered._();
 
-  KinAccountStatusUnregistered._() : super._(0);
+  static final int defaultValue = 0 ;
+
+  KinAccountStatusUnregistered._() : super._(defaultValue);
 
   factory KinAccountStatusUnregistered() => instance;
 }
 
 class KinAccountStatusRegistered extends KinAccountStatus {
+  static final int defaultValue = 1 ;
+
   int sequence;
 
-  KinAccountStatusRegistered(this.sequence) : super._(1);
+  KinAccountStatusRegistered(this.sequence) : super._(defaultValue);
 }
 
 class KinAccount {
@@ -73,4 +81,9 @@ class KinAccount {
         tokenAccounts = tokenAccounts ?? <PublicKey>[],
         balance = balance ?? KinBalance(),
         status = status ?? KinAccountStatusUnregistered();
+
+  KinAccount merge(KinAccount newer) {
+    return KinAccount(key, id: id, tokenAccounts: newer.tokenAccounts, balance: newer.balance, status: newer.status);
+  }
+
 }

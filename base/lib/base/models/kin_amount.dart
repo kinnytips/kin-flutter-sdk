@@ -6,7 +6,7 @@ class KinAmount {
   static final KinAmount zero = KinAmount(Decimal.zero);
   static final KinAmount one = KinAmount(Decimal.one);
 
-  Decimal amount;
+  final Decimal amount;
 
   KinAmount(this.amount);
 

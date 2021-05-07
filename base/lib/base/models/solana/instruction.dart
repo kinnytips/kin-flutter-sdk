@@ -1,7 +1,6 @@
 import 'dart:typed_data';
-import 'dart:ui';
 
-import 'package:flutter/foundation.dart';
+
 import 'package:kin_base/base/models/key.dart';
 import 'package:kin_base/base/tools/extensions.dart';
 import 'package:meta/meta.dart';
@@ -117,7 +116,7 @@ class Instruction {
   int get hashCode {
     var result = program.hashCode;
     result = 31 * result + accounts.hashCode;
-    result = 31 * result + hashList(data);
+    result = 31 * result + data.computeHashCode();
     return result;
   }
 }
@@ -151,8 +150,8 @@ class CompiledInstruction {
   @override
   int get hashCode {
     var result = programIndex.toInt();
-    result = 31 * result + hashList(accounts);
-    result = 31 * result + hashList(data);
+    result = 31 * result + accounts.computeHashCode();
+    result = 31 * result + data.computeHashCode();
     return result;
   }
 }

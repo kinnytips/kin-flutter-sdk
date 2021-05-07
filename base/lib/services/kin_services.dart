@@ -1,3 +1,9 @@
+import 'package:kin_base/base/models/key.dart';
+import 'package:kin_base/base/models/kin_account.dart';
+import 'package:kin_base/base/models/kin_balance.dart';
+import 'package:kin_base/base/models/quark_amount.dart';
+import 'package:kin_base/base/stellar/models/kin_transaction.dart';
+import 'package:kin_base/base/tools/observers.dart';
 import 'package:kin_base/models/app/account/create_kin_account_response.dart';
 import 'package:kin_base/models/app/account/retrieve_kin_account_response.dart';
 import 'package:kin_base/models/app/agora/agora_environment.dart';
@@ -5,6 +11,8 @@ import 'package:kin_base/models/app/transaction/submit_kin_transaction_response.
 import 'package:kin_base/models/app/transaction/transaction_history_response.dart';
 import 'package:kin_base/services/account/account_service.dart';
 import 'package:kin_base/services/transaction/transaction_service.dart';
+
+import 'package:kin_base/base/network/api/agora/proto_to_model_v4.dart';
 
 /// Services aggregator for the all the operations possible on the Kin blockchain
 class KinService {
@@ -27,11 +35,19 @@ class KinService {
   }
 
   /// To create a fresh new account/wallet on the Kin blockchain
-  Future<CreateKinAccountResponse> createAccount() async {
-    return this._accountService.createAccount();
+  Future<KinAccount> createAccount({KinAccountId accountId, PrivateKey privateKey}) async {
+    var response = await this._accountService.createAccount();
+    return response.accountInfo.toKinAccount() ;
+  }
+
+  Future<KinAccount> getAccount(KinAccountId accountId) async {
+    var response = await retrieveAccount(accountId.stellarBase32Encode()) ;
+    return response.accountInfo.toKinAccount() ;
   }
 
   /// Retrieves an existing wallet on the blockchain
+  ///
+  /// - [accountId] stellarBase32Encode
   Future<RetrieveKinAccountResponse> retrieveAccount(String accountId) async {
     return this._accountService.getAccountInfo(accountId);
   }
@@ -55,9 +71,37 @@ class KinService {
         );
   }
 
+  Observer<KinAccount> streamAccount(KinAccountId kinAccountId) {
+    //TODO
+  }
+
+  Observer<KinTransaction> streamNewTransactions(KinAccountId kinAccountId) {
+    //TODO
+  }
+
   /// Fetches the transaction history of the account
   Future<TransactionHistoryResponse> getTransactionHistory(
       String accountId) async {
     return this._transactionService.getTransactionHistory(accountId);
   }
+
+
+  Future<List<KinTransaction>> getLatestTransactions(KinAccountId kinAccountId) async {
+    //TODO
+  }
+
+  Future<List<KinTransaction>> getTransactionPage(
+      KinAccountId kinAccountId, KinTransactionPagingToken pagingToken,
+      [KinServiceOrder order = KinServiceOrder.descending]) async {
+    //TODO
+  }
+
 }
+
+
+enum KinServiceOrder {
+  ascending,
+  descending
+}
+
+
