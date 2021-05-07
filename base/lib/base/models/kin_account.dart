@@ -81,4 +81,9 @@ class KinAccount {
         tokenAccounts = tokenAccounts ?? <PublicKey>[],
         balance = balance ?? KinBalance(),
         status = status ?? KinAccountStatusUnregistered();
+
+  KinAccount merge(KinAccount newer) {
+    return KinAccount(key, id: id, tokenAccounts: newer.tokenAccounts, balance: newer.balance, status: newer.status);
+  }
+
 }

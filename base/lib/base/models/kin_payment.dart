@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:kin_base/base/models/kin_account.dart';
 import 'package:kin_base/base/network/api/kin_account_creation_api.dart';
 import 'package:kin_base/base/tools/extensions.dart';
 
@@ -71,9 +72,9 @@ class KinPayment {
 
   final KinPaymentStatus status;
 
-  final KinAccountCreationApi sourceAccountId;
+  final KinAccountId sourceAccountId;
 
-  final KinAccountCreationApi destinationAccountId;
+  final KinAccountId destinationAccountId;
 
   final KinAmount amount;
 
