@@ -15,6 +15,7 @@ dependencies:
   tweetnacl: ^0.3.2 # Just to make 'stellarfork'  work. Maybe remove in the future.
   eventsource: ^0.2.3 # Should be substituted, not maintained package.
   base32: ^1.1.2
+  fast_base58: ^0.1.9
   http: ^0.12.2
   fixnum: ^0.10.11
   protobuf: ^1.0.1
