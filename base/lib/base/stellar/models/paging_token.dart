@@ -3,7 +3,7 @@ class PagingToken {
 
   PagingToken(this.value);
 
-  int compareTo(PagingToken other){
-    this.value.compareTo(other.value)
+  int compareTo(PagingToken other) {
+    return this.value.compareTo(other.value);
   }
 }
