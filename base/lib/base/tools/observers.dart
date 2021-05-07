@@ -217,8 +217,8 @@ class ListSubject<T> extends ValueSubject<List<T>> implements ListObserver<T> {
 
   final void Function() _fetchPreviousPage;
 
-  ListSubject(this._fetchNextPage, this._fetchPreviousPage,
-      void Function() triggerInvalidation)
+  ListSubject([this._fetchNextPage, this._fetchPreviousPage,
+      void Function() triggerInvalidation])
       : super(triggerInvalidation);
 
   @override
