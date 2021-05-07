@@ -1,11 +1,13 @@
 import 'package:kin_base/base/kin_environment.dart';
 import 'package:kin_base/base/models/kin_balance.dart';
+import 'package:kin_base/base/stellar/models/kin_transaction.dart';
 import 'package:kin_base/base/tools/kin_logger.dart';
 import 'package:kin_base/base/tools/observers.dart';
 import 'package:kin_base/services/kin_services.dart';
 import 'package:kin_base/stellarfork/key_pair.dart';
 import 'package:kin_base/stellarfork/xdr/xdr_signing.dart';
 
+import 'package:kin_base/base/models/stellar_base_type_conversions.dart';
 
 import 'models/account_spec.dart';
 import 'models/appidx.dart';
@@ -215,6 +217,71 @@ class KinAccountContextBase implements KinAccountReadOperations , KinPaymentRead
     return _balanceSubject ;
   }
 
+  ListSubject<KinPayment> _paymentsSubject ;
+
+  ListSubject<KinPayment> get paymentsSubject {
+    if (_paymentsSubject == null) {
+      _paymentsSubject = ListSubject<KinPayment>(
+          () async {
+            var page = await _requestNextPage() ;
+            _paymentsSubject.onNext( page.asKinPayments() );
+          },
+          () async {
+            var page = await _requestPreviousPage() ;
+            _paymentsSubject.onNext( page.asKinPayments() );
+          },
+          () {
+            executors.parallelIO.execute(() async {
+              var transactions = await storage.getStoredTransactions(accountId);
+              var items = transactions?.items ?? <KinTransaction>[] ;
+              var payments = items.asKinPayments(true);
+              _paymentsSubject.onNext(payments);
+              fetchUpdatedTransactionHistory();
+            });
+          }
+      ) ;
+    }
+    return _paymentsSubject ;
+  }
+
+  Future<List<KinTransaction>> fetchUpdatedTransactionHistory() async {
+    var page = await _requestNextPage();
+    paymentsSubject.onNext(page.asKinPayments(true));
+    return page ;
+  }
+
+  Future<List<KinTransaction>> _requestNextPage() async {
+    var transactions = await storage.getStoredTransactions(accountId);
+
+    List<KinTransaction> newTransactions;
+    if (transactions?.headPagingToken != null) {
+      newTransactions = await service.getTransactionPage(
+          accountId, transactions.headPagingToken, KinServiceOrder.ascending);
+    } else {
+      newTransactions = await service.getLatestTransactions(accountId);
+    }
+
+    storage.upsertNewTransactionsInStorage(accountId, newTransactions);
+
+    return newTransactions;
+  }
+
+  Future<List<KinTransaction>> _requestPreviousPage() async {
+    var transactions = await storage.getStoredTransactions(accountId);
+
+    List<KinTransaction> newTransactions;
+    if (transactions?.tailPagingToken != null) {
+      newTransactions = await service.getTransactionPage(
+          accountId, transactions.tailPagingToken, KinServiceOrder.descending);
+    } else {
+      newTransactions = await service.getLatestTransactions(accountId);
+    }
+
+    storage.upsertOldTransactionsInStorage(accountId, newTransactions);
+
+    return newTransactions;
+  }
+
   Future<KinBalance> fetchUpdatedBalance() async {
     var account = await getAccount(forceUpdate: true);
     storage.updateAccountInStorage(account);
@@ -265,7 +332,7 @@ class KinAccountContextBase implements KinAccountReadOperations , KinPaymentRead
 
   @override
   Observer<KinBalance> observeBalance({ObservationMode mode = ObservationMode.Passive, ValueListener<KinBalance> balanceListener}) {
-    _log.log("observeBalance");
+    log.log("observeBalance");
     _setupActiveStreamingUpdatesIfNecessary(balanceSubject, mode);
     balanceSubject.requestInvalidation();
 
@@ -277,7 +344,7 @@ class KinAccountContextBase implements KinAccountReadOperations , KinPaymentRead
   }
 
   final DisposeBag _lifecycle = DisposeBag();
-  final Observer<KinAccount> _accountStream ;
+  Observer<KinAccount> _accountStream ;
   
   Observer<T>  _setupActiveStreamingUpdatesIfNecessary<T>(Observer<T> observer, ObservationMode mode) {
     switch (mode) {
@@ -336,8 +403,29 @@ class KinAccountContextBase implements KinAccountReadOperations , KinPaymentRead
 
   @override
   ListObserver<KinPayment> observePayments({ObservationMode mode = ObservationMode.Passive, ValueListener<List<KinPayment>> paymentsListener}) {
-    // TODO: implement observePayments
-    throw UnimplementedError();
+    if (mode == ObservationMode.Passive) {
+      paymentsSubject.requestInvalidation();
+      return paymentsSubject;
+    }
+    else if (mode == ObservationMode.Active) {
+      paymentsSubject.requestInvalidation();
+      _setupActiveStreamingUpdatesIfNecessary(paymentsSubject, mode);
+      return paymentsSubject;
+    }
+    else if (mode == ObservationMode.ActiveNewOnly) {
+      var listSubject = ListSubject<KinPayment>() ;
+      var lifecycle = DisposeBag();
+      
+      var observer = service.streamNewTransactions(accountId);
+      observer.disposedBy(lifecycle);
+      observer.mapPromise((e) => e.asKinPayments() ).then((e) => listSubject.onNext(e));
+      observer.doOnDisposed(() => lifecycle.dispose() );
+      
+      return listSubject ;
+    }
+    else {
+      throw StateError("Can't handle mode: $mode");
+    }
   }
 
   @override
@@ -358,6 +446,12 @@ class KinAccountContextBase implements KinAccountReadOperations , KinPaymentRead
       return null ;
     }
 
+  }
+
+  @override
+  Future<KinAccount> getAccount({bool forceUpdate = false, accountCallback}) {
+    // TODO: implement getAccount
+    throw UnimplementedError();
   }
 
   /*
@@ -402,7 +496,7 @@ class KinAccountContextImpl extends KinAccountContextBase with KinAccountContext
     var newAccount = KinAccount(privateKey);
     env.storage.addAccount(newAccount);
 
-    var envAgora = KinEnvironment as KinEnvironmentAgora ;
+    var envAgora = env as KinEnvironmentAgora ;
 
     return KinAccountContextImpl._(
         env.executors,
@@ -415,7 +509,7 @@ class KinAccountContextImpl extends KinAccountContextBase with KinAccountContext
   }
 
   factory KinAccountContextImpl.existingAccount(KinEnvironment env, KinAccountId accountId) {
-    var envAgora = KinEnvironment as KinEnvironmentAgora ;
+    var envAgora = env as KinEnvironmentAgora ;
 
     return KinAccountContextImpl._(
         env.executors,
@@ -425,6 +519,89 @@ class KinAccountContextImpl extends KinAccountContextBase with KinAccountContext
         envAgora?.appInfoProvider,
         env.logger
     );
+  }
+
+  @override
+  Future<KinAccount> getAccount({bool forceUpdate = false, accountCallback}) async {
+    log.log("getAccount");
+
+    var storedAccount = await storage.getStoredAccount(accountId);
+
+    if (storedAccount == null) {
+      throw StateError("Private key missing for account with id: $accountId");
+    }
+
+    if ( storedAccount.status.value == KinAccountStatusUnregistered.defaultValue ) {
+      try {
+        return await _registerAccount(storedAccount);
+      }
+      catch(e) {
+        return maybeFetchAccountDetails() ;
+      }
+    }
+    else if ( storedAccount.status.value == KinAccountStatusRegistered.defaultValue ) {
+      if (!forceUpdate) {
+        return storedAccount ;
+      }
+      else {
+        return maybeFetchAccountDetails();
+      }
+    }
+    else {
+      throw StateError("Can't handle account.status: ${ storedAccount.status }");
+    }
+
+  }
+
+  Future<KinAccount> _registerAccount(KinAccount account) async {
+    var serviceAccount = await service.createAccount( accountId: account.id, privateKey: account.key as PrivateKey) ;
+    var accountToStore = account.merge(serviceAccount);
+
+    if (!storage.updateAccount(accountToStore)) {
+      throw StateError("Failed to store Account Data!");
+    } else {
+      return accountToStore;
+    }
+  }
+
+  @override
+  Future<KinPayment> payInvoice(Invoice invoice, KinAccountId destinationAccount, AppIdx processingAppIdx, TransferType type) {
+    // TODO: implement payInvoice
+    throw UnimplementedError();
+  }
+
+  @override
+  void sendKinPayment(KinAmount amount, KinAccountId destinationAccount, KinMemo memo, Invoice invoice, paymentCallback) {
+    // TODO: implement sendKinPayment
+  }
+
+  @override
+  Future<KinPayment> sendKinPaymentToAccount(KinAmount amount, KinAccountId destinationAccount, KinMemo memo, Invoice invoice) {
+    // TODO: implement sendKinPaymentToAccount
+    throw UnimplementedError();
+  }
+
+  @override
+  void sendKinPayments(List<KinPaymentItem> payments, KinMemo memo, paymentsCallback) {
+    // TODO: implement sendKinPayments
+  }
+
+  @override
+  Future<List<KinPayment>> sendKinPaymentsByAccountSpec(List<KinPaymentItem> payments, KinMemo memo, AccountSpec sourceAccountSpec, AccountSpec destinationAccountSpec) {
+    // TODO: implement sendKinPaymentsByAccountSpec
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<KinPayment>> sendKinPaymentsWithAdditionalSignatures(List<KinPaymentItem> payments, KinMemo memo, AccountSpec sourceAccountSpec, AccountSpec destinationAccountSpec, List<XdrDecoratedSignature> additionalSignatures, QuarkAmount feeOverride) {
+    // TODO: implement sendKinPaymentsWithAdditionalSignatures
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<KinPayment>> sendKinTransaction(Future<KinTransaction> Function() buildTransaction) {
+    // TODO: implement sendKinTransaction
+    throw UnimplementedError();
   }
 
 

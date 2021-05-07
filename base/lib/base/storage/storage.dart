@@ -2,7 +2,12 @@ import 'package:kin_base/base/models/invoices.dart';
 import 'package:kin_base/base/models/kin_account.dart';
 import 'package:kin_base/base/models/quark_amount.dart';
 import 'package:kin_base/base/models/kin_balance.dart';
+import 'package:kin_base/base/stellar/models/kin_transaction.dart';
+import 'package:kin_base/base/stellar/models/kin_transactions.dart';
+import 'package:kin_base/base/stellar/models/network_environment.dart';
 
+
+typedef StorageBuilder = Storage Function({NetworkEnvironment networkEnvironment});
 
 abstract class Storage {
   bool addAccount(KinAccount account);

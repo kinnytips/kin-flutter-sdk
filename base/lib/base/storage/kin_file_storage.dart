@@ -2,18 +2,22 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:fixnum/fixnum.dart' as fixnum;
 import 'package:kin_base/base/models/invoices.dart';
-import 'package:kin_base/base/models/key.dart';
 import 'package:kin_base/base/models/kin_account.dart';
 import 'package:kin_base/base/models/kin_balance.dart';
 import 'package:kin_base/base/models/quark_amount.dart';
+import 'package:kin_base/base/models/sha_224_hash.dart';
+import 'package:kin_base/base/network/api/agora/proto_to_model_v4.dart';
+import 'package:kin_base/base/stellar/models/kin_transaction.dart';
+import 'package:kin_base/base/stellar/models/kin_transactions.dart';
 import 'package:kin_base/base/stellar/models/network_environment.dart';
 import 'package:kin_base/base/tools/executor_service.dart';
 import 'package:kin_base/base/tools/hex.dart';
+import 'package:kin_base/models/agora/protobuf/common/v3/model.pb.dart' as models ;
 import 'package:kin_base_storage/kin_base_storage.dart' as base_storage;
 import 'package:path/path.dart' as path;
 
+import 'kin_storage_extension.dart';
 import 'storage.dart';
 
 class KinFileStorage implements Storage {
@@ -27,52 +31,18 @@ class KinFileStorage implements Storage {
 
   final ExecutorServices _executors;
 
-  KinFileStorage(this._filesDir, this._networkEnvironment, this._executors);
+  KinFileStorage(
+      this._filesDir, this._networkEnvironment, [ExecutorServices executors])
+      : _executors = executors ?? ExecutorServices();
 
   @override
   bool addAccount(KinAccount kinAccount) {
     return _writeToFile(
         _directoryForAccount(kinAccount.id),
         fileNameForAccountInfo,
-        toStorageKinAccount(kinAccount).writeToBuffer());
+        kinAccount.toStorageKinAccount().writeToBuffer());
   }
 
-  base_storage.KinAccount toStorageKinAccount(KinAccount kinAccount) {
-    var storageKinAccount = base_storage.KinAccount.create()
-      ..balance = toStorageKinBalance(kinAccount.balance);
-
-    var status = kinAccount.status;
-    if (status is KinAccountStatusUnregistered) {
-      storageKinAccount.status = base_storage.KinAccount_Status.UNREGISTERED;
-    } else if (status is KinAccountStatusRegistered) {
-      storageKinAccount
-        ..status = base_storage.KinAccount_Status.REGISTERED
-        ..sequenceNumber = fixnum.Int64(status.sequence);
-    }
-
-    var key = kinAccount.key;
-
-    if (key is PublicKey) {
-      var publicKey = base_storage.PublicKey.create()..value = key.value;
-      storageKinAccount.publicKey = publicKey;
-    } else if (key is PrivateKey) {
-      var privateKey = base_storage.PrivateKey.create()..value = key.value;
-      storageKinAccount.privateKey = privateKey;
-    }
-
-    storageKinAccount.accounts.addAll(kinAccount.tokenAccounts.map((e) {
-      return base_storage.PublicKey.create()..value = e.value;
-    }));
-
-    return storageKinAccount;
-  }
-
-  base_storage.KinBalance toStorageKinBalance(KinBalance kinBalance) {
-    return base_storage.KinBalance.create()
-      ..quarkAmount = fixnum.Int64(kinBalance.amount.toQuarks().value)
-      ..pendingQuarkAmount =
-          fixnum.Int64(kinBalance.pendingAmount.toQuarks().value);
-  }
 
   String _directoryForAccount(KinAccountId accountId) {
     return _directoryForAllAccounts() + "${accountId.hashCode}/";
@@ -90,8 +60,9 @@ class KinFileStorage implements Storage {
   bool _writeToFile(String directory, String fileName, Uint8List body) {
     var file = File(path.join(directory, fileName));
 
-    if (!file.parent.existsSync()) {
-      file.parent.create(recursive: true);
+    var parent = file.parent;
+    if (!parent.existsSync()) {
+      parent.createSync(recursive: true);
     }
 
     file.writeAsBytesSync(body);
@@ -126,8 +97,7 @@ class KinFileStorage implements Storage {
   }
 
   @override
-  Future<List<InvoiceList>> addInvoiceLists(
-      KinAccountId accountId, List<InvoiceList> invoiceLists) {
+  Future<List<InvoiceList>> addInvoiceLists(KinAccountId accountId, List<InvoiceList> invoiceLists) {
     // TODO: implement addInvoiceLists
     throw UnimplementedError();
   }
@@ -146,21 +116,30 @@ class KinFileStorage implements Storage {
 
   @override
   KinAccount getAccount(KinAccountId accountId) {
-    // TODO: implement getAccount
-    throw UnimplementedError();
+    var account = this._getAccountFromAccountDirectory(_directoryForAccount(accountId)) ;
+    return account;
   }
 
   @override
   List<KinAccountId> getAllAccountIds() {
-    // TODO: implement getAllAccountIds
-    throw UnimplementedError();
+    var accountDirectories = _subdirectories(_directoryForAllAccounts());
+
+    var accountIds = accountDirectories.map((d) => _getAccountFromAccountDirectory(d)).map((e) => e.id).toList();
+
+    return accountIds ;
   }
 
-  @override
-  Future<Map<InvoiceListId, InvoiceList>> getInvoiceListsMapForAccountId(
-      KinAccountId account) {
-    // TODO: implement getInvoiceListsMapForAccountId
-    throw UnimplementedError();
+  KinAccount _getAccountFromAccountDirectory(String directory) {
+    var bytes = _readFile(directory, fileNameForAccountInfo);
+    if (bytes.isEmpty) return null;
+
+    try {
+      var storageKinAccount = base_storage.KinAccount.fromBuffer(bytes);
+      return storageKinAccount.toKinAccount();
+    } catch (e) {
+      print(e);
+      return null;
+    }
   }
 
   @override
@@ -182,32 +161,120 @@ class KinFileStorage implements Storage {
   }
 
   @override
-  Future<KinAccount> getStoredAccount(KinAccountId accountId) {
-    // TODO: implement getStoredAccount
-    throw UnimplementedError();
+  Future<KinAccount> getStoredAccount(KinAccountId accountId) async {
+    return _executors.sequentialIO.execute(() => getAccount(accountId));
   }
 
   @override
-  Future getStoredTransactions(KinAccountId accountId) {
-    // TODO: implement getStoredTransactions
-    throw UnimplementedError();
+  Future<KinTransactions> getStoredTransactions(KinAccountId accountId) async {
+    var invoiceListsMap = await getInvoiceListsMapForAccountId(accountId);
+    var transactions = getTransactions(accountId) ;
+
+    var list = transactions.items.map((t) {
+      var memo = t.memo.getAgoraMemo();
+      if (memo != null) {
+        if (t is SolanaKinTransaction) {
+          var invoiceListId = InvoiceListId(SHA224Hash.just(memo.foreignKeyBytes));
+          var invoiceList = invoiceListsMap[invoiceListId];
+          return t.copyWithInvoiceList(invoiceList);
+        }
+        else {
+          throw StateError("Can't handle transaction of type: $t");
+        }
+      }
+      else {
+        return t ;
+      }
+    }).toList() ;
+
+    var transactionsWithInvoices = KinTransactions(list) ;
+    return transactionsWithInvoices ;
+  }
+
+  Future<Map<InvoiceListId, InvoiceList>> getInvoiceListsMapForAccountId(KinAccountId account) async {
+    var bytes = _readFile(
+        _directoryForInvoices(account),
+        _fileNameForInvoices(account)
+    );
+
+    if (bytes.isEmpty) {
+      return <InvoiceListId, InvoiceList>{};
+    } else {
+      var invoices = base_storage.Invoices.fromBuffer(bytes);
+
+      Map<InvoiceListId, InvoiceList> map = invoices.invoiceLists.map((key, value) {
+        var invoiceListId = InvoiceListId( SHA224Hash(key) );
+        var invoiceList = models.InvoiceList.fromBuffer(value.networkInvoiceList).toInvoiceList() ;
+        return MapEntry(invoiceListId,  invoiceList );
+      });
+
+      return map ;
+    }
+  }
+
+  String _directoryForInvoices(KinAccountId accountId) {
+    return "${_directoryForAccount(accountId)}_invoices";
+  }
+
+  String _fileNameForInvoices(KinAccountId accountId) {
+    return "${accountId.hashCode}_invoices";
   }
 
   @override
-  getTransactions(KinAccountId key) {
-    // TODO: implement getTransactions
-    throw UnimplementedError();
+  KinTransactions getTransactions(KinAccountId key) {
+    var transactionsDir = _directoryForTransactions(key);
+    var transactionsFile = _fileNameForTransactions(key);
+
+    var transactions = _getTransactionsFromFile(transactionsDir, transactionsFile)
+
+    return transactions ;
+  }
+
+  KinTransactions _getTransactionsFromFile(String directory, String fileName){
+    var bytes = _readFile(directory, fileName);
+    if (bytes.isEmpty) return null;
+
+    try {
+      var storageTransaction = base_storage.KinTransactions.fromBuffer(bytes);
+      return storageTransaction.toKinTransactions()
+    } catch (e) {
+      print(e);
+      return null;
+    }
+  }
+
+  /*(
+    private fun getTransactionsFromFile(directory: String, fileName: String): KinTransactions? {
+        val bytes = readFile(directory, fileName)
+        if (bytes.isEmpty()) return null
+
+        try {
+            val storageTransaction = StorageKinTransactions.parseFrom(bytes)
+            return storageTransaction.toKinTransactions()
+        } catch (e: InvalidProtocolBufferException) {
+            e.printStackTrace()
+            return null
+        }
+    }
+   */
+
+  String _directoryForTransactions(KinAccountId accountId) {
+    return "${_directoryForAccount(accountId)}_transactions";
+  }
+
+
+  String _fileNameForTransactions(KinAccountId accountId) {
+    return "${accountId.hashCode}_transactions" ;
   }
 
   @override
-  Future<List> insertNewTransactionInStorage(
-      KinAccountId accountId, newTransaction) {
+  Future<List<KinTransaction>> insertNewTransactionInStorage(KinAccountId accountId, KinTransaction newTransaction) {
     // TODO: implement insertNewTransactionInStorage
     throw UnimplementedError();
   }
 
   @override
-  void putTransactions(KinAccountId key, transactions) {
+  void putTransactions(KinAccountId key, KinTransactions transactions) {
     // TODO: implement putTransactions
   }
 
@@ -248,7 +315,7 @@ class KinFileStorage implements Storage {
   }
 
   @override
-  Future<List> storeTransactions(KinAccountId accountId, List transactions) {
+  Future<List<KinTransaction>> storeTransactions(KinAccountId accountId, List<KinTransaction> transactions) {
     // TODO: implement storeTransactions
     throw UnimplementedError();
   }
@@ -260,7 +327,7 @@ class KinFileStorage implements Storage {
   }
 
   @override
-  Future<KinAccount> updateAccountBalance(KinAccountId accountId, balance) {
+  Future<KinAccount> updateAccountBalance(KinAccountId accountId, KinBalance balance) {
     // TODO: implement updateAccountBalance
     throw UnimplementedError();
   }
@@ -272,16 +339,15 @@ class KinFileStorage implements Storage {
   }
 
   @override
-  Future<List> upsertNewTransactionsInStorage(
-      KinAccountId accountId, List newTransactions) {
+  Future<List<KinTransaction>> upsertNewTransactionsInStorage(KinAccountId accountId, List<KinTransaction> newTransactions) {
     // TODO: implement upsertNewTransactionsInStorage
     throw UnimplementedError();
   }
 
   @override
-  Future<List> upsertOldTransactionsInStorage(
-      KinAccountId accountId, List oldTransactions) {
+  Future<List<KinTransaction>> upsertOldTransactionsInStorage(KinAccountId accountId, List<KinTransaction> oldTransactions) {
     // TODO: implement upsertOldTransactionsInStorage
     throw UnimplementedError();
   }
+
 }

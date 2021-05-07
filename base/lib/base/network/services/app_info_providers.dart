@@ -6,3 +6,23 @@ abstract class AppInfoProvider {
   AppUserCreds getPassthroughAppUserCredentials() ;
 }
 
+class AppInfoProviderSimple implements AppInfoProvider {
+
+  @override
+  AppInfo appInfo;
+
+  final String credentialsUser ;
+  final String credentialsPass ;
+
+  AppInfoProviderSimple(this.appInfo, this.credentialsUser, this.credentialsPass);
+
+  @override
+  AppUserCreds getPassthroughAppUserCredentials() {
+    return new AppUserCreds(
+        credentialsUser,
+        credentialsPass
+    );
+  }
+
+}
+

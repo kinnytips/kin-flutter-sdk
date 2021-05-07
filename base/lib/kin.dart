@@ -1,3 +1,9 @@
+import 'dart:typed_data';
+
+import 'package:kin_base/base/models/app_info.dart';
+import 'package:kin_base/base/models/appidx.dart';
+import 'package:kin_base/base/network/services/app_info_providers.dart';
+import 'package:kin_base/base/storage/kin_file_storage.dart';
 import 'package:kin_base/base/tools/observers.dart';
 
 import 'base/kin_account_context.dart';
@@ -18,6 +24,7 @@ class Kin {
 
   final bool _production;
   final int _appIndex;
+  final String _appName;
   final String _credentialUser;
   final String _credentialPass;
   final void Function(KinBalance kinBalance) _onBalanceChange;
@@ -26,6 +33,8 @@ class Kin {
 
   final DisposeBag _lifecycle;
 
+  AppInfo _appInfo;
+
   KinEnvironmentAgora _environment;
   KinAccountContext _context;
   Observer<List<KinPayment>> _observerPayments;
@@ -33,11 +42,15 @@ class Kin {
 
   Kin(this._production,
       this._appIndex,
+      this._appName,
       this._credentialUser,
       this._credentialPass,
       this._onBalanceChange,
       this._onPayment,
       this._onAccountContext) : _lifecycle = DisposeBag() {
+
+    _setAppInfo();
+
     //fetch the account and set the context
     this._environment = this._getEnvironment();
 
@@ -48,22 +61,28 @@ class Kin {
 
       //Then set the context with that single account
       this._context = this.getKinContext(accountId);
+      _setAppInfo();
 
       if (_onAccountContext != null) {
         _onAccountContext(this);
       }
 
+      //handle listeners
+      if (this._onBalanceChange != null) {
+        this._watchBalance(); //watch for changes in balance
+      }
+
+      if (this._onPayment != null) {
+        this._watchPayments(); //watch for changes in payments
+      }
+
       return null;
     });
+  }
 
-    //handle listeners
-    if (this._onBalanceChange != null) {
-      this._watchBalance(); //watch for changes in balance
-    }
-
-    if (this._onPayment != null) {
-      this._watchPayments(); //watch for changes in payments
-    }
+  void _setAppInfo() {
+    var accountId = this?._context?.accountId ?? KinAccountId(Uint8List(32)) ;
+    _appInfo = AppInfo(AppIdx(_appIndex), accountId, this._appName, 0);
   }
 
   String get address {
@@ -113,7 +132,10 @@ class Kin {
         ? KinStellarMainNetKin3.instance
         : KinStellarTestNetKin3.instance;
 
-    var env = KinEnvironmentAgora(networkEnv);
+    var appInfoProvider = AppInfoProviderSimple(_appInfo, _credentialUser, _credentialPass);
+
+    var env = KinEnvironmentAgora.build(networkEnv, appInfoProvider: appInfoProvider,
+    storageBuilder: ({NetworkEnvironment networkEnvironment}) => KinFileStorage(storageLoc, networkEnvironment));
 
     return env;
   }
