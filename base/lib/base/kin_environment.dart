@@ -153,4 +153,3 @@ class KinEnvironmentBuilderException implements Exception {
     return 'KinEnvironmentBuilderException{message: $message}';
   }
 }
-

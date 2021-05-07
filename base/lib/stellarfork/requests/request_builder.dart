@@ -6,10 +6,15 @@ import 'package:http/http.dart' as http;
 
 import 'package:kin_base/stellarfork/asset_type_credit_alphanum.dart';
 import 'package:kin_base/stellarfork/asset_type_native.dart';
+import 'package:sse/client/sse_client.dart';
 
 import 'dart:convert';
 import '../responses/response.dart';
 import '../assets.dart';
+
+class StreamingProtocol<ListenerType> {
+    SseClient stream(EventListener<ListenerType> listener) {}
+}
 
 /// Exception thrown when request returned an non-success HTTP code.
 class ErrorResponse implements Exception {
