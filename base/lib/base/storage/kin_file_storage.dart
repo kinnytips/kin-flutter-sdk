@@ -225,7 +225,7 @@ class KinFileStorage implements Storage {
     var transactionsDir = _directoryForTransactions(key);
     var transactionsFile = _fileNameForTransactions(key);
 
-    var transactions = _getTransactionsFromFile(transactionsDir, transactionsFile)
+    var transactions = _getTransactionsFromFile(transactionsDir, transactionsFile);
 
     return transactions ;
   }
@@ -236,7 +236,7 @@ class KinFileStorage implements Storage {
 
     try {
       var storageTransaction = base_storage.KinTransactions.fromBuffer(bytes);
-      return storageTransaction.toKinTransactions()
+      return storageTransaction.toKinTransactions();
     } catch (e) {
       print(e);
       return null;
