@@ -92,6 +92,7 @@ class KinEnvironmentAgora extends KinEnvironment {
     bool enableLogging,
     KinService service,
     Storage storage,
+    StorageBuilder storageBuilder,
     ExecutorServices executors,
     NetworkOperationsHandler networkHandler,
     AppInfoProvider appInfoProvider,
@@ -110,6 +111,10 @@ class KinEnvironmentAgora extends KinEnvironment {
     if (appInfoProvider == null) throw KinEnvironmentBuilderException("Must provide an ApplicationDelegate!");
 
     managedChannel ??= _asManagedChannel( _agoraApiConfig(networkEnvironment) , logger, 4);
+
+    if (storage == null) {
+      storage = storageBuilder(networkEnvironment: networkEnvironment) ;
+    }
 
     var agora = KinEnvironmentAgora(managedChannel, networkEnvironment, logger, service, storage, executors, networkHandler, appInfoProvider);
 
