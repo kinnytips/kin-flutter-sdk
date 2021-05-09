@@ -6,6 +6,7 @@ import 'package:kin_base/base/network/api/horizon/kin_json_api.dart';
 import 'package:kin_base/base/network/api/kin_transaction_api.dart';
 import 'package:kin_base/base/tools/managed_server_sent_event_stream.dart';
 import 'package:kin_base/base/tools/observers.dart';
+import 'package:kin_base/models/agora/protobuf/transaction/v3/transaction_service.pb.dart';
 import 'package:kin_base/stellarfork/responses/account_response.dart';
 import 'package:kin_base/stellarfork/responses/transaction_response.dart';
 
@@ -102,4 +103,22 @@ class HorizonKinApi implements KinJsonApi {
       }
     }
   }
+
+  getTransactionHistory(GetTransactionHistoryRequest request, GetTransactionHistoryResponse onCompleted) {
+    //TODO 
+    return;
+  }
+
+  getTransaction(GetTransactionRequest request, GetTransactionResponse onCompleted){
+    // TODO
+    return;
+  }
+
+  getTransactionMinFee(GetMinFeeForTransactionResponse onCompleted){
+    // TODO
+    return;
+  }
+
+  //DONT NEED THIS  THROW EXCEPTION
+  submitTransaction(SubmitTransactionRequest request, SubmitTransactionResponse onCompleted) { throw Exception("Horizon cannot process transactions"); }
 }
