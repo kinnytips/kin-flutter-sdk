@@ -99,6 +99,32 @@ class SolanaKinTransaction extends KinTransaction {
     return memo;
   }
 
-  // TODO add paymentOperations according to the Kotlin class
-  get paymentOperations => null;
+  List<KinOperationPayment> get paymentOperations {
+    List<CompiledInstruction> instructions = [];
+
+    _transaction.message.instructions.forEach((instruction) {
+      var programKey = _transaction.message.accounts[instruction.programIndex];
+
+      if (programKey != MemoProgram.PROGRAM_KEY &&
+          programKey != SystemProgram.PROGRAM_KEY &&
+          instruction.data.first == TokenProgramCommandTransfer().value) {
+        instructions.add(instruction);
+      }
+    });
+
+    List<KinOperationPayment> payments = [];
+    for (CompiledInstruction instruction in instructions) {
+      var amount = QuarkAmount(
+              instruction.data.sublist(1, instruction.data.length - 1).hashCode)
+          .toKin();
+      var source =
+          _transaction.message.accounts[instruction.accounts[0]].asPublicKey();
+      var destination =
+          _transaction.message.accounts[instruction.accounts[1]].asPublicKey();
+      payments.add(KinOperationPayment(
+          amount, KinAccountId(source.value), KinAccountId(destination.value)));
+    }
+
+    return payments;
+  }
 }
