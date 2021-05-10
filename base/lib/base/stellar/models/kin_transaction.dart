@@ -41,6 +41,7 @@ class SolanaKinTransaction extends KinTransaction {
   final TransactionHash _transactionHash;
   final List<KinOperationPayment> _paymentOperations;
   final InvoiceList _invoiceLis;
+  Transaction _transaction;
 
   SolanaKinTransaction(
       this._bytesValue,
@@ -52,10 +53,9 @@ class SolanaKinTransaction extends KinTransaction {
       this._paymentOperations,
       this._invoiceLis)
       : super(_bytesValue, _recordType, _networkEnvironment, _fee, _memo,
-            _transactionHash, _paymentOperations, _invoiceLis);
-  // TODO NOT able to use the Marshalling as present in the encoding.dart
-  // Kotlin files use the Companion Object to access the method directly
-  final _transaction = Transaction();
+            _transactionHash, _paymentOperations, _invoiceLis) {
+    this._transaction = Transaction.unmarshal(_bytesValue);
+  }
 
   get transactionHash =>
       TransactionHash(_transaction.signatures.first.value.byteArray);

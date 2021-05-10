@@ -1,4 +1,7 @@
 import 'dart:typed_data';
+import 'package:kin_base/base/models/solana/byte_utils.dart';
+import 'package:kin_base/base/models/solana/short_vec.dart';
+import 'package:kin_base/base/tools/byte_in_out_buffer.dart';
 import 'package:meta/meta.dart';
 
 import 'package:kin_base/base/models/key.dart';
@@ -9,7 +12,6 @@ import 'package:kin_base/base/models/solana/instruction.dart';
 import 'package:kin_base/base/tools/extensions.dart';
 
 import 'encoding.dart';
-
 
 class Signature {
   final FixedByteArray64 value;
@@ -48,13 +50,77 @@ class Message {
     @required this.recentBlockhash,
   });
 
+  factory Message.unmarshal(Uint8List bytesValue){
+    final input = ByteInputBuffer(bytesValue);
+
+    // Header
+    final numSignatures = wrapError("failed to read num signatures", () => input.read());
+    final numReadOnlySigned = wrapError("failed to read num readonly signatures", () => input.read());
+    final numReadOnly = wrapError("failed to read num readonly", () => input.read());
+    final Header header = Header(
+        numSignatures: numSignatures,
+        numReadOnlySigned: numReadOnlySigned,
+        numReadOnly: numReadOnly,
+    );
+
+    // Accounts
+    final accounts = ShortVec.decodeShortVecOf<PublicKey>(input, 32);
+
+    // Recent Block Hash
+    final recentBlockHash =
+      wrapError("failed to read block hash", () {
+        input.readBytes(Hash.SIZE_OF).toModel<Hash>((bytes) => Hash(FixedByteArray32(bytes)));
+      });
+
+    // Instructions
+    final instructions = <CompiledInstruction>[];
+    final instructionsLength = ShortVec.decodeLen(input);
+    for (int i = 0; i < instructionsLength; i++) {
+      // Program Index
+      final programIndex = wrapError<int>("failed to read instruction[$i] program index", () => input.read());
+      if (programIndex < 0 || programIndex >= accounts.length) {
+        throw Exception("RuntimeException: program index out of range: $i:$programIndex");
+      }
+
+      // Account Indexes
+      final accountIndexesLength = ShortVec.decodeLen(input);
+      final accountIndexesBytes = wrapError("failed to read instruction[$i] accounts", () => input.readBytes(accountIndexesLength));
+
+
+      accountIndexesBytes.forEach((element) {
+        if (element.toInt() >= accounts.length) {
+          throw Exception("RuntimeException: account index out of range: $i:$element");
+        }
+      });
+
+      // Data
+      final dataLength = wrapError("failed to read instruction[$i] data", () => ShortVec.decodeLen(input));
+      final dataBytes = input.readBytes(dataLength);
+
+      final instruction = CompiledInstruction(
+        programIndex: programIndex,
+        accounts: accountIndexesBytes,
+        data: dataBytes,
+      );
+      instructions.add(instruction);
+    }
+
+    return Message(
+      header:header,
+      accounts: accounts,
+      instructions: instructions,
+      recentBlockhash: recentBlockHash,
+    );
+  }
+
   Message copyWith({
     header,
     accounts,
     instructions,
     recentBlockhash,
   }) =>
-      Message(header: header ?? this.header,
+      Message(
+        header: header ?? this.header,
         accounts: accounts ?? this.accounts,
         instructions: instructions ?? this.instructions,
         recentBlockhash: recentBlockhash ?? this.recentBlockhash,
@@ -69,6 +135,15 @@ class Transaction {
   Transaction({@required this.message, this.signatures = const []})
       : numRequiredSignatures = message.header.numSignatures;
 
+  factory Transaction.unmarshal(Uint8List bytes) {
+    final input = ByteInputBuffer(bytes);
+
+    final signatures = ShortVec.decodeShortVecOf(
+        input, Signature.SIZE_OF, (bytes) => SignatureMarshal.unmarshal(bytes));
+
+    var message = Message.unmarshal(input.readRemainingBytes());
+    return Transaction(message: message, signatures: signatures);
+  }
   Transaction copyWith({
     message,
     signatures,
@@ -78,8 +153,8 @@ class Transaction {
         signatures: signatures ?? this.signatures,
       );
 
-  static Transaction newTransaction(PublicKey payer,
-      List<Instruction> instructions) {
+  static Transaction newTransaction(
+      PublicKey payer, List<Instruction> instructions) {
     final accounts = [
       AccountMeta(
         publicKey: payer,
@@ -99,13 +174,11 @@ class Transaction {
     //   1. All signers are before non-signers.
     //   2. Writable accounts before read-only accounts.
     //   3. Programs last
-    final List<AccountMeta> uniqueAccounts =
-    accounts.filterUnique().toList()..sort();
+    final List<AccountMeta> uniqueAccounts = accounts.filterUnique().toList()
+      ..sort();
 
     final header = Header(
-      numSignatures: uniqueAccounts
-          .where((element) => element.isSigner)
-          .length,
+      numSignatures: uniqueAccounts.where((element) => element.isSigner).length,
       numReadOnlySigned: uniqueAccounts
           .where((element) => !element.isWritable && element.isSigner)
           .length,
@@ -113,21 +186,19 @@ class Transaction {
           .where((element) => !element.isWritable && !element.isSigner)
           .length,
     );
-    final List<PublicKey> accountPublicKeys = uniqueAccounts.map((e) =>
-    e.publicKey).toList();
-    final messageInstructions = instructions.map((e) =>
-        CompiledInstruction(
-            programIndex: _indexOf(accountPublicKeys, e.program) ,
-            data: e.data,
-            accounts: Uint8List.fromList(e.accounts
-                .map((e2) =>
-                _indexOf(accountPublicKeys, e2.publicKey)))));
+    final List<PublicKey> accountPublicKeys =
+        uniqueAccounts.map((e) => e.publicKey).toList();
+    final messageInstructions = instructions.map((e) => CompiledInstruction(
+        programIndex: _indexOf(accountPublicKeys, e.program),
+        data: e.data,
+        accounts: Uint8List.fromList(e.accounts
+            .map((e2) => _indexOf(accountPublicKeys, e2.publicKey)))));
 
     final Message message = Message(
-        header: header,
-        accounts: accountPublicKeys,
-        instructions: messageInstructions,
-        recentBlockhash: Hash(FixedByteArray32()),
+      header: header,
+      accounts: accountPublicKeys,
+      instructions: messageInstructions,
+      recentBlockhash: Hash(FixedByteArray32()),
       /** Empty unless set with [copyAndSetRecentBlockhash] **/
     );
 
@@ -169,9 +240,8 @@ class Transaction {
             "signing account ${pubKey.value.toHexString()} "
             "is not in the account list");
       }
-      newSignatures[index] =
-          Signature(
-              value: FixedByteArray64(byteArray: element.sign(messageBytes)));
+      newSignatures[index] = Signature(
+          value: FixedByteArray64(byteArray: element.sign(messageBytes)));
     });
 
     return copyWith(
@@ -188,7 +258,8 @@ extension on List<AccountMeta> {
     for (var element in this) {
       for (int i = 0; i < filtered.length; i++) {
         final accountMeta = filtered[i];
-        if (element.publicKey.value.equalsContent(accountMeta.publicKey.value)) {
+        if (element.publicKey.value
+            .equalsContent(accountMeta.publicKey.value)) {
           // Promote the existing account to writable if applicable
           if (element.isSigner)
             filtered[i] = filtered[i].copyWith(isSigner: true);
