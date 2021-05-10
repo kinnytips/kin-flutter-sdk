@@ -1,13 +1,16 @@
+import 'dart:convert';
 import 'dart:typed_data';
-
 import 'package:kin_base/base/models/invoices.dart';
 import 'package:kin_base/base/models/kin_account.dart';
 import 'package:kin_base/base/models/kin_memo.dart';
 import 'package:kin_base/base/models/quark_amount.dart';
+import 'package:kin_base/base/models/solana/instruction.dart';
+import 'package:kin_base/base/models/solana/programs.dart';
 import 'package:kin_base/base/models/solana/transaction.dart';
 import 'package:kin_base/base/models/transaction_hash.dart';
 import 'package:kin_base/base/stellar/models/network_environment.dart';
 import 'package:kin_base/base/stellar/models/record_type.dart';
+import 'package:kin_base/base/tools/charsets.dart';
 
 import 'kin_operation.dart';
 
@@ -65,8 +68,36 @@ class SolanaKinTransaction extends KinTransaction {
 
   get fee => QuarkAmount(0);
 
-  // TODO add Get Memo according to the Kotlin class
-  get memo => null;
+  KinMemo get memo {
+    CompiledInstruction compiledInstruction;
+
+    for (CompiledInstruction instruction in _transaction.message.instructions) {
+      if (_transaction.message.accounts[instruction.programIndex] ==
+          MemoProgram.PROGRAM_KEY) {
+        compiledInstruction = instruction;
+        break;
+      }
+    }
+
+    if (compiledInstruction == null) {
+      return KinMemo.none;
+    }
+    var base64Decoded = base64.decode(base64.encode(compiledInstruction.data));
+
+    if (base64Decoded == null) {
+      return KinMemo.fromText(
+          String.fromCharCodes(compiledInstruction.data), Charset.utf8);
+    }
+
+    var memo = KinMemo(base64Decoded);
+
+    if (memo.getAgoraMemo == null) {
+      return KinMemo(
+          compiledInstruction.data, KinMemoTypeCharsetEncoded(Charset.utf8));
+    }
+
+    return memo;
+  }
 
   // TODO add paymentOperations according to the Kotlin class
   get paymentOperations => null;
