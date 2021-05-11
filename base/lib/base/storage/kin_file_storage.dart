@@ -169,6 +169,7 @@ class KinFileStorage implements Storage {
   Future<KinTransactions> getStoredTransactions(KinAccountId accountId) async {
     var invoiceListsMap = await getInvoiceListsMapForAccountId(accountId);
     var transactions = getTransactions(accountId) ;
+    if (transactions == null) return null ;
 
     var list = transactions.items.map((t) {
       var memo = t.memo.getAgoraMemo();
