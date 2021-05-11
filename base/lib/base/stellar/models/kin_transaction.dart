@@ -8,6 +8,7 @@ import 'package:kin_base/base/models/solana/instruction.dart';
 import 'package:kin_base/base/models/solana/programs.dart';
 import 'package:kin_base/base/models/solana/transaction.dart';
 import 'package:kin_base/base/models/transaction_hash.dart';
+import 'package:kin_base/base/stellar/models/kin_transactions.dart';
 import 'package:kin_base/base/stellar/models/network_environment.dart';
 import 'package:kin_base/base/stellar/models/record_type.dart';
 import 'package:kin_base/base/tools/charsets.dart';
@@ -33,6 +34,8 @@ abstract class KinTransaction {
       this.transactionHash,
       this.paymentOperations,
       this.invoiceList);
+
+  KinTransaction copyWithInvoiceList(InvoiceList invoiceList) ;
 }
 
 class SolanaKinTransaction extends KinTransaction {
@@ -58,6 +61,11 @@ class SolanaKinTransaction extends KinTransaction {
       : super(_bytesValue, _recordType, _networkEnvironment, _fee, _memo,
             _transactionHash, _paymentOperations, _invoiceLis) {
     this._transaction = Transaction.unmarshal(_bytesValue);
+  }
+
+  SolanaKinTransaction copyWithInvoiceList(InvoiceList invoiceList) {
+    return SolanaKinTransaction(_bytesValue, _recordType, _networkEnvironment,
+        _fee, _memo, _transactionHash, _paymentOperations, invoiceList);
   }
 
   get transactionHash =>

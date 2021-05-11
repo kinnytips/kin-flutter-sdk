@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:kin_base/base/models/kin_account.dart';
 import 'package:kin_base/base/network/api/horizon/kin_json_api.dart';
 import 'package:kin_base/base/network/api/kin_transaction_api.dart';
+import 'package:kin_base/base/stellar/models/api_config.dart';
+import 'package:kin_base/base/stellar/models/kin_transaction.dart';
 import 'package:kin_base/base/tools/managed_server_sent_event_stream.dart';
 import 'package:kin_base/base/tools/observers.dart';
 import 'package:kin_base/models/agora/protobuf/transaction/v3/transaction_service.pb.dart';

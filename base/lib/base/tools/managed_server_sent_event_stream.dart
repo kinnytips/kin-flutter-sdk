@@ -1,14 +1,17 @@
 import 'package:kin_base/stellarfork/requests/request_builder.dart';
-import 'package:sse/server/sse_handler.dart';
+import 'package:sse_client/sse_client.dart';
 
 class ManagedServerSentEventStream<ResponseType> {
-  ManagedServerSentEventStream(StreamingProtocol<ResponseType> requestBuilder);
 
-  var _lock;
-  List<EventListener<ResponseType>> listeners;
-  SseConnection _connection = null; 
+  final StreamingProtocol<ResponseType> _requestBuilder ;
+  final List<EventListener<ResponseType>> listeners = <EventListener<ResponseType>>[] ;
+  SseClient _connection = null;
   ResponseType _lastReceivedResponse = null;
-  var listener = ResponseTypeEventListener();
+  ResponseTypeEventListener<ResponseType> listener ;
+
+  ManagedServerSentEventStream(this._requestBuilder) {
+    listener = ResponseTypeEventListener(this);
+  }
 
   addListener(EventListener<ResponseType> listener) {
     listeners.add(listener);
@@ -31,30 +34,34 @@ class ManagedServerSentEventStream<ResponseType> {
   }
 
   connectIfNecessary() {
-    synchronized(_lock) {
-      if(_connection == null && listeners.isNotEmpty()) {
-        _connection = requestBuilder.stream(listener);
-      }
+
+    if(_connection == null && listeners.isNotEmpty) {
+      var sseClient = _requestBuilder.stream(listener);
+      _connection = sseClient;
     }
+
   }
 
   closeIfNecessary() {
-    synchronized(_lock) {
-      if(_connection == null) {
-        if(listeners.isEmpty()) {
-          _connection.shutdown();
-          _connection = null;
-        }
+
+    if(_connection == null) {
+      if(listeners.isEmpty) {
+        // No close, since it's a HTTP client:
+        //_connection.close();
+        _connection = null;
       }
     }
+
   }
 }
 
-extension ResponseTypeEventListener on ManagedServerSentEventStream<ResponseType> {
-  onEvent(ResponseType data){
-    synchronized(_lock) {
-      _lastReceivedResponse = data;
-    }
+class ResponseTypeEventListener<ResponseType> extends EventListener<ResponseType> {
 
+  ManagedServerSentEventStream<ResponseType> _managedServerSentEventStream ;
+
+  ResponseTypeEventListener(this._managedServerSentEventStream);
+
+  onEvent(ResponseType data){
+    _managedServerSentEventStream._lastReceivedResponse = data;
   }
 }
