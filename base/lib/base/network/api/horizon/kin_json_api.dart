@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:kin_base/base/stellar/models/api_config.dart';
+
 abstract class KinJsonApi {
   KinJsonApi(ApiConfig environment, HttpClient httpClient, [KinServer server = Server(environment.networkEndpoint, okHttpClient)]) { }
 }

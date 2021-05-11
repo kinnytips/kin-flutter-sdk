@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-import 'dart:ui';
 
 import 'package:kin_base/base/tools/extensions.dart';
 
@@ -24,8 +23,6 @@ abstract class FixedByteArray {
   @override
   bool operator ==(Object other) {
     if (this == other) return true;
-    // todo are next 2 lines equivalent?
-    ///kotlin: if (javaClass != other?.javaClass) return false
     if (this.runtimeType != other?.runtimeType) return false;
     if (other is FixedByteArray) {
       if (!byteArray.equalsContent(other.byteArray)) return false;
@@ -37,7 +34,7 @@ abstract class FixedByteArray {
   }
 
   @override
-  int get hashCode => hashList(byteArray);
+  int get hashCode => byteArray.computeHashCode();
 }
 
 ///@JvmName("contentHashCodeNullable")

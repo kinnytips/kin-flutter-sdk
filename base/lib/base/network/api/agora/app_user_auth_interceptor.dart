@@ -1,4 +1,4 @@
-import 'package:kin_sdk/base/network/services/AppInfoProvider.dart';
+import 'package:kin_base/base/network/services/app_info_providers.dart';
 
 class AppUserAuthInterceptor {
   AppInfoProvider appInfoProvider() {

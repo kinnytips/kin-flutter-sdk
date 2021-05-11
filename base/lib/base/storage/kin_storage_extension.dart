@@ -5,6 +5,8 @@ import 'package:kin_base/base/models/kin_balance.dart';
 import 'package:kin_base/base/models/quark_amount.dart';
 import 'package:kin_base/base/stellar/models/kin_transaction.dart';
 import 'package:kin_base/base/stellar/models/kin_transactions.dart';
+import 'package:kin_base/base/stellar/models/paging_token.dart';
+import 'package:kin_base/base/stellar/models/record_type.dart';
 import 'package:kin_base_storage/kin_base_storage.dart' as base_storage;
 import 'package:protobuf/protobuf.dart';
 
@@ -107,9 +109,9 @@ extension StorageKinTransactionsExtension on base_storage.KinTransactions {
   KinTransactions toKinTransactions() {
     return KinTransactions(
       this.items.map( (e) => e.toKinTransaction() ) ,
-        KinTransactionPagingToken(headPagingToken),
-        KinTransactionPagingToken(tailPagingToken)
-    )
+        PagingToken(headPagingToken),
+        PagingToken(tailPagingToken)
+    );
   }
 
 }

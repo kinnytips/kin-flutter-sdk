@@ -17,12 +17,12 @@ dependencies:
   base32: ^1.1.2
   fast_base58: ^0.1.9
   http: ^0.12.2
-  sse: ^3.8.1
+  sse_client: ^0.0.3
   fixnum: ^0.10.11
   protobuf: ^1.0.1
   crypto: ^2.1.5
   decimal: ^0.3.5
-  flutter_sodium: ^0.1.8
+  #flutter_sodium: ^0.1.8
   pointycastle: ^2.0.0
   grpc: ^2.3.0
   logging: ^0.11.4
@@ -32,5 +32,4 @@ dependencies:
     path: ../base_storage
 
 dev_dependencies:
-  flutter_test:
-    sdk: flutter
+  test: ^1.16.0

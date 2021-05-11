@@ -3,6 +3,7 @@ import 'package:kin_base/base/models/kin_account.dart';
 import 'package:kin_base/base/models/kin_balance.dart';
 import 'package:kin_base/base/models/quark_amount.dart';
 import 'package:kin_base/base/stellar/models/kin_transaction.dart';
+import 'package:kin_base/base/stellar/models/paging_token.dart';
 import 'package:kin_base/base/tools/observers.dart';
 import 'package:kin_base/models/app/account/create_kin_account_response.dart';
 import 'package:kin_base/models/app/account/retrieve_kin_account_response.dart';
@@ -91,7 +92,7 @@ class KinService {
   }
 
   Future<List<KinTransaction>> getTransactionPage(
-      KinAccountId kinAccountId, KinTransactionPagingToken pagingToken,
+      KinAccountId kinAccountId, PagingToken pagingToken,
       [KinServiceOrder order = KinServiceOrder.descending]) async {
     //TODO
   }
