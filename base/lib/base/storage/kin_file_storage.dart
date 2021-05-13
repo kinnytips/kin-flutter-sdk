@@ -124,7 +124,11 @@ class KinFileStorage implements Storage {
   List<KinAccountId> getAllAccountIds() {
     var accountDirectories = _subdirectories(_directoryForAllAccounts());
 
-    var accountIds = accountDirectories.map((d) => _getAccountFromAccountDirectory(d)).map((e) => e.id).toList();
+    var accountIds = accountDirectories
+        .map((d) => _getAccountFromAccountDirectory(d))
+        .where((e) => e != null)
+        .map((e) => e.id)
+        .toList();
 
     return accountIds ;
   }
@@ -243,21 +247,6 @@ class KinFileStorage implements Storage {
       return null;
     }
   }
-
-  /*(
-    private fun getTransactionsFromFile(directory: String, fileName: String): KinTransactions? {
-        val bytes = readFile(directory, fileName)
-        if (bytes.isEmpty()) return null
-
-        try {
-            val storageTransaction = StorageKinTransactions.parseFrom(bytes)
-            return storageTransaction.toKinTransactions()
-        } catch (e: InvalidProtocolBufferException) {
-            e.printStackTrace()
-            return null
-        }
-    }
-   */
 
   String _directoryForTransactions(KinAccountId accountId) {
     return "${_directoryForAccount(accountId)}_transactions";
