@@ -5,11 +5,14 @@ import 'package:kin_base/base/repository/app_info_repository.dart';
 import 'package:kin_base/base/repository/invoice_repository.dart';
 import 'package:kin_base/base/storage/storage.dart';
 import 'package:kin_base/base/tools/observers.dart';
-import 'package:kin_base/services/kin_services.dart';
+
+import 'package:kin_base/base/network/services/kin_service.dart';
+
 
 import 'models/key.dart';
 import 'models/kin_account.dart';
 import 'network/services/app_info_providers.dart';
+import 'network/services/kin_service_impl.dart';
 import 'stellar/models/api_config.dart';
 import 'stellar/models/network_environment.dart';
 import 'tools/executor_service.dart';
@@ -111,6 +114,8 @@ class KinEnvironmentAgora extends KinEnvironment {
     if (appInfoProvider == null) throw KinEnvironmentBuilderException("Must provide an ApplicationDelegate!");
 
     managedChannel ??= _asManagedChannel( _agoraApiConfig(networkEnvironment) , logger, 4);
+
+    service ??= KinServiceImpl();
 
     if (storage == null) {
       storage = storageBuilder(networkEnvironment: networkEnvironment) ;

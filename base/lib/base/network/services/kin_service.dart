@@ -55,19 +55,7 @@ abstract class KinService {
     invalidateBlockhashCache() ;
 }
 
-class KinServiceOrder {
-    final int value;
-
-    KinServiceOrder(this.value);
-}
-
-class Ascending extends KinServiceOrder {
-  Ascending() : super(0);
-}
-
-class Descending extends KinServiceOrder {
-  Descending() : super(1);
-}
+enum KinServiceOrder { ascending, descending }
 
 class FatalError extends StateError {
     final Error reason ;
