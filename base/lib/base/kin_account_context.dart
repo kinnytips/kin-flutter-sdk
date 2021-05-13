@@ -3,7 +3,7 @@ import 'package:kin_base/base/models/kin_balance.dart';
 import 'package:kin_base/base/stellar/models/kin_transaction.dart';
 import 'package:kin_base/base/tools/kin_logger.dart';
 import 'package:kin_base/base/tools/observers.dart';
-import 'package:kin_base/services/kin_services.dart';
+import 'package:kin_base/base/network/services/kin_service.dart';
 import 'package:kin_base/stellarfork/key_pair.dart';
 import 'package:kin_base/stellarfork/xdr/xdr_signing.dart';
 
@@ -554,7 +554,7 @@ class KinAccountContextImpl extends KinAccountContextBase with KinAccountContext
   }
 
   Future<KinAccount> _registerAccount(KinAccount account) async {
-    var serviceAccount = await service.createAccount( accountId: account.id, privateKey: account.key as PrivateKey) ;
+    var serviceAccount = await service.createAccount( account.id, account.key as PrivateKey ) ;
     var accountToStore = account.merge(serviceAccount);
 
     if (!storage.updateAccount(accountToStore)) {

@@ -16,6 +16,12 @@ import 'package:kin_base/services/transaction/transaction_service.dart';
 import 'package:kin_base/base/network/api/agora/proto_to_model_v4.dart';
 
 /// Services aggregator for the all the operations possible on the Kin blockchain
+///
+/// DEPRECATED!
+/// SHOULD IMPORT:
+/// import 'package:kin_base/base/network/services/kin_service.dart';
+///
+@deprecated
 class KinService {
   AccountService _accountService;
   TransactionService _transactionService;
