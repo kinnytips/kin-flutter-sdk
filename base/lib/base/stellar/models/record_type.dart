@@ -1,17 +1,46 @@
 import 'dart:typed_data';
 
+import 'paging_token.dart';
+
 class RecordType {
-  int timeStamp;
+  int value ;
+  int timestamp;
 
-  RecordType(this.timeStamp);
+  RecordType(this.value, {this.timestamp});
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is RecordType &&
+          runtimeType == other.runtimeType &&
+          value == other.value &&
+          timestamp == other.timestamp;
+
+  @override
+  int get hashCode => value.hashCode ^ timestamp.hashCode;
 }
 
-class Inflight extends RecordType {
-  Inflight() : super(0);
+class RecordTypeInflight extends RecordType {
+  static const defaultValue = 0 ;
+
+  RecordTypeInflight(int timestamp) : super(defaultValue, timestamp: timestamp);
 }
 
-class Acknowledged extends RecordType {
-  Acknowledged() : super(1);
+class RecordTypeAcknowledged extends RecordType {
+  static const defaultValue = 1 ;
+
+  final Uint8List resultXdrBytes ;
+
+  RecordTypeAcknowledged(int timestamp, this.resultXdrBytes) : super(defaultValue, timestamp: timestamp);
+}
+
+class RecordTypeHistorical extends RecordType {
+  static const defaultValue = 2 ;
+
+  final Uint8List resultXdrBytes ;
+  final PagingToken pagingToken;
+
+  RecordTypeHistorical(int timestamp, this.resultXdrBytes, this.pagingToken) : super(defaultValue, timestamp: timestamp);
 }
 
 class ResultCodeParser {
@@ -21,5 +50,6 @@ class ResultCodeParser {
 
   void parseResultCode() {
     // TODO Add StellarFork.TransactionResult and the parser
+    throw UnsupportedError('todo');
   }
 }
