@@ -62,7 +62,7 @@ class KinBinaryMemo {
   // ignore: non_constant_identifier_names
   static final int BYTE_OF_FK_START = (BIT_OFFSET_FOREIGN_KEY / 8).floor() ;
 
-  KinBinaryMemo decode(Uint8List bytes) {
+  static KinBinaryMemo decode(Uint8List bytes) {
     var n = ByteData.view(bytes.buffer).getInt32(0) ;
 
     var magicByteIndicator = n & ( (MASK_MAGIC_BYTE_INDICATOR & 0xFFFFFFFF) >> BIT_OFFSET_MAGIC_BYTE_INDICATOR) ;

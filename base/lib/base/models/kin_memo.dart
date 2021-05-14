@@ -74,8 +74,7 @@ class KinMemo {
 
   KinBinaryMemo getAgoraMemo() {
     try {
-      // TODO:
-      // KinBinaryMemo.decode(rawValue) ;
+      return KinBinaryMemo.decode(rawValue) ;
     } on Error {
       return null;
     }

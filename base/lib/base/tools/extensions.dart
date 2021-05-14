@@ -63,6 +63,13 @@ extension ListExtension<T> on List<T> {
   int computeHashCode() => _listEquality.hash(this);
 
   bool equalsContent(List<T> other) => _listEquality.equals(this, other);
+
+  List<T> requireNoNulls() {
+    for (var e in this) {
+      if (e == null) throw StateError('Null element found in: $this');
+    }
+    return this ;
+  }
 }
 
 extension ModelInvoice_LineItemParser on Model.Invoice_LineItem {

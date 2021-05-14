@@ -57,6 +57,24 @@ abstract class KinService {
 
 enum KinServiceOrder { ascending, descending }
 
+typedef KinServiceResponseCallback<T> = void Function(KinServiceResponse<T> response) ;
+
+class KinServiceResponse<P> {
+    final P payload ;
+    final KinServiceResponseType type;
+    final dynamic error;
+
+    KinServiceResponse(this.type, [this.payload, this.error]);
+}
+
+enum KinServiceResponseType {
+    ok,
+    notFound,
+    transientFailure,
+    undefinedError,
+    upgradeRequiredError
+}
+
 class FatalError extends StateError {
     final Error reason ;
     FatalError(String message, [this.reason]) : super(message);
@@ -116,6 +134,9 @@ class InvoiceErrorsInRequest extends FatalError {
     InvoiceErrorsInRequest(this.invoiceErrors, [Error reason]) : super("Invoice Errors", reason);
 }
 
+class SDKUpgradeRequired extends FatalError {
+    SDKUpgradeRequired([Error reason]) : super("Please upgrade to a newer version of the SDK", reason);
+}
 
 abstract class KinTestService {
     /**
