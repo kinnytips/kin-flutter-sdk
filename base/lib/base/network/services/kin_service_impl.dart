@@ -18,7 +18,6 @@ class KinServiceImpl extends KinService {
   final KinLoggerFactory logger;
 
   KinServiceImpl(
-
       this.networkEnvironment,
       this.networkOperationsHandler,
       this.accountApi,

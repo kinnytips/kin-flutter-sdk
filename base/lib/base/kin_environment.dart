@@ -8,6 +8,8 @@ import 'package:kin_base/base/tools/observers.dart';
 
 import 'package:kin_base/base/network/services/kin_service.dart';
 
+import 'package:kin_base/base/network/api/agora/agora_v4_apis.dart';
+
 
 import 'models/key.dart';
 import 'models/kin_account.dart';
@@ -115,7 +117,9 @@ class KinEnvironmentAgora extends KinEnvironment {
 
     managedChannel ??= _asManagedChannel( _agoraApiConfig(networkEnvironment) , logger, 4);
 
-    service ??= KinServiceImpl();
+    var transactionsApi = new AgoraKinTransactionsApiV4(managedChannel, networkEnvironment);
+
+    service ??= KinServiceImpl(networkEnvironment, null, null, transactionsApi, null, null, null, logger);
 
     if (storage == null) {
       storage = storageBuilder(networkEnvironment: networkEnvironment) ;
