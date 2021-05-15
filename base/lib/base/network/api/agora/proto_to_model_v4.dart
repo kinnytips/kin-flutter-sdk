@@ -11,6 +11,7 @@ import 'package:kin_base/base/models/quark_amount.dart';
 import 'package:kin_base/base/models/sha_224_hash.dart';
 import 'package:kin_base/base/models/solana/fixed_byte_array.dart';
 import 'package:kin_base/base/models/solana/transaction.dart';
+import 'package:kin_base/base/models/stellar_base_type_conversions.dart';
 import 'package:kin_base/base/stellar/models/kin_transaction.dart';
 import 'package:kin_base/base/stellar/models/network_environment.dart';
 import 'package:kin_base/base/stellar/models/paging_token.dart';
@@ -23,8 +24,6 @@ import 'package:kin_base/stellarfork/key_pair.dart';
 import 'package:kin_base/stellarfork/xdr/xdr_data_io.dart';
 import 'package:kin_base/stellarfork/xdr/xdr_transaction.dart';
 import 'package:kin_base/stellarfork/xdr/xdr_type.dart';
-
-import 'package:kin_base/base/models/stellar_base_type_conversions.dart';
 
 
 extension AccountInfoExtension on AccountInfo {
@@ -134,6 +133,23 @@ extension HistoryItemExtension on HistoryItem {
             DateTime.now().millisecondsSinceEpoch,
             transactionError.toResultXdr(),
             PagingToken(base64.encode(cursor.value))),
+        networkEnvironment,
+        this.hasInvoiceList() ? this.invoiceList.toInvoiceList() : null,
+      );
+    } else {
+      //TODO:
+      throw UnsupportedError('No StellarKinTransaction implementation yet');
+    }
+  }
+
+  KinTransaction toAcknowledgedKinTransaction(NetworkEnvironment networkEnvironment) {
+    if (this.hasSolanaTransaction()) {
+      return SolanaKinTransaction(
+        Uint8List.fromList(solanaTransaction.value),
+        RecordTypeAcknowledged(
+          DateTime.now().millisecondsSinceEpoch,
+          transactionError.toResultXdr(),
+        ),
         networkEnvironment,
         this.hasInvoiceList() ? this.invoiceList.toInvoiceList() : null,
       );

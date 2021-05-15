@@ -14,6 +14,7 @@ import 'package:kin_base/base/stellar/models/kin_transaction.dart';
 import 'package:kin_base/base/stellar/models/network_environment.dart';
 import 'package:kin_base/base/stellar/models/paging_token.dart';
 import 'package:kin_base/base/tools/extensions.dart';
+import 'package:kin_base/models/agora/protobuf/common/v4/model.pb.dart' as model_v4;
 import 'package:kin_base/models/agora/protobuf/transaction/v4/transaction_service.pb.dart';
 import 'package:kin_base/models/agora/protobuf/transaction/v4/transaction_service.pbgrpc.dart';
 
@@ -86,8 +87,26 @@ class AgoraKinTransactionsApiV4 extends GrpcApi implements KinTransactionApiV4 {
 
   @override
   Future<KinServiceResponse<KinTransaction>> getTransaction(TransactionHash transactionHash) async {
-    // TODO: implement getTransaction
-    throw UnimplementedError();
+    var request = GetTransactionRequest()..transactionId = model_v4.TransactionId(value: transactionHash.rawValue);
+    var response = await _transactionClient.getTransaction(request);
+
+    if (response.state == GetTransactionResponse_State.SUCCESS) {
+      var transaction = response.item.toHistoricalKinTransaction(networkEnvironment);
+      return KinServiceResponse(KinServiceResponseType.ok, transaction);
+    }
+    else if (response.state == GetTransactionResponse_State.UNKNOWN) {
+      return KinServiceResponse(KinServiceResponseType.notFound);
+    }
+    else if (response.state == GetTransactionResponse_State.FAILED ) {
+      return KinServiceResponse(KinServiceResponseType.undefinedError, null, Exception('Result.Failed') );
+    }
+    else if (response.state == GetTransactionResponse_State.PENDING ) {
+      var transaction = response.item.toAcknowledgedKinTransaction(networkEnvironment);
+      return KinServiceResponse(KinServiceResponseType.ok, transaction);
+    }
+    else {
+      return KinServiceResponse(KinServiceResponseType.notFound);
+    }
   }
 
   @override
