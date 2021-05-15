@@ -9,6 +9,9 @@ import 'package:kin_base/base/models/kin_account.dart';
 import 'package:kin_base/base/models/kin_balance.dart';
 import 'package:kin_base/base/models/quark_amount.dart';
 import 'package:kin_base/base/models/sha_224_hash.dart';
+import 'package:kin_base/base/models/solana/fixed_byte_array.dart';
+import 'package:kin_base/base/models/solana/transaction.dart';
+import 'package:kin_base/base/models/stellar_base_type_conversions.dart';
 import 'package:kin_base/base/stellar/models/kin_transaction.dart';
 import 'package:kin_base/base/stellar/models/network_environment.dart';
 import 'package:kin_base/base/stellar/models/paging_token.dart';
@@ -17,9 +20,11 @@ import 'package:kin_base/models/agora/protobuf/account/v4/account_service.pb.dar
 import 'package:kin_base/models/agora/protobuf/common/v3/model.pb.dart' as model_v3 ;
 import 'package:kin_base/models/agora/protobuf/common/v4/model.pb.dart' as model_v4 ;
 import 'package:kin_base/models/agora/protobuf/transaction/v4/transaction_service.pb.dart';
+import 'package:kin_base/stellarfork/key_pair.dart';
 import 'package:kin_base/stellarfork/xdr/xdr_data_io.dart';
 import 'package:kin_base/stellarfork/xdr/xdr_transaction.dart';
 import 'package:kin_base/stellarfork/xdr/xdr_type.dart';
+
 
 extension AccountInfoExtension on AccountInfo {
 
@@ -136,4 +141,31 @@ extension HistoryItemExtension on HistoryItem {
       throw UnsupportedError('No StellarKinTransaction implementation yet');
     }
   }
+
+  KinTransaction toAcknowledgedKinTransaction(NetworkEnvironment networkEnvironment) {
+    if (this.hasSolanaTransaction()) {
+      return SolanaKinTransaction(
+        Uint8List.fromList(solanaTransaction.value),
+        RecordTypeAcknowledged(
+          DateTime.now().millisecondsSinceEpoch,
+          transactionError.toResultXdr(),
+        ),
+        networkEnvironment,
+        this.hasInvoiceList() ? this.invoiceList.toInvoiceList() : null,
+      );
+    } else {
+      //TODO:
+      throw UnsupportedError('No StellarKinTransaction implementation yet');
+    }
+  }
+}
+
+extension ModelBlockhashExtension on model_v4.Blockhash {
+  Hash toModel() => Hash( FixedByteArray32( this.value ) );
+}
+
+extension SolanaAccountIdExtension on model_v4.SolanaAccountId {
+
+  PublicKey toPublicKey() => KeyPair.fromPublicKey(value).asPublicKey() ;
+
 }

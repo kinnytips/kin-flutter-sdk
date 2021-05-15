@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:kin_base/base/network/api/agora/proto_to_model.dart';
+import 'package:kin_base/base/network/api/agora/model_to_proto.dart';
 import 'package:kin_base/base/tools/extensions.dart';
 import 'package:kin_base/models/agora/protobuf/common/v3/model.pb.dart' as Model;
 
