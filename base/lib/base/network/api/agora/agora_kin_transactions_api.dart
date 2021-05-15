@@ -24,11 +24,11 @@ import 'proto_to_model.dart';
 class AgoraKinTransactionsApi extends GrpcApi implements KinTransactionApi {
   NetworkEnvironment networkEnvironment;
 
-  final TransactionClient transactionClient;
+  final TransactionClient _transactionClient;
 
   AgoraKinTransactionsApi(
       ClientChannel managedChannel, this.networkEnvironment)
-      : transactionClient = TransactionClient(managedChannel),
+      : _transactionClient = TransactionClient(managedChannel),
         super(managedChannel);
 
   @override
@@ -41,7 +41,7 @@ class AgoraKinTransactionsApi extends GrpcApi implements KinTransactionApi {
         accountId: accountId.toProtoStellarAccountId(),
         cursor: pagingToken.toProtoCursor());
 
-    var history = await transactionClient.getHistory(request);
+    var history = await _transactionClient.getHistory(request);
 
     if ( history.result == GetHistoryResponse_Result.OK ) {
       var transactions = history.items.map((e) => e.toHistoricalKinTransaction(networkEnvironment)).toList().requireNoNulls();
@@ -59,7 +59,7 @@ class AgoraKinTransactionsApi extends GrpcApi implements KinTransactionApi {
   @override
   Future<KinServiceResponse<KinTransaction>> getTransaction(TransactionHash transactionHash) async {
     var request = GetTransactionRequest()..transactionHash = model_v3.TransactionHash(value: transactionHash.rawValue);
-    var response = await transactionClient.getTransaction(request);
+    var response = await _transactionClient.getTransaction(request);
 
     if (response.state == GetTransactionResponse_State.SUCCESS) {
       var transaction = response.item.toHistoricalKinTransaction(networkEnvironment);
@@ -75,7 +75,7 @@ class AgoraKinTransactionsApi extends GrpcApi implements KinTransactionApi {
 
   @override
   Future<KinServiceResponse<QuarkAmount>> getTransactionMinFee() async {
-    return KinServiceResponse(KinServiceResponseType.ok, QuarkAmount(0));
+    return KinServiceResponse(KinServiceResponseType.ok, QuarkAmount(100));
   }
 
 }
