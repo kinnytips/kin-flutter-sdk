@@ -1,95 +1,53 @@
-import 'package:kin_sdk/base-compat/main/network.dart';
-import 'package:kin_sdk/base/network/models/KinAccount.dart';
-import 'package:kin_sdk/base/network/models/KinAccount.dart';
-import 'package:meta/meta.dart';
+import 'package:grpc/grpc.dart';
+import 'package:kin_base/base/models/invoices.dart';
+import 'package:kin_base/base/models/kin_account.dart';
+import 'package:kin_base/base/models/quark_amount.dart';
+import 'package:kin_base/base/models/solana/transaction.dart';
+import 'package:kin_base/base/models/transaction_hash.dart';
+import 'package:kin_base/base/network/api/agora/grpc_api.dart';
+import 'package:kin_base/base/network/api/agora/model_to_proto_v4.dart';
+import 'package:kin_base/base/network/api/kin_account_api.dart';
+import 'package:kin_base/base/network/api/kin_account_creation_api.dart';
+import 'package:kin_base/base/network/api/kin_streaming_api.dart';
+import 'package:kin_base/base/network/api/kin_transaction_api_v4.dart';
+import 'package:kin_base/base/network/services/kin_service.dart';
+import 'package:kin_base/base/stellar/models/kin_transaction.dart';
+import 'package:kin_base/base/stellar/models/network_environment.dart';
+import 'package:kin_base/base/stellar/models/paging_token.dart';
+import 'package:kin_base/base/tools/observers.dart';
+import 'package:kin_base/models/agora/protobuf/transaction/v4/transaction_service.pb.dart';
+import 'package:kin_base/models/agora/protobuf/transaction/v4/transaction_service.pbgrpc.dart';
 
-abstract class AgoraKinAccountsApi {
-  AgoraKinAccountsApi(ManagedChannel managedChannel, Network networkEnvironment)
+import 'package:kin_base/base/tools/extensions.dart';
 
-  // ignore: empty_constructor_bodies
-  GrpcApi(managedChannel)
+import 'proto_to_model.dart';
+import 'proto_to_model_v4.dart';
 
-  ,
+class AgoraKinAccountsApi extends GrpcApi
+    implements KinAccountApi, KinStreamingApi, KinAccountCreationApi {
+  AgoraKinAccountsApi(ClientChannel managedChannel) : super(managedChannel);
 
-  KinAccountApi
-
-  ,
-
-  KinStreamingApi
-
-  ,
-
-  KinAccountCreationApi
-
-  ;
-
-  var accountApi = AccountGrpc.newStub(managedChannel);
-
-  createAccount(KinAccountCreationApi.CreateAccountRequest request,
-      KinAccountCreationApi.CreateAccountResponse onCompleted) {
-    createAccount
-        .callAsPromisedCallback(
-        request.toGrpcRequest(),
-        onCompleted.createAccountResponse()
-    )
+  @override
+  Future<KinAccount> createAccount(KinAccountId accountId) {
+    // TODO: implement createAccount
+    throw UnimplementedError();
   }
 
-  getAccount(GetAccountRequest request, GetAccountResponse onCompleted) {
-    getAccountInfo
-        .callAsPromisedCallback(
-        request.toGrpcRequest(),
-        onCompleted.getAccountResponse()
-    )
+  @override
+  Future<KinServiceResponse<KinAccount>> getAccount(KinAccountId accountId) {
+    // TODO: implement getAccount
+    throw UnimplementedError();
   }
 
+  @override
+  Observer<KinAccount> streamAccount(KinAccountId kinAccountId) {
+    // TODO: implement streamAccount
+    throw UnimplementedError();
+  }
 
-}
-
-@sealed
-class AgoraEvent {
-
-  abstract AccountService.Event event;
-
-  UnknownEvent(event);
-
-  AccountUpdate(event);
-
-  TransactionUpdate(event);
-}
-
-class UnknownEvent(
-
-AccountService.Event event
-) {
-return AgoraEvent();
-}
-
-class AccountUpdate(
-
-KinAccount kinAccount, AccountService
-.
-Eventevent:) {
-return AgoraEvent();
-}
-
-class TransactionUpdate(
-
-KinTransaction kinTransaction, AccountService
-.
-
-Event event
-) {
-return AgoraEvent();
-}
-
-streamAccount
-(
-
-KinAccount.Id kinAccountId
-)
-Observer<KinAccount>{
-return openEventStream(kinAccountId)
-    .filter { (it as? AgoraEvent.AccountUpdate) != null }
-    .map { (it as AgoraEvent.AccountUpdate).kinAccount }
-
+  @override
+  Observer<KinTransaction> streamNewTransactions(KinAccountId kinAccountId) {
+    // TODO: implement streamNewTransactions
+    throw UnimplementedError();
+  }
 }
