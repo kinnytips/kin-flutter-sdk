@@ -21,12 +21,12 @@ abstract class KinTransactionApiV4 implements KinTransactionApi {
   Future<KinServiceInvoiceResponse<KinTransaction>> submitTransaction(
       Transaction transaction, InvoiceList invoiceList);
 
-  Future<KinServiceInvoiceResponse<ServiceConfig>> getServiceConfig();
+  Future<KinServiceResponse<ServiceConfig>> getServiceConfig();
 
-  Future<KinServiceInvoiceResponse<int>> getMinKinVersion();
+  Future<KinServiceResponse<int>> getMinKinVersion();
 
-  Future<KinServiceInvoiceResponse<Hash>> getRecentBlockHash();
+  Future<KinServiceResponse<Hash>> getRecentBlockHash();
 
-  Future<KinServiceInvoiceResponse<int>> getMinimumBalanceForRentExemption(
+  Future<KinServiceResponse<int>> getMinimumBalanceForRentExemption(
       int size);
 }

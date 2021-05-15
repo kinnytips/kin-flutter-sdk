@@ -1,5 +1,9 @@
 import 'package:grpc/grpc.dart';
+import 'package:kin_base/base/models/invoices.dart';
 import 'package:kin_base/base/models/kin_account.dart';
+import 'package:kin_base/base/models/quark_amount.dart';
+import 'package:kin_base/base/models/solana/transaction.dart';
+import 'package:kin_base/base/models/transaction_hash.dart';
 import 'package:kin_base/base/network/api/agora/grpc_api.dart';
 import 'package:kin_base/base/network/api/agora/model_to_proto_v4.dart';
 import 'package:kin_base/base/network/api/kin_transaction_api_v4.dart';
@@ -48,5 +52,47 @@ class AgoraKinTransactionsApiV4 extends GrpcApi implements KinTransactionApiV4 {
       return KinServiceResponse(KinServiceResponseType.undefinedError, null, UnrecognizedResultException(UnrecognizedProtoResponse()) );
     }
 
+  }
+
+  @override
+  Future<KinServiceResponse<int>> getMinKinVersion() async {
+    var response = await _transactionClient.getMinimumKinVersion(GetMinimumKinVersionRequest());
+    return KinServiceResponse(KinServiceResponseType.ok, response.version);
+  }
+
+  @override
+  Future<KinServiceResponse<int>> getMinimumBalanceForRentExemption(int size) async {
+    // TODO: implement getMinimumBalanceForRentExemption
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<KinServiceResponse<Hash>> getRecentBlockHash() async {
+    // TODO: implement getRecentBlockHash
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<KinServiceResponse<ServiceConfig>> getServiceConfig() async {
+    // TODO: implement getServiceConfig
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<KinServiceResponse<KinTransaction>> getTransaction(TransactionHash transactionHash) async {
+    // TODO: implement getTransaction
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<KinServiceResponse<QuarkAmount>> getTransactionMinFee() async {
+    // TODO: implement getTransactionMinFee
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<KinServiceInvoiceResponse<KinTransaction>> submitTransaction(Transaction transaction, InvoiceList invoiceList) async {
+    // TODO: implement submitTransaction
+    throw UnimplementedError();
   }
 }
