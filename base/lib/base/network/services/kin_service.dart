@@ -60,8 +60,8 @@ enum KinServiceOrder { ascending, descending }
 typedef KinServiceResponseCallback<T> = void Function(KinServiceResponse<T> response) ;
 
 class KinServiceResponse<P> {
-    final P payload ;
     final KinServiceResponseType type;
+    final P payload ;
     final dynamic error;
 
     KinServiceResponse(this.type, [this.payload, this.error]);
@@ -72,7 +72,28 @@ enum KinServiceResponseType {
     notFound,
     transientFailure,
     undefinedError,
-    upgradeRequiredError
+    upgradeRequiredError,
+    insufficientBalance,
+    insufficientFee,
+    badSequenceNumber,
+    noAccount,
+    webhookRejected,
+    invoiceError,
+}
+
+class KinServiceInvoiceResponse<P> extends KinServiceResponse<P> {
+    List<KinServiceInvoiceErrorType> invoiceErrors;
+
+    KinServiceInvoiceResponse(this.invoiceErrors, [P payload, dynamic error])
+        : super(KinServiceResponseType.invoiceError, payload, error);
+
+}
+
+enum KinServiceInvoiceErrorType {
+    unknown,
+    alreadyPaid,
+    wrongDestination,
+    SkuNotFound
 }
 
 class FatalError extends StateError {
