@@ -160,6 +160,14 @@ extension HistoryItemExtension on HistoryItem {
   }
 }
 
+extension TransactionSignatureExtension on model_v4.TransactionSignature {
+
+  Signature toModel() {
+    return Signature(value: FixedByteArray64( this.value ));
+  }
+
+}
+
 extension ModelBlockhashExtension on model_v4.Blockhash {
   Hash toModel() => Hash( FixedByteArray32( this.value ) );
 }

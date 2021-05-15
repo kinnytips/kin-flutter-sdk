@@ -11,8 +11,10 @@ extension KinAccountIdToProto on KinAccountId {
       SolanaAccountId.create()..value = Uint8List.fromList(this.value);
 }
 
-extension PagingTokenToProto on PagingToken {
-  Cursor toProtoCursor() {
+extension PagingTokenToProtoV4 on PagingToken {
+  Cursor toProtoCursor() => toProtoCursorV4();
+
+  Cursor toProtoCursorV4() {
     var cursor = Cursor.create();
     if (this.value.isNotEmpty) {
       cursor.value = base64.decode(this.value);
