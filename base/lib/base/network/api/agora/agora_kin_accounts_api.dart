@@ -28,13 +28,13 @@ class AgoraKinAccountsApi extends GrpcApi
   AgoraKinAccountsApi(ClientChannel managedChannel) : super(managedChannel);
 
   @override
-  Future<KinAccount> createAccount(KinAccountId accountId) {
+  Future<KinAccount> createAccount(KinAccountId accountId) async {
     // TODO: implement createAccount
     throw UnimplementedError();
   }
 
   @override
-  Future<KinServiceResponse<KinAccount>> getAccount(KinAccountId accountId) {
+  Future<KinServiceResponse<KinAccount>> getAccount(KinAccountId accountId) async  {
     // TODO: implement getAccount
     throw UnimplementedError();
   }
