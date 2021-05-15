@@ -37,13 +37,6 @@ abstract class FixedByteArray {
   int get hashCode => byteArray.computeHashCode();
 }
 
-///@JvmName("contentHashCodeNullable")
-///fun FixedByteArray?.contentHashCode(): Int = java.util.Arrays.hashCode(this?.byteArray)
-///
-///@JvmName("contentEqualsNullable")
-///infix fun FixedByteArray?.contentEquals(other: FixedByteArray?): Boolean =
-///java.util.Arrays.equals(this?.byteArray, other?.byteArray)
-
 class FixedByteArray32 extends FixedByteArray {
   FixedByteArray32([Uint8List byteArray]) : super(byteArray ?? Uint8List(32)) ;
 
@@ -55,11 +48,8 @@ class FixedByteArray32 extends FixedByteArray {
 }
 
 class FixedByteArray64 extends FixedByteArray {
-  Uint8List byteArray;
 
-  FixedByteArray64({this.byteArray}) : super(byteArray) {
-    this.byteArray = Uint8List(64);
-  }
+  FixedByteArray64([Uint8List byteArray]) : super(byteArray ?? Uint8List(64)) ;
 
   @override
   int size() => 64;
