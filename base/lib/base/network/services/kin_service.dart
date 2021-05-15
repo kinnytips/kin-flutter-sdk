@@ -85,11 +85,12 @@ enum KinServiceResponseType {
     unavailable,
 }
 
+// Maybe this should be removed and use only `KinServiceResponse`:
 class KinServiceInvoiceResponse<P> extends KinServiceResponse<P> {
     List<KinServiceInvoiceErrorType> invoiceErrors;
 
-    KinServiceInvoiceResponse(this.invoiceErrors, [P payload, dynamic error])
-        : super(KinServiceResponseType.invoiceError, payload, error);
+    KinServiceInvoiceResponse(KinServiceResponseType type, [P payload, dynamic error, this.invoiceErrors])
+        : super(type, payload, error);
 
 }
 

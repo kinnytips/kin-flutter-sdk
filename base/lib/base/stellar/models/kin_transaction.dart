@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'package:kin_base/base/models/invoices.dart';
 import 'package:kin_base/base/models/kin_account.dart';
+import 'package:kin_base/base/models/kin_amount.dart';
 import 'package:kin_base/base/models/kin_memo.dart';
 import 'package:kin_base/base/models/quark_amount.dart';
 import 'package:kin_base/base/models/solana/instruction.dart';
@@ -18,6 +19,9 @@ import 'package:kin_base/base/models/stellar_base_type_conversions.dart';
 import 'kin_operation.dart';
 
 extension TransactionExtension on Transaction {
+
+  KinAmount get totalAmount => this.paymentOperations.map((e) => e.amount).reduce((value, element) => value + element ) ;
+
   TransactionHash get transactionHash => TransactionHash(signatures.first.value.byteArray) ;
 
   KinAccountId get signingSource => message.accounts[0].asKinAccountId() ;
@@ -30,7 +34,7 @@ extension TransactionExtension on Transaction {
 
     var stringBase64 = utf8.decode(instruction.data);
     var decodedBase64 = stringBase64.isNotEmpty ? base64.decode(stringBase64) : null ;
-    
+
     if (decodedBase64 != null && decodedBase64.isNotEmpty) {
       var memo = KinMemo( decodedBase64 , KinMemoTypeCharsetEncoded(Charset.utf8));
 

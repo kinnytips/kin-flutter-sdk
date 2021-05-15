@@ -1,18 +1,23 @@
+import 'package:decimal/decimal.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:grpc/grpc.dart';
 import 'package:kin_base/base/models/invoices.dart';
 import 'package:kin_base/base/models/kin_account.dart';
 import 'package:kin_base/base/models/quark_amount.dart';
+import 'package:kin_base/base/models/solana/encoding.dart';
 import 'package:kin_base/base/models/solana/transaction.dart';
 import 'package:kin_base/base/models/stellar_base_type_conversions.dart';
 import 'package:kin_base/base/models/transaction_hash.dart';
+import 'package:kin_base/base/network/api/api_helpers.dart';
 import 'package:kin_base/base/network/api/agora/grpc_api.dart';
+import 'package:kin_base/base/network/api/agora/model_to_proto.dart';
 import 'package:kin_base/base/network/api/agora/model_to_proto_v4.dart';
 import 'package:kin_base/base/network/api/kin_transaction_api_v4.dart';
 import 'package:kin_base/base/network/services/kin_service.dart';
 import 'package:kin_base/base/stellar/models/kin_transaction.dart';
 import 'package:kin_base/base/stellar/models/network_environment.dart';
 import 'package:kin_base/base/stellar/models/paging_token.dart';
+import 'package:kin_base/base/stellar/models/result_code.dart';
 import 'package:kin_base/base/tools/extensions.dart';
 import 'package:kin_base/models/agora/protobuf/common/v4/model.pb.dart' as model_v4;
 import 'package:kin_base/models/agora/protobuf/transaction/v4/transaction_service.pb.dart';
@@ -38,7 +43,7 @@ class AgoraKinTransactionsApiV4 extends GrpcApi implements KinTransactionApiV4 {
   }) async {
     var request = GetHistoryRequest(
         accountId: accountId.toProtoSolanaAccountId(),
-        cursor: pagingToken.toProtoCursor());
+        cursor: pagingToken.toProtoCursorV4());
 
     var history = await _transactionClient.getHistory(request);
 
@@ -111,13 +116,84 @@ class AgoraKinTransactionsApiV4 extends GrpcApi implements KinTransactionApiV4 {
 
   @override
   Future<KinServiceResponse<QuarkAmount>> getTransactionMinFee() async {
-    // TODO: implement getTransactionMinFee
-    throw UnimplementedError();
+    return KinServiceResponse(KinServiceResponseType.ok, QuarkAmount(0));
   }
 
   @override
   Future<KinServiceInvoiceResponse<KinTransaction>> submitTransaction(Transaction transaction, InvoiceList invoiceList) async {
-    // TODO: implement submitTransaction
-    throw UnimplementedError();
+    var amount = transaction.totalAmount ;
+    var commitment ;
+
+    if (amount.value < Decimal.fromInt(50000) ) { // ~1 $USD
+      commitment = model_v4.Commitment.RECENT ;
+    } else if (amount.value < Decimal.fromInt(500000) ) { // ~10 $USD
+      commitment = model_v4.Commitment.SINGLE ;
+    } else {
+      commitment = model_v4.Commitment.MAX ;
+    }
+
+    var request = SubmitTransactionRequest(
+      transaction: model_v4.Transaction( value: transaction.marshal() ),
+        commitment: commitment) ;
+
+    if (invoiceList != null) {
+      request.invoiceList = invoiceList.toProto();
+    }
+
+    var response = await _transactionClient.submitTransaction(request);
+
+    if (response.result == SubmitTransactionResponse_Result.OK || response.result == SubmitTransactionResponse_Result.ALREADY_SUBMITTED) {
+
+      var historyItem = HistoryItem();
+
+      var signatures2 = transaction.signatures.toList();
+      signatures2[0] = response.signature.toModel();
+
+      var transactionMarshal = transaction.copyWith(signatures: signatures2).marshal() ;
+
+      historyItem.solanaTransaction = model_v4.Transaction( value: transactionMarshal ) ;
+
+      if (invoiceList != null) {
+        historyItem.invoiceList = invoiceList.toProto();
+      }
+
+      var responseTransaction = historyItem.toAcknowledgedKinTransaction(networkEnvironment);
+
+      return KinServiceInvoiceResponse(KinServiceResponseType.ok, responseTransaction);
+    }
+    else if (response.result == SubmitTransactionResponse_Result.FAILED) {
+      var responseType2 = parseResultCode( response.transactionError.toResultXdr() ).toKinServiceResponseType() ;
+
+      if (responseType2 == KinServiceResponseType.ok) {
+        return KinServiceInvoiceResponse(KinServiceResponseType.undefinedError);
+      }
+      else {
+        return KinServiceInvoiceResponse(responseType2);
+      }
+    }
+    else if (response.result == SubmitTransactionResponse_Result.INVOICE_ERROR) {
+      /* No `response.invoiceErrorsList`:
+      SubmitTransactionResponse.Result.InvoiceErrors(response.invoiceErrorsList.map {
+                    when (it.reason) {
+                        InvoiceError.Reason.ALREADY_PAID -> SubmitTransactionResponse.Result.InvoiceErrors.InvoiceError.ALREADY_PAID
+                        InvoiceError.Reason.WRONG_DESTINATION -> SubmitTransactionResponse.Result.InvoiceErrors.InvoiceError.WRONG_DESTINATION
+                        InvoiceError.Reason.SKU_NOT_FOUND -> SubmitTransactionResponse.Result.InvoiceErrors.InvoiceError.SKU_NOT_FOUND
+                        InvoiceError.Reason.UNRECOGNIZED,
+                        InvoiceError.Reason.UNKNOWN,
+                        null -> SubmitTransactionResponse.Result.InvoiceErrors.InvoiceError.UNKNOWN
+                    }
+                })
+       */
+      return KinServiceInvoiceResponse(KinServiceResponseType.invoiceError);
+    }
+    else if (response.result == SubmitTransactionResponse_Result.REJECTED) {
+      return KinServiceInvoiceResponse(KinServiceResponseType.webhookRejected);
+    }
+    else if (response.result == SubmitTransactionResponse_Result.PAYER_REQUIRED) {
+      return KinServiceInvoiceResponse(KinServiceResponseType.undefinedError, null, Exception("subsidizer required: not yet supported in this sdk outside of community agora instance"));
+    }
+    else {
+      return KinServiceInvoiceResponse(KinServiceResponseType.undefinedError, null, Exception("Internal Error"));
+    }
   }
 }

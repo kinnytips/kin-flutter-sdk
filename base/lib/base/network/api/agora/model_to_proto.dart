@@ -52,6 +52,6 @@ extension ListInvoiceToProto on List<Invoice> {
 }
 
 extension InvoiceListToProto on InvoiceList {
-  toProto() =>
+  model_v3.InvoiceList toProto() =>
       model_v3.InvoiceList(invoices: this.invoices.map((e) => e.toProto()));
 }
