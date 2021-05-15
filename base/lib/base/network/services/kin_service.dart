@@ -79,6 +79,10 @@ enum KinServiceResponseType {
     noAccount,
     webhookRejected,
     invoiceError,
+    exists,
+    payerRequired,
+    badNonce,
+    unavailable,
 }
 
 class KinServiceInvoiceResponse<P> extends KinServiceResponse<P> {
