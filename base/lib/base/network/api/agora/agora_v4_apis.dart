@@ -1,3 +1,4 @@
+import 'package:fixnum/fixnum.dart';
 import 'package:grpc/grpc.dart';
 import 'package:kin_base/base/models/invoices.dart';
 import 'package:kin_base/base/models/kin_account.dart';
@@ -62,8 +63,8 @@ class AgoraKinTransactionsApiV4 extends GrpcApi implements KinTransactionApiV4 {
 
   @override
   Future<KinServiceResponse<int>> getMinimumBalanceForRentExemption(int size) async {
-    // TODO: implement getMinimumBalanceForRentExemption
-    throw UnimplementedError();
+    var response = await _transactionClient.getMinimumBalanceForRentExemption(GetMinimumBalanceForRentExemptionRequest(size: Int64(size)));
+    return KinServiceResponse(KinServiceResponseType.ok, response.lamports.toInt());
   }
 
   @override
