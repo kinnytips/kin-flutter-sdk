@@ -19,9 +19,13 @@ import 'package:kin_base/models/agora/protobuf/account/v4/account_service.pb.dar
 import 'package:kin_base/models/agora/protobuf/common/v3/model.pb.dart' as model_v3 ;
 import 'package:kin_base/models/agora/protobuf/common/v4/model.pb.dart' as model_v4 ;
 import 'package:kin_base/models/agora/protobuf/transaction/v4/transaction_service.pb.dart';
+import 'package:kin_base/stellarfork/key_pair.dart';
 import 'package:kin_base/stellarfork/xdr/xdr_data_io.dart';
 import 'package:kin_base/stellarfork/xdr/xdr_transaction.dart';
 import 'package:kin_base/stellarfork/xdr/xdr_type.dart';
+
+import 'package:kin_base/base/models/stellar_base_type_conversions.dart';
+
 
 extension AccountInfoExtension on AccountInfo {
 
@@ -142,4 +146,10 @@ extension HistoryItemExtension on HistoryItem {
 
 extension ModelBlockhashExtension on model_v4.Blockhash {
   Hash toModel() => Hash( FixedByteArray32( this.value ) );
+}
+
+extension SolanaAccountIdExtension on model_v4.SolanaAccountId {
+
+  PublicKey toPublicKey() => KeyPair.fromPublicKey(value).asPublicKey() ;
+
 }

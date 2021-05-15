@@ -2,6 +2,7 @@
 import 'package:kin_base/base/models/key.dart';
 import 'package:kin_base/base/models/kin_account.dart';
 import 'package:kin_base/base/stellar/models/kin_transaction.dart';
+import 'package:kin_base/stellarfork/key_pair.dart';
 import 'package:protobuf/protobuf.dart';
 
 import 'kin_payment.dart';
@@ -46,4 +47,8 @@ extension KeyExtension on Key {
 
   KinAccountId asKinAccountId() => KinAccountId(asPublicKey().value) ;
 
+}
+
+extension KeyPairExtension on KeyPair {
+  PublicKey asPublicKey() => PublicKey.fromBytes( this.publicKey ) ;
 }
