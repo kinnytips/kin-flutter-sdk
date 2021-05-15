@@ -1,9 +1,14 @@
 import 'dart:io';
 
 import 'package:kin_base/base/stellar/models/api_config.dart';
+import 'package:kin_base/stellarfork/kinserver.dart';
+import 'package:kin_base/stellarfork/server.dart';
 
 abstract class KinJsonApi {
-  KinJsonApi(ApiConfig environment, HttpClient httpClient, [KinServer server = Server(environment.networkEndpoint, okHttpClient)]) { }
+  KinServer server;
+  KinJsonApi(ApiConfig environment, HttpClient httpClient) {
+    server = Server(environment.networkEndpoint, httpClient);
+   }
 }
 
 class MalformedBodyExcpetion implements Exception {
