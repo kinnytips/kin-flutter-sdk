@@ -5,20 +5,20 @@ import 'package:kin_base/base/models/invoices.dart';
 import 'package:kin_base/base/models/kin_account.dart';
 import 'package:kin_base/base/models/quark_amount.dart';
 import 'package:kin_base/base/models/transaction_hash.dart';
-import 'package:kin_base/models/agora/protobuf/common/v3/model.pb.dart' as Model;
+import 'package:kin_base/models/agora/protobuf/common/v3/model.pb.dart' as model_v3;
 
 extension KinAccountIdToProto on KinAccountId {
-  Model.StellarAccountId toProtoStellarAccountId() =>
-      Model.StellarAccountId(value: toKeyPair().accountId);
+  model_v3.StellarAccountId toProtoStellarAccountId() =>
+      model_v3.StellarAccountId(value: toKeyPair().accountId);
 }
 
 extension TransactionHashToProto on TransactionHash {
-  Model.TransactionHash toProtoTransactionHash() =>
-      Model.TransactionHash.fromBuffer(rawValue);
+  model_v3.TransactionHash toProtoTransactionHash() =>
+      model_v3.TransactionHash.fromBuffer(rawValue);
 }
 
 extension LineItemToProto on LineItem {
-  Model.Invoice_LineItem toProto() => Model.Invoice_LineItem(
+  model_v3.Invoice_LineItem toProto() => model_v3.Invoice_LineItem(
       title: title,
       description: description,
       amount: $fixnum.Int64(amount.toQuarks().value),
@@ -26,21 +26,21 @@ extension LineItemToProto on LineItem {
 }
 
 extension ListLineItemToProto on List<LineItem> {
-  List<Model.Invoice_LineItem> toProto() => map((e) => e.toProto()).toList();
+  List<model_v3.Invoice_LineItem> toProto() => map((e) => e.toProto()).toList();
 }
 
 extension InvoiceToProto on Invoice {
-  Model.Invoice toProto() => Model.Invoice(items: lineItems.toProto());
+  model_v3.Invoice toProto() => model_v3.Invoice(items: lineItems.toProto());
 }
 
 extension ListInvoiceToProto on List<Invoice> {
-  Model.InvoiceList toProto() =>
-      Model.InvoiceList(invoices: this.map((e) => e.toProto()));
+  model_v3.InvoiceList toProto() =>
+      model_v3.InvoiceList(invoices: this.map((e) => e.toProto()));
 }
 
 extension InvoiceListToProto on InvoiceList {
   toProto() =>
-      Model.InvoiceList(invoices: this.invoices.map((e) => e.toProto()));
+      model_v3.InvoiceList(invoices: this.invoices.map((e) => e.toProto()));
 }
 
 //

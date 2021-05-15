@@ -68,8 +68,8 @@ class AgoraKinTransactionsApiV4 extends GrpcApi implements KinTransactionApiV4 {
 
   @override
   Future<KinServiceResponse<Hash>> getRecentBlockHash() async {
-    // TODO: implement getRecentBlockHash
-    throw UnimplementedError();
+    var response = await _transactionClient.getRecentBlockhash(GetRecentBlockhashRequest());
+    return KinServiceResponse(KinServiceResponseType.ok, response.blockhash.toModel());
   }
 
   @override

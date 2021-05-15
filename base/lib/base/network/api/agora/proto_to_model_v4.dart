@@ -9,6 +9,8 @@ import 'package:kin_base/base/models/kin_account.dart';
 import 'package:kin_base/base/models/kin_balance.dart';
 import 'package:kin_base/base/models/quark_amount.dart';
 import 'package:kin_base/base/models/sha_224_hash.dart';
+import 'package:kin_base/base/models/solana/fixed_byte_array.dart';
+import 'package:kin_base/base/models/solana/transaction.dart';
 import 'package:kin_base/base/stellar/models/kin_transaction.dart';
 import 'package:kin_base/base/stellar/models/network_environment.dart';
 import 'package:kin_base/base/stellar/models/paging_token.dart';
@@ -136,4 +138,8 @@ extension HistoryItemExtension on HistoryItem {
       throw UnsupportedError('No StellarKinTransaction implementation yet');
     }
   }
+}
+
+extension ModelBlockhashExtension on model_v4.Blockhash {
+  Hash toModel() => Hash( FixedByteArray32( this.value ) );
 }
