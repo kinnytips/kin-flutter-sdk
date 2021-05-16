@@ -12,6 +12,8 @@ import 'package:kin_base/base/network/api/api_helpers.dart';
 import 'package:kin_base/base/network/api/agora/grpc_api.dart';
 import 'package:kin_base/base/network/api/agora/model_to_proto.dart';
 import 'package:kin_base/base/network/api/agora/model_to_proto_v4.dart';
+import 'package:kin_base/base/network/api/api_helpers.dart';
+import 'package:kin_base/base/network/api/kin_account_creation_api_v4.dart';
 import 'package:kin_base/base/network/api/kin_transaction_api_v4.dart';
 import 'package:kin_base/base/network/services/kin_service.dart';
 import 'package:kin_base/base/stellar/models/kin_transaction.dart';
@@ -19,11 +21,49 @@ import 'package:kin_base/base/stellar/models/network_environment.dart';
 import 'package:kin_base/base/stellar/models/paging_token.dart';
 import 'package:kin_base/base/stellar/models/result_code.dart';
 import 'package:kin_base/base/tools/extensions.dart';
+import 'package:kin_base/models/agora/protobuf/account/v4/account_service.pbgrpc.dart';
 import 'package:kin_base/models/agora/protobuf/common/v4/model.pb.dart' as model_v4;
 import 'package:kin_base/models/agora/protobuf/transaction/v4/transaction_service.pb.dart';
 import 'package:kin_base/models/agora/protobuf/transaction/v4/transaction_service.pbgrpc.dart';
 
 import 'proto_to_model_v4.dart';
+
+
+class AgoraKinAccountCreationApiV4 extends GrpcApi implements KinAccountCreationApiV4 {
+
+  final AccountClient _accountClient ;
+
+  AgoraKinAccountCreationApiV4(ClientChannel managedChannel)
+      : _accountClient = AccountClient(managedChannel),
+        super(managedChannel) ;
+
+  @override
+  Future<KinServiceResponse<KinAccount>> createAccount(KinAccountId accountId) {
+    throw UnsupportedError('Only for V3 protocol');
+  }
+
+  @override
+  Future<KinServiceResponse<KinAccount>> createAccountV4(Transaction transaction) async {
+    var request = CreateAccountRequest(
+      commitment: model_v4.Commitment.SINGLE,
+      transaction: model_v4.Transaction(value: transaction.marshal()),
+    );
+
+    var response = await _accountClient.createAccount(request);
+
+    if ( response.result == CreateAccountResponse_Result.OK ) {
+      var account = response.accountInfo.toKinAccount() ;
+      return KinServiceResponse( KinServiceResponseType.ok , account );
+    }
+    else if ( response.result == CreateAccountResponse_Result.EXISTS ) {
+      return KinServiceResponse( KinServiceResponseType.exists );
+    }
+    else {
+      return KinServiceResponse( KinServiceResponseType.undefinedError );
+    }
+  }
+
+}
 
 class AgoraKinTransactionsApiV4 extends GrpcApi implements KinTransactionApiV4 {
   NetworkEnvironment networkEnvironment;
