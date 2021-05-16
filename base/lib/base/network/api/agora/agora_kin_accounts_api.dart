@@ -15,8 +15,8 @@ import 'package:kin_base/base/stellar/models/kin_transaction.dart';
 import 'package:kin_base/base/stellar/models/network_environment.dart';
 import 'package:kin_base/base/stellar/models/paging_token.dart';
 import 'package:kin_base/base/tools/observers.dart';
-import 'package:kin_base/models/agora/protobuf/transaction/v4/transaction_service.pb.dart';
-import 'package:kin_base/models/agora/protobuf/transaction/v4/transaction_service.pbgrpc.dart';
+import 'package:kin_base/models/agora/protobuf/common/v3/model.pb.dart' as model_v3;
+import 'package:kin_base/models/agora/protobuf/transaction/v3/transaction_service.pbgrpc.dart';
 
 import 'package:kin_base/base/tools/extensions.dart';
 
@@ -25,10 +25,14 @@ import 'proto_to_model_v4.dart';
 
 class AgoraKinAccountsApi extends GrpcApi
     implements KinAccountApi, KinStreamingApi, KinAccountCreationApi {
-  AgoraKinAccountsApi(ClientChannel managedChannel) : super(managedChannel);
+
+  AgoraKinAccountsApi(ClientChannel managedChannel) : super(managedChannel) {
+    // No AccountClient for V3!
+    //_accountClient = AccountClient(managedChannel) ;
+  }
 
   @override
-  Future<KinAccount> createAccount(KinAccountId accountId) async {
+  Future<KinServiceResponse<KinAccount>> createAccount(KinAccountId accountId) async {
     // TODO: implement createAccount
     throw UnimplementedError();
   }
