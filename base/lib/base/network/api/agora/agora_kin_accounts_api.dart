@@ -15,10 +15,17 @@ import 'package:kin_base/base/stellar/models/kin_transaction.dart';
 import 'package:kin_base/base/stellar/models/network_environment.dart';
 import 'package:kin_base/base/stellar/models/paging_token.dart';
 import 'package:kin_base/base/tools/observers.dart';
+import 'package:kin_base/models/agora/protobuf/account/v4/account_service.pb.dart';
+import 'package:kin_base/models/agora/protobuf/account/v4/account_service.pbgrpc.dart';
 import 'package:kin_base/models/agora/protobuf/common/v3/model.pb.dart' as model_v3;
+import 'package:kin_base/models/agora/protobuf/common/v4/model.pb.dart' as model_v4;
 import 'package:kin_base/models/agora/protobuf/transaction/v3/transaction_service.pbgrpc.dart';
 
 import 'package:kin_base/base/tools/extensions.dart';
+import 'package:kin_base/models/app/account/create_kin_account_response.dart';
+import 'package:kin_base/models/app/interfaces/status.dart';
+import 'package:kin_base/models/app/sdk/constants.dart';
+import 'package:logging/logging.dart';
 
 import 'proto_to_model.dart';
 import 'proto_to_model_v4.dart';
@@ -31,10 +38,30 @@ class AgoraKinAccountsApi extends GrpcApi
     //_accountClient = AccountClient(managedChannel) ;
   }
 
+  final log = Logger('AccountService');
+
   @override
   Future<KinServiceResponse<KinAccount>> createAccount(KinAccountId accountId) async {
     // TODO: implement createAccount
-    throw UnimplementedError();
+        // Transaction.Value contains the instructions for creating the account
+    var transaction = model_v4.Transaction();
+    var createAccountRequest = CreateAccountRequest()
+      ..transaction = transaction;
+    try {
+      var response = await AccountClient(managedChannel)
+          .createAccount(createAccountRequest)
+          .timeout(Duration(seconds: 10));
+      return KinServiceResponse<KinAccount>(
+        KinServiceResponseType.ok
+      );
+    } catch (e) {
+      log.severe(
+        "Error creating account :" + e.toString(),
+      );
+      return  KinServiceResponse<KinAccount>(
+        KinServiceResponseType.exists
+      );
+    }
   }
 
   @override
