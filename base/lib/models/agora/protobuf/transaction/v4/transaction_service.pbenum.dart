@@ -39,6 +39,23 @@ class GetHistoryResponse_Result extends $pb.ProtobufEnum {
   const GetHistoryResponse_Result._($core.int v, $core.String n) : super(v, n);
 }
 
+class SignTransactionResponse_Result extends $pb.ProtobufEnum {
+  static const SignTransactionResponse_Result OK = SignTransactionResponse_Result._(0, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'OK');
+  static const SignTransactionResponse_Result REJECTED = SignTransactionResponse_Result._(3, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'REJECTED');
+  static const SignTransactionResponse_Result INVOICE_ERROR = SignTransactionResponse_Result._(4, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'INVOICE_ERROR');
+
+  static const $core.List<SignTransactionResponse_Result> values = <SignTransactionResponse_Result> [
+    OK,
+    REJECTED,
+    INVOICE_ERROR,
+  ];
+
+  static final $core.Map<$core.int, SignTransactionResponse_Result> _byValue = $pb.ProtobufEnum.initByValue(values);
+  static SignTransactionResponse_Result valueOf($core.int value) => _byValue[value];
+
+  const SignTransactionResponse_Result._($core.int v, $core.String n) : super(v, n);
+}
+
 class SubmitTransactionResponse_Result extends $pb.ProtobufEnum {
   static const SubmitTransactionResponse_Result OK = SubmitTransactionResponse_Result._(0, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'OK');
   static const SubmitTransactionResponse_Result ALREADY_SUBMITTED = SubmitTransactionResponse_Result._(1, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'ALREADY_SUBMITTED');

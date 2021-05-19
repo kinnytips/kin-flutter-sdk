@@ -21,6 +21,8 @@ class AccountInfo extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'AccountInfo', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'kin.agora.account.v4'), createEmptyInstance: create)
     ..aOM<$3.SolanaAccountId>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'accountId', subBuilder: $3.SolanaAccountId.create)
     ..aInt64(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'balance')
+    ..aOM<$3.SolanaAccountId>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'owner', subBuilder: $3.SolanaAccountId.create)
+    ..aOM<$3.SolanaAccountId>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'closeAuthority', subBuilder: $3.SolanaAccountId.create)
     ..hasRequiredFields = false
   ;
 
@@ -28,6 +30,8 @@ class AccountInfo extends $pb.GeneratedMessage {
   factory AccountInfo({
     $3.SolanaAccountId accountId,
     $fixnum.Int64 balance,
+    $3.SolanaAccountId owner,
+    $3.SolanaAccountId closeAuthority,
   }) {
     final _result = create();
     if (accountId != null) {
@@ -35,6 +39,12 @@ class AccountInfo extends $pb.GeneratedMessage {
     }
     if (balance != null) {
       _result.balance = balance;
+    }
+    if (owner != null) {
+      _result.owner = owner;
+    }
+    if (closeAuthority != null) {
+      _result.closeAuthority = closeAuthority;
     }
     return _result;
   }
@@ -78,6 +88,28 @@ class AccountInfo extends $pb.GeneratedMessage {
   $core.bool hasBalance() => $_has(1);
   @$pb.TagNumber(2)
   void clearBalance() => clearField(2);
+
+  @$pb.TagNumber(3)
+  $3.SolanaAccountId get owner => $_getN(2);
+  @$pb.TagNumber(3)
+  set owner($3.SolanaAccountId v) { setField(3, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasOwner() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearOwner() => clearField(3);
+  @$pb.TagNumber(3)
+  $3.SolanaAccountId ensureOwner() => $_ensure(2);
+
+  @$pb.TagNumber(4)
+  $3.SolanaAccountId get closeAuthority => $_getN(3);
+  @$pb.TagNumber(4)
+  set closeAuthority($3.SolanaAccountId v) { setField(4, v); }
+  @$pb.TagNumber(4)
+  $core.bool hasCloseAuthority() => $_has(3);
+  @$pb.TagNumber(4)
+  void clearCloseAuthority() => clearField(4);
+  @$pb.TagNumber(4)
+  $3.SolanaAccountId ensureCloseAuthority() => $_ensure(3);
 }
 
 class CreateAccountRequest extends $pb.GeneratedMessage {
@@ -335,16 +367,21 @@ class GetAccountInfoResponse extends $pb.GeneratedMessage {
 class ResolveTokenAccountsRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'ResolveTokenAccountsRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'kin.agora.account.v4'), createEmptyInstance: create)
     ..aOM<$3.SolanaAccountId>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'accountId', subBuilder: $3.SolanaAccountId.create)
+    ..aOB(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'includeAccountInfo')
     ..hasRequiredFields = false
   ;
 
   ResolveTokenAccountsRequest._() : super();
   factory ResolveTokenAccountsRequest({
     $3.SolanaAccountId accountId,
+    $core.bool includeAccountInfo,
   }) {
     final _result = create();
     if (accountId != null) {
       _result.accountId = accountId;
+    }
+    if (includeAccountInfo != null) {
+      _result.includeAccountInfo = includeAccountInfo;
     }
     return _result;
   }
@@ -379,21 +416,37 @@ class ResolveTokenAccountsRequest extends $pb.GeneratedMessage {
   void clearAccountId() => clearField(1);
   @$pb.TagNumber(1)
   $3.SolanaAccountId ensureAccountId() => $_ensure(0);
+
+  @$pb.TagNumber(2)
+  $core.bool get includeAccountInfo => $_getBF(1);
+  @$pb.TagNumber(2)
+  set includeAccountInfo($core.bool v) { $_setBool(1, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasIncludeAccountInfo() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearIncludeAccountInfo() => clearField(2);
 }
 
 class ResolveTokenAccountsResponse extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'ResolveTokenAccountsResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'kin.agora.account.v4'), createEmptyInstance: create)
     ..pc<$3.SolanaAccountId>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'tokenAccounts', $pb.PbFieldType.PM, subBuilder: $3.SolanaAccountId.create)
+    ..pc<AccountInfo>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'tokenAccountInfos', $pb.PbFieldType.PM, subBuilder: AccountInfo.create)
     ..hasRequiredFields = false
   ;
 
   ResolveTokenAccountsResponse._() : super();
   factory ResolveTokenAccountsResponse({
+  @$core.Deprecated('This field is deprecated.')
     $core.Iterable<$3.SolanaAccountId> tokenAccounts,
+    $core.Iterable<AccountInfo> tokenAccountInfos,
   }) {
     final _result = create();
     if (tokenAccounts != null) {
+      // ignore: deprecated_member_use_from_same_package
       _result.tokenAccounts.addAll(tokenAccounts);
+    }
+    if (tokenAccountInfos != null) {
+      _result.tokenAccountInfos.addAll(tokenAccountInfos);
     }
     return _result;
   }
@@ -418,8 +471,12 @@ class ResolveTokenAccountsResponse extends $pb.GeneratedMessage {
   static ResolveTokenAccountsResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<ResolveTokenAccountsResponse>(create);
   static ResolveTokenAccountsResponse _defaultInstance;
 
+  @$core.Deprecated('This field is deprecated.')
   @$pb.TagNumber(1)
   $core.List<$3.SolanaAccountId> get tokenAccounts => $_getList(0);
+
+  @$pb.TagNumber(2)
+  $core.List<AccountInfo> get tokenAccountInfos => $_getList(1);
 }
 
 class GetEventsRequest extends $pb.GeneratedMessage {

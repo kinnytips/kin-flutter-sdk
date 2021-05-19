@@ -21,11 +21,13 @@ const AccountInfo$json = const {
       '8': const {'6': 1},
       '10': 'balance',
     },
+    const {'1': 'owner', '3': 3, '4': 1, '5': 11, '6': '.kin.agora.common.v4.SolanaAccountId', '10': 'owner'},
+    const {'1': 'close_authority', '3': 4, '4': 1, '5': 11, '6': '.kin.agora.common.v4.SolanaAccountId', '10': 'closeAuthority'},
   ],
 };
 
 /// Descriptor for `AccountInfo`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List accountInfoDescriptor = $convert.base64Decode('CgtBY2NvdW50SW5mbxJNCgphY2NvdW50X2lkGAEgASgLMiQua2luLmFnb3JhLmNvbW1vbi52NC5Tb2xhbmFBY2NvdW50SWRCCPpCBYoBAhABUglhY2NvdW50SWQSHAoHYmFsYW5jZRgCIAEoA0ICMAFSB2JhbGFuY2U=');
+final $typed_data.Uint8List accountInfoDescriptor = $convert.base64Decode('CgtBY2NvdW50SW5mbxJNCgphY2NvdW50X2lkGAEgASgLMiQua2luLmFnb3JhLmNvbW1vbi52NC5Tb2xhbmFBY2NvdW50SWRCCPpCBYoBAhABUglhY2NvdW50SWQSHAoHYmFsYW5jZRgCIAEoA0ICMAFSB2JhbGFuY2USOgoFb3duZXIYAyABKAsyJC5raW4uYWdvcmEuY29tbW9uLnY0LlNvbGFuYUFjY291bnRJZFIFb3duZXISTQoPY2xvc2VfYXV0aG9yaXR5GAQgASgLMiQua2luLmFnb3JhLmNvbW1vbi52NC5Tb2xhbmFBY2NvdW50SWRSDmNsb3NlQXV0aG9yaXR5');
 @$core.Deprecated('Use createAccountRequestDescriptor instead')
 const CreateAccountRequest$json = const {
   '1': 'CreateAccountRequest',
@@ -97,21 +99,31 @@ const ResolveTokenAccountsRequest$json = const {
   '1': 'ResolveTokenAccountsRequest',
   '2': const [
     const {'1': 'account_id', '3': 1, '4': 1, '5': 11, '6': '.kin.agora.common.v4.SolanaAccountId', '8': const {}, '10': 'accountId'},
+    const {'1': 'include_account_info', '3': 2, '4': 1, '5': 8, '10': 'includeAccountInfo'},
   ],
 };
 
 /// Descriptor for `ResolveTokenAccountsRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List resolveTokenAccountsRequestDescriptor = $convert.base64Decode('ChtSZXNvbHZlVG9rZW5BY2NvdW50c1JlcXVlc3QSTQoKYWNjb3VudF9pZBgBIAEoCzIkLmtpbi5hZ29yYS5jb21tb24udjQuU29sYW5hQWNjb3VudElkQgj6QgWKAQIQAVIJYWNjb3VudElk');
+final $typed_data.Uint8List resolveTokenAccountsRequestDescriptor = $convert.base64Decode('ChtSZXNvbHZlVG9rZW5BY2NvdW50c1JlcXVlc3QSTQoKYWNjb3VudF9pZBgBIAEoCzIkLmtpbi5hZ29yYS5jb21tb24udjQuU29sYW5hQWNjb3VudElkQgj6QgWKAQIQAVIJYWNjb3VudElkEjAKFGluY2x1ZGVfYWNjb3VudF9pbmZvGAIgASgIUhJpbmNsdWRlQWNjb3VudEluZm8=');
 @$core.Deprecated('Use resolveTokenAccountsResponseDescriptor instead')
 const ResolveTokenAccountsResponse$json = const {
   '1': 'ResolveTokenAccountsResponse',
   '2': const [
-    const {'1': 'token_accounts', '3': 1, '4': 3, '5': 11, '6': '.kin.agora.common.v4.SolanaAccountId', '10': 'tokenAccounts'},
+    const {
+      '1': 'token_accounts',
+      '3': 1,
+      '4': 3,
+      '5': 11,
+      '6': '.kin.agora.common.v4.SolanaAccountId',
+      '8': const {'3': true},
+      '10': 'tokenAccounts',
+    },
+    const {'1': 'token_account_infos', '3': 2, '4': 3, '5': 11, '6': '.kin.agora.account.v4.AccountInfo', '10': 'tokenAccountInfos'},
   ],
 };
 
 /// Descriptor for `ResolveTokenAccountsResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List resolveTokenAccountsResponseDescriptor = $convert.base64Decode('ChxSZXNvbHZlVG9rZW5BY2NvdW50c1Jlc3BvbnNlEksKDnRva2VuX2FjY291bnRzGAEgAygLMiQua2luLmFnb3JhLmNvbW1vbi52NC5Tb2xhbmFBY2NvdW50SWRSDXRva2VuQWNjb3VudHM=');
+final $typed_data.Uint8List resolveTokenAccountsResponseDescriptor = $convert.base64Decode('ChxSZXNvbHZlVG9rZW5BY2NvdW50c1Jlc3BvbnNlEk8KDnRva2VuX2FjY291bnRzGAEgAygLMiQua2luLmFnb3JhLmNvbW1vbi52NC5Tb2xhbmFBY2NvdW50SWRCAhgBUg10b2tlbkFjY291bnRzElEKE3Rva2VuX2FjY291bnRfaW5mb3MYAiADKAsyIS5raW4uYWdvcmEuYWNjb3VudC52NC5BY2NvdW50SW5mb1IRdG9rZW5BY2NvdW50SW5mb3M=');
 @$core.Deprecated('Use getEventsRequestDescriptor instead')
 const GetEventsRequest$json = const {
   '1': 'GetEventsRequest',

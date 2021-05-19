@@ -12,6 +12,7 @@ import 'package:protobuf/protobuf.dart' as $pb;
 
 import '../../common/v4/model.pb.dart' as $3;
 import '../../common/v3/model.pb.dart' as $4;
+import '../../google/protobuf/timestamp.pb.dart' as $2;
 
 import 'transaction_service.pbenum.dart';
 import '../../common/v4/model.pbenum.dart' as $3;
@@ -510,6 +511,134 @@ class GetHistoryResponse extends $pb.GeneratedMessage {
   $core.List<HistoryItem> get items => $_getList(1);
 }
 
+class SignTransactionRequest extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'SignTransactionRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'kin.agora.transaction.v4'), createEmptyInstance: create)
+    ..aOM<$3.Transaction>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'transaction', subBuilder: $3.Transaction.create)
+    ..aOM<$4.InvoiceList>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'invoiceList', subBuilder: $4.InvoiceList.create)
+    ..hasRequiredFields = false
+  ;
+
+  SignTransactionRequest._() : super();
+  factory SignTransactionRequest({
+    $3.Transaction transaction,
+    $4.InvoiceList invoiceList,
+  }) {
+    final _result = create();
+    if (transaction != null) {
+      _result.transaction = transaction;
+    }
+    if (invoiceList != null) {
+      _result.invoiceList = invoiceList;
+    }
+    return _result;
+  }
+  factory SignTransactionRequest.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory SignTransactionRequest.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  SignTransactionRequest clone() => SignTransactionRequest()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  SignTransactionRequest copyWith(void Function(SignTransactionRequest) updates) => super.copyWith((message) => updates(message as SignTransactionRequest)) as SignTransactionRequest; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static SignTransactionRequest create() => SignTransactionRequest._();
+  SignTransactionRequest createEmptyInstance() => create();
+  static $pb.PbList<SignTransactionRequest> createRepeated() => $pb.PbList<SignTransactionRequest>();
+  @$core.pragma('dart2js:noInline')
+  static SignTransactionRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<SignTransactionRequest>(create);
+  static SignTransactionRequest _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $3.Transaction get transaction => $_getN(0);
+  @$pb.TagNumber(1)
+  set transaction($3.Transaction v) { setField(1, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasTransaction() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearTransaction() => clearField(1);
+  @$pb.TagNumber(1)
+  $3.Transaction ensureTransaction() => $_ensure(0);
+
+  @$pb.TagNumber(2)
+  $4.InvoiceList get invoiceList => $_getN(1);
+  @$pb.TagNumber(2)
+  set invoiceList($4.InvoiceList v) { setField(2, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasInvoiceList() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearInvoiceList() => clearField(2);
+  @$pb.TagNumber(2)
+  $4.InvoiceList ensureInvoiceList() => $_ensure(1);
+}
+
+class SignTransactionResponse extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'SignTransactionResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'kin.agora.transaction.v4'), createEmptyInstance: create)
+    ..e<SignTransactionResponse_Result>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'result', $pb.PbFieldType.OE, defaultOrMaker: SignTransactionResponse_Result.OK, valueOf: SignTransactionResponse_Result.valueOf, enumValues: SignTransactionResponse_Result.values)
+    ..aOM<$3.TransactionSignature>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'signature', subBuilder: $3.TransactionSignature.create)
+    ..hasRequiredFields = false
+  ;
+
+  SignTransactionResponse._() : super();
+  factory SignTransactionResponse({
+    SignTransactionResponse_Result result,
+    $3.TransactionSignature signature,
+  }) {
+    final _result = create();
+    if (result != null) {
+      _result.result = result;
+    }
+    if (signature != null) {
+      _result.signature = signature;
+    }
+    return _result;
+  }
+  factory SignTransactionResponse.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory SignTransactionResponse.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  SignTransactionResponse clone() => SignTransactionResponse()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  SignTransactionResponse copyWith(void Function(SignTransactionResponse) updates) => super.copyWith((message) => updates(message as SignTransactionResponse)) as SignTransactionResponse; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static SignTransactionResponse create() => SignTransactionResponse._();
+  SignTransactionResponse createEmptyInstance() => create();
+  static $pb.PbList<SignTransactionResponse> createRepeated() => $pb.PbList<SignTransactionResponse>();
+  @$core.pragma('dart2js:noInline')
+  static SignTransactionResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<SignTransactionResponse>(create);
+  static SignTransactionResponse _defaultInstance;
+
+  @$pb.TagNumber(1)
+  SignTransactionResponse_Result get result => $_getN(0);
+  @$pb.TagNumber(1)
+  set result(SignTransactionResponse_Result v) { setField(1, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasResult() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearResult() => clearField(1);
+
+  @$pb.TagNumber(2)
+  $3.TransactionSignature get signature => $_getN(1);
+  @$pb.TagNumber(2)
+  set signature($3.TransactionSignature v) { setField(2, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasSignature() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearSignature() => clearField(2);
+  @$pb.TagNumber(2)
+  $3.TransactionSignature ensureSignature() => $_ensure(1);
+}
+
 class SubmitTransactionRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'SubmitTransactionRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'kin.agora.transaction.v4'), createEmptyInstance: create)
     ..aOM<$3.Transaction>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'transaction', subBuilder: $3.Transaction.create)
@@ -950,6 +1079,7 @@ class HistoryItem extends $pb.GeneratedMessage {
     ..aOM<$3.TransactionError>(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'transactionError', subBuilder: $3.TransactionError.create)
     ..pc<HistoryItem_Payment>(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'payments', $pb.PbFieldType.PM, subBuilder: HistoryItem_Payment.create)
     ..aOM<$4.InvoiceList>(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'invoiceList', subBuilder: $4.InvoiceList.create)
+    ..aOM<$2.Timestamp>(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'transactionTime', subBuilder: $2.Timestamp.create)
     ..hasRequiredFields = false
   ;
 
@@ -962,6 +1092,7 @@ class HistoryItem extends $pb.GeneratedMessage {
     $3.TransactionError transactionError,
     $core.Iterable<HistoryItem_Payment> payments,
     $4.InvoiceList invoiceList,
+    $2.Timestamp transactionTime,
   }) {
     final _result = create();
     if (transactionId != null) {
@@ -984,6 +1115,9 @@ class HistoryItem extends $pb.GeneratedMessage {
     }
     if (invoiceList != null) {
       _result.invoiceList = invoiceList;
+    }
+    if (transactionTime != null) {
+      _result.transactionTime = transactionTime;
     }
     return _result;
   }
@@ -1079,6 +1213,17 @@ class HistoryItem extends $pb.GeneratedMessage {
   void clearInvoiceList() => clearField(7);
   @$pb.TagNumber(7)
   $4.InvoiceList ensureInvoiceList() => $_ensure(6);
+
+  @$pb.TagNumber(8)
+  $2.Timestamp get transactionTime => $_getN(7);
+  @$pb.TagNumber(8)
+  set transactionTime($2.Timestamp v) { setField(8, v); }
+  @$pb.TagNumber(8)
+  $core.bool hasTransactionTime() => $_has(7);
+  @$pb.TagNumber(8)
+  void clearTransactionTime() => clearField(8);
+  @$pb.TagNumber(8)
+  $2.Timestamp ensureTransactionTime() => $_ensure(7);
 }
 
 class Cursor extends $pb.GeneratedMessage {

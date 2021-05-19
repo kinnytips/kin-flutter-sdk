@@ -124,6 +124,39 @@ const GetHistoryResponse_Result$json = const {
 
 /// Descriptor for `GetHistoryResponse`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List getHistoryResponseDescriptor = $convert.base64Decode('ChJHZXRIaXN0b3J5UmVzcG9uc2USSwoGcmVzdWx0GAEgASgOMjMua2luLmFnb3JhLnRyYW5zYWN0aW9uLnY0LkdldEhpc3RvcnlSZXNwb25zZS5SZXN1bHRSBnJlc3VsdBJICgVpdGVtcxgCIAMoCzIlLmtpbi5hZ29yYS50cmFuc2FjdGlvbi52NC5IaXN0b3J5SXRlbUIL+kIIkgEFCAAQgAFSBWl0ZW1zIh8KBlJlc3VsdBIGCgJPSxAAEg0KCU5PVF9GT1VORBAB');
+@$core.Deprecated('Use signTransactionRequestDescriptor instead')
+const SignTransactionRequest$json = const {
+  '1': 'SignTransactionRequest',
+  '2': const [
+    const {'1': 'transaction', '3': 1, '4': 1, '5': 11, '6': '.kin.agora.common.v4.Transaction', '8': const {}, '10': 'transaction'},
+    const {'1': 'invoice_list', '3': 2, '4': 1, '5': 11, '6': '.kin.agora.common.v3.InvoiceList', '10': 'invoiceList'},
+  ],
+};
+
+/// Descriptor for `SignTransactionRequest`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List signTransactionRequestDescriptor = $convert.base64Decode('ChZTaWduVHJhbnNhY3Rpb25SZXF1ZXN0EkwKC3RyYW5zYWN0aW9uGAEgASgLMiAua2luLmFnb3JhLmNvbW1vbi52NC5UcmFuc2FjdGlvbkII+kIFigECEAFSC3RyYW5zYWN0aW9uEkMKDGludm9pY2VfbGlzdBgCIAEoCzIgLmtpbi5hZ29yYS5jb21tb24udjMuSW52b2ljZUxpc3RSC2ludm9pY2VMaXN0');
+@$core.Deprecated('Use signTransactionResponseDescriptor instead')
+const SignTransactionResponse$json = const {
+  '1': 'SignTransactionResponse',
+  '2': const [
+    const {'1': 'result', '3': 1, '4': 1, '5': 14, '6': '.kin.agora.transaction.v4.SignTransactionResponse.Result', '10': 'result'},
+    const {'1': 'signature', '3': 2, '4': 1, '5': 11, '6': '.kin.agora.common.v4.TransactionSignature', '10': 'signature'},
+  ],
+  '4': const [SignTransactionResponse_Result$json],
+};
+
+@$core.Deprecated('Use signTransactionResponseDescriptor instead')
+const SignTransactionResponse_Result$json = const {
+  '1': 'Result',
+  '2': const [
+    const {'1': 'OK', '2': 0},
+    const {'1': 'REJECTED', '2': 3},
+    const {'1': 'INVOICE_ERROR', '2': 4},
+  ],
+};
+
+/// Descriptor for `SignTransactionResponse`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List signTransactionResponseDescriptor = $convert.base64Decode('ChdTaWduVHJhbnNhY3Rpb25SZXNwb25zZRJQCgZyZXN1bHQYASABKA4yOC5raW4uYWdvcmEudHJhbnNhY3Rpb24udjQuU2lnblRyYW5zYWN0aW9uUmVzcG9uc2UuUmVzdWx0UgZyZXN1bHQSRwoJc2lnbmF0dXJlGAIgASgLMikua2luLmFnb3JhLmNvbW1vbi52NC5UcmFuc2FjdGlvblNpZ25hdHVyZVIJc2lnbmF0dXJlIjEKBlJlc3VsdBIGCgJPSxAAEgwKCFJFSkVDVEVEEAMSEQoNSU5WT0lDRV9FUlJPUhAE');
 @$core.Deprecated('Use submitTransactionRequestDescriptor instead')
 const SubmitTransactionRequest$json = const {
   '1': 'SubmitTransactionRequest',
@@ -217,6 +250,7 @@ const HistoryItem$json = const {
     const {'1': 'transaction_error', '3': 5, '4': 1, '5': 11, '6': '.kin.agora.common.v4.TransactionError', '10': 'transactionError'},
     const {'1': 'payments', '3': 6, '4': 3, '5': 11, '6': '.kin.agora.transaction.v4.HistoryItem.Payment', '10': 'payments'},
     const {'1': 'invoice_list', '3': 7, '4': 1, '5': 11, '6': '.kin.agora.common.v3.InvoiceList', '10': 'invoiceList'},
+    const {'1': 'transaction_time', '3': 8, '4': 1, '5': 11, '6': '.google.protobuf.Timestamp', '10': 'transactionTime'},
   ],
   '3': const [HistoryItem_Payment$json],
   '8': const [
@@ -236,7 +270,7 @@ const HistoryItem_Payment$json = const {
 };
 
 /// Descriptor for `HistoryItem`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List historyItemDescriptor = $convert.base64Decode('CgtIaXN0b3J5SXRlbRJTCg50cmFuc2FjdGlvbl9pZBgBIAEoCzIiLmtpbi5hZ29yYS5jb21tb24udjQuVHJhbnNhY3Rpb25JZEII+kIFigECEAFSDXRyYW5zYWN0aW9uSWQSOAoGY3Vyc29yGAIgASgLMiAua2luLmFnb3JhLnRyYW5zYWN0aW9uLnY0LkN1cnNvclIGY3Vyc29yElEKEnNvbGFuYV90cmFuc2FjdGlvbhgDIAEoCzIgLmtpbi5hZ29yYS5jb21tb24udjQuVHJhbnNhY3Rpb25IAFIRc29sYW5hVHJhbnNhY3Rpb24SWgoTc3RlbGxhcl90cmFuc2FjdGlvbhgEIAEoCzInLmtpbi5hZ29yYS5jb21tb24udjQuU3RlbGxhclRyYW5zYWN0aW9uSABSEnN0ZWxsYXJUcmFuc2FjdGlvbhJSChF0cmFuc2FjdGlvbl9lcnJvchgFIAEoCzIlLmtpbi5hZ29yYS5jb21tb24udjQuVHJhbnNhY3Rpb25FcnJvclIQdHJhbnNhY3Rpb25FcnJvchJJCghwYXltZW50cxgGIAMoCzItLmtpbi5hZ29yYS50cmFuc2FjdGlvbi52NC5IaXN0b3J5SXRlbS5QYXltZW50UghwYXltZW50cxJDCgxpbnZvaWNlX2xpc3QYByABKAsyIC5raW4uYWdvcmEuY29tbW9uLnYzLkludm9pY2VMaXN0UgtpbnZvaWNlTGlzdBrRAQoHUGF5bWVudBJGCgZzb3VyY2UYASABKAsyJC5raW4uYWdvcmEuY29tbW9uLnY0LlNvbGFuYUFjY291bnRJZEII+kIFigECEAFSBnNvdXJjZRJQCgtkZXN0aW5hdGlvbhgCIAEoCzIkLmtpbi5hZ29yYS5jb21tb24udjQuU29sYW5hQWNjb3VudElkQgj6QgWKAQIQAVILZGVzdGluYXRpb24SFgoGYW1vdW50GAMgASgDUgZhbW91bnQSFAoFaW5kZXgYBCABKA1SBWluZGV4QhEKD3Jhd190cmFuc2FjdGlvbg==');
+final $typed_data.Uint8List historyItemDescriptor = $convert.base64Decode('CgtIaXN0b3J5SXRlbRJTCg50cmFuc2FjdGlvbl9pZBgBIAEoCzIiLmtpbi5hZ29yYS5jb21tb24udjQuVHJhbnNhY3Rpb25JZEII+kIFigECEAFSDXRyYW5zYWN0aW9uSWQSOAoGY3Vyc29yGAIgASgLMiAua2luLmFnb3JhLnRyYW5zYWN0aW9uLnY0LkN1cnNvclIGY3Vyc29yElEKEnNvbGFuYV90cmFuc2FjdGlvbhgDIAEoCzIgLmtpbi5hZ29yYS5jb21tb24udjQuVHJhbnNhY3Rpb25IAFIRc29sYW5hVHJhbnNhY3Rpb24SWgoTc3RlbGxhcl90cmFuc2FjdGlvbhgEIAEoCzInLmtpbi5hZ29yYS5jb21tb24udjQuU3RlbGxhclRyYW5zYWN0aW9uSABSEnN0ZWxsYXJUcmFuc2FjdGlvbhJSChF0cmFuc2FjdGlvbl9lcnJvchgFIAEoCzIlLmtpbi5hZ29yYS5jb21tb24udjQuVHJhbnNhY3Rpb25FcnJvclIQdHJhbnNhY3Rpb25FcnJvchJJCghwYXltZW50cxgGIAMoCzItLmtpbi5hZ29yYS50cmFuc2FjdGlvbi52NC5IaXN0b3J5SXRlbS5QYXltZW50UghwYXltZW50cxJDCgxpbnZvaWNlX2xpc3QYByABKAsyIC5raW4uYWdvcmEuY29tbW9uLnYzLkludm9pY2VMaXN0UgtpbnZvaWNlTGlzdBJFChB0cmFuc2FjdGlvbl90aW1lGAggASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcFIPdHJhbnNhY3Rpb25UaW1lGtEBCgdQYXltZW50EkYKBnNvdXJjZRgBIAEoCzIkLmtpbi5hZ29yYS5jb21tb24udjQuU29sYW5hQWNjb3VudElkQgj6QgWKAQIQAVIGc291cmNlElAKC2Rlc3RpbmF0aW9uGAIgASgLMiQua2luLmFnb3JhLmNvbW1vbi52NC5Tb2xhbmFBY2NvdW50SWRCCPpCBYoBAhABUgtkZXN0aW5hdGlvbhIWCgZhbW91bnQYAyABKANSBmFtb3VudBIUCgVpbmRleBgEIAEoDVIFaW5kZXhCEQoPcmF3X3RyYW5zYWN0aW9u');
 @$core.Deprecated('Use cursorDescriptor instead')
 const Cursor$json = const {
   '1': 'Cursor',

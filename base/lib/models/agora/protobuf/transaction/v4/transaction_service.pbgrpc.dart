@@ -46,6 +46,12 @@ class TransactionClient extends $grpc.Client {
           ($0.GetHistoryRequest value) => value.writeToBuffer(),
           ($core.List<$core.int> value) =>
               $0.GetHistoryResponse.fromBuffer(value));
+  static final _$signTransaction =
+      $grpc.ClientMethod<$0.SignTransactionRequest, $0.SignTransactionResponse>(
+          '/kin.agora.transaction.v4.Transaction/SignTransaction',
+          ($0.SignTransactionRequest value) => value.writeToBuffer(),
+          ($core.List<$core.int> value) =>
+              $0.SignTransactionResponse.fromBuffer(value));
   static final _$submitTransaction = $grpc.ClientMethod<
           $0.SubmitTransactionRequest, $0.SubmitTransactionResponse>(
       '/kin.agora.transaction.v4.Transaction/SubmitTransaction',
@@ -94,6 +100,12 @@ class TransactionClient extends $grpc.Client {
       $0.GetHistoryRequest request,
       {$grpc.CallOptions options}) {
     return $createUnaryCall(_$getHistory, request, options: options);
+  }
+
+  $grpc.ResponseFuture<$0.SignTransactionResponse> signTransaction(
+      $0.SignTransactionRequest request,
+      {$grpc.CallOptions options}) {
+    return $createUnaryCall(_$signTransaction, request, options: options);
   }
 
   $grpc.ResponseFuture<$0.SubmitTransactionResponse> submitTransaction(
@@ -157,6 +169,15 @@ abstract class TransactionServiceBase extends $grpc.Service {
         false,
         ($core.List<$core.int> value) => $0.GetHistoryRequest.fromBuffer(value),
         ($0.GetHistoryResponse value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$0.SignTransactionRequest,
+            $0.SignTransactionResponse>(
+        'SignTransaction',
+        signTransaction_Pre,
+        false,
+        false,
+        ($core.List<$core.int> value) =>
+            $0.SignTransactionRequest.fromBuffer(value),
+        ($0.SignTransactionResponse value) => value.writeToBuffer()));
     $addMethod($grpc.ServiceMethod<$0.SubmitTransactionRequest,
             $0.SubmitTransactionResponse>(
         'SubmitTransaction',
@@ -208,6 +229,12 @@ abstract class TransactionServiceBase extends $grpc.Service {
     return getHistory(call, await request);
   }
 
+  $async.Future<$0.SignTransactionResponse> signTransaction_Pre(
+      $grpc.ServiceCall call,
+      $async.Future<$0.SignTransactionRequest> request) async {
+    return signTransaction(call, await request);
+  }
+
   $async.Future<$0.SubmitTransactionResponse> submitTransaction_Pre(
       $grpc.ServiceCall call,
       $async.Future<$0.SubmitTransactionRequest> request) async {
@@ -231,6 +258,8 @@ abstract class TransactionServiceBase extends $grpc.Service {
           $0.GetMinimumBalanceForRentExemptionRequest request);
   $async.Future<$0.GetHistoryResponse> getHistory(
       $grpc.ServiceCall call, $0.GetHistoryRequest request);
+  $async.Future<$0.SignTransactionResponse> signTransaction(
+      $grpc.ServiceCall call, $0.SignTransactionRequest request);
   $async.Future<$0.SubmitTransactionResponse> submitTransaction(
       $grpc.ServiceCall call, $0.SubmitTransactionRequest request);
   $async.Future<$0.GetTransactionResponse> getTransaction(
