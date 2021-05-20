@@ -13,7 +13,7 @@ abstract class ExecutorService {
 abstract class ScheduledExecutorService extends ExecutorService {
   static ScheduledExecutorService create() => _ExecutorServiceScheduled();
 
-  ScheduledFuture<R> schedule<R>(ExecutorTask<R> task, Duration delay);
+  ScheduledFuture<R> schedule<R>(ExecutorTask<R> task, [Duration delay]);
 }
 
 class ScheduledFuture<T> {
@@ -96,10 +96,16 @@ class _ExecutorServiceScheduled extends ScheduledExecutorService {
   }
 
   @override
-  ScheduledFuture<R> schedule<R>(ExecutorTask<R> task, Duration delay) {
-     var scheduledFuture = ScheduledFuture<R>(delay, task) ;
-     scheduledFuture._future = Future<R>.delayed(delay, scheduledFuture.executeTask);
-    return scheduledFuture ;
+  ScheduledFuture<R> schedule<R>(ExecutorTask<R> task, [Duration delay]) {
+    var scheduledFuture = ScheduledFuture<R>(delay, task);
+
+    if (delay != null && delay.inMilliseconds > 0) {
+      scheduledFuture._future = Future<R>.delayed(delay, scheduledFuture.executeTask);
+    } else {
+      scheduledFuture._future = Future<R>.microtask(scheduledFuture.executeTask);
+    }
+
+    return scheduledFuture;
   }
 }
 
