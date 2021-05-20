@@ -241,7 +241,7 @@ class Transaction {
             "is not in the account list");
       }
       newSignatures[index] = Signature(
-          value: FixedByteArray64(byteArray: element.sign(messageBytes)));
+          value: FixedByteArray64(element.sign(messageBytes)));
     });
 
     return copyWith(

@@ -37,7 +37,7 @@ extension TransactionMarshal on Transaction {
 extension SignatureMarshal on Signature {
   Uint8List marshal() => value.byteArray;
 
-  static Signature unmarshal(Uint8List bytes) => Signature(value: FixedByteArray64(byteArray: bytes));
+  static Signature unmarshal(Uint8List bytes) => Signature(value: FixedByteArray64(bytes));
 }
 
 extension CompiledInstructionMarshal on CompiledInstruction {
