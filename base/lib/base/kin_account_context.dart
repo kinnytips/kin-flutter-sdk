@@ -441,43 +441,59 @@ class KinAccountContextBase implements KinAccountReadOperations , KinPaymentRead
       return kinAccount ;
     }
     catch(e) {
-      //service.resolveTokenAccounts(accountId);
-      print(e);
-      return null ;
+      var accounts = await service.resolveTokenAccounts(accountId);
+
+      var maybeResolvedAccountId = accounts != null && accounts.isNotEmpty ? accounts.first.asKinAccountId() : accountId ;
+
+      var account2 = await service.getAccount(maybeResolvedAccountId) ;
+
+      if (maybeResolvedAccountId != accountId) {
+        // b/c we want to update our on hand account with the resolved accountInfo details on solana
+        return account2.copy(
+          id: accountId,
+          key: PublicKey.fromBytes(accountId.value),
+          tokenAccounts: accounts,
+        );
+      } else {
+        return account2 ;
+      }
     }
 
   }
 
   @override
-  Future<KinAccount> getAccount({bool forceUpdate = false, accountCallback}) {
-    // TODO: implement getAccount
-    throw UnimplementedError();
+  Future<KinAccount> getAccount({bool forceUpdate = false, accountCallback}) async {
+    log.log("getAccount");
+
+    var account = await storage.getStoredAccount(accountId);
+
+    if ( account.status is KinAccountStatusUnregistered ) {
+      return this._registerAccount(account);
+    }
+    else if ( account.status is KinAccountStatusRegistered ) {
+      if (!forceUpdate) {
+        return account ;
+      }
+      else {
+        return maybeFetchAccountDetails() ;
+      }
+    }
+    else {
+      throw StateError("Unknown status: ${account.status}");
+    }
+
   }
 
-  /*
-fun maybeFetchAccountDetails(): Promise<KinAccount> =
-        service.getAccount(accountId)
-            .flatMap { storage.updateAccountInStorage(it) }
-            .onErrorResumeNext(KinService.FatalError.ItemNotFound.javaClass) {
-                service.resolveTokenAccounts(accountId)
-                    .flatMap { accounts ->
-                        val maybeResolvedAccountId =
-                            accounts.firstOrNull()?.asKinAccountId() ?: accountId
-                        service.getAccount(maybeResolvedAccountId)
-                            .map {
-                                if (maybeResolvedAccountId != accountId) {
-                                    // b/c we want to update our on hand account with the resolved accountInfo details on solana
-                                    it.copy(
-                                        id = accountId,
-                                        key = Key.PublicKey(accountId.value),
-                                        tokenAccounts = accounts,
-                                    )
-                                } else it
-                            }
-                            .flatMap { storage.updateAccountInStorage(it) }
-                    }
-            }
-   */
+  Future<KinAccount> _registerAccount(KinAccount account) async {
+    var accountReg = await service.createAccount(account.id, account.key) ;
+    var accountToStore = account.merge(accountReg);
+
+    if ( !storage.updateAccount(accountToStore) ) {
+      throw StateError('Failed to store Account Data!');
+    }
+
+    return accountToStore ;
+  }
 
 }
 

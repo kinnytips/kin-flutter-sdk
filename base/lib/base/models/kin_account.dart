@@ -82,6 +82,18 @@ class KinAccount {
         balance = balance ?? KinBalance(),
         status = status ?? KinAccountStatusUnregistered();
 
+  KinAccount copy({Key key , KinAccountId id , List<PublicKey> tokenAccounts,
+    KinBalance balance,
+    KinAccountStatus status
+  }) {
+    key ??= this.key ;
+    id ??= this.id ;
+    tokenAccounts ??= this.tokenAccounts ;
+    balance ??= this.balance;
+    status ??= this.status;
+    return KinAccount(key, id: id, tokenAccounts: tokenAccounts, balance: balance, status: status);
+  }
+
   KinAccount merge(KinAccount newer) {
     return KinAccount(key, id: id, tokenAccounts: newer.tokenAccounts, balance: newer.balance, status: newer.status);
   }
