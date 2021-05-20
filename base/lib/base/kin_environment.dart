@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:grpc/grpc.dart';
+import 'package:kin_base/base/network/services/kin_service_impl_v4.dart';
 import 'package:kin_base/base/repository/app_info_repository.dart';
 import 'package:kin_base/base/repository/invoice_repository.dart';
 import 'package:kin_base/base/storage/storage.dart';
@@ -119,7 +120,7 @@ class KinEnvironmentAgora extends KinEnvironment {
 
     var transactionsApi = new AgoraKinTransactionsApiV4(managedChannel, networkEnvironment);
 
-    service ??= KinServiceImpl(networkEnvironment, null, null, transactionsApi, null, null, null, logger);
+    service ??= KinServiceImplV4(networkEnvironment, null, null, transactionsApi, null, null, logger);
 
     if (storage == null) {
       storage = storageBuilder(networkEnvironment: networkEnvironment) ;

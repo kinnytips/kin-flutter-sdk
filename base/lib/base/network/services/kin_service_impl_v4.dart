@@ -1,14 +1,23 @@
 
 
+import 'package:kin_base/base/models/key.dart';
 import 'package:kin_base/base/models/kin_account.dart';
+import 'package:kin_base/base/models/kin_memo.dart';
+import 'package:kin_base/base/models/kin_payment_item.dart';
+import 'package:kin_base/base/models/quark_amount.dart';
+import 'package:kin_base/base/models/transaction_hash.dart';
 import 'package:kin_base/base/network/api/kin_account_api.dart';
+import 'package:kin_base/base/network/api/kin_account_api_v4.dart';
 import 'package:kin_base/base/network/api/kin_account_creation_api_v4.dart';
 import 'package:kin_base/base/network/api/kin_streaming_api_v4.dart';
 import 'package:kin_base/base/network/api/kin_transaction_api.dart';
 import 'package:kin_base/base/network/api/kin_transaction_api_v4.dart';
 import 'package:kin_base/base/stellar/models/kin_transaction.dart';
 import 'package:kin_base/base/stellar/models/network_environment.dart';
+import 'package:kin_base/base/stellar/models/paging_token.dart';
 import 'package:kin_base/base/tools/kin_logger.dart';
+import 'package:kin_base/base/tools/network_operations_handler.dart';
+import 'package:kin_base/base/tools/observers.dart';
 
 import 'kin_service.dart';
 
@@ -16,7 +25,7 @@ class KinServiceImplV4 extends KinService {
 
   final NetworkEnvironment networkEnvironment ;
   final NetworkOperationsHandler networkOperationsHandler ;
-  final KinAccountApi accountApi ;
+  final KinAccountApiV4 accountApi ;
   final KinTransactionApiV4 transactionApi ;
   final KinStreamingApiV4 streamingApi ;
   final KinAccountCreationApiV4 accountCreationApi ;
@@ -29,7 +38,6 @@ class KinServiceImplV4 extends KinService {
       this.transactionApi,
       this.streamingApi,
       this.accountCreationApi,
-      this.transactionWhitelistingApi,
       this.logger);
 
   @override
@@ -60,6 +68,78 @@ class KinServiceImplV4 extends KinService {
       }
       default: throw StateError("Can't handle response type: ${response.type}");
     }
+  }
+
+  @override
+  Future<KinTransaction> buildAndSignTransaction(PrivateKey ownerKey, PublicKey sourceKey, int nonce, List<KinPaymentItem> paymentItems, KinMemo memo, QuarkAmount fee) {
+    // TODO: implement buildAndSignTransaction
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<KinTransaction> buildSignAndSubmitTransaction(Future<KinTransaction> buildAndSignTransaction) {
+    // TODO: implement buildSignAndSubmitTransaction
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> canWhitelistTransactions() {
+    // TODO: implement canWhitelistTransactions
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<KinAccount> createAccount(KinAccountId accountId, PrivateKey signer) {
+    // TODO: implement createAccount
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<QuarkAmount> getMinFee() {
+    // TODO: implement getMinFee
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<KinTransaction> getTransaction(TransactionHash transactionHash) {
+    // TODO: implement getTransaction
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<KinTransaction>> getTransactionPage(KinAccountId kinAccountId, PagingToken pagingToken, KinServiceOrder order) {
+    // TODO: implement getTransactionPage
+    throw UnimplementedError();
+  }
+
+  @override
+  invalidateBlockhashCache() {
+    // TODO: implement invalidateBlockhashCache
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<PublicKey>> resolveTokenAccounts(KinAccountId accountId) {
+    // TODO: implement resolveTokenAccounts
+    throw UnimplementedError();
+  }
+
+  @override
+  Observer<KinAccount> streamAccount(KinAccountId kinAccountId) {
+    // TODO: implement streamAccount
+    throw UnimplementedError();
+  }
+
+  @override
+  Observer<KinTransaction> streamNewTransactions(KinAccountId kinAccountId) {
+    // TODO: implement streamNewTransactions
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<KinTransaction> submitTransaction(KinTransaction transaction) {
+    // TODO: implement submitTransaction
+    throw UnimplementedError();
   }
 
 }
