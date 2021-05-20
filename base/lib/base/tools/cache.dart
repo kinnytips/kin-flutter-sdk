@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:kin_base/base/tools/executor_service.dart';
 
 class Cache<KEY> {
@@ -10,11 +12,11 @@ class Cache<KEY> {
   Cache({Duration defaultTimeout})
       : defaultTimeout = defaultTimeout ?? Duration(minutes: 5);
 
-  Future<VALUE> resolve<VALUE>(
+  FutureOr<VALUE> resolve<VALUE>(
     KEY key,
-    Duration timeoutOverride, [
-    Future<VALUE> Function(KEY key) fault,
-  ]) async {
+      { Duration timeoutOverride,
+        Future<VALUE> Function(KEY key) fault,
+      }) async {
     var now = DateTime.now().millisecondsSinceEpoch;
 
     var cached = _storage[key];
@@ -34,19 +36,21 @@ class Cache<KEY> {
     }
 
     if (fault != null) {
-      var resolved = fault(key);
+      var resolvedFuture = fault(key);
+      var resolved = resolvedFuture != null ? await resolvedFuture : null ;
       _storage[key] = Pair(resolved, DateTime.now().millisecondsSinceEpoch);
-      return resolved as VALUE;
+      return resolved ;
     }
 
     return null;
   }
 
-  Future<VALUE> warm<VALUE>(
+  FutureOr<VALUE> warm<VALUE>(
     KEY key,
-    Future<VALUE> Function(KEY key) fault,
+    FutureOr<VALUE> Function(KEY key) fault,
   ) async {
-    var resolved = fault(key);
+    var resolvedFuture = fault(key);
+    var resolved = resolvedFuture != null ? await resolvedFuture : null ;
     _storage[key] = Pair(resolved, DateTime.now().millisecondsSinceEpoch);
     return resolved;
   }
