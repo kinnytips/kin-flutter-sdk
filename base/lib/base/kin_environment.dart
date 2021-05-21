@@ -120,7 +120,18 @@ class KinEnvironmentAgora extends KinEnvironment {
 
     var transactionsApi = new AgoraKinTransactionsApiV4(managedChannel, networkEnvironment);
 
-    service ??= KinServiceImplV4(networkEnvironment, null, null, transactionsApi, null, null, logger);
+    if (service == null) {
+      var accountApi = AgoraKinAccountApiV4(managedChannel, networkEnvironment) ;
+
+      service = KinServiceImplV4(
+          networkEnvironment,
+          networkHandler,
+          accountApi,
+          transactionsApi,
+          null,
+          null,
+          logger);
+    }
 
     if (storage == null) {
       storage = storageBuilder(networkEnvironment: networkEnvironment) ;

@@ -15,6 +15,7 @@ import 'package:kin_base/base/network/api/kin_transaction_api_v4.dart';
 import 'package:kin_base/base/stellar/models/kin_transaction.dart';
 import 'package:kin_base/base/stellar/models/network_environment.dart';
 import 'package:kin_base/base/stellar/models/paging_token.dart';
+import 'package:kin_base/base/tools/cache.dart';
 import 'package:kin_base/base/tools/kin_logger.dart';
 import 'package:kin_base/base/tools/network_operations_handler.dart';
 import 'package:kin_base/base/tools/observers.dart';
@@ -39,6 +40,8 @@ class KinServiceImplV4 extends KinService {
       this.streamingApi,
       this.accountCreationApi,
       this.logger);
+
+  final Cache<String> _cache = Cache<String>();
 
   @override
   Future<KinAccount> getAccount(KinAccountId accountId) {
@@ -119,9 +122,36 @@ class KinServiceImplV4 extends KinService {
   }
 
   @override
-  Future<List<PublicKey>> resolveTokenAccounts(KinAccountId accountId) {
-    // TODO: implement resolveTokenAccounts
-    throw UnimplementedError();
+  Future<List<PublicKey>> resolveTokenAccounts(KinAccountId accountId) async {
+    var cacheKey = "resolvedAccounts:${accountId.stellarBase32Encode()}";
+
+    var tokenAccounts = await _cache.resolve(cacheKey, fault: (k) async {
+      return networkOperationsHandler.queueWork('accountApi.resolveTokenAccounts', () async {
+        var response = await accountApi.resolveTokenAccounts(accountId) ;
+
+        if ( response.type == KinServiceResponseType.ok ) {
+          return response.payload ;
+        }
+        else if ( response.type == KinServiceResponseType.undefinedError ) {
+          throw UnexpectedServiceError(response.error);
+        }
+        else if ( response.type == KinServiceResponseType.transientFailure ) {
+          throw TransientFailure(response.error);
+        }
+        else if ( response.type == KinServiceResponseType.upgradeRequiredError ) {
+          throw SDKUpgradeRequired();
+        }
+        else {
+          throw StateError("Can't handle response.type: ${ response.type }") ;
+        }
+      });
+    });
+
+    if (tokenAccounts == null || tokenAccounts.isEmpty) {
+      _cache.invalidate(cacheKey);
+    }
+
+    return tokenAccounts ;
   }
 
   @override

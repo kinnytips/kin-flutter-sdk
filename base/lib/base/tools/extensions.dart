@@ -108,3 +108,13 @@ extension ModelInvoiceListParser on Model.InvoiceList {
 
   SHA224Hash sha224Hash() => SHA224Hash.fromBytes(this.writeToBuffer());
 }
+
+extension StackTraceExtension on StackTrace {
+
+  List<String> get lines => toString().split(RegExp(r'[\r\n]+'));
+
+  String getLine(int index) => lines[index];
+
+  String get firstLine => getLine(0);
+
+}

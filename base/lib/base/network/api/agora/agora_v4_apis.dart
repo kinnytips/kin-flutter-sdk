@@ -2,18 +2,20 @@ import 'package:decimal/decimal.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:grpc/grpc.dart';
 import 'package:kin_base/base/models/invoices.dart';
+import 'package:kin_base/base/models/key.dart';
 import 'package:kin_base/base/models/kin_account.dart';
 import 'package:kin_base/base/models/quark_amount.dart';
 import 'package:kin_base/base/models/solana/encoding.dart';
 import 'package:kin_base/base/models/solana/transaction.dart';
 import 'package:kin_base/base/models/stellar_base_type_conversions.dart';
 import 'package:kin_base/base/models/transaction_hash.dart';
-import 'package:kin_base/base/network/api/api_helpers.dart';
 import 'package:kin_base/base/network/api/agora/grpc_api.dart';
 import 'package:kin_base/base/network/api/agora/model_to_proto.dart';
 import 'package:kin_base/base/network/api/agora/model_to_proto_v4.dart';
 import 'package:kin_base/base/network/api/api_helpers.dart';
+import 'package:kin_base/base/network/api/kin_account_api_v4.dart';
 import 'package:kin_base/base/network/api/kin_account_creation_api_v4.dart';
+import 'package:kin_base/base/network/api/kin_streaming_api_v4.dart';
 import 'package:kin_base/base/network/api/kin_transaction_api_v4.dart';
 import 'package:kin_base/base/network/services/kin_service.dart';
 import 'package:kin_base/base/stellar/models/kin_transaction.dart';
@@ -21,6 +23,7 @@ import 'package:kin_base/base/stellar/models/network_environment.dart';
 import 'package:kin_base/base/stellar/models/paging_token.dart';
 import 'package:kin_base/base/stellar/models/result_code.dart';
 import 'package:kin_base/base/tools/extensions.dart';
+import 'package:kin_base/base/tools/observers.dart';
 import 'package:kin_base/models/agora/protobuf/account/v4/account_service.pbgrpc.dart';
 import 'package:kin_base/models/agora/protobuf/common/v4/model.pb.dart' as model_v4;
 import 'package:kin_base/models/agora/protobuf/transaction/v4/transaction_service.pb.dart';
@@ -65,6 +68,42 @@ class AgoraKinAccountCreationApiV4 extends GrpcApi implements KinAccountCreation
 
 }
 
+class AgoraKinAccountApiV4 extends GrpcApi implements KinAccountApiV4, KinStreamingApiV4 {
+  NetworkEnvironment networkEnvironment;
+
+  final AccountClient _accountClient;
+
+  AgoraKinAccountApiV4(ClientChannel managedChannel, this.networkEnvironment) :
+        _accountClient = AccountClient(managedChannel),
+        super(managedChannel);
+
+  @override
+  Future<KinServiceResponse<KinAccount>> getAccount(KinAccountId accountId) {
+    // TODO: implement getAccount
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<KinServiceResponse<List<PublicKey>>> resolveTokenAccounts(KinAccountId accountId) {
+    // TODO: implement resolveTokenAccounts
+    throw UnimplementedError();
+  }
+
+  @override
+  Observer<KinAccount> streamAccount(KinAccountId kinAccountId) {
+    // TODO: implement streamAccount
+    throw UnimplementedError();
+  }
+
+  @override
+  Observer<KinTransaction> streamNewTransactions(KinAccountId kinAccountId) {
+    // TODO: implement streamNewTransactions
+    throw UnimplementedError();
+  }
+
+
+}
+
 class AgoraKinTransactionsApiV4 extends GrpcApi implements KinTransactionApiV4 {
   NetworkEnvironment networkEnvironment;
 
@@ -82,8 +121,11 @@ class AgoraKinTransactionsApiV4 extends GrpcApi implements KinTransactionApiV4 {
     KinServiceOrder order = KinServiceOrder.descending,
   }) async {
     var request = GetHistoryRequest(
-        accountId: accountId.toProtoSolanaAccountId(),
-        cursor: pagingToken.toProtoCursorV4());
+      accountId: accountId.toProtoSolanaAccountId(),
+      cursor: pagingToken != null && pagingToken.value.isNotEmpty
+          ? pagingToken.toProtoCursorV4()
+          : null,
+    );
 
     var history = await _transactionClient.getHistory(request);
 
