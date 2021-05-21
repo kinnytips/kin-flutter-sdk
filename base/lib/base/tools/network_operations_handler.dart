@@ -197,13 +197,22 @@ class NetworkOperation<T> {
 
   void _complete(T result) {
     state = NetworkOperationState.completed;
-    completer.complete(result);
+    if (!completer.isCompleted) {
+      completer.complete(result);
+    }
+    else {
+      throw StateError('Attempt to complete and already completed operation: op: $this > result: result');
+    }
     _cleanup();
   }
 
   ScheduledFuture expiryFuture ;
 
   void _expire() {
+    if ( state == NetworkOperationState.completed  ) {
+      throw StateError('Attempting to expire a completed operation: $this');
+    }
+
     var error = NetworkOperationsHandlerTimeoutException();
     _error(error, null);
   }
@@ -215,7 +224,9 @@ class NetworkOperation<T> {
   }
 
   void _notifyError(Error error, StackTrace stackTrace) {
-    completer.completeError(error, stackTrace) ;
+    if (!completer.isCompleted) {
+      completer.completeError(error, stackTrace);
+    }
   }
 
   void _cleanup() {
@@ -235,25 +246,32 @@ class NetworkOperation<T> {
 
 class NetworkOperationState {
 
-  static final NetworkOperationState init = NetworkOperationState._();
-  static final NetworkOperationState queued = NetworkOperationState._();
-  static final NetworkOperationState running = NetworkOperationState._();
-  static final NetworkOperationState completed = NetworkOperationState._();
+  static final NetworkOperationState init = NetworkOperationState._('init');
+  static final NetworkOperationState queued = NetworkOperationState._('queued');
+  static final NetworkOperationState running = NetworkOperationState._('running');
+  static final NetworkOperationState completed = NetworkOperationState._('completed');
 
-  NetworkOperationState._();
+  final String name ;
+
+  NetworkOperationState._(this.name);
+
+  @override
+  String toString() {
+    return '$runtimeType{$name}';
+  }
 }
 
 class NetworkOperationStateScheduled<T> extends NetworkOperationState {
   int executionTimestamp ;
   ScheduledFuture cancellable ;
 
-  NetworkOperationStateScheduled(this.executionTimestamp, this.cancellable) : super._();
+  NetworkOperationStateScheduled(this.executionTimestamp, this.cancellable) : super._('scheduled');
 }
 
 class NetworkOperationStateErrored extends NetworkOperationState {
   Error error ;
 
-  NetworkOperationStateErrored(this.error) : super._();
+  NetworkOperationStateErrored(this.error) : super._('errored');
 }
 
 abstract class NetworkOperationsHandler {
@@ -293,11 +311,14 @@ class NetworkOperationsHandlerImpl extends NetworkOperationsHandler {
 
     _operations[op.id] = op ;
 
-    _ioScheduler.schedule(() {
-      _expire(op);
-    }, op.timeout);
-
     _schedule(op);
+
+    if ( op.timeout != null && op.timeout.inMilliseconds > 0 ) {
+      _log.log("timeout> timeout: ${op.timeout} ; $op");
+      _ioScheduler.schedule(() {
+        _expire(op);
+      }, op.timeout);
+    }
 
     return op;
   }
@@ -371,13 +392,20 @@ class NetworkOperationsHandlerImpl extends NetworkOperationsHandler {
   }
 
   void _expire<T>(NetworkOperation<T> op) {
-    op._expire();
-    _cleanup(op);
+    if (_exists(op)) {
+      _log.log("expire> $op");
+      op._expire();
+      _cleanup(op);
+    }
   }
 
   void _cleanup<T>(NetworkOperation<T> op) {
     op._cleanup();
     _operations.remove(op.id);
+  }
+
+  bool _exists<T>(NetworkOperation<T> op) {
+    return _operations.containsKey(op.id);
   }
 
 }
