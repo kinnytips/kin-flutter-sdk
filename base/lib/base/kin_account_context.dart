@@ -261,7 +261,7 @@ class KinAccountContextBase implements KinAccountReadOperations , KinPaymentRead
       newTransactions = await service.getLatestTransactions(accountId);
     }
 
-    storage.upsertNewTransactionsInStorage(accountId, newTransactions);
+    await storage.upsertNewTransactionsInStorage(accountId, newTransactions);
 
     return newTransactions;
   }
@@ -551,7 +551,8 @@ class KinAccountContextImpl extends KinAccountContextBase with KinAccountContext
       try {
         return await _registerAccount(storedAccount);
       }
-      catch(e) {
+      catch(e,s) {
+        log.error('Error registering account: $storedAccount', e, s);
         return maybeFetchAccountDetails() ;
       }
     }
