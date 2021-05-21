@@ -5,7 +5,7 @@ abstract class KinLogger {
 
   void warning(String msg);
 
-  void error(String msg, [Error throwable]);
+  void error(String msg, [Error error, StackTrace stackTrace]);
 
   bool isLoggingEnabled;
 }
@@ -27,10 +27,11 @@ class KinLoggerImpl implements KinLogger {
       : isLoggingEnabled = isLoggingEnabled ?? true ;
 
   @override
-  void error(String msg, [Error throwable]) {
+  void error(String msg, [Error error, StackTrace stackTrace]) {
     if (!isLoggingEnabled) return;
     print('[ERROR] $name> $msg');
-    print(error);
+    if (error != null) print(error);
+    if (stackTrace != null) print(stackTrace);
   }
 
   @override
