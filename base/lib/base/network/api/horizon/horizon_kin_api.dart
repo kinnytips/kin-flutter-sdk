@@ -9,6 +9,7 @@ import 'package:kin_base/base/stellar/models/kin_transaction.dart';
 import 'package:kin_base/base/tools/managed_server_sent_event_stream.dart';
 import 'package:kin_base/base/tools/observers.dart';
 import 'package:kin_base/models/agora/protobuf/transaction/v3/transaction_service.pb.dart';
+import 'package:kin_base/stellarfork/kinserver.dart';
 import 'package:kin_base/stellarfork/responses/account_response.dart';
 import 'package:kin_base/stellarfork/responses/transaction_response.dart';
 
@@ -116,11 +117,17 @@ class HorizonKinApi implements KinJsonApi {
     return;
   }
 
-  getTransactionMinFee(GetMinFeeForTransactionResponse onCompleted){
-    // TODO
-    return;
-  }
+
+  // DONT THINK WE NEED THIS  
+  //
+  // getTransactionMinFee(GetMinFeeForTransactionResponse onCompleted){
+  //   // TODO
+  //   return;
+  // }
 
   //DONT NEED THIS  THROW EXCEPTION
   submitTransaction(SubmitTransactionRequest request, SubmitTransactionResponse onCompleted) { throw Exception("Horizon cannot process transactions"); }
+
+  @override
+  KinServer server;
 }
