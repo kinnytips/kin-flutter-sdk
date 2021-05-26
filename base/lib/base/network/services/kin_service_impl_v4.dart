@@ -123,78 +123,95 @@ class KinServiceImplV4 extends KinService {
   @override
   Future<KinAccount> createAccount(KinAccountId accountId, PrivateKey signer) {
     return networkOperationsHandler.queueWork('accountApi.resolveTokenAccounts', () async {
-      var ret = await Future.wait( [ _cachedServiceConfig() , _cachedRecentBlockHash(), _cachedMinRentExemption() ] );
-      var serviceConfig = ret[0].payload as ServiceConfig ;
-      var recentBlockHash = ret[1].payload as Hash ;
-      var minRentExemption = ret[2].payload as int ;
+      try {
+        var ret = await Future.wait([
+          _cachedServiceConfig(),
+          _cachedRecentBlockHash(),
+          _cachedMinRentExemption()
+        ]);
+        var serviceConfig = ret[0].payload as ServiceConfig;
+        var recentBlockHash = ret[1].payload as Hash;
+        var minRentExemption = ret[2].payload as int;
 
-      var tokenAccountSeed = signer.toSigningKeyPair().rawSecretSeed.toSha256() ;
-      var tokenAccount = KeyPair.fromSecretSeedBytes(tokenAccountSeed).asPrivateKey();
-      var tokenAccountPub = tokenAccount.asPublicKey();
+        var tokenAccountSeed = signer
+            .toSigningKeyPair()
+            .rawSecretSeed
+            .toSha256();
+        var tokenAccount = KeyPair.fromSecretSeedBytes(tokenAccountSeed)
+            .asPrivateKey();
+        var tokenAccountPub = tokenAccount.asPublicKey();
 
-      var subsidizer = serviceConfig.subsidizerAccount.toKeyPair().asPublicKey();
-      var owner = signer.asPublicKey();
-      var programKey = serviceConfig.tokenProgram.toKeyPair().asPublicKey();
-      var mint = serviceConfig.token.toKeyPair().asPublicKey();
+        var subsidizer = serviceConfig.subsidizerAccount.toKeyPair()
+            .asPublicKey();
+        var owner = signer.asPublicKey();
+        var programKey = serviceConfig.tokenProgram.toKeyPair().asPublicKey();
+        var mint = serviceConfig.token.toKeyPair().asPublicKey();
 
-      var transaction = Transaction.newTransaction(subsidizer, [
-        CreateAccount(
-          subsidizer,
-          tokenAccountPub,
-          programKey,
-          minRentExemption,
-          TokenProgram().accountSize,
-        ).instruction,
-        TokenProgramInitializeAccount(
-          tokenAccountPub,
-          mint,
-          owner,
-          programKey,
-        ).instruction,
-        SetAuthority(
-          tokenAccountPub,
-          owner,
-          subsidizer,
-          TokenProgramAuthorityTypeCloseAccount(),
-          programKey,
-        ).instruction
-      ]).copyAndSetRecentBlockhash(recentBlockHash).copyAndSign([tokenAccount, signer]);
+        var transaction = Transaction.newTransaction(subsidizer, [
+          CreateAccount(
+            subsidizer,
+            tokenAccountPub,
+            programKey,
+            minRentExemption,
+            TokenProgram().accountSize,
+          ).instruction,
+          TokenProgramInitializeAccount(
+            tokenAccountPub,
+            mint,
+            owner,
+            programKey,
+          ).instruction,
+          SetAuthority(
+            tokenAccountPub,
+            owner,
+            subsidizer,
+            TokenProgramAuthorityTypeCloseAccount(),
+            programKey,
+          ).instruction
+        ]).copyAndSetRecentBlockhash(recentBlockHash).copyAndSign(
+            [tokenAccount, signer]);
 
-      var response = await accountCreationApi.createAccountV4(transaction) ;
+        var response = await accountCreationApi.createAccountV4(transaction);
 
-      if (response.type == KinServiceResponseType.ok) {
-        var account = response.payload;
-        if (account != null) {
-          return account ;
-        } else {
-          throw IllegalResponseError();
+        if (response.type == KinServiceResponseType.ok) {
+          var account = response.payload;
+          if (account != null) {
+            return account;
+          } else {
+            throw IllegalResponseError();
+          }
         }
-      }
-      else if (response.type == KinServiceResponseType.exists) {
-        var account = response.payload;
-        if (account != null) {
-          return account ;
-        } else {
-          return getAccount(accountId);
+        else if (response.type == KinServiceResponseType.exists) {
+          var account = response.payload;
+          if (account != null) {
+            return account;
+          } else {
+            return getAccount(accountId);
+          }
         }
-      }
-      else if (response.type == KinServiceResponseType.badNonce) {
-        throw TransientFailure(StateError('Bad Nonce: RecentBlockhash invalid')) ;
-      }
-      else if (response.type == KinServiceResponseType.transientFailure) {
-        throw TransientFailure(response.error) ;
-      }
-      else if (response.type == KinServiceResponseType.undefinedError) {
-        throw UnexpectedServiceError(response.error) ;
-      }
-      else if (response.type == KinServiceResponseType.upgradeRequiredError) {
-        throw SDKUpgradeRequired();
-      }
-      else if (response.type == KinServiceResponseType.payerRequired) {
-        throw UnexpectedServiceError(StateError('PayerRequired: no subsidizer set')) ;
-      }
-      else {
-        throw StateError("Can't handle response type: ${response.type}");
+        else if (response.type == KinServiceResponseType.badNonce) {
+          throw TransientFailure(
+              StateError('Bad Nonce: RecentBlockhash invalid'));
+        }
+        else if (response.type == KinServiceResponseType.transientFailure) {
+          throw TransientFailure(response.error);
+        }
+        else if (response.type == KinServiceResponseType.undefinedError) {
+          throw UnexpectedServiceError(response.error);
+        }
+        else if (response.type == KinServiceResponseType.upgradeRequiredError) {
+          throw SDKUpgradeRequired();
+        }
+        else if (response.type == KinServiceResponseType.payerRequired) {
+          throw UnexpectedServiceError(
+              StateError('PayerRequired: no subsidizer set'));
+        }
+        else {
+          throw StateError("Can't handle response type: ${response.type}");
+        }
+      } on TransientFailure {
+        invalidateBlockhashCache();
+        rethrow ;
       }
     });
   }
