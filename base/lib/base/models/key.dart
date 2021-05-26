@@ -11,7 +11,7 @@ abstract class Key {
 
   PublicKey asPublicKey() {
     if (this is PrivateKey) {
-      return PublicKey.fromBytes(KeyPair.fromSecretSeedList(value).publicKey);
+      return PublicKey.fromBytes(KeyPair.fromSecretSeedBytes(value).publicKey);
     } else {
       return this as PublicKey;
     }
@@ -55,18 +55,18 @@ class PrivateKey extends Key {
       : super(KeyPair.fromSecretSeed(privateKeyString).rawSecretSeed);
 
   PrivateKey.fromBytes(Uint8List privateKeyBytes)
-      : super(KeyPair.fromSecretSeedList(privateKeyBytes).rawSecretSeed);
+      : super(KeyPair.fromSecretSeedBytes(privateKeyBytes).rawSecretSeed);
 
   String toString() {
     return "PrivateKey(value=XXXXXXXX<Private>XXXXXXXX)";
   }
 
-  String stellarBase32Encode() => KeyPair.fromSecretSeedList(value).secretSeed;
+  String stellarBase32Encode() => KeyPair.fromSecretSeedBytes(value).secretSeed;
 
   String base58Encode() => Base58().encode(value);
 
   Uint8List sign(Uint8List data) =>
-      KeyPair.fromSecretSeedList(value).sign(data);
+      KeyPair.fromSecretSeedBytes(value).sign(data);
 
   static PrivateKey decode(String value) =>
       PrivateKey.fromBytes(KeyPair.fromSecretSeed(value).privateKey);

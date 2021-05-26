@@ -96,7 +96,7 @@ class KinServiceImpl extends KinService {
   }
 
   @override
-  invalidateBlockhashCache() {
+  void invalidateBlockhashCache() {
     // TODO: implement invalidateBlockhashCache
     throw UnimplementedError();
   }

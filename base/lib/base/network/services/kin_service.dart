@@ -52,7 +52,7 @@ abstract class KinService {
 
     Observer<KinTransaction> streamNewTransactions(KinAccountId kinAccountId) ;
 
-    invalidateBlockhashCache() ;
+    void invalidateBlockhashCache() ;
 }
 
 enum KinServiceOrder { ascending, descending }
