@@ -329,9 +329,15 @@ class KinFileStorage implements Storage {
   }
 
   @override
-  Future<List<KinTransaction>> upsertNewTransactionsInStorage(KinAccountId accountId, List<KinTransaction> newTransactions) {
-    // TODO: implement upsertNewTransactionsInStorage
-    throw UnimplementedError();
+  Future<List<KinTransaction>> upsertNewTransactionsInStorage(KinAccountId accountId, List<KinTransaction> newTransactions) async {
+    var kinTransactions = await getStoredTransactions(accountId);
+
+    var storedTransactions = kinTransactions?.items ?? <KinTransaction>[] ;
+    storedTransactions.retainWhere((storedTxn) => newTransactions.where((newTxn) => newTxn.transactionHash == storedTxn.transactionHash ).isEmpty) ;
+
+    var allTxn = List.from([ ...newTransactions , ...storedTransactions ]);
+
+    return storeTransactions(accountId, allTxn);
   }
 
   @override
