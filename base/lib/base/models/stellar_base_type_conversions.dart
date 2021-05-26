@@ -51,4 +51,17 @@ extension KeyExtension on Key {
 
 extension KeyPairExtension on KeyPair {
   PublicKey asPublicKey() => PublicKey.fromBytes( this.publicKey ) ;
+
+  PrivateKey asPrivateKey() => PrivateKey.fromBytes( this.rawSecretSeed ) ;
 }
+
+extension PrivateKeyExtension on PrivateKey {
+  KeyPair toSigningKeyPair() {
+    var keyPair = KeyPair.fromSecretSeedBytes(value);
+    if (keyPair == null) {
+      throw StateError("Cannot get a signing KeyPair");
+    }
+    return keyPair ;
+  }
+}
+
