@@ -150,13 +150,13 @@ class KeyPair {
   /// Creates a new KeyPair object from a Stellar secret [seed] ("S...").
   static KeyPair fromSecretSeed(String seed) {
     Uint8List decoded = StrKey.decodeStellarSecretSeed(seed);
-    KeyPair keypair = fromSecretSeedList(decoded);
+    KeyPair keypair = fromSecretSeedBytes(decoded);
 
     return keypair;
   }
 
   /// Creates a new KeyPair object from a raw 32 byte secret [seed].
-  static KeyPair fromSecretSeedList(Uint8List seed) {
+  static KeyPair fromSecretSeedBytes(Uint8List seed) {
     _mPrivateKeySeed = seed;
     ed25519.KeyPair kp = ed25519.Signature.keyPair_fromSeed(seed);
     return new KeyPair(kp.publicKey, kp.secretKey);
@@ -182,7 +182,7 @@ class KeyPair {
   /// Generates a random Stellar KeyPair object.
   static KeyPair random() {
     Uint8List secret = ed25519.TweetNaclFast.randombytes(32);
-    return fromSecretSeedList(secret);
+    return fromSecretSeedBytes(secret);
   }
 
   /// Returns the human readable account ID of this key pair.
