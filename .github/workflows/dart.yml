@@ -12,7 +12,7 @@ jobs:
         java-version: '11.x'
     - uses: actions/checkout@v2
       with:
-        path: 'base'
+        path: base
     - uses: subosito/flutter-action@v1
       with:
         flutter-version: '1.20.0'
