@@ -13,6 +13,8 @@ jobs:
     - uses: actions/checkout@v2
     - name: 'Move to BASE sdk folder'
       run: cd base
+    - name: 'Verify folder'
+      run: ls -al
     - uses: subosito/flutter-action@v1
       with:
         flutter-version: '1.20.0'
