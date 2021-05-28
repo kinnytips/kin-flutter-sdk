@@ -7,7 +7,7 @@ abstract class ExecutorService {
   static ExecutorService createParallel() => _ExecutorServiceParallel();
   static ScheduledExecutorService createScheduled() => ScheduledExecutorService.create();
 
-  Future<R> execute<R>(ExecutorTask<R> task);
+  Future<R> execute<R>(ExecutorTask<FutureOr<R>> task);
 }
 
 abstract class ScheduledExecutorService extends ExecutorService {
@@ -44,17 +44,29 @@ class _ExecutorServiceSequential extends ExecutorService {
   ExecutorTask _executing;
 
   @override
-  Future<R> execute<R>(ExecutorTask<R> task) {
+  Future<R> execute<R>(ExecutorTask<FutureOr<R>> task) {
     if (_executing != null) {
       var completer = Completer<R>();
+
       _queue.add(() {
-        R ret ;
+        FutureOr<R> ret ;
         try {
           ret = task();
         } finally {
-          completer.complete(ret);
+          if (ret == null) {
+            completer.complete(null);
+          }
+          else if (ret is Future) {
+            var future = ret as Future<R> ;
+            future.then((r) => completer.complete(r));
+          }
+          else {
+            var r = ret as R ;
+            completer.complete(r);
+          }
         }
       });
+
       return completer.future;
     }
 
@@ -85,13 +97,13 @@ class _ExecutorServiceSequential extends ExecutorService {
 }
 
 class _ExecutorServiceParallel extends ExecutorService {
-  Future<R> execute<R>(ExecutorTask<R> task) {
+  Future<R> execute<R>(ExecutorTask<FutureOr<R>> task) {
     return Future.microtask(task);
   }
 }
 
 class _ExecutorServiceScheduled extends ScheduledExecutorService {
-  Future<R> execute<R>(ExecutorTask<R> task) {
+  Future<R> execute<R>(ExecutorTask<FutureOr<R>> task) {
     return Future<R>.microtask(task);
   }
 
