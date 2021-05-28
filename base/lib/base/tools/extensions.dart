@@ -6,6 +6,9 @@ import 'package:crypto/crypto.dart';
 import 'package:kin_base/base/models/invoices.dart';
 import 'package:kin_base/base/models/kin_amount.dart';
 import 'package:kin_base/base/models/sha_224_hash.dart';
+import 'package:kin_base/base/stellar/models/kin_transaction.dart';
+import 'package:kin_base/base/stellar/models/paging_token.dart';
+import 'package:kin_base/base/stellar/models/record_type.dart';
 import 'package:kin_base/models/agora/protobuf/common/v3/model.pb.dart' as Model;
 
 extension ListTypedExtension<T> on List<T> {
@@ -55,6 +58,12 @@ extension Uint8ListExtension on Uint8List {
     var bytes = sha224.convert(this).bytes;
     return bytes is Uint8List ? bytes : Uint8List.fromList(bytes);
   }
+}
+
+extension ListIntExtension on List<int> {
+
+  Uint8List toUint8List() => Uint8List.fromList(this);
+
 }
 
 extension ListExtension<T> on List<T> {
@@ -109,6 +118,22 @@ extension ModelInvoiceListParser on Model.InvoiceList {
   SHA224Hash sha224Hash() => SHA224Hash.fromBytes(this.writeToBuffer());
 }
 
+extension ListKinTransactionExtension on List<KinTransaction> {
+
+  PagingToken findHeadHistoricalTransaction() {
+    return findHistoricalTransaction(this);
+  }
+
+  PagingToken findTailHistoricalTransaction() {
+    return findHistoricalTransaction(this.reversed);
+  }
+
+  static PagingToken findHistoricalTransaction(List<KinTransaction> transactions) {
+    return transactions.map((t) => t.recordType).whereType<RecordTypeHistorical>().first.pagingToken ;
+  }
+
+}
+
 extension StackTraceExtension on StackTrace {
 
   List<String> get lines => toString().split(RegExp(r'[\r\n]+'));
@@ -117,4 +142,8 @@ extension StackTraceExtension on StackTrace {
 
   String get firstLine => getLine(0);
 
+}
+
+extension DigestExtension on Digest {
+  Uint8List toUint8List() => Uint8List.fromList(bytes);
 }
