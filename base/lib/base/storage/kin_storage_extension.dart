@@ -1,14 +1,24 @@
+import 'dart:typed_data';
+
 import 'package:fixnum/fixnum.dart' as fixnum;
+import 'package:kin_base/base/models/invoices.dart';
 import 'package:kin_base/base/models/key.dart';
 import 'package:kin_base/base/models/kin_account.dart';
 import 'package:kin_base/base/models/kin_balance.dart';
 import 'package:kin_base/base/models/quark_amount.dart';
 import 'package:kin_base/base/stellar/models/kin_transaction.dart';
 import 'package:kin_base/base/stellar/models/kin_transactions.dart';
+import 'package:kin_base/base/stellar/models/network_environment.dart';
 import 'package:kin_base/base/stellar/models/paging_token.dart';
 import 'package:kin_base/base/stellar/models/record_type.dart';
+import 'package:kin_base/stellarfork/xdr/xdr_data_io.dart';
+import 'package:kin_base/stellarfork/xdr/xdr_transaction.dart';
 import 'package:kin_base_storage/kin_base_storage.dart' as base_storage;
 import 'package:protobuf/protobuf.dart';
+
+import 'package:kin_base/base/tools/extensions.dart';
+
+import 'package:kin_base/base/network/api/agora/model_to_proto.dart';
 
 extension KinAccountExtension on KinAccount {
   base_storage.KinAccount toStorageKinAccount() {
@@ -48,6 +58,19 @@ extension KinBalanceExtension on KinBalance {
       ..quarkAmount = fixnum.Int64(this.amount.toQuarks().value)
       ..pendingQuarkAmount = fixnum.Int64(this.pendingAmount.toQuarks().value);
   }
+}
+
+extension InvoiceListMapExtension on Map<InvoiceListId,InvoiceList> {
+
+  base_storage.Invoices toInvoices() {
+    var invoices = base_storage.Invoices() ;
+    for (var entry in this.entries) {
+      var blob = base_storage.InvoiceListBlob(networkInvoiceList: entry.value.toProto().writeToBuffer());
+      invoices.invoiceLists[ entry.key.invoiceHash.encodedValue ] = blob ;
+    }
+    return invoices ;
+  }
+
 }
 
 extension StorageKinAccountExtension on base_storage.KinAccount {
@@ -106,9 +129,9 @@ extension StoragePrivateKeyExtension on base_storage.PrivateKey {
 
 extension StorageKinTransactionsExtension on base_storage.KinTransactions {
 
-  KinTransactions toKinTransactions() {
+  KinTransactions toKinTransactions(NetworkEnvironment networkEnvironment) {
     return KinTransactions(
-      this.items.map( (e) => e.toKinTransaction() ) ,
+      this.items.map( (e) => e.toKinTransaction(networkEnvironment) ) ,
         PagingToken(headPagingToken),
         PagingToken(tailPagingToken)
     );
@@ -118,59 +141,28 @@ extension StorageKinTransactionsExtension on base_storage.KinTransactions {
 
 extension StorageKinTransactionExtension on base_storage.KinTransaction {
 
-
-  KinTransaction toKinTransaction() {
+  KinTransaction toKinTransaction(NetworkEnvironment networkEnvironment) {
     RecordType recordType ;
     if (this.status.value == base_storage.KinTransaction_Status.INFLIGHT.value ) {
       recordType = RecordType( this.timestamp.toInt() ) ;
     }
     else if (this.status.value == base_storage.KinTransaction_Status.ACKNOWLEDGED.value ) {
-      //TODO
+      recordType = RecordTypeAcknowledged(this.timestamp.toInt() , this.resultXdr.toUint8List());
     }
     else if (this.status.value == base_storage.KinTransaction_Status.HISTORICAL.value ) {
-      //TODO
+      recordType = RecordTypeHistorical(this.timestamp.toInt() , this.resultXdr.toUint8List(), PagingToken(this.pagingToken) );
+    }
+
+    try {
+      XdrTransactionEnvelope.decode(XdrDataInputStream(this.envelopeXdr.toUint8List()));
+      throw UnsupportedError('StellarKinTransaction not supported yet!');
+    }
+    on UnsupportedError {
+      rethrow ;
+    }
+    catch (e) {
+      return SolanaKinTransaction(this.envelopeXdr.toUint8List(),  recordType,  networkEnvironment);
     }
   }
 
 }
-
-
-/*
-private fun StorageKinTransaction.toKinTransaction(): KinTransaction {
-        val recordType = when (this.status) {
-            StorageKinTransaction.Status.INFLIGHT -> KinTransaction.RecordType.InFlight(
-                this.timestamp
-            )
-            StorageKinTransaction.Status.ACKNOWLEDGED -> KinTransaction.RecordType.Acknowledged(
-                this.timestamp,
-                this.resultXdr.toByteArray()
-            )
-            StorageKinTransaction.Status.HISTORICAL -> KinTransaction.RecordType.Historical(
-                this.timestamp,
-                this.resultXdr.toByteArray(),
-                KinTransaction.PagingToken(this.pagingToken)
-            )
-            else -> throw InvalidProtocolBufferException("Unrecognized record type.")
-        }
-        var transaction: KinTransaction
-        with(
-            StellarKinTransaction(
-                this.envelopeXdr.toByteArray(),
-                recordType,
-                networkEnvironment
-            )
-        ) {
-            try {
-                transactionEnvelope // Will explode if not a StellarKinTransaction TODO find a better test
-                transaction = this
-            } catch (t: Throwable) {
-                transaction = SolanaKinTransaction(
-                    this@toKinTransaction.envelopeXdr.toByteArray(),
-                    recordType,
-                    networkEnvironment
-                )
-            }
-        }
-        return transaction
-    }
- */
