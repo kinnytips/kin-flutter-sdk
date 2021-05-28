@@ -11,12 +11,12 @@ jobs:
       with:
         java-version: '11.x'
     - uses: actions/checkout@v2
-    - name: 'Move to BASE sdk folder'
-      run: cd base
     - uses: subosito/flutter-action@v1
       with:
-        flutter-version: '1.20.0'
+        channel: 'stable'
     - name: Install Flutter dependencies
       run: flutter pub get
+      working-directory: ./base
     - name: Run tests
       run: flutter test test/*.dart
+      working-directory: ./base
