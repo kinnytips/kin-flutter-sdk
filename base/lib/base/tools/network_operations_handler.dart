@@ -362,7 +362,12 @@ class NetworkOperationsHandlerImpl extends NetworkOperationsHandler {
       _complete(op, result);
     }
     catch(e,s) {
-      _handleError(op, e, s);
+      if (e is Exception) {
+        _handleError(op, NetworkOperationError('Operation Exception', e), s);
+      }
+      else {
+        _handleError(op, e, s);
+      }
     }
 
   }
@@ -408,4 +413,16 @@ class NetworkOperationsHandlerImpl extends NetworkOperationsHandler {
     return _operations.containsKey(op.id);
   }
 
+}
+
+class NetworkOperationError extends Error {
+  String message ;
+  dynamic cause ;
+
+  NetworkOperationError(this.message, [this.cause]);
+
+  @override
+  String toString() {
+    return 'NetworkOperationError{message: $message, cause: $cause}';
+  }
 }

@@ -13,6 +13,7 @@ import 'package:kin_base/base/stellar/models/kin_transactions.dart';
 import 'package:kin_base/base/stellar/models/network_environment.dart';
 import 'package:kin_base/base/tools/executor_service.dart';
 import 'package:kin_base/base/tools/hex.dart';
+import 'package:kin_base/base/tools/extensions.dart' show ListKinTransactionExtension;
 import 'package:kin_base/models/agora/protobuf/common/v3/model.pb.dart' as models ;
 import 'package:kin_base_storage/kin_base_storage.dart' as base_storage;
 import 'package:path/path.dart' as path;
@@ -97,9 +98,22 @@ class KinFileStorage implements Storage {
   }
 
   @override
-  Future<List<InvoiceList>> addInvoiceLists(KinAccountId accountId, List<InvoiceList> invoiceLists) {
-    // TODO: implement addInvoiceLists
-    throw UnimplementedError();
+  Future<List<InvoiceList>> addInvoiceLists(KinAccountId accountId, List<InvoiceList> invoiceLists) async {
+    if (invoiceLists.isEmpty) return invoiceLists ;
+
+    var invoiceListsMap = await getInvoiceListsMapForAccountId(accountId) ;
+
+    for (var invoice in invoiceLists) {
+      invoiceListsMap[invoice.id] = invoice ;
+    }
+
+    _writeToFile(
+        _directoryForInvoices(accountId),
+        _fileNameForInvoices(accountId),
+        invoiceListsMap.toInvoices().writeToBuffer()
+    );
+
+    return invoiceListsMap.values.toList();
   }
 
   @override
@@ -241,7 +255,7 @@ class KinFileStorage implements Storage {
 
     try {
       var storageTransaction = base_storage.KinTransactions.fromBuffer(bytes);
-      return storageTransaction.toKinTransactions();
+      return storageTransaction.toKinTransactions(_networkEnvironment);
     } catch (e) {
       print(e);
       return null;
@@ -305,9 +319,20 @@ class KinFileStorage implements Storage {
   }
 
   @override
-  Future<List<KinTransaction>> storeTransactions(KinAccountId accountId, List<KinTransaction> transactions) {
-    // TODO: implement storeTransactions
-    throw UnimplementedError();
+  Future<List<KinTransaction>> storeTransactions(KinAccountId accountId, List<KinTransaction> transactions) async {
+    if ( transactions.isEmpty ) return transactions ;
+
+    return _executors.sequentialIO.execute(() async {
+      await addInvoiceLists(accountId, transactions.map((t) => t.invoiceList).where((t) => t != null).toList());
+
+      await putTransactions(accountId, KinTransactions(
+      transactions,
+      transactions.findHeadHistoricalTransaction(),
+      transactions.findTailHistoricalTransaction()
+      ));
+
+      return transactions ;
+    });
   }
 
   @override
@@ -335,7 +360,7 @@ class KinFileStorage implements Storage {
     var storedTransactions = kinTransactions?.items ?? <KinTransaction>[] ;
     storedTransactions.retainWhere((storedTxn) => newTransactions.where((newTxn) => newTxn.transactionHash == storedTxn.transactionHash ).isEmpty) ;
 
-    var allTxn = List.from([ ...newTransactions , ...storedTransactions ]);
+    var allTxn = List<KinTransaction>.from([ ...newTransactions , ...storedTransactions ]);
 
     return storeTransactions(accountId, allTxn);
   }

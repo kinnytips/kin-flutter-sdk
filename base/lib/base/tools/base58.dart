@@ -24,7 +24,7 @@ class Base58 {
     }
   }
 
-  Uint8List decode(String input) => fast_base58.Base58Decode(input);
+  Uint8List decode(String input) => Uint8List.fromList(fast_base58.Base58Decode(input));
 
   BigInt decodeToBigInteger(String input) {
     return BigInt.parse(input);

@@ -188,11 +188,14 @@ class Transaction {
     );
     final List<PublicKey> accountPublicKeys =
         uniqueAccounts.map((e) => e.publicKey).toList();
-    final messageInstructions = instructions.map((e) => CompiledInstruction(
+
+    final messageInstructions = instructions.map((e) {
+      return CompiledInstruction(
         programIndex: _indexOf(accountPublicKeys, e.program),
         data: e.data,
-        accounts: Uint8List.fromList(e.accounts
-            .map((e2) => _indexOf(accountPublicKeys, e2.publicKey)))));
+        accounts: Uint8List.fromList(e.accounts.map((e2) => _indexOf(accountPublicKeys, e2.publicKey)).toList()),
+      );
+    }).toList();
 
     final Message message = Message(
       header: header,
@@ -222,7 +225,7 @@ class Transaction {
 
   Transaction copyAndSign(List<PrivateKey> signers) {
     if (signers.length > numRequiredSignatures) {
-      throw Exception("IllegalArgumentException: too many signers");
+      throw Exception("IllegalArgumentException: too many signers (${signers.length} > $numRequiredSignatures)");
     }
 
     final messageBytes = message.marshal();

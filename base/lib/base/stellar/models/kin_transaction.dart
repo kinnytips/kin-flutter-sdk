@@ -97,7 +97,7 @@ class SolanaKinTransaction extends KinTransaction {
       Uint8List bytesValue,
       RecordType recordType,
       NetworkEnvironment networkEnvironment,
-      InvoiceList invoiceLis)
+      [InvoiceList invoiceLis])
       : super(bytesValue, recordType, networkEnvironment, invoiceLis) {
     this._transaction = Transaction.unmarshal(bytesValue);
   }

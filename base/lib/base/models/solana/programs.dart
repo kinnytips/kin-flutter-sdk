@@ -500,7 +500,7 @@ class SetAuthority {
         data.addAll(newAuthority.value);
       }
 
-      _instruction = Instruction.newInstruction(programKey, data, [
+      _instruction = Instruction.newInstruction(programKey, data.toUint8List(), [
         AccountMeta.newAccountMeta(account, false),
         AccountMeta.newReadonlyAccountMeta(currentAuthority, true)
       ]);
