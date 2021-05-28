@@ -57,7 +57,7 @@ class KinServiceImplV4 extends KinService {
 
   Future<KinServiceResponse<Hash>> _cachedRecentBlockHash() async {
     return await _cache.resolve("recentBlockHash", timeoutOverride: Duration(minutes: 2), fault: (key) {
-      return networkOperationsHandler.queueWork('_cachedServiceConfig', () async {
+      return networkOperationsHandler.queueWork('_cachedRecentBlockHash', () async {
         return await transactionApi.getRecentBlockHash();
       });
     });
@@ -66,7 +66,7 @@ class KinServiceImplV4 extends KinService {
 
   Future<KinServiceResponse<int>> _cachedMinRentExemption() async {
     return await _cache.resolve("minRentExemption", timeoutOverride: Duration(minutes: 30), fault: (key) {
-      return networkOperationsHandler.queueWork('_cachedServiceConfig', () async {
+      return networkOperationsHandler.queueWork('_cachedMinRentExemption', () async {
         return await transactionApi.getMinimumBalanceForRentExemption( TokenProgram().accountSize );
       });
     });
@@ -122,7 +122,7 @@ class KinServiceImplV4 extends KinService {
 
   @override
   Future<KinAccount> createAccount(KinAccountId accountId, PrivateKey signer) {
-    return networkOperationsHandler.queueWork('accountApi.resolveTokenAccounts', () async {
+    return networkOperationsHandler.queueWork('accountApi.createAccount', () async {
       try {
         var ret = await Future.wait([
           _cachedServiceConfig(),
