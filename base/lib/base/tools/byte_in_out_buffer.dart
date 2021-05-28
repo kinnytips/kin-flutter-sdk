@@ -74,6 +74,7 @@ class ByteOutputBuffer {
     var p = _position++;
     ensureCapacity(_position);
     _bytes[p] = b;
+    if (_position > _length) _length = _position;
   }
 
   void writeBytes(ByteData data) {
@@ -84,6 +85,7 @@ class ByteOutputBuffer {
       _bytes[_position++] = b;
     }
 
+    if (_position > _length) _length = _position;
   }
 
   void writeAll(List<int> bs) {
@@ -91,13 +93,15 @@ class ByteOutputBuffer {
     for (var b in bs) {
       _bytes[_position++] = b;
     }
+
+    if (_position > _length) _length = _position;
   }
 
   void ensureCapacity(int desiredLength) {
     if (_bytes.length < desiredLength) {
       var capacity2 = max(desiredLength, _bytes.length * 2);
       var bytes2 = Uint8List(capacity2);
-      bytes2.addAll(_bytes);
+      bytes2.setRange(0, _bytes.length, _bytes);
       _bytes = bytes2;
     }
   }
@@ -109,8 +113,8 @@ class ByteOutputBuffer {
   }
 
   Uint8List toBytes() {
-    var bytes2 = Uint8List(_bytes.length);
-    bytes2.addAll(_bytes);
+    var bytes2 = Uint8List(_length);
+    bytes2.setRange(0, _length, _bytes);
     return bytes2;
   }
 }
