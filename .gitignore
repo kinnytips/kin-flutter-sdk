@@ -9,3 +9,6 @@ build
 .flutter-plugins
 .flutter-plugins-dependencies
 .vscode/launch.json
+kin_flutter_sdk/android/local.properties
+kin_flutter_sdk/ios/Flutter/flutter_export_environment.sh
+**Generated**
