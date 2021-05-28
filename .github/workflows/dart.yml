@@ -11,8 +11,8 @@ jobs:
       with:
         java-version: '11.x'
     - uses: actions/checkout@v2
-      with:
-        path: base
+    - name: 'Move to BASE sdk folder'
+      run: cd base
     - uses: subosito/flutter-action@v1
       with:
         flutter-version: '1.20.0'
