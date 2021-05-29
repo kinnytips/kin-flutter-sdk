@@ -17,18 +17,9 @@ jobs:
     - name: Install Flutter dependencies for base SDK
       run: flutter pub get
       working-directory: ./base
-    - name: Run tests for base SDK
-      run: flutter test test/*.dart
-      working-directory: ./base
     - name: Install Flutter dependencies for base-compat SDK
       run: flutter pub get
       working-directory: ./base_compat
-    - name: Run tests for base-compat SDK
-      run: flutter test test/*.dart
-      working-directory: ./base_compat
     - name: Install Flutter dependencies for base-storage SDK
       run: flutter pub get
-      working-directory: ./base_storage
-    - name: Run tests for base-storage SDK
-      run: flutter test test/*.dart
       working-directory: ./base_storage
