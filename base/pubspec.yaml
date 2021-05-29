@@ -30,7 +30,7 @@ dependencies:
   path: ^1.8.0
   kin_base_storage:
     git:
-      url: https://devayansarkar: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@github.com/kinnytips/kin-flutter-sdk.git
+      url: git@github.com:kinnytips/kin-flutter-sdk.git
       path: base_storage
 
 dev_dependencies:
