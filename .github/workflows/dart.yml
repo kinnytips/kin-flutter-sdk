@@ -4,7 +4,7 @@ on:
   push:
     branches: [ master ]
 jobs:
-  test-base-sdk:
+  test-sdk:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/setup-java@v1
@@ -14,9 +14,21 @@ jobs:
     - uses: subosito/flutter-action@v1
       with:
         channel: 'stable'
-    - name: Install Flutter dependencies
+    - name: Install Flutter dependencies for base SDK
       run: flutter pub get
       working-directory: ./base
-    - name: Run tests
+    - name: Run tests for base SDK
       run: flutter test test/*.dart
       working-directory: ./base
+    - name: Install Flutter dependencies for base-compat SDK
+      run: flutter pub get
+      working-directory: ./base_compat
+    - name: Run tests for base-compat SDK
+      run: flutter test test/*.dart
+      working-directory: ./base_compat
+    - name: Install Flutter dependencies for base-storage SDK
+      run: flutter pub get
+      working-directory: ./base_storage
+    - name: Run tests for base-storage SDK
+      run: flutter test test/*.dart
+      working-directory: ./base_storage
