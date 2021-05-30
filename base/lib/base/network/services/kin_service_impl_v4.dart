@@ -1,6 +1,5 @@
 
 import 'dart:async';
-import 'dart:html';
 
 import 'package:kin_base/base/models/key.dart';
 import 'package:kin_base/base/models/kin_account.dart';
@@ -23,7 +22,6 @@ import 'package:kin_base/base/tools/cache.dart';
 import 'package:kin_base/base/tools/kin_logger.dart';
 import 'package:kin_base/base/tools/network_operations_handler.dart';
 import 'package:kin_base/base/tools/observers.dart';
-import 'package:kin_base/models/agora/protobuf/account/v4/account_service.pb.dart';
 import 'package:kin_base/stellarfork/key_pair.dart';
 
 import 'kin_service.dart';
@@ -51,7 +49,7 @@ class KinServiceImplV4 extends KinService {
 
   Future<KinServiceResponse<ServiceConfig>> _cachedServiceConfig() async {
     return await _cache.resolve("serviceConfig", timeoutOverride: Duration(minutes: 30), fault: (key) {
-      return networkOperationsHandler.queueWork('_cachedServiceConfig', () async {
+      return networkOperationsHandler.queueWork('KinServiceImplV4._cachedServiceConfig', () async {
         return await transactionApi.getServiceConfig();
       });
     });
@@ -59,7 +57,7 @@ class KinServiceImplV4 extends KinService {
 
   Future<KinServiceResponse<Hash>> _cachedRecentBlockHash() async {
     return await _cache.resolve("recentBlockHash", timeoutOverride: Duration(minutes: 2), fault: (key) {
-      return networkOperationsHandler.queueWork('_cachedRecentBlockHash', () async {
+      return networkOperationsHandler.queueWork('KinServiceImplV4._cachedRecentBlockHash', () async {
         return await transactionApi.getRecentBlockHash();
       });
     });
@@ -68,7 +66,7 @@ class KinServiceImplV4 extends KinService {
 
   Future<KinServiceResponse<int>> _cachedMinRentExemption() async {
     return await _cache.resolve("minRentExemption", timeoutOverride: Duration(minutes: 30), fault: (key) {
-      return networkOperationsHandler.queueWork('_cachedMinRentExemption', () async {
+      return networkOperationsHandler.queueWork('KinServiceImplV4._cachedMinRentExemption', () async {
         return await transactionApi.getMinimumBalanceForRentExemption( TokenProgram().accountSize );
       });
     });
@@ -81,27 +79,29 @@ class KinServiceImplV4 extends KinService {
 
   @override
   Future<List<KinTransaction>> getLatestTransactions(KinAccountId kinAccountId) async {
-    var response = await transactionApi.getTransactionHistory(kinAccountId) ;
+    return networkOperationsHandler.queueWork('KinServiceImplV4.getLatestTransactions', () async {
+      var response = await transactionApi.getTransactionHistory(kinAccountId) ;
 
-    switch(response.type) {
-      case KinServiceResponseType.ok: {
-        if (response.payload == null) throw IllegalResponseError();
-        return response.payload ;
+      switch(response.type) {
+        case KinServiceResponseType.ok: {
+          if (response.payload == null) throw IllegalResponseError();
+          return response.payload ;
+        }
+        case KinServiceResponseType.notFound: {
+          throw ItemNotFoundError();
+        }
+        case KinServiceResponseType.undefinedError: {
+          throw UnexpectedServiceError(response.error);
+        }
+        case KinServiceResponseType.transientFailure: {
+          throw TransientFailure(response.error);
+        }
+        case KinServiceResponseType.upgradeRequiredError: {
+          throw SDKUpgradeRequired(response.error);
+        }
+        default: throw StateError("Can't handle response type: ${response.type}");
       }
-      case KinServiceResponseType.notFound: {
-        throw ItemNotFoundError();
-      }
-      case KinServiceResponseType.undefinedError: {
-        throw UnexpectedServiceError(response.error);
-      }
-      case KinServiceResponseType.transientFailure: {
-        throw TransientFailure(response.error);
-      }
-      case KinServiceResponseType.upgradeRequiredError: {
-        throw SDKUpgradeRequired(response.error);
-      }
-      default: throw StateError("Can't handle response type: ${response.type}");
-    }
+    });
   }
 
   @override
@@ -124,7 +124,7 @@ class KinServiceImplV4 extends KinService {
 
   @override
   Future<KinAccount> createAccount(KinAccountId accountId, PrivateKey signer) {
-    return networkOperationsHandler.queueWork('accountApi.createAccount', () async {
+    return networkOperationsHandler.queueWork('KinServiceImplV4.createAccount', () async {
       try {
         var ret = await Future.wait([
           _cachedServiceConfig(),
@@ -226,48 +226,52 @@ class KinServiceImplV4 extends KinService {
 
   @override
   Future<KinTransaction> getTransaction(TransactionHash transactionHash) async {
-    var tx = await transactionApi.getTransaction(transactionHash);
+    return networkOperationsHandler.queueWork('KinServiceImplV4.getTransaction', () async {
+      var response = await transactionApi.getTransaction(transactionHash);
 
-    if(tx.type == KinServiceResponseType.ok) {
-      if(tx.payload != null) {
-        return tx.payload;
+      if(response.type == KinServiceResponseType.ok) {
+        if(response.payload != null) {
+          return response.payload;
+        }
+        else{
+          throw IllegalResponseError(response.error);
+        }
       }
-      else{
-        throw IllegalResponseError(tx.error);
+      else if (response.type == KinServiceResponseType.notFound) {
+        throw ItemNotFoundError(response.error);
       }
-    }
-    else if (tx.type == KinServiceResponseType.notFound) {
-      throw ItemNotFoundError(tx.error);
-    }
-    else {
-      throw UnexpectedServiceError(tx.error);
-    }
+      else {
+        throw UnexpectedServiceError(response.error);
+      }
+    });
   }
 
   @override
   Future<List<KinTransaction>> getTransactionPage(KinAccountId kinAccountId, PagingToken pagingToken, KinServiceOrder order) async {
-    var transactionPage = await transactionApi.getTransactionHistory(kinAccountId, pagingToken: pagingToken, order: order);
+    return networkOperationsHandler.queueWork('KinServiceImplV4.getTransactionPage', () async {
+      var response = await transactionApi.getTransactionHistory(kinAccountId, pagingToken: pagingToken, order: order);
 
-    if(transactionPage.type == KinServiceResponseType.ok) {
-      if (transactionPage.payload != null) {
-        return transactionPage.payload;
+      if(response.type == KinServiceResponseType.ok) {
+        if (response.payload != null) {
+          return response.payload;
+        }
+        else {
+          throw IllegalResponseError(response.error);
+        }
+      }
+      else if (response.type == KinServiceResponseType.undefinedError) {
+        throw UnexpectedServiceError(response.error);
+      }
+      else if (response.type == KinServiceResponseType.transientFailure) {
+        throw TransientFailure(response.error);
+      }
+      else if (response.type == KinServiceResponseType.upgradeRequiredError) {
+        throw SDKUpgradeRequired();
       }
       else {
-        throw IllegalResponseError(transactionPage.error);
+        throw UnexpectedServiceError(response.error);
       }
-    }
-    else if (transactionPage.type == KinServiceResponseType.undefinedError) {
-      throw UnexpectedServiceError(transactionPage.error);
-    }
-    else if (transactionPage.type == KinServiceResponseType.transientFailure) {
-      throw TransientFailure(transactionPage.error);
-    }
-    else if (transactionPage.type == KinServiceResponseType.upgradeRequiredError) {
-      throw SDKUpgradeRequired();
-    }
-    else {
-      throw UnexpectedServiceError(transactionPage.error);
-    }
+    });
   }
 
   @override
@@ -276,11 +280,11 @@ class KinServiceImplV4 extends KinService {
   }
 
   @override
-  Future<List<AccountInfo>> resolveTokenAccounts(KinAccountId accountId) async {
+  Future<List<PublicKey>> resolveTokenAccounts(KinAccountId accountId) async {
     var cacheKey = "resolvedAccounts:${accountId.stellarBase32Encode()}";
 
     var tokenAccounts = await _cache.resolve(cacheKey, fault: (k) async {
-      return networkOperationsHandler.queueWork('accountApi.resolveTokenAccounts', () async {
+      return networkOperationsHandler.queueWork('KinServiceImplV4.resolveTokenAccounts', () async {
         var response = await accountApi.resolveTokenAccounts(accountId) ;
 
         if ( response.type == KinServiceResponseType.ok ) {
@@ -322,41 +326,46 @@ class KinServiceImplV4 extends KinService {
 
   @override
   Future<KinTransaction> submitTransaction(KinTransaction transaction) async {
-    var tx = await transactionApi.submitTransaction((transaction as Transaction), null);
+    return networkOperationsHandler.queueWork('KinServiceImplV4.submitTransaction', () async {
+      var response = await transactionApi.submitTransaction(
+        Transaction.unmarshal(transaction.bytesValue),
+        transaction.invoiceList,
+      );
 
-    if (tx.type == KinServiceResponseType.ok) {
-      return tx.payload;
-    }
-    else if (tx.type == KinServiceResponseType.insufficientFee) {
-      throw InsufficientFeeInRequestError(tx.error);
-    }
-    else if (tx.type == KinServiceResponseType.badSequenceNumber) {
-      throw BadSequenceNumberInRequestError(tx.error);
-    }
-    else if (tx.type == KinServiceResponseType.noAccount) {
-      throw UnknownAccountInRequestError(tx.error);
-    }
-    else if (tx.type == KinServiceResponseType.insufficientBalance) {
-      throw InsufficientBalanceForSourceAccountInRequestError(tx.error);
-    }
-    else if (tx.type == KinServiceResponseType.invoiceError) {
-      throw InvoiceErrorsInRequest(tx.error);
-    }
-    else if (tx.type == KinServiceResponseType.webhookRejected) {
-      throw WebhookRejectedTransactionError(tx.error);
-    }
-    else if (tx .type == KinServiceResponseType.undefinedError) {
-      throw UnexpectedServiceError(tx.error);
-    }
-    else if (tx.type == KinServiceResponseType.transientFailure) {
-      throw TransientFailure(tx.error);
-    }
-    else if (tx.type == KinServiceResponseType.upgradeRequiredError) {
-      throw SDKUpgradeRequired(tx.error);
-    }
-    else {
-      throw UnexpectedServiceError(tx.error);
-    }
+      if (response.type == KinServiceResponseType.ok) {
+        return response.payload;
+      }
+      else if (response.type == KinServiceResponseType.insufficientFee) {
+        throw InsufficientFeeInRequestError(response.error);
+      }
+      else if (response.type == KinServiceResponseType.badSequenceNumber) {
+        throw BadSequenceNumberInRequestError(response.error);
+      }
+      else if (response.type == KinServiceResponseType.noAccount) {
+        throw UnknownAccountInRequestError(response.error);
+      }
+      else if (response.type == KinServiceResponseType.insufficientBalance) {
+        throw InsufficientBalanceForSourceAccountInRequestError(response.error);
+      }
+      else if (response.type == KinServiceResponseType.invoiceError) {
+        throw InvoiceErrorsInRequest(response.error);
+      }
+      else if (response.type == KinServiceResponseType.webhookRejected) {
+        throw WebhookRejectedTransactionError(response.error);
+      }
+      else if (response .type == KinServiceResponseType.undefinedError) {
+        throw UnexpectedServiceError(response.error);
+      }
+      else if (response.type == KinServiceResponseType.transientFailure) {
+        throw TransientFailure(response.error);
+      }
+      else if (response.type == KinServiceResponseType.upgradeRequiredError) {
+        throw SDKUpgradeRequired(response.error);
+      }
+      else {
+        throw UnexpectedServiceError(response.error);
+      }
+    });
   }
 
 }
