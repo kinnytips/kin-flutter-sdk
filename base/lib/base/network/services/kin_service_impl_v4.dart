@@ -23,6 +23,7 @@ import 'package:kin_base/base/tools/cache.dart';
 import 'package:kin_base/base/tools/kin_logger.dart';
 import 'package:kin_base/base/tools/network_operations_handler.dart';
 import 'package:kin_base/base/tools/observers.dart';
+import 'package:kin_base/models/agora/protobuf/account/v4/account_service.pb.dart';
 import 'package:kin_base/stellarfork/key_pair.dart';
 
 import 'kin_service.dart';
@@ -275,7 +276,7 @@ class KinServiceImplV4 extends KinService {
   }
 
   @override
-  Future<List<PublicKey>> resolveTokenAccounts(KinAccountId accountId) async {
+  Future<List<AccountInfo>> resolveTokenAccounts(KinAccountId accountId) async {
     var cacheKey = "resolvedAccounts:${accountId.stellarBase32Encode()}";
 
     var tokenAccounts = await _cache.resolve(cacheKey, fault: (k) async {
@@ -304,7 +305,7 @@ class KinServiceImplV4 extends KinService {
       _cache.invalidate(cacheKey);
     }
 
-    return tokenAccounts ;
+    return tokenAccounts;
   }
 
   @override
@@ -320,9 +321,42 @@ class KinServiceImplV4 extends KinService {
   }
 
   @override
-  Future<KinTransaction> submitTransaction(KinTransaction transaction) {
-    // TODO: implement submitTransaction
-    throw UnimplementedError();
+  Future<KinTransaction> submitTransaction(KinTransaction transaction) async {
+    var tx = await transactionApi.submitTransaction((transaction as Transaction), null);
+
+    if (tx.type == KinServiceResponseType.ok) {
+      return tx.payload;
+    }
+    else if (tx.type == KinServiceResponseType.insufficientFee) {
+      throw InsufficientFeeInRequestError(tx.error);
+    }
+    else if (tx.type == KinServiceResponseType.badSequenceNumber) {
+      throw BadSequenceNumberInRequestError(tx.error);
+    }
+    else if (tx.type == KinServiceResponseType.noAccount) {
+      throw UnknownAccountInRequestError(tx.error);
+    }
+    else if (tx.type == KinServiceResponseType.insufficientBalance) {
+      throw InsufficientBalanceForSourceAccountInRequestError(tx.error);
+    }
+    else if (tx.type == KinServiceResponseType.invoiceError) {
+      throw InvoiceErrorsInRequest(tx.error);
+    }
+    else if (tx.type == KinServiceResponseType.webhookRejected) {
+      throw WebhookRejectedTransactionError(tx.error);
+    }
+    else if (tx .type == KinServiceResponseType.undefinedError) {
+      throw UnexpectedServiceError(tx.error);
+    }
+    else if (tx.type == KinServiceResponseType.transientFailure) {
+      throw TransientFailure(tx.error);
+    }
+    else if (tx.type == KinServiceResponseType.upgradeRequiredError) {
+      throw SDKUpgradeRequired(tx.error);
+    }
+    else {
+      throw UnexpectedServiceError(tx.error);
+    }
   }
 
 }

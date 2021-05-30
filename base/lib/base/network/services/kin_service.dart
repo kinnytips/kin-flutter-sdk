@@ -9,6 +9,7 @@ import 'package:kin_base/base/models/transaction_hash.dart';
 import 'package:kin_base/base/stellar/models/kin_transaction.dart';
 import 'package:kin_base/base/stellar/models/paging_token.dart';
 import 'package:kin_base/base/tools/observers.dart';
+import 'package:kin_base/models/agora/protobuf/account/v4/account_service.pb.dart';
 
 import 'package:kin_base/models/agora/protobuf/transaction/v3/transaction_service.pbenum.dart';
 
@@ -17,7 +18,7 @@ abstract class KinService {
 
     Future<KinAccount> getAccount(KinAccountId accountId) ;
 
-    Future<List<PublicKey>> resolveTokenAccounts(KinAccountId accountId) ;
+    Future<List<AccountInfo>> resolveTokenAccounts(KinAccountId accountId) ;
 
     Future<List<KinTransaction>> getLatestTransactions(KinAccountId kinAccountId) ;
 
