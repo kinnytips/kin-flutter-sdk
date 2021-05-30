@@ -78,15 +78,49 @@ class AgoraKinAccountApiV4 extends GrpcApi implements KinAccountApiV4, KinStream
         super(managedChannel);
 
   @override
-  Future<KinServiceResponse<KinAccount>> getAccount(KinAccountId accountId) {
-    // TODO: implement getAccount
-    throw UnimplementedError();
+  Future<KinServiceResponse<KinAccount>> getAccount(KinAccountId accountId) async {
+    try {
+      model_v4.Commitment commitment = model_v4.Commitment.SINGLE;
+
+      var request = new GetAccountInfoRequest(
+          accountId: accountId.toProtoSolanaAccountId(),
+          commitment: commitment);
+
+      var account = await _accountClient.getAccountInfo(request);
+
+      if (account.result == GetAccountInfoResponse_Result.OK) {
+        var accountInfo = account.accountInfo.toKinAccount();
+        return KinServiceResponse(KinServiceResponseType.ok, accountInfo);
+      }
+      else if (account.result == GetAccountInfoResponse_Result.NOT_FOUND) {
+        return KinServiceResponse(KinServiceResponseType.notFound);
+      }
+      else {
+        return KinServiceResponse(KinServiceResponseType.undefinedError, null,
+            UnrecognizedResultException(UnrecognizedProtoResponse()));
+      }
+    }
+    catch (e) {
+      if ( GrpcApi.canRetry(e) ) {
+        return KinServiceResponse(KinServiceResponseType.transientFailure, null, TransientFailure(e));
+      }
+      else if ( GrpcApi.isForcedUpgrade(e) ) {
+        return KinServiceResponse(KinServiceResponseType.upgradeRequiredError, null);
+      }
+      else {
+        return KinServiceResponse(KinServiceResponseType.undefinedError, null, UnrecognizedResultException(e));
+      }
+    }
   }
 
   @override
-  Future<KinServiceResponse<List<PublicKey>>> resolveTokenAccounts(KinAccountId accountId) {
-    // TODO: implement resolveTokenAccounts
-    throw UnimplementedError();
+  Future<KinServiceResponse<List<PublicKey>>> resolveTokenAccounts(KinAccountId accountId) async {
+    var request = new ResolveTokenAccountsRequest(accountId: accountId.toProtoSolanaAccountId(), includeAccountInfo: true);
+    var accounts = await _accountClient.resolveTokenAccounts(request);
+
+    var publicKeys = accounts.tokenAccountInfos.map((e) => e.accountId.toPublicKey()).toList();
+
+    return new KinServiceResponse(KinServiceResponseType.ok, publicKeys);
   }
 
   @override
