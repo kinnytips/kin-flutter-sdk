@@ -1,6 +1,6 @@
-# base_compat
+# base_compat WIP 
 
-A new Flutter package project.
+DO NOT USE THIS PACKAGE.  IT IS CURRENTLY UNDER CONSTRUCTION
 
 ## Getting Started
 
