@@ -1,6 +1,6 @@
-# spend
+# spend WIP
 
-A new Flutter package project.
+THIS PROJECT IS CURRENTLY UNDER CONSTRUCTION.  DO NOT USE.
 
 ## Getting Started
 
