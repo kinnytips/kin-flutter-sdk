@@ -101,9 +101,14 @@ class AgoraKinAccountApiV4 extends GrpcApi implements KinAccountApiV4, KinStream
   }
 
   @override
-  Future<KinServiceResponse<List<PublicKey>>> resolveTokenAccounts(KinAccountId accountId) {
-    // TODO: implement resolveTokenAccounts
-    throw UnimplementedError();
+  Future<KinServiceResponse<List<AccountInfo>>> resolveTokenAccounts(KinAccountId accountId) async {
+    
+    model_v4.Commitment commitment;
+
+    var request = new ResolveTokenAccountsRequest(accountId: accountId.toProtoSolanaAccountId(), includeAccountInfo: true)
+    var accounts = await _accountClient.resolveTokenAccounts(request);
+    
+    return new KinServiceResponse(KinServiceResponseType.ok, accounts.tokenAccountInfos);
   }
 
   @override
