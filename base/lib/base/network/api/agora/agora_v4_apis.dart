@@ -78,9 +78,26 @@ class AgoraKinAccountApiV4 extends GrpcApi implements KinAccountApiV4, KinStream
         super(managedChannel);
 
   @override
-  Future<KinServiceResponse<KinAccount>> getAccount(KinAccountId accountId) {
-    // TODO: implement getAccount
-    throw UnimplementedError();
+  Future<KinServiceResponse<KinAccount>> getAccount(KinAccountId accountId) async {
+
+    model_v4.Commitment commitment;
+
+    var request = new GetAccountInfoRequest(accountId: accountId.toProtoSolanaAccountId(), commitment: commitment);
+    var account = await _accountClient.getAccountInfo(request);
+
+    if(account.result == GetAccountInfoResponse_Result.OK)
+    {
+      var accountInfo = account.accountInfo.toKinAccount();
+      return KinServiceResponse(KinServiceResponseType.ok, accountInfo);
+    }
+    else if (account.result == GetAccountInfoResponse_Result.NOT_FOUND)
+    {
+      return KinServiceResponse(KinServiceResponseType.notFound);
+    }
+    else
+    {
+      return KinServiceResponse(KinServiceResponseType.undefinedError, null, UnrecognizedResultException(UnrecognizedProtoResponse()) );
+    }
   }
 
   @override
