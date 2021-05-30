@@ -223,9 +223,23 @@ class KinServiceImplV4 extends KinService {
   }
 
   @override
-  Future<KinTransaction> getTransaction(TransactionHash transactionHash) {
-    // TODO: implement getTransaction
-    throw UnimplementedError();
+  Future<KinTransaction> getTransaction(TransactionHash transactionHash) async {
+    var tx = await transactionApi.getTransaction(transactionHash);
+
+    if(tx.type == KinServiceResponseType.ok) {
+      if(tx.payload != null) {
+        return tx.payload;
+      }
+      else{
+        throw IllegalResponseError(tx.error);
+      }
+    }
+    else if (tx.type == KinServiceResponseType.notFound) {
+      throw ItemNotFoundError(tx.error);
+    }
+    else {
+      throw UnexpectedServiceError(tx.error);
+    }
   }
 
   @override
