@@ -1,5 +1,6 @@
 
 import 'dart:async';
+import 'dart:html';
 
 import 'package:kin_base/base/models/key.dart';
 import 'package:kin_base/base/models/kin_account.dart';
@@ -243,9 +244,29 @@ class KinServiceImplV4 extends KinService {
   }
 
   @override
-  Future<List<KinTransaction>> getTransactionPage(KinAccountId kinAccountId, PagingToken pagingToken, KinServiceOrder order) {
-    // TODO: implement getTransactionPage
-    throw UnimplementedError();
+  Future<List<KinTransaction>> getTransactionPage(KinAccountId kinAccountId, PagingToken pagingToken, KinServiceOrder order) async {
+    var transactionPage = await transactionApi.getTransactionHistory(kinAccountId, pagingToken: pagingToken, order: order);
+
+    if(transactionPage.type == KinServiceResponseType.ok) {
+      if (transactionPage.payload != null) {
+        return transactionPage.payload;
+      }
+      else {
+        throw IllegalResponseError(transactionPage.error);
+      }
+    }
+    else if (transactionPage.type == KinServiceResponseType.undefinedError) {
+      throw UnexpectedServiceError(transactionPage.error);
+    }
+    else if (transactionPage.type == KinServiceResponseType.transientFailure) {
+      throw TransientFailure(transactionPage.error);
+    }
+    else if (transactionPage.type == KinServiceResponseType.upgradeRequiredError) {
+      throw SDKUpgradeRequired();
+    }
+    else {
+      throw UnexpectedServiceError(transactionPage.error);
+    }
   }
 
   @override
