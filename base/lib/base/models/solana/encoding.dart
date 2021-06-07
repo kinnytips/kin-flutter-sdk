@@ -76,7 +76,10 @@ extension MessageMarshal on Message {
     output.write(header.numReadOnly);
 
     // Accounts (panic?)
-    ShortVec.encodeShortVecOf(output, accounts, (bytes) => PublicKey(bytes).marshal());
+    ShortVec.encodeShortVecOf(output, accounts, (o) {
+      var publicKey = o is PublicKey ? o : PublicKey(o);
+      return publicKey.marshal();
+    });
 
     // Recent Blockhash
     output.writeAll(recentBlockhash.marshal());
