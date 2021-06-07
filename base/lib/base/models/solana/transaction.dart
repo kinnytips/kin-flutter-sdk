@@ -1,22 +1,22 @@
 import 'dart:typed_data';
-import 'package:kin_base/base/models/solana/byte_utils.dart';
-import 'package:kin_base/base/models/solana/short_vec.dart';
-import 'package:kin_base/base/tools/byte_in_out_buffer.dart';
-import 'package:meta/meta.dart';
 
 import 'package:kin_base/base/models/key.dart';
+import 'package:kin_base/base/models/solana/byte_utils.dart';
 // import 'package:kin_sdk/base/tools/byte_utils.dart';
 // import 'package:kin_sdk/base/tools/sort.dart';
 import 'package:kin_base/base/models/solana/fixed_byte_array.dart';
 import 'package:kin_base/base/models/solana/instruction.dart';
+import 'package:kin_base/base/models/solana/short_vec.dart';
+import 'package:kin_base/base/tools/byte_in_out_buffer.dart';
 import 'package:kin_base/base/tools/extensions.dart';
+import 'package:meta/meta.dart';
 
 import 'encoding.dart';
 
 class Signature {
   final FixedByteArray64 value;
 
-  Signature({this.value});
+  Signature({FixedByteArray64 value}) : value = value ?? FixedByteArray64() ;
 
   static const SIZE_OF = 64;
 }
@@ -145,8 +145,8 @@ class Transaction {
     return Transaction(message: message, signatures: signatures);
   }
   Transaction copyWith({
-    message,
-    signatures,
+    Message message,
+    List<Signature> signatures,
   }) =>
       Transaction(
         message: message ?? this.message,
@@ -167,6 +167,7 @@ class Transaction {
     // Extract all of the unique accounts from the instructions.
     instructions.forEach((element) {
       accounts.add(AccountMeta(publicKey: element.program, isProgram: true));
+      accounts.addAll(element.accounts);
     });
 
     // Sort the account meta's based on:
@@ -209,11 +210,12 @@ class Transaction {
   }
 
   static int _indexOf(List<PublicKey> slice, PublicKey item) {
-    slice.asMap().forEach((i, publicKey) {
-      if (publicKey.value.equalsContent(item.value)) {
+    for (var i = 0; i < slice.length; ++i) {
+      var key = slice[i];
+      if (key.value.equalsContent(item.value)) {
         return i;
       }
-    });
+    }
 
     return -1;
   }
@@ -247,8 +249,11 @@ class Transaction {
           value: FixedByteArray64(element.sign(messageBytes)));
     });
 
-    return copyWith(
-        signatures: newSignatures.every((element) => element ?? Signature()));
+    var copySignatures = newSignatures.map((element) {
+      return element ?? Signature();
+    }).toList().cast<Signature>();
+
+    return copyWith(signatures: copySignatures);
   }
 }
 
