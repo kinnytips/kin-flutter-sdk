@@ -40,6 +40,8 @@ class Kin {
   Observer<List<KinPayment>> _observerPayments;
   Observer<KinBalance> _observerBalance;
 
+  final String storageLocation ;
+
   Kin(this._production,
       this._appIndex,
       this._appName,
@@ -47,7 +49,8 @@ class Kin {
       this._credentialPass,
       this._onBalanceChange,
       this._onPayment,
-      this._onAccountContext) : _lifecycle = DisposeBag() {
+      this._onAccountContext,
+      {this.storageLocation = "/tmp/kin-flutter"}) : _lifecycle = DisposeBag() {
 
     _setAppInfo();
 
@@ -126,8 +129,6 @@ class Kin {
   }
 
   KinEnvironmentAgora _getEnvironment() {
-    String storageLoc = "/tmp/kin";
-
     NetworkEnvironment networkEnv = _production
         ? KinStellarMainNetKin3.instance
         : KinStellarTestNetKin3.instance;
@@ -135,7 +136,7 @@ class Kin {
     var appInfoProvider = AppInfoProviderSimple(_appInfo, _credentialUser, _credentialPass);
 
     var env = KinEnvironmentAgora.build(networkEnv, appInfoProvider: appInfoProvider,
-    storageBuilder: ({NetworkEnvironment networkEnvironment}) => KinFileStorage(storageLoc, networkEnvironment));
+    storageBuilder: ({NetworkEnvironment networkEnvironment}) => KinFileStorage(storageLocation, networkEnvironment));
 
     return env;
   }
