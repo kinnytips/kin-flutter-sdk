@@ -111,7 +111,9 @@ class KinEnvironmentAgora extends KinEnvironment {
         ioScheduler: executors.sequentialScheduled,
         ioExecutor: executors.parallelIO,
         logger: logger,
-        shouldRetryError: (e) => e is Error  //TODO: is KinService.FatalError.TransientFailure
+        shouldRetryError: (e) {
+          return e is TransientFailure;
+        }
     );
 
     if (appInfoProvider == null) throw KinEnvironmentBuilderException("Must provide an ApplicationDelegate!");

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:kin_base/base/models/invoices.dart';
+import 'package:kin_base/base/models/key.dart';
 import 'package:kin_base/base/models/kin_account.dart';
 import 'package:kin_base/base/models/kin_balance.dart';
 import 'package:kin_base/base/models/quark_amount.dart';
@@ -12,8 +13,8 @@ import 'package:kin_base/base/stellar/models/kin_transaction.dart';
 import 'package:kin_base/base/stellar/models/kin_transactions.dart';
 import 'package:kin_base/base/stellar/models/network_environment.dart';
 import 'package:kin_base/base/tools/executor_service.dart';
-import 'package:kin_base/base/tools/hex.dart';
 import 'package:kin_base/base/tools/extensions.dart' show ListKinTransactionExtension;
+import 'package:kin_base/base/tools/hex.dart';
 import 'package:kin_base/models/agora/protobuf/common/v3/model.pb.dart' as models ;
 import 'package:kin_base_storage/kin_base_storage.dart' as base_storage;
 import 'package:path/path.dart' as path;
@@ -337,8 +338,26 @@ class KinFileStorage implements Storage {
 
   @override
   bool updateAccount(KinAccount account) {
-    // TODO: implement updateAccount
-    throw UnimplementedError();
+    // If the account is already stored with private key, when updating this account with a
+    // public key, keep the private key.
+    var existingAccount = getAccount(account.id);
+
+    KinAccount mergedAccount ;
+    if (existingAccount != null && existingAccount.key is PrivateKey) {
+      mergedAccount = existingAccount.copy(
+          tokenAccounts: account.tokenAccounts,
+          balance: account.balance,
+          status: account.status
+      );
+    }
+    else {
+      mergedAccount = account ;
+    }
+
+    return _writeToFile(
+        _directoryForAccount(account.id),
+        fileNameForAccountInfo,
+        mergedAccount.toStorageKinAccount().writeToBuffer());
   }
 
   @override
@@ -348,9 +367,15 @@ class KinFileStorage implements Storage {
   }
 
   @override
-  Future<KinAccount> updateAccountInStorage(KinAccount account) {
-    // TODO: implement updateAccountInStorage
-    throw UnimplementedError();
+  Future<KinAccount> updateAccountInStorage(KinAccount account) async {
+    var accountInStorage = await getStoredAccount(account.id);
+    var accountToStore = accountInStorage.merge(account);
+
+    if (accountToStore != null && updateAccount(accountToStore)) {
+      return accountToStore ;
+    } else {
+      throw Exception("Failed to update Account in storage");
+    }
   }
 
   @override

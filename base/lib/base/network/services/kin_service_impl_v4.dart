@@ -79,8 +79,31 @@ class KinServiceImplV4 extends KinService {
   }
 
   @override
-  Future<KinAccount> getAccount(KinAccountId accountId) {
-    throw UnimplementedError('!!!getAccount');
+  Future<KinAccount> getAccount(KinAccountId accountId) async {
+    return networkOperationsHandler.queueWork('KinServiceImplV4.getAccount', () async {
+      var response = await accountApi.getAccount(accountId);
+
+      switch(response.type) {
+        case KinServiceResponseType.ok:
+          {
+            if (response.payload == null) throw IllegalResponseError();
+            return response.payload;
+          }
+        case KinServiceResponseType.notFound: {
+          throw ItemNotFoundError();
+        }
+        case KinServiceResponseType.undefinedError: {
+          throw UnexpectedServiceError(response.error);
+        }
+        case KinServiceResponseType.transientFailure: {
+          throw TransientFailure(response.error);
+        }
+        case KinServiceResponseType.upgradeRequiredError: {
+          throw SDKUpgradeRequired(response.error);
+        }
+        default: throw StateError("Can't handle response type: ${response.type}");
+      }
+    });
   }
 
   @override
