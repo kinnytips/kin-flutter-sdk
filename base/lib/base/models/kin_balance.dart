@@ -7,4 +7,9 @@ class KinBalance {
   KinBalance([KinAmount amount, KinAmount pendingAmount])
       : amount = amount ?? KinAmount.zero,
         pendingAmount = pendingAmount ?? amount ?? KinAmount.zero ;
+
+  @override
+  String toString() {
+    return 'KinBalance{amount: $amount, pendingAmount: $pendingAmount}';
+  }
 }

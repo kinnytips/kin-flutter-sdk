@@ -94,4 +94,9 @@ class KinPayment {
       this.memo,
       this.timestamp,
       {this.invoice});
+
+  @override
+  String toString() {
+    return 'KinPayment{id: $id, status: $status, sourceAccountId: $sourceAccountId, destinationAccountId: $destinationAccountId, amount: $amount, fee: $fee, memo: $memo, timestamp: $timestamp, invoice: $invoice}';
+  }
 }
