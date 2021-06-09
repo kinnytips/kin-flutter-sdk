@@ -141,6 +141,11 @@ class Kin {
     return env;
   }
 
+  @override
+  String toString() {
+    return 'Kin{_production: $_production, _appIndex: $_appIndex, _appName: $_appName, _credentialUser: $_credentialUser, _appInfo: $_appInfo, storageLocation: $storageLocation}';
+  }
+
 /*
 
     private KinEnvironment.Agora getEnvironment() {
@@ -181,5 +186,6 @@ class Kin {
                 .build();
     }
      */
+
 
 }

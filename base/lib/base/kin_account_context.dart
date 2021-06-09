@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:kin_base/base/kin_environment.dart';
 import 'package:kin_base/base/models/kin_balance.dart';
 import 'package:kin_base/base/stellar/models/kin_transaction.dart';
@@ -507,8 +508,14 @@ class KinAccountContextImpl extends KinAccountContextBase with KinAccountContext
       KinAccountId accountId, this.appInfoProvider, KinLoggerFactory logger)
       : super(executors, service, storage, accountId, logger);
 
+  static Uint8List _generateRandomPrivateKey() {
+    //var keyPair = KeyPair.fromSecretSeedBytes(Uint8List.fromList(List<int>.generate(32, (i) => i)));
+    //return keyPair.privateKey;
+    return KeyPair.random().privateKey;
+  }
+
   factory KinAccountContextImpl.newAccount(KinEnvironment env) {
-    var privateKey = PrivateKey.fromBytes( KeyPair.random().privateKey ) ;
+    var privateKey = PrivateKey.fromBytes( _generateRandomPrivateKey() ) ;
     var newAccount = KinAccount(privateKey);
     env.storage.addAccount(newAccount);
 
