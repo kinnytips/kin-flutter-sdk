@@ -10,12 +10,12 @@ import 'dart:core' as $core;
 import 'package:fixnum/fixnum.dart' as $fixnum;
 import 'package:protobuf/protobuf.dart' as $pb;
 
-import '../../common/v4/model.pb.dart' as $3;
-import '../../common/v3/model.pb.dart' as $4;
-import '../../google/protobuf/timestamp.pb.dart' as $2;
+import '../../common/v4/model.pb.dart' as $8;
+import '../../common/v3/model.pb.dart' as $9;
+import '../../google/protobuf/timestamp.pb.dart' as $7;
 
 import 'transaction_service.pbenum.dart';
-import '../../common/v4/model.pbenum.dart' as $3;
+import '../../common/v4/model.pbenum.dart' as $8;
 
 export 'transaction_service.pbenum.dart';
 
@@ -50,17 +50,17 @@ class GetServiceConfigRequest extends $pb.GeneratedMessage {
 
 class GetServiceConfigResponse extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetServiceConfigResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'kin.agora.transaction.v4'), createEmptyInstance: create)
-    ..aOM<$3.SolanaAccountId>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'subsidizerAccount', subBuilder: $3.SolanaAccountId.create)
-    ..aOM<$3.SolanaAccountId>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'tokenProgram', subBuilder: $3.SolanaAccountId.create)
-    ..aOM<$3.SolanaAccountId>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'token', subBuilder: $3.SolanaAccountId.create)
+    ..aOM<$8.SolanaAccountId>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'subsidizerAccount', subBuilder: $8.SolanaAccountId.create)
+    ..aOM<$8.SolanaAccountId>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'tokenProgram', subBuilder: $8.SolanaAccountId.create)
+    ..aOM<$8.SolanaAccountId>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'token', subBuilder: $8.SolanaAccountId.create)
     ..hasRequiredFields = false
   ;
 
   GetServiceConfigResponse._() : super();
   factory GetServiceConfigResponse({
-    $3.SolanaAccountId subsidizerAccount,
-    $3.SolanaAccountId tokenProgram,
-    $3.SolanaAccountId token,
+    $8.SolanaAccountId subsidizerAccount,
+    $8.SolanaAccountId tokenProgram,
+    $8.SolanaAccountId token,
   }) {
     final _result = create();
     if (subsidizerAccount != null) {
@@ -96,37 +96,37 @@ class GetServiceConfigResponse extends $pb.GeneratedMessage {
   static GetServiceConfigResponse _defaultInstance;
 
   @$pb.TagNumber(1)
-  $3.SolanaAccountId get subsidizerAccount => $_getN(0);
+  $8.SolanaAccountId get subsidizerAccount => $_getN(0);
   @$pb.TagNumber(1)
-  set subsidizerAccount($3.SolanaAccountId v) { setField(1, v); }
+  set subsidizerAccount($8.SolanaAccountId v) { setField(1, v); }
   @$pb.TagNumber(1)
   $core.bool hasSubsidizerAccount() => $_has(0);
   @$pb.TagNumber(1)
   void clearSubsidizerAccount() => clearField(1);
   @$pb.TagNumber(1)
-  $3.SolanaAccountId ensureSubsidizerAccount() => $_ensure(0);
+  $8.SolanaAccountId ensureSubsidizerAccount() => $_ensure(0);
 
   @$pb.TagNumber(2)
-  $3.SolanaAccountId get tokenProgram => $_getN(1);
+  $8.SolanaAccountId get tokenProgram => $_getN(1);
   @$pb.TagNumber(2)
-  set tokenProgram($3.SolanaAccountId v) { setField(2, v); }
+  set tokenProgram($8.SolanaAccountId v) { setField(2, v); }
   @$pb.TagNumber(2)
   $core.bool hasTokenProgram() => $_has(1);
   @$pb.TagNumber(2)
   void clearTokenProgram() => clearField(2);
   @$pb.TagNumber(2)
-  $3.SolanaAccountId ensureTokenProgram() => $_ensure(1);
+  $8.SolanaAccountId ensureTokenProgram() => $_ensure(1);
 
   @$pb.TagNumber(3)
-  $3.SolanaAccountId get token => $_getN(2);
+  $8.SolanaAccountId get token => $_getN(2);
   @$pb.TagNumber(3)
-  set token($3.SolanaAccountId v) { setField(3, v); }
+  set token($8.SolanaAccountId v) { setField(3, v); }
   @$pb.TagNumber(3)
   $core.bool hasToken() => $_has(2);
   @$pb.TagNumber(3)
   void clearToken() => clearField(3);
   @$pb.TagNumber(3)
-  $3.SolanaAccountId ensureToken() => $_ensure(2);
+  $8.SolanaAccountId ensureToken() => $_ensure(2);
 }
 
 class GetMinimumKinVersionRequest extends $pb.GeneratedMessage {
@@ -236,13 +236,13 @@ class GetRecentBlockhashRequest extends $pb.GeneratedMessage {
 
 class GetRecentBlockhashResponse extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetRecentBlockhashResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'kin.agora.transaction.v4'), createEmptyInstance: create)
-    ..aOM<$3.Blockhash>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'blockhash', subBuilder: $3.Blockhash.create)
+    ..aOM<$8.Blockhash>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'blockhash', subBuilder: $8.Blockhash.create)
     ..hasRequiredFields = false
   ;
 
   GetRecentBlockhashResponse._() : super();
   factory GetRecentBlockhashResponse({
-    $3.Blockhash blockhash,
+    $8.Blockhash blockhash,
   }) {
     final _result = create();
     if (blockhash != null) {
@@ -272,15 +272,15 @@ class GetRecentBlockhashResponse extends $pb.GeneratedMessage {
   static GetRecentBlockhashResponse _defaultInstance;
 
   @$pb.TagNumber(1)
-  $3.Blockhash get blockhash => $_getN(0);
+  $8.Blockhash get blockhash => $_getN(0);
   @$pb.TagNumber(1)
-  set blockhash($3.Blockhash v) { setField(1, v); }
+  set blockhash($8.Blockhash v) { setField(1, v); }
   @$pb.TagNumber(1)
   $core.bool hasBlockhash() => $_has(0);
   @$pb.TagNumber(1)
   void clearBlockhash() => clearField(1);
   @$pb.TagNumber(1)
-  $3.Blockhash ensureBlockhash() => $_ensure(0);
+  $8.Blockhash ensureBlockhash() => $_ensure(0);
 }
 
 class GetMinimumBalanceForRentExemptionRequest extends $pb.GeneratedMessage {
@@ -379,7 +379,7 @@ class GetMinimumBalanceForRentExemptionResponse extends $pb.GeneratedMessage {
 
 class GetHistoryRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetHistoryRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'kin.agora.transaction.v4'), createEmptyInstance: create)
-    ..aOM<$3.SolanaAccountId>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'accountId', subBuilder: $3.SolanaAccountId.create)
+    ..aOM<$8.SolanaAccountId>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'accountId', subBuilder: $8.SolanaAccountId.create)
     ..aOM<Cursor>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'cursor', subBuilder: Cursor.create)
     ..e<GetHistoryRequest_Direction>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'direction', $pb.PbFieldType.OE, defaultOrMaker: GetHistoryRequest_Direction.ASC, valueOf: GetHistoryRequest_Direction.valueOf, enumValues: GetHistoryRequest_Direction.values)
     ..hasRequiredFields = false
@@ -387,7 +387,7 @@ class GetHistoryRequest extends $pb.GeneratedMessage {
 
   GetHistoryRequest._() : super();
   factory GetHistoryRequest({
-    $3.SolanaAccountId accountId,
+    $8.SolanaAccountId accountId,
     Cursor cursor,
     GetHistoryRequest_Direction direction,
   }) {
@@ -425,15 +425,15 @@ class GetHistoryRequest extends $pb.GeneratedMessage {
   static GetHistoryRequest _defaultInstance;
 
   @$pb.TagNumber(1)
-  $3.SolanaAccountId get accountId => $_getN(0);
+  $8.SolanaAccountId get accountId => $_getN(0);
   @$pb.TagNumber(1)
-  set accountId($3.SolanaAccountId v) { setField(1, v); }
+  set accountId($8.SolanaAccountId v) { setField(1, v); }
   @$pb.TagNumber(1)
   $core.bool hasAccountId() => $_has(0);
   @$pb.TagNumber(1)
   void clearAccountId() => clearField(1);
   @$pb.TagNumber(1)
-  $3.SolanaAccountId ensureAccountId() => $_ensure(0);
+  $8.SolanaAccountId ensureAccountId() => $_ensure(0);
 
   @$pb.TagNumber(2)
   Cursor get cursor => $_getN(1);
@@ -513,15 +513,15 @@ class GetHistoryResponse extends $pb.GeneratedMessage {
 
 class SignTransactionRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'SignTransactionRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'kin.agora.transaction.v4'), createEmptyInstance: create)
-    ..aOM<$3.Transaction>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'transaction', subBuilder: $3.Transaction.create)
-    ..aOM<$4.InvoiceList>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'invoiceList', subBuilder: $4.InvoiceList.create)
+    ..aOM<$8.Transaction>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'transaction', subBuilder: $8.Transaction.create)
+    ..aOM<$9.InvoiceList>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'invoiceList', subBuilder: $9.InvoiceList.create)
     ..hasRequiredFields = false
   ;
 
   SignTransactionRequest._() : super();
   factory SignTransactionRequest({
-    $3.Transaction transaction,
-    $4.InvoiceList invoiceList,
+    $8.Transaction transaction,
+    $9.InvoiceList invoiceList,
   }) {
     final _result = create();
     if (transaction != null) {
@@ -554,39 +554,41 @@ class SignTransactionRequest extends $pb.GeneratedMessage {
   static SignTransactionRequest _defaultInstance;
 
   @$pb.TagNumber(1)
-  $3.Transaction get transaction => $_getN(0);
+  $8.Transaction get transaction => $_getN(0);
   @$pb.TagNumber(1)
-  set transaction($3.Transaction v) { setField(1, v); }
+  set transaction($8.Transaction v) { setField(1, v); }
   @$pb.TagNumber(1)
   $core.bool hasTransaction() => $_has(0);
   @$pb.TagNumber(1)
   void clearTransaction() => clearField(1);
   @$pb.TagNumber(1)
-  $3.Transaction ensureTransaction() => $_ensure(0);
+  $8.Transaction ensureTransaction() => $_ensure(0);
 
   @$pb.TagNumber(2)
-  $4.InvoiceList get invoiceList => $_getN(1);
+  $9.InvoiceList get invoiceList => $_getN(1);
   @$pb.TagNumber(2)
-  set invoiceList($4.InvoiceList v) { setField(2, v); }
+  set invoiceList($9.InvoiceList v) { setField(2, v); }
   @$pb.TagNumber(2)
   $core.bool hasInvoiceList() => $_has(1);
   @$pb.TagNumber(2)
   void clearInvoiceList() => clearField(2);
   @$pb.TagNumber(2)
-  $4.InvoiceList ensureInvoiceList() => $_ensure(1);
+  $9.InvoiceList ensureInvoiceList() => $_ensure(1);
 }
 
 class SignTransactionResponse extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'SignTransactionResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'kin.agora.transaction.v4'), createEmptyInstance: create)
     ..e<SignTransactionResponse_Result>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'result', $pb.PbFieldType.OE, defaultOrMaker: SignTransactionResponse_Result.OK, valueOf: SignTransactionResponse_Result.valueOf, enumValues: SignTransactionResponse_Result.values)
-    ..aOM<$3.TransactionSignature>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'signature', subBuilder: $3.TransactionSignature.create)
+    ..aOM<$8.TransactionSignature>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'signature', subBuilder: $8.TransactionSignature.create)
+    ..pc<$9.InvoiceError>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'invoiceErrors', $pb.PbFieldType.PM, subBuilder: $9.InvoiceError.create)
     ..hasRequiredFields = false
   ;
 
   SignTransactionResponse._() : super();
   factory SignTransactionResponse({
     SignTransactionResponse_Result result,
-    $3.TransactionSignature signature,
+    $8.TransactionSignature signature,
+    $core.Iterable<$9.InvoiceError> invoiceErrors,
   }) {
     final _result = create();
     if (result != null) {
@@ -594,6 +596,9 @@ class SignTransactionResponse extends $pb.GeneratedMessage {
     }
     if (signature != null) {
       _result.signature = signature;
+    }
+    if (invoiceErrors != null) {
+      _result.invoiceErrors.addAll(invoiceErrors);
     }
     return _result;
   }
@@ -628,31 +633,34 @@ class SignTransactionResponse extends $pb.GeneratedMessage {
   void clearResult() => clearField(1);
 
   @$pb.TagNumber(2)
-  $3.TransactionSignature get signature => $_getN(1);
+  $8.TransactionSignature get signature => $_getN(1);
   @$pb.TagNumber(2)
-  set signature($3.TransactionSignature v) { setField(2, v); }
+  set signature($8.TransactionSignature v) { setField(2, v); }
   @$pb.TagNumber(2)
   $core.bool hasSignature() => $_has(1);
   @$pb.TagNumber(2)
   void clearSignature() => clearField(2);
   @$pb.TagNumber(2)
-  $3.TransactionSignature ensureSignature() => $_ensure(1);
+  $8.TransactionSignature ensureSignature() => $_ensure(1);
+
+  @$pb.TagNumber(4)
+  $core.List<$9.InvoiceError> get invoiceErrors => $_getList(2);
 }
 
 class SubmitTransactionRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'SubmitTransactionRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'kin.agora.transaction.v4'), createEmptyInstance: create)
-    ..aOM<$3.Transaction>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'transaction', subBuilder: $3.Transaction.create)
-    ..aOM<$4.InvoiceList>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'invoiceList', subBuilder: $4.InvoiceList.create)
-    ..e<$3.Commitment>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'commitment', $pb.PbFieldType.OE, defaultOrMaker: $3.Commitment.RECENT, valueOf: $3.Commitment.valueOf, enumValues: $3.Commitment.values)
+    ..aOM<$8.Transaction>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'transaction', subBuilder: $8.Transaction.create)
+    ..aOM<$9.InvoiceList>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'invoiceList', subBuilder: $9.InvoiceList.create)
+    ..e<$8.Commitment>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'commitment', $pb.PbFieldType.OE, defaultOrMaker: $8.Commitment.RECENT, valueOf: $8.Commitment.valueOf, enumValues: $8.Commitment.values)
     ..a<$core.List<$core.int>>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'dedupeId', $pb.PbFieldType.OY)
     ..hasRequiredFields = false
   ;
 
   SubmitTransactionRequest._() : super();
   factory SubmitTransactionRequest({
-    $3.Transaction transaction,
-    $4.InvoiceList invoiceList,
-    $3.Commitment commitment,
+    $8.Transaction transaction,
+    $9.InvoiceList invoiceList,
+    $8.Commitment commitment,
     $core.List<$core.int> dedupeId,
   }) {
     final _result = create();
@@ -692,31 +700,31 @@ class SubmitTransactionRequest extends $pb.GeneratedMessage {
   static SubmitTransactionRequest _defaultInstance;
 
   @$pb.TagNumber(1)
-  $3.Transaction get transaction => $_getN(0);
+  $8.Transaction get transaction => $_getN(0);
   @$pb.TagNumber(1)
-  set transaction($3.Transaction v) { setField(1, v); }
+  set transaction($8.Transaction v) { setField(1, v); }
   @$pb.TagNumber(1)
   $core.bool hasTransaction() => $_has(0);
   @$pb.TagNumber(1)
   void clearTransaction() => clearField(1);
   @$pb.TagNumber(1)
-  $3.Transaction ensureTransaction() => $_ensure(0);
+  $8.Transaction ensureTransaction() => $_ensure(0);
 
   @$pb.TagNumber(2)
-  $4.InvoiceList get invoiceList => $_getN(1);
+  $9.InvoiceList get invoiceList => $_getN(1);
   @$pb.TagNumber(2)
-  set invoiceList($4.InvoiceList v) { setField(2, v); }
+  set invoiceList($9.InvoiceList v) { setField(2, v); }
   @$pb.TagNumber(2)
   $core.bool hasInvoiceList() => $_has(1);
   @$pb.TagNumber(2)
   void clearInvoiceList() => clearField(2);
   @$pb.TagNumber(2)
-  $4.InvoiceList ensureInvoiceList() => $_ensure(1);
+  $9.InvoiceList ensureInvoiceList() => $_ensure(1);
 
   @$pb.TagNumber(3)
-  $3.Commitment get commitment => $_getN(2);
+  $8.Commitment get commitment => $_getN(2);
   @$pb.TagNumber(3)
-  set commitment($3.Commitment v) { setField(3, v); }
+  set commitment($8.Commitment v) { setField(3, v); }
   @$pb.TagNumber(3)
   $core.bool hasCommitment() => $_has(2);
   @$pb.TagNumber(3)
@@ -735,16 +743,18 @@ class SubmitTransactionRequest extends $pb.GeneratedMessage {
 class SubmitTransactionResponse extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'SubmitTransactionResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'kin.agora.transaction.v4'), createEmptyInstance: create)
     ..e<SubmitTransactionResponse_Result>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'result', $pb.PbFieldType.OE, defaultOrMaker: SubmitTransactionResponse_Result.OK, valueOf: SubmitTransactionResponse_Result.valueOf, enumValues: SubmitTransactionResponse_Result.values)
-    ..aOM<$3.TransactionSignature>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'signature', subBuilder: $3.TransactionSignature.create)
-    ..aOM<$3.TransactionError>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'transactionError', subBuilder: $3.TransactionError.create)
+    ..aOM<$8.TransactionSignature>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'signature', subBuilder: $8.TransactionSignature.create)
+    ..aOM<$8.TransactionError>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'transactionError', subBuilder: $8.TransactionError.create)
+    ..pc<$9.InvoiceError>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'invoiceErrors', $pb.PbFieldType.PM, subBuilder: $9.InvoiceError.create)
     ..hasRequiredFields = false
   ;
 
   SubmitTransactionResponse._() : super();
   factory SubmitTransactionResponse({
     SubmitTransactionResponse_Result result,
-    $3.TransactionSignature signature,
-    $3.TransactionError transactionError,
+    $8.TransactionSignature signature,
+    $8.TransactionError transactionError,
+    $core.Iterable<$9.InvoiceError> invoiceErrors,
   }) {
     final _result = create();
     if (result != null) {
@@ -755,6 +765,9 @@ class SubmitTransactionResponse extends $pb.GeneratedMessage {
     }
     if (transactionError != null) {
       _result.transactionError = transactionError;
+    }
+    if (invoiceErrors != null) {
+      _result.invoiceErrors.addAll(invoiceErrors);
     }
     return _result;
   }
@@ -789,39 +802,42 @@ class SubmitTransactionResponse extends $pb.GeneratedMessage {
   void clearResult() => clearField(1);
 
   @$pb.TagNumber(2)
-  $3.TransactionSignature get signature => $_getN(1);
+  $8.TransactionSignature get signature => $_getN(1);
   @$pb.TagNumber(2)
-  set signature($3.TransactionSignature v) { setField(2, v); }
+  set signature($8.TransactionSignature v) { setField(2, v); }
   @$pb.TagNumber(2)
   $core.bool hasSignature() => $_has(1);
   @$pb.TagNumber(2)
   void clearSignature() => clearField(2);
   @$pb.TagNumber(2)
-  $3.TransactionSignature ensureSignature() => $_ensure(1);
+  $8.TransactionSignature ensureSignature() => $_ensure(1);
 
   @$pb.TagNumber(3)
-  $3.TransactionError get transactionError => $_getN(2);
+  $8.TransactionError get transactionError => $_getN(2);
   @$pb.TagNumber(3)
-  set transactionError($3.TransactionError v) { setField(3, v); }
+  set transactionError($8.TransactionError v) { setField(3, v); }
   @$pb.TagNumber(3)
   $core.bool hasTransactionError() => $_has(2);
   @$pb.TagNumber(3)
   void clearTransactionError() => clearField(3);
   @$pb.TagNumber(3)
-  $3.TransactionError ensureTransactionError() => $_ensure(2);
+  $8.TransactionError ensureTransactionError() => $_ensure(2);
+
+  @$pb.TagNumber(4)
+  $core.List<$9.InvoiceError> get invoiceErrors => $_getList(3);
 }
 
 class GetTransactionRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'GetTransactionRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'kin.agora.transaction.v4'), createEmptyInstance: create)
-    ..aOM<$3.TransactionId>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'transactionId', subBuilder: $3.TransactionId.create)
-    ..e<$3.Commitment>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'commitment', $pb.PbFieldType.OE, defaultOrMaker: $3.Commitment.RECENT, valueOf: $3.Commitment.valueOf, enumValues: $3.Commitment.values)
+    ..aOM<$8.TransactionId>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'transactionId', subBuilder: $8.TransactionId.create)
+    ..e<$8.Commitment>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'commitment', $pb.PbFieldType.OE, defaultOrMaker: $8.Commitment.RECENT, valueOf: $8.Commitment.valueOf, enumValues: $8.Commitment.values)
     ..hasRequiredFields = false
   ;
 
   GetTransactionRequest._() : super();
   factory GetTransactionRequest({
-    $3.TransactionId transactionId,
-    $3.Commitment commitment,
+    $8.TransactionId transactionId,
+    $8.Commitment commitment,
   }) {
     final _result = create();
     if (transactionId != null) {
@@ -854,20 +870,20 @@ class GetTransactionRequest extends $pb.GeneratedMessage {
   static GetTransactionRequest _defaultInstance;
 
   @$pb.TagNumber(1)
-  $3.TransactionId get transactionId => $_getN(0);
+  $8.TransactionId get transactionId => $_getN(0);
   @$pb.TagNumber(1)
-  set transactionId($3.TransactionId v) { setField(1, v); }
+  set transactionId($8.TransactionId v) { setField(1, v); }
   @$pb.TagNumber(1)
   $core.bool hasTransactionId() => $_has(0);
   @$pb.TagNumber(1)
   void clearTransactionId() => clearField(1);
   @$pb.TagNumber(1)
-  $3.TransactionId ensureTransactionId() => $_ensure(0);
+  $8.TransactionId ensureTransactionId() => $_ensure(0);
 
   @$pb.TagNumber(2)
-  $3.Commitment get commitment => $_getN(1);
+  $8.Commitment get commitment => $_getN(1);
   @$pb.TagNumber(2)
-  set commitment($3.Commitment v) { setField(2, v); }
+  set commitment($8.Commitment v) { setField(2, v); }
   @$pb.TagNumber(2)
   $core.bool hasCommitment() => $_has(1);
   @$pb.TagNumber(2)
@@ -967,8 +983,8 @@ class GetTransactionResponse extends $pb.GeneratedMessage {
 
 class HistoryItem_Payment extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'HistoryItem.Payment', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'kin.agora.transaction.v4'), createEmptyInstance: create)
-    ..aOM<$3.SolanaAccountId>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'source', subBuilder: $3.SolanaAccountId.create)
-    ..aOM<$3.SolanaAccountId>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'destination', subBuilder: $3.SolanaAccountId.create)
+    ..aOM<$8.SolanaAccountId>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'source', subBuilder: $8.SolanaAccountId.create)
+    ..aOM<$8.SolanaAccountId>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'destination', subBuilder: $8.SolanaAccountId.create)
     ..aInt64(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'amount')
     ..a<$core.int>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'index', $pb.PbFieldType.OU3)
     ..hasRequiredFields = false
@@ -976,8 +992,8 @@ class HistoryItem_Payment extends $pb.GeneratedMessage {
 
   HistoryItem_Payment._() : super();
   factory HistoryItem_Payment({
-    $3.SolanaAccountId source,
-    $3.SolanaAccountId destination,
+    $8.SolanaAccountId source,
+    $8.SolanaAccountId destination,
     $fixnum.Int64 amount,
     $core.int index,
   }) {
@@ -1018,26 +1034,26 @@ class HistoryItem_Payment extends $pb.GeneratedMessage {
   static HistoryItem_Payment _defaultInstance;
 
   @$pb.TagNumber(1)
-  $3.SolanaAccountId get source => $_getN(0);
+  $8.SolanaAccountId get source => $_getN(0);
   @$pb.TagNumber(1)
-  set source($3.SolanaAccountId v) { setField(1, v); }
+  set source($8.SolanaAccountId v) { setField(1, v); }
   @$pb.TagNumber(1)
   $core.bool hasSource() => $_has(0);
   @$pb.TagNumber(1)
   void clearSource() => clearField(1);
   @$pb.TagNumber(1)
-  $3.SolanaAccountId ensureSource() => $_ensure(0);
+  $8.SolanaAccountId ensureSource() => $_ensure(0);
 
   @$pb.TagNumber(2)
-  $3.SolanaAccountId get destination => $_getN(1);
+  $8.SolanaAccountId get destination => $_getN(1);
   @$pb.TagNumber(2)
-  set destination($3.SolanaAccountId v) { setField(2, v); }
+  set destination($8.SolanaAccountId v) { setField(2, v); }
   @$pb.TagNumber(2)
   $core.bool hasDestination() => $_has(1);
   @$pb.TagNumber(2)
   void clearDestination() => clearField(2);
   @$pb.TagNumber(2)
-  $3.SolanaAccountId ensureDestination() => $_ensure(1);
+  $8.SolanaAccountId ensureDestination() => $_ensure(1);
 
   @$pb.TagNumber(3)
   $fixnum.Int64 get amount => $_getI64(2);
@@ -1072,27 +1088,27 @@ class HistoryItem extends $pb.GeneratedMessage {
   };
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'HistoryItem', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'kin.agora.transaction.v4'), createEmptyInstance: create)
     ..oo(0, [3, 4])
-    ..aOM<$3.TransactionId>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'transactionId', subBuilder: $3.TransactionId.create)
+    ..aOM<$8.TransactionId>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'transactionId', subBuilder: $8.TransactionId.create)
     ..aOM<Cursor>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'cursor', subBuilder: Cursor.create)
-    ..aOM<$3.Transaction>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'solanaTransaction', subBuilder: $3.Transaction.create)
-    ..aOM<$3.StellarTransaction>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'stellarTransaction', subBuilder: $3.StellarTransaction.create)
-    ..aOM<$3.TransactionError>(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'transactionError', subBuilder: $3.TransactionError.create)
+    ..aOM<$8.Transaction>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'solanaTransaction', subBuilder: $8.Transaction.create)
+    ..aOM<$8.StellarTransaction>(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'stellarTransaction', subBuilder: $8.StellarTransaction.create)
+    ..aOM<$8.TransactionError>(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'transactionError', subBuilder: $8.TransactionError.create)
     ..pc<HistoryItem_Payment>(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'payments', $pb.PbFieldType.PM, subBuilder: HistoryItem_Payment.create)
-    ..aOM<$4.InvoiceList>(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'invoiceList', subBuilder: $4.InvoiceList.create)
-    ..aOM<$2.Timestamp>(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'transactionTime', subBuilder: $2.Timestamp.create)
+    ..aOM<$9.InvoiceList>(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'invoiceList', subBuilder: $9.InvoiceList.create)
+    ..aOM<$7.Timestamp>(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'transactionTime', subBuilder: $7.Timestamp.create)
     ..hasRequiredFields = false
   ;
 
   HistoryItem._() : super();
   factory HistoryItem({
-    $3.TransactionId transactionId,
+    $8.TransactionId transactionId,
     Cursor cursor,
-    $3.Transaction solanaTransaction,
-    $3.StellarTransaction stellarTransaction,
-    $3.TransactionError transactionError,
+    $8.Transaction solanaTransaction,
+    $8.StellarTransaction stellarTransaction,
+    $8.TransactionError transactionError,
     $core.Iterable<HistoryItem_Payment> payments,
-    $4.InvoiceList invoiceList,
-    $2.Timestamp transactionTime,
+    $9.InvoiceList invoiceList,
+    $7.Timestamp transactionTime,
   }) {
     final _result = create();
     if (transactionId != null) {
@@ -1146,15 +1162,15 @@ class HistoryItem extends $pb.GeneratedMessage {
   void clearRawTransaction() => clearField($_whichOneof(0));
 
   @$pb.TagNumber(1)
-  $3.TransactionId get transactionId => $_getN(0);
+  $8.TransactionId get transactionId => $_getN(0);
   @$pb.TagNumber(1)
-  set transactionId($3.TransactionId v) { setField(1, v); }
+  set transactionId($8.TransactionId v) { setField(1, v); }
   @$pb.TagNumber(1)
   $core.bool hasTransactionId() => $_has(0);
   @$pb.TagNumber(1)
   void clearTransactionId() => clearField(1);
   @$pb.TagNumber(1)
-  $3.TransactionId ensureTransactionId() => $_ensure(0);
+  $8.TransactionId ensureTransactionId() => $_ensure(0);
 
   @$pb.TagNumber(2)
   Cursor get cursor => $_getN(1);
@@ -1168,62 +1184,62 @@ class HistoryItem extends $pb.GeneratedMessage {
   Cursor ensureCursor() => $_ensure(1);
 
   @$pb.TagNumber(3)
-  $3.Transaction get solanaTransaction => $_getN(2);
+  $8.Transaction get solanaTransaction => $_getN(2);
   @$pb.TagNumber(3)
-  set solanaTransaction($3.Transaction v) { setField(3, v); }
+  set solanaTransaction($8.Transaction v) { setField(3, v); }
   @$pb.TagNumber(3)
   $core.bool hasSolanaTransaction() => $_has(2);
   @$pb.TagNumber(3)
   void clearSolanaTransaction() => clearField(3);
   @$pb.TagNumber(3)
-  $3.Transaction ensureSolanaTransaction() => $_ensure(2);
+  $8.Transaction ensureSolanaTransaction() => $_ensure(2);
 
   @$pb.TagNumber(4)
-  $3.StellarTransaction get stellarTransaction => $_getN(3);
+  $8.StellarTransaction get stellarTransaction => $_getN(3);
   @$pb.TagNumber(4)
-  set stellarTransaction($3.StellarTransaction v) { setField(4, v); }
+  set stellarTransaction($8.StellarTransaction v) { setField(4, v); }
   @$pb.TagNumber(4)
   $core.bool hasStellarTransaction() => $_has(3);
   @$pb.TagNumber(4)
   void clearStellarTransaction() => clearField(4);
   @$pb.TagNumber(4)
-  $3.StellarTransaction ensureStellarTransaction() => $_ensure(3);
+  $8.StellarTransaction ensureStellarTransaction() => $_ensure(3);
 
   @$pb.TagNumber(5)
-  $3.TransactionError get transactionError => $_getN(4);
+  $8.TransactionError get transactionError => $_getN(4);
   @$pb.TagNumber(5)
-  set transactionError($3.TransactionError v) { setField(5, v); }
+  set transactionError($8.TransactionError v) { setField(5, v); }
   @$pb.TagNumber(5)
   $core.bool hasTransactionError() => $_has(4);
   @$pb.TagNumber(5)
   void clearTransactionError() => clearField(5);
   @$pb.TagNumber(5)
-  $3.TransactionError ensureTransactionError() => $_ensure(4);
+  $8.TransactionError ensureTransactionError() => $_ensure(4);
 
   @$pb.TagNumber(6)
   $core.List<HistoryItem_Payment> get payments => $_getList(5);
 
   @$pb.TagNumber(7)
-  $4.InvoiceList get invoiceList => $_getN(6);
+  $9.InvoiceList get invoiceList => $_getN(6);
   @$pb.TagNumber(7)
-  set invoiceList($4.InvoiceList v) { setField(7, v); }
+  set invoiceList($9.InvoiceList v) { setField(7, v); }
   @$pb.TagNumber(7)
   $core.bool hasInvoiceList() => $_has(6);
   @$pb.TagNumber(7)
   void clearInvoiceList() => clearField(7);
   @$pb.TagNumber(7)
-  $4.InvoiceList ensureInvoiceList() => $_ensure(6);
+  $9.InvoiceList ensureInvoiceList() => $_ensure(6);
 
   @$pb.TagNumber(8)
-  $2.Timestamp get transactionTime => $_getN(7);
+  $7.Timestamp get transactionTime => $_getN(7);
   @$pb.TagNumber(8)
-  set transactionTime($2.Timestamp v) { setField(8, v); }
+  set transactionTime($7.Timestamp v) { setField(8, v); }
   @$pb.TagNumber(8)
   $core.bool hasTransactionTime() => $_has(7);
   @$pb.TagNumber(8)
   void clearTransactionTime() => clearField(8);
   @$pb.TagNumber(8)
-  $2.Timestamp ensureTransactionTime() => $_ensure(7);
+  $7.Timestamp ensureTransactionTime() => $_ensure(7);
 }
 
 class Cursor extends $pb.GeneratedMessage {

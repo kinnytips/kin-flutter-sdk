@@ -16,14 +16,15 @@ class ShortVec {
       Uint8List Function(T) byteTransform) {
     encodeLen(output, elements.length);
     for (var element in elements) {
-      output.writeAll(byteTransform(element));
+      var bs = byteTransform(element);
+      output.writeAll(bs);
     }
   }
 
   static List<T> decodeShortVecOf<T>(ByteInputBuffer input, int sizeOfElement,
       [T Function(Uint8List) newInstance]) {
     final vecLength = decodeLen(input);
-    final elements = [];
+    final elements = <T>[];
 
     for (int i = 0; i < vecLength; i++) {
       Uint8List elemBytes = Uint8List(sizeOfElement);
@@ -75,16 +76,16 @@ class ShortVec {
   ///
   static int decodeLen(ByteInputBuffer input) {
     var offset = 0;
-    final Uint8List valBuf = Uint8List(1);
     var value = 0;
 
     while (true) {
-      valBuf.first = input.read();
-
-      value |= (valBuf.first & 0x7f << (offset * 7));
+      var b = input.read() & 0xff ;
+      var i = b & 0x7f;
+      var m = i << (offset * 7);
+      value = value | m ;
       ++offset;
 
-      if ((valBuf.first & 0x80) == 0) break;
+      if ((b & 0x80) == 0) break;
     }
 
     if (offset > 3) {

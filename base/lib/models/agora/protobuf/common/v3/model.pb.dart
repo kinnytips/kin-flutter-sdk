@@ -10,6 +10,10 @@ import 'dart:core' as $core;
 import 'package:fixnum/fixnum.dart' as $fixnum;
 import 'package:protobuf/protobuf.dart' as $pb;
 
+import 'model.pbenum.dart';
+
+export 'model.pbenum.dart';
+
 class StellarAccountId extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'StellarAccountId', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'kin.agora.common.v3'), createEmptyInstance: create)
     ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'value')
@@ -320,5 +324,82 @@ class InvoiceList extends $pb.GeneratedMessage {
 
   @$pb.TagNumber(1)
   $core.List<Invoice> get invoices => $_getList(0);
+}
+
+class InvoiceError extends $pb.GeneratedMessage {
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'InvoiceError', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'kin.agora.common.v3'), createEmptyInstance: create)
+    ..a<$core.int>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'opIndex', $pb.PbFieldType.OU3)
+    ..aOM<Invoice>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'invoice', subBuilder: Invoice.create)
+    ..e<InvoiceError_Reason>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'reason', $pb.PbFieldType.OE, defaultOrMaker: InvoiceError_Reason.UNKNOWN, valueOf: InvoiceError_Reason.valueOf, enumValues: InvoiceError_Reason.values)
+    ..hasRequiredFields = false
+  ;
+
+  InvoiceError._() : super();
+  factory InvoiceError({
+    $core.int opIndex,
+    Invoice invoice,
+    InvoiceError_Reason reason,
+  }) {
+    final _result = create();
+    if (opIndex != null) {
+      _result.opIndex = opIndex;
+    }
+    if (invoice != null) {
+      _result.invoice = invoice;
+    }
+    if (reason != null) {
+      _result.reason = reason;
+    }
+    return _result;
+  }
+  factory InvoiceError.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory InvoiceError.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
+  'Will be removed in next major version')
+  InvoiceError clone() => InvoiceError()..mergeFromMessage(this);
+  @$core.Deprecated(
+  'Using this can add significant overhead to your binary. '
+  'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
+  'Will be removed in next major version')
+  InvoiceError copyWith(void Function(InvoiceError) updates) => super.copyWith((message) => updates(message as InvoiceError)) as InvoiceError; // ignore: deprecated_member_use
+  $pb.BuilderInfo get info_ => _i;
+  @$core.pragma('dart2js:noInline')
+  static InvoiceError create() => InvoiceError._();
+  InvoiceError createEmptyInstance() => create();
+  static $pb.PbList<InvoiceError> createRepeated() => $pb.PbList<InvoiceError>();
+  @$core.pragma('dart2js:noInline')
+  static InvoiceError getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<InvoiceError>(create);
+  static InvoiceError _defaultInstance;
+
+  @$pb.TagNumber(1)
+  $core.int get opIndex => $_getIZ(0);
+  @$pb.TagNumber(1)
+  set opIndex($core.int v) { $_setUnsignedInt32(0, v); }
+  @$pb.TagNumber(1)
+  $core.bool hasOpIndex() => $_has(0);
+  @$pb.TagNumber(1)
+  void clearOpIndex() => clearField(1);
+
+  @$pb.TagNumber(2)
+  Invoice get invoice => $_getN(1);
+  @$pb.TagNumber(2)
+  set invoice(Invoice v) { setField(2, v); }
+  @$pb.TagNumber(2)
+  $core.bool hasInvoice() => $_has(1);
+  @$pb.TagNumber(2)
+  void clearInvoice() => clearField(2);
+  @$pb.TagNumber(2)
+  Invoice ensureInvoice() => $_ensure(1);
+
+  @$pb.TagNumber(3)
+  InvoiceError_Reason get reason => $_getN(2);
+  @$pb.TagNumber(3)
+  set reason(InvoiceError_Reason v) { setField(3, v); }
+  @$pb.TagNumber(3)
+  $core.bool hasReason() => $_has(2);
+  @$pb.TagNumber(3)
+  void clearReason() => clearField(3);
 }
 
