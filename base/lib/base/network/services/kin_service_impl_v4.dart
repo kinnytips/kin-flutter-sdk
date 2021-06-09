@@ -45,6 +45,12 @@ class KinServiceImplV4 extends KinService {
       this.accountCreationApi,
       this.logger);
 
+  KinLogger _log ;
+  KinLogger get log {
+    _log ??= logger.getLogger('$runtimeType') ;
+    return _log ;
+  }
+
   final Cache<String> _cache = Cache<String>();
 
   Future<KinServiceResponse<ServiceConfig>> _cachedServiceConfig() async {
@@ -172,6 +178,12 @@ class KinServiceImplV4 extends KinService {
           ).instruction
         ]).copyAndSetRecentBlockhash(recentBlockHash).copyAndSign(
             [tokenAccount, signer]);
+        
+        log.log("createAccount:");
+        log.log("- serviceConfig: $serviceConfig");
+        log.log("- recentBlockHash: $recentBlockHash");
+        log.log("- minRentExemption: $minRentExemption");
+        log.log("- createTransaction: ${transaction.marshal().toHex()}");
 
         var response = await accountCreationApi.createAccountV4(transaction);
 

@@ -10,48 +10,48 @@ import 'dart:async' as $async;
 import 'dart:core' as $core;
 
 import 'package:grpc/service_api.dart' as $grpc;
-import 'transaction_service.pb.dart' as $0;
+import 'transaction_service.pb.dart' as $1;
 export 'transaction_service.pb.dart';
 
 class TransactionClient extends $grpc.Client {
   static final _$getHistory =
-      $grpc.ClientMethod<$0.GetHistoryRequest, $0.GetHistoryResponse>(
+      $grpc.ClientMethod<$1.GetHistoryRequest, $1.GetHistoryResponse>(
           '/kin.agora.transaction.v3.Transaction/GetHistory',
-          ($0.GetHistoryRequest value) => value.writeToBuffer(),
+          ($1.GetHistoryRequest value) => value.writeToBuffer(),
           ($core.List<$core.int> value) =>
-              $0.GetHistoryResponse.fromBuffer(value));
+              $1.GetHistoryResponse.fromBuffer(value));
   static final _$submitTransaction = $grpc.ClientMethod<
-          $0.SubmitTransactionRequest, $0.SubmitTransactionResponse>(
+          $1.SubmitTransactionRequest, $1.SubmitTransactionResponse>(
       '/kin.agora.transaction.v3.Transaction/SubmitTransaction',
-      ($0.SubmitTransactionRequest value) => value.writeToBuffer(),
+      ($1.SubmitTransactionRequest value) => value.writeToBuffer(),
       ($core.List<$core.int> value) =>
-          $0.SubmitTransactionResponse.fromBuffer(value));
+          $1.SubmitTransactionResponse.fromBuffer(value));
   static final _$getTransaction =
-      $grpc.ClientMethod<$0.GetTransactionRequest, $0.GetTransactionResponse>(
+      $grpc.ClientMethod<$1.GetTransactionRequest, $1.GetTransactionResponse>(
           '/kin.agora.transaction.v3.Transaction/GetTransaction',
-          ($0.GetTransactionRequest value) => value.writeToBuffer(),
+          ($1.GetTransactionRequest value) => value.writeToBuffer(),
           ($core.List<$core.int> value) =>
-              $0.GetTransactionResponse.fromBuffer(value));
+              $1.GetTransactionResponse.fromBuffer(value));
 
   TransactionClient($grpc.ClientChannel channel,
       {$grpc.CallOptions options,
       $core.Iterable<$grpc.ClientInterceptor> interceptors})
       : super(channel, options: options, interceptors: interceptors);
 
-  $grpc.ResponseFuture<$0.GetHistoryResponse> getHistory(
-      $0.GetHistoryRequest request,
+  $grpc.ResponseFuture<$1.GetHistoryResponse> getHistory(
+      $1.GetHistoryRequest request,
       {$grpc.CallOptions options}) {
     return $createUnaryCall(_$getHistory, request, options: options);
   }
 
-  $grpc.ResponseFuture<$0.SubmitTransactionResponse> submitTransaction(
-      $0.SubmitTransactionRequest request,
+  $grpc.ResponseFuture<$1.SubmitTransactionResponse> submitTransaction(
+      $1.SubmitTransactionRequest request,
       {$grpc.CallOptions options}) {
     return $createUnaryCall(_$submitTransaction, request, options: options);
   }
 
-  $grpc.ResponseFuture<$0.GetTransactionResponse> getTransaction(
-      $0.GetTransactionRequest request,
+  $grpc.ResponseFuture<$1.GetTransactionResponse> getTransaction(
+      $1.GetTransactionRequest request,
       {$grpc.CallOptions options}) {
     return $createUnaryCall(_$getTransaction, request, options: options);
   }
@@ -61,54 +61,54 @@ abstract class TransactionServiceBase extends $grpc.Service {
   $core.String get $name => 'kin.agora.transaction.v3.Transaction';
 
   TransactionServiceBase() {
-    $addMethod($grpc.ServiceMethod<$0.GetHistoryRequest, $0.GetHistoryResponse>(
+    $addMethod($grpc.ServiceMethod<$1.GetHistoryRequest, $1.GetHistoryResponse>(
         'GetHistory',
         getHistory_Pre,
         false,
         false,
-        ($core.List<$core.int> value) => $0.GetHistoryRequest.fromBuffer(value),
-        ($0.GetHistoryResponse value) => value.writeToBuffer()));
-    $addMethod($grpc.ServiceMethod<$0.SubmitTransactionRequest,
-            $0.SubmitTransactionResponse>(
+        ($core.List<$core.int> value) => $1.GetHistoryRequest.fromBuffer(value),
+        ($1.GetHistoryResponse value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$1.SubmitTransactionRequest,
+            $1.SubmitTransactionResponse>(
         'SubmitTransaction',
         submitTransaction_Pre,
         false,
         false,
         ($core.List<$core.int> value) =>
-            $0.SubmitTransactionRequest.fromBuffer(value),
-        ($0.SubmitTransactionResponse value) => value.writeToBuffer()));
-    $addMethod($grpc.ServiceMethod<$0.GetTransactionRequest,
-            $0.GetTransactionResponse>(
+            $1.SubmitTransactionRequest.fromBuffer(value),
+        ($1.SubmitTransactionResponse value) => value.writeToBuffer()));
+    $addMethod($grpc.ServiceMethod<$1.GetTransactionRequest,
+            $1.GetTransactionResponse>(
         'GetTransaction',
         getTransaction_Pre,
         false,
         false,
         ($core.List<$core.int> value) =>
-            $0.GetTransactionRequest.fromBuffer(value),
-        ($0.GetTransactionResponse value) => value.writeToBuffer()));
+            $1.GetTransactionRequest.fromBuffer(value),
+        ($1.GetTransactionResponse value) => value.writeToBuffer()));
   }
 
-  $async.Future<$0.GetHistoryResponse> getHistory_Pre($grpc.ServiceCall call,
-      $async.Future<$0.GetHistoryRequest> request) async {
+  $async.Future<$1.GetHistoryResponse> getHistory_Pre($grpc.ServiceCall call,
+      $async.Future<$1.GetHistoryRequest> request) async {
     return getHistory(call, await request);
   }
 
-  $async.Future<$0.SubmitTransactionResponse> submitTransaction_Pre(
+  $async.Future<$1.SubmitTransactionResponse> submitTransaction_Pre(
       $grpc.ServiceCall call,
-      $async.Future<$0.SubmitTransactionRequest> request) async {
+      $async.Future<$1.SubmitTransactionRequest> request) async {
     return submitTransaction(call, await request);
   }
 
-  $async.Future<$0.GetTransactionResponse> getTransaction_Pre(
+  $async.Future<$1.GetTransactionResponse> getTransaction_Pre(
       $grpc.ServiceCall call,
-      $async.Future<$0.GetTransactionRequest> request) async {
+      $async.Future<$1.GetTransactionRequest> request) async {
     return getTransaction(call, await request);
   }
 
-  $async.Future<$0.GetHistoryResponse> getHistory(
-      $grpc.ServiceCall call, $0.GetHistoryRequest request);
-  $async.Future<$0.SubmitTransactionResponse> submitTransaction(
-      $grpc.ServiceCall call, $0.SubmitTransactionRequest request);
-  $async.Future<$0.GetTransactionResponse> getTransaction(
-      $grpc.ServiceCall call, $0.GetTransactionRequest request);
+  $async.Future<$1.GetHistoryResponse> getHistory(
+      $grpc.ServiceCall call, $1.GetHistoryRequest request);
+  $async.Future<$1.SubmitTransactionResponse> submitTransaction(
+      $grpc.ServiceCall call, $1.SubmitTransactionRequest request);
+  $async.Future<$1.GetTransactionResponse> getTransaction(
+      $grpc.ServiceCall call, $1.GetTransactionRequest request);
 }

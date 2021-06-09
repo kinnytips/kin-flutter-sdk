@@ -15,6 +15,11 @@ class ServiceConfig {
   final KinAccountId token ;
 
   ServiceConfig(this.subsidizerAccount, this.tokenProgram, this.token);
+
+  @override
+  String toString() {
+    return 'ServiceConfig{subsidizerAccount: $subsidizerAccount, tokenProgram: $tokenProgram, token: $token}';
+  }
 }
 
 abstract class KinTransactionApiV4 implements KinTransactionApi {

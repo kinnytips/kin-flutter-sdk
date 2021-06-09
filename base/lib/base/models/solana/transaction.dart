@@ -27,6 +27,11 @@ class Hash {
   Hash(this.value);
 
   static const SIZE_OF = 32;
+
+  @override
+  String toString() {
+    return 'Hash{value: $value}';
+  }
 }
 
 class Header {
@@ -144,6 +149,19 @@ class Transaction {
     var message = Message.unmarshal(input.readRemainingBytes());
     return Transaction(message: message, signatures: signatures);
   }
+
+  Uint8List marshal() {
+    var output = ByteOutputBuffer(32);
+
+    // Signatures
+    ShortVec.encodeShortVecOf<Signature>(output, signatures, (s) => s.marshal());
+
+    // Message
+    output.writeAll(message.marshal());
+
+    return output.toBytes();
+  }
+
   Transaction copyWith({
     Message message,
     List<Signature> signatures,

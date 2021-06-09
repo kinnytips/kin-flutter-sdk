@@ -10,26 +10,26 @@ import 'dart:core' as $core;
 import 'package:fixnum/fixnum.dart' as $fixnum;
 import 'package:protobuf/protobuf.dart' as $pb;
 
-import '../../common/v4/model.pb.dart' as $3;
+import '../../common/v4/model.pb.dart' as $8;
 
-import '../../common/v4/model.pbenum.dart' as $3;
+import '../../common/v4/model.pbenum.dart' as $8;
 import 'airdrop_service.pbenum.dart';
 
 export 'airdrop_service.pbenum.dart';
 
 class RequestAirdropRequest extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'RequestAirdropRequest', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'kin.agora.airdrop.v4'), createEmptyInstance: create)
-    ..aOM<$3.SolanaAccountId>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'accountId', subBuilder: $3.SolanaAccountId.create)
+    ..aOM<$8.SolanaAccountId>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'accountId', subBuilder: $8.SolanaAccountId.create)
     ..a<$fixnum.Int64>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'quarks', $pb.PbFieldType.OU6, defaultOrMaker: $fixnum.Int64.ZERO)
-    ..e<$3.Commitment>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'commitment', $pb.PbFieldType.OE, defaultOrMaker: $3.Commitment.RECENT, valueOf: $3.Commitment.valueOf, enumValues: $3.Commitment.values)
+    ..e<$8.Commitment>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'commitment', $pb.PbFieldType.OE, defaultOrMaker: $8.Commitment.RECENT, valueOf: $8.Commitment.valueOf, enumValues: $8.Commitment.values)
     ..hasRequiredFields = false
   ;
 
   RequestAirdropRequest._() : super();
   factory RequestAirdropRequest({
-    $3.SolanaAccountId accountId,
+    $8.SolanaAccountId accountId,
     $fixnum.Int64 quarks,
-    $3.Commitment commitment,
+    $8.Commitment commitment,
   }) {
     final _result = create();
     if (accountId != null) {
@@ -65,15 +65,15 @@ class RequestAirdropRequest extends $pb.GeneratedMessage {
   static RequestAirdropRequest _defaultInstance;
 
   @$pb.TagNumber(1)
-  $3.SolanaAccountId get accountId => $_getN(0);
+  $8.SolanaAccountId get accountId => $_getN(0);
   @$pb.TagNumber(1)
-  set accountId($3.SolanaAccountId v) { setField(1, v); }
+  set accountId($8.SolanaAccountId v) { setField(1, v); }
   @$pb.TagNumber(1)
   $core.bool hasAccountId() => $_has(0);
   @$pb.TagNumber(1)
   void clearAccountId() => clearField(1);
   @$pb.TagNumber(1)
-  $3.SolanaAccountId ensureAccountId() => $_ensure(0);
+  $8.SolanaAccountId ensureAccountId() => $_ensure(0);
 
   @$pb.TagNumber(2)
   $fixnum.Int64 get quarks => $_getI64(1);
@@ -85,9 +85,9 @@ class RequestAirdropRequest extends $pb.GeneratedMessage {
   void clearQuarks() => clearField(2);
 
   @$pb.TagNumber(3)
-  $3.Commitment get commitment => $_getN(2);
+  $8.Commitment get commitment => $_getN(2);
   @$pb.TagNumber(3)
-  set commitment($3.Commitment v) { setField(3, v); }
+  set commitment($8.Commitment v) { setField(3, v); }
   @$pb.TagNumber(3)
   $core.bool hasCommitment() => $_has(2);
   @$pb.TagNumber(3)
@@ -97,14 +97,14 @@ class RequestAirdropRequest extends $pb.GeneratedMessage {
 class RequestAirdropResponse extends $pb.GeneratedMessage {
   static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'RequestAirdropResponse', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'kin.agora.airdrop.v4'), createEmptyInstance: create)
     ..e<RequestAirdropResponse_Result>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'result', $pb.PbFieldType.OE, defaultOrMaker: RequestAirdropResponse_Result.OK, valueOf: RequestAirdropResponse_Result.valueOf, enumValues: RequestAirdropResponse_Result.values)
-    ..aOM<$3.TransactionSignature>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'signature', subBuilder: $3.TransactionSignature.create)
+    ..aOM<$8.TransactionSignature>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'signature', subBuilder: $8.TransactionSignature.create)
     ..hasRequiredFields = false
   ;
 
   RequestAirdropResponse._() : super();
   factory RequestAirdropResponse({
     RequestAirdropResponse_Result result,
-    $3.TransactionSignature signature,
+    $8.TransactionSignature signature,
   }) {
     final _result = create();
     if (result != null) {
@@ -146,14 +146,14 @@ class RequestAirdropResponse extends $pb.GeneratedMessage {
   void clearResult() => clearField(1);
 
   @$pb.TagNumber(2)
-  $3.TransactionSignature get signature => $_getN(1);
+  $8.TransactionSignature get signature => $_getN(1);
   @$pb.TagNumber(2)
-  set signature($3.TransactionSignature v) { setField(2, v); }
+  set signature($8.TransactionSignature v) { setField(2, v); }
   @$pb.TagNumber(2)
   $core.bool hasSignature() => $_has(1);
   @$pb.TagNumber(2)
   void clearSignature() => clearField(2);
   @$pb.TagNumber(2)
-  $3.TransactionSignature ensureSignature() => $_ensure(1);
+  $8.TransactionSignature ensureSignature() => $_ensure(1);
 }
 

@@ -141,6 +141,7 @@ const SignTransactionResponse$json = const {
   '2': const [
     const {'1': 'result', '3': 1, '4': 1, '5': 14, '6': '.kin.agora.transaction.v4.SignTransactionResponse.Result', '10': 'result'},
     const {'1': 'signature', '3': 2, '4': 1, '5': 11, '6': '.kin.agora.common.v4.TransactionSignature', '10': 'signature'},
+    const {'1': 'invoice_errors', '3': 4, '4': 3, '5': 11, '6': '.kin.agora.common.v3.InvoiceError', '10': 'invoiceErrors'},
   ],
   '4': const [SignTransactionResponse_Result$json],
 };
@@ -156,7 +157,7 @@ const SignTransactionResponse_Result$json = const {
 };
 
 /// Descriptor for `SignTransactionResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List signTransactionResponseDescriptor = $convert.base64Decode('ChdTaWduVHJhbnNhY3Rpb25SZXNwb25zZRJQCgZyZXN1bHQYASABKA4yOC5raW4uYWdvcmEudHJhbnNhY3Rpb24udjQuU2lnblRyYW5zYWN0aW9uUmVzcG9uc2UuUmVzdWx0UgZyZXN1bHQSRwoJc2lnbmF0dXJlGAIgASgLMikua2luLmFnb3JhLmNvbW1vbi52NC5UcmFuc2FjdGlvblNpZ25hdHVyZVIJc2lnbmF0dXJlIjEKBlJlc3VsdBIGCgJPSxAAEgwKCFJFSkVDVEVEEAMSEQoNSU5WT0lDRV9FUlJPUhAE');
+final $typed_data.Uint8List signTransactionResponseDescriptor = $convert.base64Decode('ChdTaWduVHJhbnNhY3Rpb25SZXNwb25zZRJQCgZyZXN1bHQYASABKA4yOC5raW4uYWdvcmEudHJhbnNhY3Rpb24udjQuU2lnblRyYW5zYWN0aW9uUmVzcG9uc2UuUmVzdWx0UgZyZXN1bHQSRwoJc2lnbmF0dXJlGAIgASgLMikua2luLmFnb3JhLmNvbW1vbi52NC5UcmFuc2FjdGlvblNpZ25hdHVyZVIJc2lnbmF0dXJlEkgKDmludm9pY2VfZXJyb3JzGAQgAygLMiEua2luLmFnb3JhLmNvbW1vbi52My5JbnZvaWNlRXJyb3JSDWludm9pY2VFcnJvcnMiMQoGUmVzdWx0EgYKAk9LEAASDAoIUkVKRUNURUQQAxIRCg1JTlZPSUNFX0VSUk9SEAQ=');
 @$core.Deprecated('Use submitTransactionRequestDescriptor instead')
 const SubmitTransactionRequest$json = const {
   '1': 'SubmitTransactionRequest',
@@ -177,6 +178,7 @@ const SubmitTransactionResponse$json = const {
     const {'1': 'result', '3': 1, '4': 1, '5': 14, '6': '.kin.agora.transaction.v4.SubmitTransactionResponse.Result', '10': 'result'},
     const {'1': 'signature', '3': 2, '4': 1, '5': 11, '6': '.kin.agora.common.v4.TransactionSignature', '10': 'signature'},
     const {'1': 'transaction_error', '3': 3, '4': 1, '5': 11, '6': '.kin.agora.common.v4.TransactionError', '10': 'transactionError'},
+    const {'1': 'invoice_errors', '3': 4, '4': 3, '5': 11, '6': '.kin.agora.common.v3.InvoiceError', '10': 'invoiceErrors'},
   ],
   '4': const [SubmitTransactionResponse_Result$json],
 };
@@ -195,7 +197,7 @@ const SubmitTransactionResponse_Result$json = const {
 };
 
 /// Descriptor for `SubmitTransactionResponse`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List submitTransactionResponseDescriptor = $convert.base64Decode('ChlTdWJtaXRUcmFuc2FjdGlvblJlc3BvbnNlElIKBnJlc3VsdBgBIAEoDjI6Lmtpbi5hZ29yYS50cmFuc2FjdGlvbi52NC5TdWJtaXRUcmFuc2FjdGlvblJlc3BvbnNlLlJlc3VsdFIGcmVzdWx0EkcKCXNpZ25hdHVyZRgCIAEoCzIpLmtpbi5hZ29yYS5jb21tb24udjQuVHJhbnNhY3Rpb25TaWduYXR1cmVSCXNpZ25hdHVyZRJSChF0cmFuc2FjdGlvbl9lcnJvchgDIAEoCzIlLmtpbi5hZ29yYS5jb21tb24udjQuVHJhbnNhY3Rpb25FcnJvclIQdHJhbnNhY3Rpb25FcnJvciJoCgZSZXN1bHQSBgoCT0sQABIVChFBTFJFQURZX1NVQk1JVFRFRBABEgoKBkZBSUxFRBACEgwKCFJFSkVDVEVEEAMSEQoNSU5WT0lDRV9FUlJPUhAEEhIKDlBBWUVSX1JFUVVJUkVEEAU=');
+final $typed_data.Uint8List submitTransactionResponseDescriptor = $convert.base64Decode('ChlTdWJtaXRUcmFuc2FjdGlvblJlc3BvbnNlElIKBnJlc3VsdBgBIAEoDjI6Lmtpbi5hZ29yYS50cmFuc2FjdGlvbi52NC5TdWJtaXRUcmFuc2FjdGlvblJlc3BvbnNlLlJlc3VsdFIGcmVzdWx0EkcKCXNpZ25hdHVyZRgCIAEoCzIpLmtpbi5hZ29yYS5jb21tb24udjQuVHJhbnNhY3Rpb25TaWduYXR1cmVSCXNpZ25hdHVyZRJSChF0cmFuc2FjdGlvbl9lcnJvchgDIAEoCzIlLmtpbi5hZ29yYS5jb21tb24udjQuVHJhbnNhY3Rpb25FcnJvclIQdHJhbnNhY3Rpb25FcnJvchJICg5pbnZvaWNlX2Vycm9ycxgEIAMoCzIhLmtpbi5hZ29yYS5jb21tb24udjMuSW52b2ljZUVycm9yUg1pbnZvaWNlRXJyb3JzImgKBlJlc3VsdBIGCgJPSxAAEhUKEUFMUkVBRFlfU1VCTUlUVEVEEAESCgoGRkFJTEVEEAISDAoIUkVKRUNURUQQAxIRCg1JTlZPSUNFX0VSUk9SEAQSEgoOUEFZRVJfUkVRVUlSRUQQBQ==');
 @$core.Deprecated('Use getTransactionRequestDescriptor instead')
 const GetTransactionRequest$json = const {
   '1': 'GetTransactionRequest',
