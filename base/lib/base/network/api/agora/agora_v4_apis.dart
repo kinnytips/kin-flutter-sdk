@@ -47,9 +47,12 @@ class AgoraKinAccountCreationApiV4 extends GrpcApi implements KinAccountCreation
 
   @override
   Future<KinServiceResponse<KinAccount>> createAccountV4(Transaction transaction) async {
+    var transactionMarshal = transaction.marshal();
+    var modelTransaction = model_v4.Transaction(value: transactionMarshal);
+
     var request = CreateAccountRequest(
       commitment: model_v4.Commitment.SINGLE,
-      transaction: model_v4.Transaction(value: transaction.marshal()),
+      transaction: modelTransaction,
     );
 
     var response = await _accountClient.createAccount(request);

@@ -150,10 +150,10 @@ class CreateAccount {
   Instruction get instruction {
     if (_instruction == null) {
       var bout = ByteOutputBuffer(32)
-        ..writeBytes(SystemProgramCommandCreateAccount().value.toInt32Bytes())
-        ..writeBytes(lamports.toInt64Bytes())
-        ..writeBytes(size.toInt64Bytes())
-        ..writeAll(owner.value);
+      ..writeBytes(SystemProgramCommandCreateAccount().value.toInt32Bytes())
+      ..writeBytes(lamports.toInt64Bytes())
+      ..writeBytes(size.toInt64Bytes())
+      ..writeAll(owner.value);
 
       var data = bout.toBytes();
 
@@ -182,38 +182,9 @@ class TokenProgram {
   // todo: lock this in, or make configurable.
   // TODO: should be using ServiceConfig for now...this may not be the final one, use ServiceConfig instead - USE THIS IN TESTS ONLY UNTIL FINAL!
   static final PublicKey PROGRAM_KEY = PublicKey.fromBytes(Uint8List.fromList([
-    6,
-    221,
-    246,
-    225,
-    215,
-    101,
-    161,
-    147,
-    217,
-    203,
-    225,
-    70,
-    206,
-    235,
-    121,
-    172,
-    28,
-    180,
-    133,
-    237,
-    95,
-    91,
-    55,
-    145,
-    58,
-    140,
-    245,
-    133,
-    126,
-    255,
-    0,
-    169
+    6, 221, 246, 225, 215, 101, 161, 147, 217, 203, 225,
+    70, 206, 235, 121, 172, 28, 180, 133, 237, 95, 91, 55,
+    145, 58, 140, 245, 133, 126, 255, 0, 169
   ]));
 
   static final Uint8List SYS_VAR_RENT =
@@ -517,38 +488,8 @@ class MemoProgram {
   MemoProgram._();
 
   static final PublicKey PROGRAM_KEY = PublicKey.fromBytes(Uint8List.fromList([
-    5,
-    74,
-    83,
-    80,
-    248,
-    93,
-    200,
-    130,
-    214,
-    20,
-    165,
-    86,
-    114,
-    120,
-    138,
-    41,
-    109,
-    223,
-    30,
-    171,
-    171,
-    208,
-    166,
-    6,
-    120,
-    136,
-    73,
-    50,
-    244,
-    238,
-    246,
-    160
+    5, 74, 83, 80, 248, 93, 200, 130, 214, 20, 165, 86, 114, 120, 138, 41, 109, 223,
+    30, 171, 171, 208, 166, 6, 120, 136, 73, 50, 244, 238, 246, 160
   ]));
 }
 

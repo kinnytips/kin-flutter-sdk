@@ -58,25 +58,6 @@ class SubmitTransactionResponse_Result extends $pb.ProtobufEnum {
   const SubmitTransactionResponse_Result._($core.int v, $core.String n) : super(v, n);
 }
 
-class SubmitTransactionResponse_InvoiceError_Reason extends $pb.ProtobufEnum {
-  static const SubmitTransactionResponse_InvoiceError_Reason UNKNOWN = SubmitTransactionResponse_InvoiceError_Reason._(0, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'UNKNOWN');
-  static const SubmitTransactionResponse_InvoiceError_Reason ALREADY_PAID = SubmitTransactionResponse_InvoiceError_Reason._(1, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'ALREADY_PAID');
-  static const SubmitTransactionResponse_InvoiceError_Reason WRONG_DESTINATION = SubmitTransactionResponse_InvoiceError_Reason._(2, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'WRONG_DESTINATION');
-  static const SubmitTransactionResponse_InvoiceError_Reason SKU_NOT_FOUND = SubmitTransactionResponse_InvoiceError_Reason._(3, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'SKU_NOT_FOUND');
-
-  static const $core.List<SubmitTransactionResponse_InvoiceError_Reason> values = <SubmitTransactionResponse_InvoiceError_Reason> [
-    UNKNOWN,
-    ALREADY_PAID,
-    WRONG_DESTINATION,
-    SKU_NOT_FOUND,
-  ];
-
-  static final $core.Map<$core.int, SubmitTransactionResponse_InvoiceError_Reason> _byValue = $pb.ProtobufEnum.initByValue(values);
-  static SubmitTransactionResponse_InvoiceError_Reason valueOf($core.int value) => _byValue[value];
-
-  const SubmitTransactionResponse_InvoiceError_Reason._($core.int v, $core.String n) : super(v, n);
-}
-
 class GetTransactionResponse_State extends $pb.ProtobufEnum {
   static const GetTransactionResponse_State UNKNOWN = GetTransactionResponse_State._(0, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'UNKNOWN');
   static const GetTransactionResponse_State SUCCESS = GetTransactionResponse_State._(1, const $core.bool.fromEnvironment('protobuf.omit_enum_names') ? '' : 'SUCCESS');

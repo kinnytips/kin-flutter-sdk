@@ -79,6 +79,11 @@ class AccountMeta implements Comparable<AccountMeta> {
 
     return less(other) ? -1 : 1;
   }
+
+  @override
+  String toString() {
+    return 'AccountMeta{publicKey: $publicKey, isSigner: $isSigner, isWritable: $isWritable, isPayer: $isPayer, isProgram: $isProgram}';
+  }
 }
 
 /// Instruction represents a transaction instruction.

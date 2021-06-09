@@ -10,8 +10,6 @@ import 'package:kin_base/base/stellar/models/kin_transaction.dart';
 import 'package:kin_base/base/stellar/models/paging_token.dart';
 import 'package:kin_base/base/tools/observers.dart';
 
-import 'package:kin_base/models/agora/protobuf/transaction/v3/transaction_service.pbenum.dart';
-
 abstract class KinService {
     Future<KinAccount> createAccount(KinAccountId accountId, PrivateKey signer) ;
 
@@ -155,9 +153,12 @@ class WebhookRejectedTransactionError extends FatalError {
 }
 
 class InvoiceErrorsInRequest extends FatalError {
-    List<SubmitTransactionResponse_InvoiceError_Reason> invoiceErrors ;
+    // No SubmitTransactionResponse_InvoiceError_Reason
+    //List<SubmitTransactionResponse_InvoiceError_Reason> invoiceErrors ;
 
-    InvoiceErrorsInRequest(this.invoiceErrors, [Error reason]) : super("Invoice Errors", reason);
+    InvoiceErrorsInRequest(
+        //this.invoiceErrors,
+        [Error reason]) : super("Invoice Errors", reason);
 }
 
 class SDKUpgradeRequired extends FatalError {

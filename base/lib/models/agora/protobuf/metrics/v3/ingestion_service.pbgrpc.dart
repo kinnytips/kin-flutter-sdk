@@ -10,22 +10,22 @@ import 'dart:async' as $async;
 import 'dart:core' as $core;
 
 import 'package:grpc/service_api.dart' as $grpc;
-import 'ingestion_service.pb.dart' as $0;
+import 'ingestion_service.pb.dart' as $4;
 export 'ingestion_service.pb.dart';
 
 class IngestionClient extends $grpc.Client {
   static final _$submit =
-      $grpc.ClientMethod<$0.SubmitRequest, $0.SubmitResponse>(
+      $grpc.ClientMethod<$4.SubmitRequest, $4.SubmitResponse>(
           '/kin.agora.metrics.v3.Ingestion/Submit',
-          ($0.SubmitRequest value) => value.writeToBuffer(),
-          ($core.List<$core.int> value) => $0.SubmitResponse.fromBuffer(value));
+          ($4.SubmitRequest value) => value.writeToBuffer(),
+          ($core.List<$core.int> value) => $4.SubmitResponse.fromBuffer(value));
 
   IngestionClient($grpc.ClientChannel channel,
       {$grpc.CallOptions options,
       $core.Iterable<$grpc.ClientInterceptor> interceptors})
       : super(channel, options: options, interceptors: interceptors);
 
-  $grpc.ResponseFuture<$0.SubmitResponse> submit($0.SubmitRequest request,
+  $grpc.ResponseFuture<$4.SubmitResponse> submit($4.SubmitRequest request,
       {$grpc.CallOptions options}) {
     return $createUnaryCall(_$submit, request, options: options);
   }
@@ -35,20 +35,20 @@ abstract class IngestionServiceBase extends $grpc.Service {
   $core.String get $name => 'kin.agora.metrics.v3.Ingestion';
 
   IngestionServiceBase() {
-    $addMethod($grpc.ServiceMethod<$0.SubmitRequest, $0.SubmitResponse>(
+    $addMethod($grpc.ServiceMethod<$4.SubmitRequest, $4.SubmitResponse>(
         'Submit',
         submit_Pre,
         false,
         false,
-        ($core.List<$core.int> value) => $0.SubmitRequest.fromBuffer(value),
-        ($0.SubmitResponse value) => value.writeToBuffer()));
+        ($core.List<$core.int> value) => $4.SubmitRequest.fromBuffer(value),
+        ($4.SubmitResponse value) => value.writeToBuffer()));
   }
 
-  $async.Future<$0.SubmitResponse> submit_Pre(
-      $grpc.ServiceCall call, $async.Future<$0.SubmitRequest> request) async {
+  $async.Future<$4.SubmitResponse> submit_Pre(
+      $grpc.ServiceCall call, $async.Future<$4.SubmitRequest> request) async {
     return submit(call, await request);
   }
 
-  $async.Future<$0.SubmitResponse> submit(
-      $grpc.ServiceCall call, $0.SubmitRequest request);
+  $async.Future<$4.SubmitResponse> submit(
+      $grpc.ServiceCall call, $4.SubmitRequest request);
 }
