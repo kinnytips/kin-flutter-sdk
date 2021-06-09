@@ -137,6 +137,8 @@ class KinServiceImplV4 extends KinService {
           _cachedRecentBlockHash(),
           _cachedMinRentExemption()
         ]);
+        log.log("createAccount:");
+
         var serviceConfig = ret[0].payload as ServiceConfig;
         var recentBlockHash = ret[1].payload as Hash;
         var minRentExemption = ret[2].payload as int;
@@ -154,6 +156,11 @@ class KinServiceImplV4 extends KinService {
         var owner = signer.asPublicKey();
         var programKey = serviceConfig.tokenProgram.toKeyPair().asPublicKey();
         var mint = serviceConfig.token.toKeyPair().asPublicKey();
+
+        log.log("- subsidizer: $subsidizer");
+        log.log("- owner: $owner");
+        log.log("- programKey: $programKey");
+        log.log("- mint: $mint");
 
         var transaction = Transaction.newTransaction(subsidizer, [
           CreateAccount(
@@ -178,8 +185,7 @@ class KinServiceImplV4 extends KinService {
           ).instruction
         ]).copyAndSetRecentBlockhash(recentBlockHash).copyAndSign(
             [tokenAccount, signer]);
-        
-        log.log("createAccount:");
+
         log.log("- serviceConfig: $serviceConfig");
         log.log("- recentBlockHash: $recentBlockHash");
         log.log("- minRentExemption: $minRentExemption");

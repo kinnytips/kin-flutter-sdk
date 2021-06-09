@@ -19,13 +19,13 @@ extension ListTypedExtension<T> on List<T> {
 extension IntExtension on int {
   ByteData toByte() => ByteData(1)..setInt8(0, this);
 
-  ByteData toInt32Bytes() => ByteData(4)..setInt32(0, this);
+  ByteData toInt32Bytes([Endian endian = Endian.little]) => ByteData(4)..setInt32(0, this, endian);
 
-  ByteData toInt64Bytes() => ByteData(8)..setInt64(0, this);
+  ByteData toInt64Bytes([Endian endian = Endian.little]) => ByteData(8)..setInt64(0, this, endian);
 
-  Uint8List toInt32Uint8List() => toInt32Bytes().buffer.asUint8List();
+  Uint8List toInt32Uint8List([Endian endian = Endian.little]) => toInt32Bytes(endian).buffer.asUint8List();
 
-  Uint8List toInt64Uint8List() => toInt64Bytes().buffer.asUint8List();
+  Uint8List toInt64Uint8List([Endian endian = Endian.little]) => toInt64Bytes(endian).buffer.asUint8List();
 
   Uint8List toUint8List() {
     var l = Uint8List(1);
@@ -42,6 +42,9 @@ extension StringExtension on String {
 
 extension ByteDataExtension on ByteData {
   int toInt() => this.getInt8(0);
+
+  Uint8List toUint8List() =>
+      Uint8List.fromList(List<int>.generate(lengthInBytes, (i) => getInt8(i)));
 }
 
 extension Uint8ListExtension on Uint8List {
