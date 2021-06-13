@@ -1,20 +1,18 @@
 import 'dart:convert';
 import 'dart:typed_data';
+
 import 'package:kin_base/base/models/invoices.dart';
 import 'package:kin_base/base/models/kin_account.dart';
 import 'package:kin_base/base/models/kin_amount.dart';
 import 'package:kin_base/base/models/kin_memo.dart';
 import 'package:kin_base/base/models/quark_amount.dart';
-import 'package:kin_base/base/models/solana/instruction.dart';
 import 'package:kin_base/base/models/solana/programs.dart';
 import 'package:kin_base/base/models/solana/transaction.dart';
+import 'package:kin_base/base/models/stellar_base_type_conversions.dart';
 import 'package:kin_base/base/models/transaction_hash.dart';
-import 'package:kin_base/base/stellar/models/kin_transactions.dart';
 import 'package:kin_base/base/stellar/models/network_environment.dart';
 import 'package:kin_base/base/stellar/models/record_type.dart';
 import 'package:kin_base/base/tools/charsets.dart';
-
-import 'package:kin_base/base/models/stellar_base_type_conversions.dart';
 
 import 'kin_operation.dart';
 
@@ -56,7 +54,8 @@ extension TransactionExtension on Transaction {
           && programKey != SystemProgram.PROGRAM_KEY
           && e.data.first.toInt() == TokenProgramCommandTransfer().value ;
     }).map((e) {
-      var amountAsLong = e.data.buffer.asInt64List(1)[0] ;
+      var int64list = e.data.sublist(1).buffer.asInt64List();
+      var amountAsLong = int64list[0] ;
       var amount = QuarkAmount(amountAsLong).toKin() ;
       var source = message.accounts[e.accounts[0]].asKinAccountId() ;
       var destination = message.accounts[e.accounts[1]].asKinAccountId() ;
@@ -93,12 +92,13 @@ class SolanaKinTransaction extends KinTransaction {
 
   Transaction _transaction;
 
-  SolanaKinTransaction(
-      Uint8List bytesValue,
-      RecordType recordType,
-      NetworkEnvironment networkEnvironment,
-      [InvoiceList invoiceLis])
-      : super(bytesValue, recordType, networkEnvironment, invoiceLis) {
+  SolanaKinTransaction(Uint8List bytesValue, RecordType recordType,
+      NetworkEnvironment networkEnvironment, [InvoiceList invoiceLis])
+      : super(
+            bytesValue,
+            recordType ?? RecordTypeInflight(DateTime.now().millisecondsSinceEpoch),
+            networkEnvironment,
+            invoiceLis) {
     this._transaction = Transaction.unmarshal(bytesValue);
   }
 
@@ -114,5 +114,11 @@ class SolanaKinTransaction extends KinTransaction {
   SolanaKinTransaction copyWithInvoiceList(InvoiceList invoiceList) {
     return SolanaKinTransaction(bytesValue, recordType, networkEnvironment, invoiceList);
   }
+
+}
+
+
+class StellarKinTransaction {
+
 
 }

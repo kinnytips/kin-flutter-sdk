@@ -27,7 +27,7 @@ abstract class KinService {
 
     Future<KinTransaction> getTransaction(TransactionHash transactionHash) ;
 
-    Future<bool> canWhitelistTransactions() ;
+    FutureOr<bool> canWhitelistTransactions() ;
 
     Future<QuarkAmount> getMinFee() ;
 
@@ -43,7 +43,7 @@ abstract class KinService {
     Future<KinTransaction> submitTransaction(KinTransaction transaction) ;
 
     Future<KinTransaction> buildSignAndSubmitTransaction(
-        Future<KinTransaction> buildAndSignTransaction
+        Future<KinTransaction> Function() buildAndSignTransaction
     ) ;
 
     Observer<KinAccount> streamAccount(KinAccountId kinAccountId) ;
@@ -63,6 +63,11 @@ class KinServiceResponse<P> {
     final dynamic error;
 
     KinServiceResponse(this.type, [this.payload, this.error]);
+
+    @override
+    String toString() {
+      return 'KinServiceResponse{type: $type, payload: ${ payload?.runtimeType }, error: $error}';
+    }
 }
 
 enum KinServiceResponseType {

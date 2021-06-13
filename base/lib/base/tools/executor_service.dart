@@ -1,6 +1,6 @@
 import 'dart:async';
 
-typedef ExecutorTask<R> = R Function();
+typedef ExecutorTask<R> = FutureOr<R> Function();
 
 abstract class ExecutorService {
   static ExecutorService createSequencial() => _ExecutorServiceSequential() ;
@@ -26,7 +26,7 @@ class ScheduledFuture<T> {
 
   ScheduledFuture(this.delay, this._task);
 
-  T executeTask() {
+  FutureOr<T> executeTask() {
     if (_task == null) return null ;
     var ret = _task();
     _task = null;
@@ -44,7 +44,7 @@ class _ExecutorServiceSequential extends ExecutorService {
   ExecutorTask _executing;
 
   @override
-  Future<R> execute<R>(ExecutorTask<FutureOr<R>> task) {
+  Future<R> execute<R>(ExecutorTask<FutureOr<R>> task) async {
     if (_executing != null) {
       var completer = Completer<R>();
 
@@ -70,18 +70,13 @@ class _ExecutorServiceSequential extends ExecutorService {
       return completer.future;
     }
 
-    return _execute(task);
+    return _executeWithTask(task);
   }
 
-  Future<R> _execute<R>([ExecutorTask<R> task]) {
-    if (task == null) {
-      if (_queue.isEmpty) return null;
-      task = _queue.removeAt(0);
-    }
-
+  Future<R> _executeWithTask<R>(ExecutorTask<R> task) {
     _executing = task;
 
-    return Future<R>.microtask(() {
+    return Future<R>.microtask(() async {
       try {
         return task();
       } catch (e, s) {
@@ -90,7 +85,26 @@ class _ExecutorServiceSequential extends ExecutorService {
         return null ;
       } finally {
         _executing = null;
-        _execute();
+        Future.microtask(_executeFromQueue);
+      }
+    });
+  }
+
+  void _executeFromQueue<R>() {
+    if (_queue.isEmpty) return null;
+
+    var task = _queue.removeAt(0);
+    _executing = task;
+
+    Future.microtask(() {
+      try {
+        task();
+      } catch (e, s) {
+        print(e);
+        print(s);
+      } finally {
+        _executing = null;
+        Future.microtask(_executeFromQueue);
       }
     });
   }
@@ -112,13 +126,15 @@ class _ExecutorServiceScheduled extends ScheduledExecutorService {
     var scheduledFuture = ScheduledFuture<R>(delay, task);
 
     if (delay != null && delay.inMilliseconds > 0) {
-      scheduledFuture._future = Future<R>.delayed(delay, scheduledFuture.executeTask);
+      scheduledFuture._future = Future<R>.delayed(
+          delay, scheduledFuture.executeTask);
     } else {
       scheduledFuture._future = Future<R>.microtask(scheduledFuture.executeTask);
     }
 
     return scheduledFuture;
   }
+
 }
 
 class ExecutorServices {

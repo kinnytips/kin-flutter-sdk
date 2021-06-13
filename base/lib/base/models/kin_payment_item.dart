@@ -1,7 +1,6 @@
 import 'package:kin_base/base/models/invoices.dart';
 import 'package:kin_base/base/models/kin_account.dart';
 import 'package:kin_base/base/models/kin_amount.dart';
-import 'package:kin_base/base/tools/optional.dart';
 
 ///
 /// @param amount - always the amount transferred in the payment
@@ -14,4 +13,10 @@ class KinPaymentItem {
   final Invoice invoice;
 
   KinPaymentItem(this.amount, this.destinationAccount, [this.invoice]);
+
+  KinPaymentItem copy(
+      {KinAmount amount, KinAccountId destinationAccount, Invoice invoice}) {
+    return KinPaymentItem(amount ?? this.amount,
+        destinationAccount ?? this.destinationAccount, invoice ?? this.invoice);
+  }
 }

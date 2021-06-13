@@ -2,10 +2,10 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:kin_base/base/tools/extensions.dart';
+
 import 'executor_service.dart';
 import 'kin_logger.dart';
-
-import 'package:kin_base/base/tools/extensions.dart';
 
 class RetriesExceededException extends Error {
   String message ;
@@ -83,6 +83,7 @@ class BackoffStrategyCustom extends BackoffStrategy {
     _reset();
   }
 }
+
 class BackoffStrategy {
   static const int DEFAULT_MAX_ATTEMPTS = 5 ;
   static const Duration DEFAULT_MAX_ATTEMPT_WAIT_TIME = Duration(milliseconds:  15000);
@@ -92,6 +93,26 @@ class BackoffStrategy {
   final int maxAttempts ;
 
   BackoffStrategy([int maxAttempts = DEFAULT_MAX_ATTEMPTS]) : maxAttempts = maxAttempts ?? DEFAULT_MAX_ATTEMPTS ;
+
+  static BackoffStrategy combine(List<BackoffStrategy> strategies) {
+    var totalMaxAttempts = strategies.map((e) => e.maxAttempts).reduce((value, element) => value + element);
+
+    return BackoffStrategyCustom(
+      (currentAttempt) {
+        var previousAttempts = 0;
+        for (var it in strategies) {
+          if ((currentAttempt - previousAttempts) < it.maxAttempts) {
+            return it.nextDelay();
+          } else {
+            previousAttempts += it.maxAttempts;
+          }
+        }
+        return -1;
+      },
+      () => strategies.forEach((e) => e.reset()),
+      totalMaxAttempts,
+    );
+  }
 
   int currentAttempt = 0;
 
