@@ -281,7 +281,8 @@ class AgoraKinTransactionsApiV4 extends GrpcApi implements KinTransactionApiV4 {
       return KinServiceInvoiceResponse(KinServiceResponseType.ok, responseTransaction);
     }
     else if (response.result == SubmitTransactionResponse_Result.FAILED) {
-      var responseType2 = parseResultCode( response.transactionError.toResultXdr() ).toKinServiceResponseType() ;
+      var resultXdr = response.transactionError.toResultXdr();
+      var responseType2 = parseResultCode( resultXdr ).toKinServiceResponseType() ;
 
       if (responseType2 == KinServiceResponseType.ok) {
         return KinServiceInvoiceResponse(KinServiceResponseType.undefinedError);
