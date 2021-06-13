@@ -615,9 +615,9 @@ class XdrTransactionResultResult {
     switch (encodedTransactionResultResult.discriminant) {
       case XdrTransactionResultCode.txSUCCESS:
       case XdrTransactionResultCode.txFAILED:
-        int resultssize = encodedTransactionResultResult.results.length;
-        stream.writeInt(resultssize);
-        for (int i = 0; i < resultssize; i++) {
+        int resultsSize = encodedTransactionResultResult.results.length;
+        stream.writeInt(resultsSize);
+        for (int i = 0; i < resultsSize; i++) {
           XdrOperationResult.encode(
               stream, encodedTransactionResultResult._results[i]);
         }
