@@ -5,7 +5,9 @@ import 'package:collection/collection.dart' show ListEquality;
 import 'package:crypto/crypto.dart';
 import 'package:kin_base/base/models/invoices.dart';
 import 'package:kin_base/base/models/kin_amount.dart';
+import 'package:kin_base/base/models/kin_payment_item.dart';
 import 'package:kin_base/base/models/sha_224_hash.dart';
+import 'package:kin_base/base/network/api/agora/model_to_proto.dart';
 import 'package:kin_base/base/stellar/models/kin_transaction.dart';
 import 'package:kin_base/base/stellar/models/paging_token.dart';
 import 'package:kin_base/base/stellar/models/record_type.dart';
@@ -82,6 +84,24 @@ extension ListExtension<T> on List<T> {
     }
     return this ;
   }
+
+  List<T> whereNotNull() => where((e) => e != null).toList();
+
+  T get firstOrNull => isEmpty ? null : first ;
+}
+
+
+extension IterableExtension<T> on Iterable<T> {
+  List<T> requireNoNulls() {
+    for (var e in this) {
+      if (e == null) throw StateError('Null element found in: $this');
+    }
+    return this ;
+  }
+
+  List<T> whereNotNull() => where((e) => e != null).toList();
+
+  T get firstOrNull => isEmpty ? null : first ;
 }
 
 extension ModelInvoice_LineItemParser on Model.Invoice_LineItem {
@@ -128,11 +148,24 @@ extension ListKinTransactionExtension on List<KinTransaction> {
   }
 
   PagingToken findTailHistoricalTransaction() {
-    return findHistoricalTransaction(this.reversed);
+    return findHistoricalTransaction(this.reversed.toList());
   }
 
   static PagingToken findHistoricalTransaction(List<KinTransaction> transactions) {
-    return transactions.map((t) => t.recordType).whereType<RecordTypeHistorical>().first.pagingToken ;
+    var recordTypes = transactions.map((t) => t.recordType).toList();
+    var historicalTransactions = recordTypes.whereType<RecordTypeHistorical>();
+    return historicalTransactions.isNotEmpty ? historicalTransactions.first.pagingToken : null ;
+  }
+
+}
+
+extension ListKinPaymentItemExtension on List<KinPaymentItem> {
+
+  InvoiceList toInvoiceList() {
+    var list = this.map((e) => e?.invoice).whereNotNull().toList();
+    return list.isNotEmpty
+        ? InvoiceList(InvoiceListId(list.toProto().sha224Hash()), list)
+        : null;
   }
 
 }
