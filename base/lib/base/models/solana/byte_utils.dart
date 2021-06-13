@@ -18,11 +18,10 @@ extension Uint8ListExtension on Uint8List {
 }
 
 T wrapError<T>(String msg, T Function() wrapped) {
-  T value;
   try {
-    value = wrapped();
+    T value = wrapped();
+    return value ;
   } catch (e) {
     throw Exception(msg);
   }
-  return value;
 }
