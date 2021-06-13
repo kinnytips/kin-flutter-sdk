@@ -1,5 +1,6 @@
 
 import 'package:fixnum/fixnum.dart' as fixNum;
+import 'package:kin_base/base/tools/base58.dart';
 import 'package:tweetnacl/tweetnacl.dart' as ed25519;
 import 'dart:typed_data';
 import "util.dart";
@@ -170,7 +171,15 @@ class KeyPair {
       XdrMuxedAccountMed25519.decode(XdrDataInputStream(bytes));
       return fromPublicKey(muxMed25519.ed25519.uint256);
     }
-    Uint8List decoded = StrKey.decodeStellarAccountId(accountId);
+
+    Uint8List decoded ;
+    if ( accountId.length >= 56 ) {
+      decoded = StrKey.decodeStellarAccountId(accountId);
+    }
+    else {
+      decoded = Base58().decode(accountId);
+    }
+
     return fromPublicKey(decoded);
   }
 
