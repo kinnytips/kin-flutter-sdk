@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:kin_base/base/models/app_info.dart';
@@ -79,9 +80,22 @@ class Kin {
         this._watchPayments(); //watch for changes in payments
       }
 
+      _notifyReady();
+
       return null;
     });
   }
+
+  final Completer<bool> _waitReady = Completer<bool>();
+
+  bool get isReady => _waitReady.isCompleted;
+
+  void _notifyReady() {
+    if ( _waitReady.isCompleted ) return ;
+    _waitReady.complete(true);
+  }
+
+  Future<bool> waitReady() => _waitReady.future;
 
   void _setAppInfo() {
     var accountId = this?._context?.accountId ?? KinAccountId(Uint8List(32)) ;
@@ -89,6 +103,14 @@ class Kin {
   }
 
   String get address {
+    return this._context.accountId.base58Encode();
+  }
+
+  String get addressAsStellarBase32 {
+    return this._context.accountId.stellarBase32Encode() ;
+  }
+
+  String get addressAsBase58 {
     return this._context.accountId.base58Encode();
   }
 
@@ -118,7 +140,11 @@ class Kin {
     _observerBalance.disposedBy(_lifecycle);
   }
 
-  KinAccountContext getKinContext(String accountId) {
+  KinAccountContext getKinContext([String accountId]) {
+    if (accountId == null) {
+      return _context;
+    }
+
     return new KinAccountContext.useExistingAccount(
         _environment, KinAccountId.fromIdString(accountId));
   }
@@ -143,7 +169,10 @@ class Kin {
 
   @override
   String toString() {
-    return 'Kin{_production: $_production, _appIndex: $_appIndex, _appName: $_appName, _credentialUser: $_credentialUser, _appInfo: $_appInfo, storageLocation: $storageLocation}';
+    var accountId = _context?.accountId;
+    var stellarBase32 = accountId?.stellarBase32Encode();
+    var base58 = accountId?.base58Encode() ;
+    return 'Kin{_production: $_production, _appIndex: $_appIndex, _appName: $_appName, _credentialUser: $_credentialUser, _appInfo: $_appInfo, storageLocation: $storageLocation, accountId: $stellarBase32 ($base58)}';
   }
 
 /*
