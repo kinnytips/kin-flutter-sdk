@@ -19,6 +19,8 @@ import 'package:kin_base/models/agora/protobuf/common/v3/model.pb.dart' as model
 import 'package:kin_base_storage/kin_base_storage.dart' as base_storage;
 import 'package:path/path.dart' as path;
 
+import 'package:kin_base/base/tools/extensions.dart' show ListExtension;
+
 import 'kin_storage_extension.dart';
 import 'storage.dart';
 
@@ -119,8 +121,22 @@ class KinFileStorage implements Storage {
 
   @override
   KinAccount advanceSequence(KinAccountId id) {
-    // TODO: implement advanceSequence
-    throw UnimplementedError();
+    var storedAccount = getAccount(id) ;
+    if (storedAccount == null) return null ;
+
+    var storedStatus = storedAccount.status is KinAccountStatusRegistered ? storedAccount.status as KinAccountStatusRegistered : null ;
+
+    var newStatus = KinAccountStatusRegistered(storedStatus.sequence + 1);
+
+    var updatedAccount = storedAccount.copy(
+        key: storedAccount.key,
+        balance: storedAccount.balance,
+        status: newStatus
+    );
+
+    updateAccount(updatedAccount);
+
+    return updatedAccount ;
   }
 
   @override
@@ -273,9 +289,13 @@ class KinFileStorage implements Storage {
   }
 
   @override
-  Future<List<KinTransaction>> insertNewTransactionInStorage(KinAccountId accountId, KinTransaction newTransaction) {
-    // TODO: implement insertNewTransactionInStorage
-    throw UnimplementedError();
+  Future<List<KinTransaction>> insertNewTransactionInStorage(KinAccountId accountId, KinTransaction newTransaction) async {
+    var storedTransactions = await getStoredTransactions(accountId);
+    var items = storedTransactions?.items ?? <KinTransaction>[] ;
+
+    var list = <KinTransaction>[newTransaction , ...items].whereNotNull();
+
+    return storeTransactions(accountId, list);
   }
 
   @override
@@ -361,9 +381,14 @@ class KinFileStorage implements Storage {
   }
 
   @override
-  Future<KinAccount> updateAccountBalance(KinAccountId accountId, KinBalance balance) {
-    // TODO: implement updateAccountBalance
-    throw UnimplementedError();
+  Future<KinAccount> updateAccountBalance(KinAccountId accountId, KinBalance balance) async {
+    var storedAccount = await getStoredAccount(accountId) ;
+
+    var account2 = storedAccount.copy(balance: balance);
+
+    updateAccount(account2);
+
+    return account2 ;
   }
 
   @override
