@@ -144,8 +144,15 @@ extension HistoryItemExtension on HistoryItem {
         this.hasInvoiceList() ? this.invoiceList.toInvoiceList() : null,
       );
     } else {
-      //TODO:
-      throw UnsupportedError('No StellarKinTransaction implementation yet');
+      return StellarKinTransaction(
+        Uint8List.fromList(stellarTransaction.envelopeXdr),
+        RecordTypeHistorical(
+            DateTime.now().millisecondsSinceEpoch,
+            transactionError.toResultXdr(),
+            PagingToken(base64.encode(cursor.value))),
+        networkEnvironment,
+        this.hasInvoiceList() ? this.invoiceList.toInvoiceList() : null,
+      );
     }
   }
 
@@ -161,8 +168,15 @@ extension HistoryItemExtension on HistoryItem {
         this.hasInvoiceList() ? this.invoiceList.toInvoiceList() : null,
       );
     } else {
-      //TODO:
-      throw UnsupportedError('No StellarKinTransaction implementation yet');
+      return StellarKinTransaction(
+        Uint8List.fromList(stellarTransaction.envelopeXdr),
+        RecordTypeAcknowledged(
+            DateTime.now().millisecondsSinceEpoch,
+            transactionError.toResultXdr(),
+        ),
+        networkEnvironment,
+        this.hasInvoiceList() ? this.invoiceList.toInvoiceList() : null,
+      );
     }
   }
 }

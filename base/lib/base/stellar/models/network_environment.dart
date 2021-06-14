@@ -1,4 +1,5 @@
 import 'package:kin_base/stellarfork/key_pair.dart';
+import 'package:kin_base/stellarfork/network.dart';
 
 abstract class  NetworkEnvironment {
 
@@ -11,8 +12,11 @@ abstract class  NetworkEnvironment {
   static final _kin2IssuerTest = KeyPair.fromAccountId("GBC3SG6NGTSZ2OMH3FFGB7UVRQWILW367U4GSOOF4TFSZONV42UJXUH7");
 
   final String networkPassphrase;
+  final KeyPair issuer;
 
-  const NetworkEnvironment(this.networkPassphrase, [KeyPair issuer]) ;
+  const NetworkEnvironment(this.networkPassphrase, [this.issuer]) ;
+
+  Network get network => Network(networkPassphrase);
 
   String toString() {
       return "NetworkEnvironment(networkPassphrase='$networkPassphrase')";

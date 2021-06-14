@@ -59,6 +59,21 @@ class InvoiceId {
 
   InvoiceId.fromListOfLineItem(List<LineItem> lineItems)
       : this(Model.Invoice(items: lineItems.toProto()).sha224Hash());
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is InvoiceId &&
+          runtimeType == other.runtimeType &&
+          invoiceHash == other.invoiceHash;
+
+  @override
+  int get hashCode => invoiceHash.hashCode;
+
+  @override
+  String toString() {
+    return 'InvoiceId{invoiceHash: $invoiceHash}';
+  }
 }
 
 class InvoiceFormatException implements Exception {
@@ -102,6 +117,19 @@ class Invoice {
   }
 
   Uint8List toProtoBytes() => toProto().writeToBuffer();
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Invoice && runtimeType == other.runtimeType && id == other.id;
+
+  @override
+  int get hashCode => id.hashCode;
+
+  @override
+  String toString() {
+    return 'Invoice{id: $id, lineItems: $lineItems}';
+  }
 }
 
 class InvoiceListId {
@@ -112,6 +140,21 @@ class InvoiceListId {
   InvoiceListId.fromListOfInvoice(List<Invoice> invoices)
       : this(Model.InvoiceList(invoices: invoices.toProto().invoices)
             .sha224Hash());
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is InvoiceListId &&
+          runtimeType == other.runtimeType &&
+          invoiceHash == other.invoiceHash;
+
+  @override
+  int get hashCode => invoiceHash.hashCode;
+
+  @override
+  String toString() {
+    return 'InvoiceListId{invoiceHash: $invoiceHash}';
+  }
 }
 
 class InvoiceListFormatException implements Exception {
@@ -138,4 +181,20 @@ class InvoiceList {
 
   factory InvoiceList.fromListOfInvoice(List<Invoice> invoices) =>
       InvoiceList(InvoiceListId.fromListOfInvoice(invoices), invoices);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is InvoiceList &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          invoices.equalsContent(other.invoices) ;
+
+  @override
+  int get hashCode => id.hashCode ^ invoices.hashCode;
+
+  @override
+  String toString() {
+    return 'InvoiceList{id: $id, invoices: $invoices}';
+  }
 }
