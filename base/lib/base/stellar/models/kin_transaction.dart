@@ -13,6 +13,17 @@ import 'package:kin_base/base/models/transaction_hash.dart';
 import 'package:kin_base/base/stellar/models/network_environment.dart';
 import 'package:kin_base/base/stellar/models/record_type.dart';
 import 'package:kin_base/base/tools/charsets.dart';
+import 'package:kin_base/base/tools/extensions.dart';
+import 'package:kin_base/stellarfork/asset_type_credit_alphanum4.dart';
+import 'package:kin_base/stellarfork/assets.dart';
+import 'package:kin_base/stellarfork/memo.dart';
+import 'package:kin_base/stellarfork/muxed_account.dart';
+import 'package:kin_base/stellarfork/operation.dart';
+import 'package:kin_base/stellarfork/payment_operation.dart';
+import 'package:kin_base/stellarfork/transaction.dart' as stellarfork_tx;
+import 'package:kin_base/stellarfork/xdr/xdr_data_io.dart';
+import 'package:kin_base/stellarfork/xdr/xdr_operation.dart';
+import 'package:kin_base/stellarfork/xdr/xdr_transaction.dart';
 
 import 'kin_operation.dart';
 
@@ -86,6 +97,23 @@ abstract class KinTransaction {
       );
 
   KinTransaction copyWithInvoiceList(InvoiceList invoiceList) ;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is KinTransaction &&
+          runtimeType == other.runtimeType &&
+          bytesValue.equalsContent(other.bytesValue) &&
+          recordType.value == other.recordType.value &&
+          networkEnvironment == other.networkEnvironment &&
+          invoiceList == other.invoiceList;
+
+  @override
+  int get hashCode =>
+      bytesValue.hashCode ^
+      recordType.hashCode ^
+      networkEnvironment.hashCode ^
+      invoiceList.hashCode;
 }
 
 class SolanaKinTransaction extends KinTransaction {
@@ -118,7 +146,112 @@ class SolanaKinTransaction extends KinTransaction {
 }
 
 
-class StellarKinTransaction {
+class StellarKinTransaction extends KinTransaction {
 
+  StellarKinTransaction(Uint8List bytesValue, RecordType recordType,
+      NetworkEnvironment networkEnvironment, [InvoiceList invoiceLis])
+      : super(
+      bytesValue,
+      recordType ?? RecordTypeInflight(DateTime.now().millisecondsSinceEpoch),
+      networkEnvironment,
+      invoiceLis) ;
+
+  bool isKinNonNativeAsset() {
+    return _transactionEnvelopeTX.operations.where(_isPaymentOperation)
+        .map(_toPaymentOperation).map((e) {
+      var asset = e.asset;
+      return asset is AssetTypeCreditAlphaNum4 && asset.code == 'KIN';
+    }).reduce((acc, b) => acc && b);
+  }
+
+  bool _isPaymentOperation(operation) =>
+  operation
+      .toOperationBody()
+      .discriminant == XdrOperationType.PAYMENT;
+
+  PaymentOperation _toPaymentOperation(Operation op) {
+    var paymentOp = op.toOperationBody().paymentOp;
+
+    var destinationAccount = MuxedAccount.fromXdr(paymentOp.destination);
+    var asset = Asset.fromXdr(paymentOp.asset);
+    var amount = paymentOp.amount.int64 ;
+
+    return PaymentOperationBuilder.forMuxedDestinationAccount(destinationAccount, asset, '$amount').build() ;
+  }
+
+  XdrTransactionEnvelope _transactionEnvelope;
+
+  XdrTransactionEnvelope get transactionEnvelope =>
+      _transactionEnvelope ??= _buildTransactionEnvelope();
+
+  XdrTransactionEnvelope _buildTransactionEnvelope() {
+    return XdrTransactionEnvelope.decode(XdrDataInputStream(bytesValue));
+  }
+
+  stellarfork_tx.Transaction get _transactionEnvelopeTX {
+    var tx = transactionEnvelope.v0 != null ?
+    stellarfork_tx.Transaction.fromV0EnvelopeXdr(transactionEnvelope.v0) :
+    stellarfork_tx.Transaction.fromV1EnvelopeXdr(transactionEnvelope.v1) ;
+    return tx;
+  }
+
+  TransactionHash _transactionHash;
+
+  TransactionHash get transactionHash =>
+      _transactionHash ??= TransactionHash(
+          _transactionEnvelopeTX.hash(networkEnvironment.network));
+
+  KinAccountId _signingSource;
+
+  KinAccountId get signingSource => _signingSource ??=
+      KinAccountId.fromIdString(_transactionEnvelopeTX.sourceAccount.accountId);
+
+  QuarkAmount _fee;
+
+  QuarkAmount get fee => _fee ??= QuarkAmount(_transactionEnvelopeTX.fee);
+
+  KinMemo _memo ;
+
+  KinMemo get memo => _memo ??= _buildMemo();
+
+  KinMemo _buildMemo() {
+    Memo memo = _transactionEnvelopeTX.memo ;
+
+    if (memo == null) {
+      return KinMemo.none;
+    }
+    if (memo is MemoHash) {
+      return KinMemo(memo.bytes);
+    }
+    else if (memo is MemoText) {
+      return KinMemo.fromText(memo.text, Charset.utf8);
+    }
+    else {
+      return KinMemo.none;
+    }
+  }
+
+  List<KinOperationPayment> _paymentOperations ;
+
+  List<KinOperationPayment> get paymentOperations => _paymentOperations ??= _buildPaymentOperations();
+
+  List<KinOperationPayment> _buildPaymentOperations() {
+    return _transactionEnvelopeTX.operations
+        .where(_isPaymentOperation)
+        .map((e) => _toPaymentOperation(e))
+        .map((payOp) {
+      return KinOperationPayment(
+          KinAmount.fromString(payOp.amount),
+          (payOp.sourceAccount != null
+              ? KinAccountId.fromIdString(payOp.sourceAccount.ed25519AccountId)
+              : signingSource),
+          KinAccountId.fromIdString(payOp.destination.ed25519AccountId));
+    }).toList();
+  }
+
+  @override
+  StellarKinTransaction copyWithInvoiceList(InvoiceList invoiceList) {
+    return StellarKinTransaction(bytesValue, recordType, networkEnvironment, invoiceList);
+  }
 
 }
