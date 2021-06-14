@@ -1,4 +1,3 @@
-import 'dart:collection';
 import 'dart:typed_data';
 
 import 'package:decimal/decimal.dart';
@@ -44,20 +43,12 @@ abstract class KinAccountReadOperationsAltIdioms {
 
   Observer<KinBalance> observeBalance({ ObservationMode mode = ObservationMode.Passive , ValueListener<KinBalance> balanceListener });
 
-  void clearStorage(Callback<bool> clearCompleteCallback);
+  Future<bool> clearStorage({Callback<bool> clearCompleteCallback});
 }
 
 abstract class KinAccountReadOperations extends KinAccountReadOperationsAltIdioms {
 
   Future<KinAccount> getAccount({ bool forceUpdate = false , Callback<KinAccount> accountCallback }) ;
-
-  Future<KinAccount> getAccountAsFutureMayForceUpdate({ bool forceUpdate = false }) ;
-
-  Future<KinAccount> getAccountAsFuture() ;
-
-  Observer<KinBalance> observeBalanceNoBalanceListener( { ObservationMode mode = ObservationMode.Passive }) ;
-
-  Future<bool> clearStorageNoCallback();
 
 }
 
@@ -65,7 +56,7 @@ abstract class KinPaymentReadOperationsAltIdioms {
 
   ListObserver<KinPayment> observePayments({ ObservationMode mode = ObservationMode.Passive , ValueListener<List<KinPayment>> paymentsListener });
 
-  void getPaymentsForTransactionHash(TransactionHash transactionHash, Callback<List<KinPayment>> paymentsCallback);
+  Future<List<KinPayment>> getPaymentsForTransactionHash(TransactionHash transactionHash, {Callback<List<KinPayment>> paymentsCallback});
 
 }
 
@@ -73,8 +64,6 @@ abstract class KinPaymentReadOperationsAltIdioms {
 abstract class  KinPaymentReadOperations implements KinPaymentReadOperationsAltIdioms {
 
   Future<QuarkAmount> calculateFee(int numberOfOperations);
-
-  ListObserver<KinPayment> observePaymentsNoPaymentsListener({ObservationMode mode = ObservationMode.Passive});
 
   Future<List<KinPayment>> getPaymentsForTransactionHashNoCallback(TransactionHash transactionHash);
 }
@@ -100,14 +89,6 @@ abstract class KinPaymentWriteOperations implements KinPaymentWriteOperationsAlt
       AppIdx processingAppIdx
       /* = appInfoProvider?.appInfo?.appIndex?: throw RuntimeException("Need to specify an AppIdx") */,
       TransferType type /* = TransferType.spend */);
-
-  Future<List<KinPayment>> sendKinPaymentsByAccountSpec(
-      List<KinPaymentItem>payments,
-      KinMemo memo /*= KinMemo.NONE */,
-      {AccountSpec sourceAccountSpec /* = AccountSpec.Preferred*/,
-      AccountSpec destinationAccountSpec /*= AccountSpec.Preferred */,
-      List<XdrDecoratedSignature> additionalSignatures,
-      QuarkAmount feeOverride});
 
   Future<List<KinPayment>> sendKinTransaction(
       Future<KinTransaction> Function() buildTransaction);
@@ -281,32 +262,31 @@ class KinAccountContextBase implements KinAccountReadOperations , KinPaymentRead
   }
 
   @override
-  void clearStorage(clearCompleteCallback) {
-    // TODO: implement clearStorage
+  Future<bool> clearStorage({Callback<bool> clearCompleteCallback}) async {
+    log.log("clearStorage");
+
+    var ret = await storage.deleteAllStorage(accountId);
+
+    if (clearCompleteCallback != null) {
+      clearCompleteCallback(ret);
+    }
+
+    return ret ;
   }
 
   @override
-  Future<bool> clearStorageNoCallback() {
-    // TODO: implement clearStorageNoCallback
-    throw UnimplementedError();
-  }
+  Future<List<KinPayment>> getPaymentsForTransactionHash(TransactionHash transactionHash,  {Callback<List<KinPayment>> paymentsCallback}) async {
+    log.log("getPaymentsForTransactionHash");
 
+    var ret = await service.getTransaction(transactionHash);
 
-  @override
-  Future<KinAccount> getAccountAsFuture() {
-    // TODO: implement getAccountAsFuture
-    throw UnimplementedError();
-  }
+    var kinPayments = ret.asKinPayments() ;
 
-  @override
-  Future<KinAccount> getAccountAsFutureMayForceUpdate({bool forceUpdate = false}) {
-    // TODO: implement getAccountAsFutureMayForceUpdate
-    throw UnimplementedError();
-  }
+    if (paymentsCallback != null) {
+      paymentsCallback(kinPayments);
+    }
 
-  @override
-  void getPaymentsForTransactionHash(TransactionHash transactionHash, paymentsCallback) {
-    // TODO: implement getPaymentsForTransactionHash
+    return kinPayments ;
   }
 
   @override
@@ -329,65 +309,54 @@ class KinAccountContextBase implements KinAccountReadOperations , KinPaymentRead
   }
 
   final DisposeBag _lifecycle = DisposeBag();
+
   Observer<KinAccount> _accountStream ;
-  
-  Observer<T>  _setupActiveStreamingUpdatesIfNecessary<T>(Observer<T> observer, ObservationMode mode) {
+
+  Observer<T> _setupActiveStreamingUpdatesIfNecessary<T>(
+      Observer<T> observer, ObservationMode mode) {
     switch (mode) {
       case ObservationMode.ActiveNewOnly:
-      case ObservationMode.Active: {
-        if (_accountStream == null) {
-          service.streamAccount(accountId);
+      case ObservationMode.Active:
+        {
+          if (_accountStream == null) {
+            _accountStream = service.streamAccount(accountId)
+              ..disposedBy(_lifecycle).map((kinAccount) async {
+                var account2 = await storage.updateAccountInStorage(kinAccount);
+                var balance = account2.balance;
+                // Yea...this 5s delay is gross but reads aren't
+                // deterministic with the account update events so
+                // instead of polling (worse), we delay for a
+                // 'best effort' history update.
+                // TODO: Maybe we can do better with a future event for history updates.
+                await fetchUpdatedTransactionHistory();
+                Future.delayed(
+                    Duration(seconds: 5), () => balanceSubject.onNext(balance));
+              })
+              ..doOnDisposed(() {
+                _lifecycle.dispose();
+                _accountStream = null;
+              });
+          }
+          break;
         }
-      }
+      default:
+        break;
     }
-    return observer ;
-  }
-  
-  /*
-  private fun <T> Observer<T>.setupActiveStreamingUpdatesIfNecessary(mode: ObservationMode): Observer<T> {
-        when (mode) {
-            ObservationMode.ActiveNewOnly,
-            ObservationMode.Active -> {
-                synchronized(streamLock) {
-                    if (accountStream == null) {
-                        accountStream = service.streamAccount(accountId).apply {
-                            disposedBy(lifecycle)
-                                .flatMapPromise { kinAccount ->
-                                    storage.updateAccountInStorage(kinAccount)
-                                        .map { it.balance }
-                                        .doOnResolved { balance ->
-                                            // Yea...this 5s delay is gross but reads aren't
-                                            // deterministic with the account update events so
-                                            // instead of polling (worse), we delay for a
-                                            // 'best effort' history update.
-                                            // TODO: Maybe we can do better with a future event for history updates.
-                                            Promise.defer { fetchUpdatedTransactionHistory() }
-                                                .doOnResolved { balanceSubject.onNext(balance) }
-                                                .resolveIn(5, TimeUnit.SECONDS)
-                                        }
-                                }.resolve()
-                        }
-
-                        doOnDisposed {
-                            lifecycle.dispose()
-                            accountStream = null
-                        }
-                    }
-                }
-            }
-        }
-        return this
-    }
-   */
-
-  @override
-  Observer<KinBalance> observeBalanceNoBalanceListener({ObservationMode mode = ObservationMode.Passive}) {
-    // TODO: implement observeBalanceNoBalanceListener
-    throw UnimplementedError();
+    return observer;
   }
 
   @override
   ListObserver<KinPayment> observePayments({ObservationMode mode = ObservationMode.Passive, ValueListener<List<KinPayment>> paymentsListener}) {
+    var observer = _observePaymentsImpl(mode);
+
+    if (paymentsListener != null) {
+      observer.listen(paymentsListener);
+    }
+
+    return observer;
+  }
+
+  ListSubject<KinPayment> _observePaymentsImpl(ObservationMode mode) {
     if (mode == ObservationMode.Passive) {
       paymentsSubject.requestInvalidation();
       return paymentsSubject;
@@ -400,23 +369,17 @@ class KinAccountContextBase implements KinAccountReadOperations , KinPaymentRead
     else if (mode == ObservationMode.ActiveNewOnly) {
       var listSubject = ListSubject<KinPayment>() ;
       var lifecycle = DisposeBag();
-      
+
       var observer = service.streamNewTransactions(accountId);
       observer.disposedBy(lifecycle);
       observer.mapPromise((e) => e.asKinPayments() ).then((e) => listSubject.onNext(e));
       observer.doOnDisposed(() => lifecycle.dispose() );
-      
+
       return listSubject ;
     }
     else {
       throw StateError("Can't handle mode: $mode");
     }
-  }
-
-  @override
-  ListObserver<KinPayment> observePaymentsNoPaymentsListener({ObservationMode mode = ObservationMode.Passive}) {
-    // TODO: implement observePaymentsNoPaymentsListener
-    throw UnimplementedError();
   }
 
   Future<KinAccount> maybeFetchAccountDetails() async {
@@ -532,9 +495,19 @@ class KinAccountContextImpl extends KinAccountContextBase with KinAccountContext
   }
 
   @override
-  Future<KinAccount> getAccount({bool forceUpdate = false, accountCallback}) async {
+  Future<KinAccount> getAccount({bool forceUpdate = false, Callback<KinAccount> accountCallback}) async {
     log.log("getAccount");
 
+    var account = await _getAccountImpl(forceUpdate);
+
+    if (accountCallback != null) {
+      accountCallback(account);
+    }
+
+    return account ;
+  }
+
+  Future<Object> _getAccountImpl(bool forceUpdate) async {
     var storedAccount = await storage.getStoredAccount(accountId);
 
     if (storedAccount == null) {
@@ -561,7 +534,6 @@ class KinAccountContextImpl extends KinAccountContextBase with KinAccountContext
     else {
       throw StateError("Can't handle account.status: ${ storedAccount.status }");
     }
-
   }
 
   Future<KinAccount> _registerAccount(KinAccount account) async {
@@ -590,11 +562,10 @@ class KinAccountContextImpl extends KinAccountContextBase with KinAccountContext
 
   @override
   Future<List<KinPayment>> sendKinPayments(List<KinPaymentItem> payments, {KinMemo memo}) {
-    return sendKinPaymentsByAccountSpec(payments, memo);
+    return _sendKinPaymentsImpl(payments, memo);
   }
 
-  @override
-  Future<List<KinPayment>> sendKinPaymentsByAccountSpec(List<KinPaymentItem> payments, KinMemo memo, { AccountSpec sourceAccountSpec, AccountSpec destinationAccountSpec , List<XdrDecoratedSignature> additionalSignatures, QuarkAmount feeOverride}) async {
+  Future<List<KinPayment>> _sendKinPaymentsImpl(List<KinPaymentItem> payments, KinMemo memo, { AccountSpec sourceAccountSpec, AccountSpec destinationAccountSpec , List<XdrDecoratedSignature> additionalSignatures, QuarkAmount feeOverride}) async {
     log.log("sendKinPayments");
 
     memo ??= KinMemo.none;
@@ -696,12 +667,6 @@ class KinAccountContextImpl extends KinAccountContextBase with KinAccountContext
     else {
       return transaction ;
     }
-  }
-
-  @override
-  Future<List<KinPayment>> sendKinPaymentsWithAdditionalSignatures(List<KinPaymentItem> payments, KinMemo memo, AccountSpec sourceAccountSpec, AccountSpec destinationAccountSpec, List<XdrDecoratedSignature> additionalSignatures, QuarkAmount feeOverride) {
-    // TODO: implement sendKinPaymentsWithAdditionalSignatures
-    throw UnimplementedError();
   }
 
   final ExecutorService _outgoingTransactionsQueueIO = ExecutorService.createSequencial();
