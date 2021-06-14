@@ -4,13 +4,13 @@ import 'package:decimal/decimal.dart';
 import 'package:kin_base/base/kin_environment.dart';
 import 'package:kin_base/base/models/kin_balance.dart';
 import 'package:kin_base/base/models/stellar_base_type_conversions.dart';
+import 'package:kin_base/base/network/api/agora/model_to_proto.dart';
 import 'package:kin_base/base/network/services/kin_service.dart';
 import 'package:kin_base/base/stellar/models/kin_transaction.dart';
 import 'package:kin_base/base/tools/kin_logger.dart';
 import 'package:kin_base/base/tools/network_operations_handler.dart';
 import 'package:kin_base/base/tools/observers.dart';
 import 'package:kin_base/stellarfork/key_pair.dart';
-import 'package:kin_base/stellarfork/xdr/xdr_signing.dart';
 
 import 'models/account_spec.dart';
 import 'models/appidx.dart';
@@ -28,6 +28,8 @@ import 'network/services/app_info_providers.dart';
 import 'storage/storage.dart';
 import 'tools/executor_service.dart';
 import 'tools/extensions.dart';
+
+
 
 enum ObservationMode {
   Passive,
@@ -541,9 +543,21 @@ class KinAccountContextImpl extends KinAccountContextBase with KinAccountContext
   }
 
   @override
-  Future<KinPayment> payInvoice(Invoice invoice, KinAccountId destinationAccount, AppIdx processingAppIdx, TransferType type) {
-    // TODO: implement payInvoice
-    throw UnimplementedError();
+  Future<KinPayment> payInvoice(
+      Invoice invoice,
+      KinAccountId destinationAccount,
+      AppIdx processingAppIdx,
+      TransferType type) {
+    log.log('payInvoice');
+
+    var kinBinaryMemoBuilder = KinBinaryMemoBuilder(processingAppIdx.value)
+      ..setForeignKey([invoice].toProto().sha224Hash().decode())
+      ..setTransferType(type);
+
+    var kinMemo = kinBinaryMemoBuilder.build().toKinMemo();
+
+    return sendKinPayment(invoice.total, destinationAccount,
+        memo: kinMemo, invoice: invoice);
   }
 
   @override

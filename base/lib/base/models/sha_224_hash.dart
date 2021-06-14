@@ -15,6 +15,8 @@ class SHA224Hash {
 
   factory SHA224Hash.just(Uint8List bytes) => SHA224Hash.fromBytes(bytes);
 
+  Uint8List decode() => Base64Codec().decode(encodedValue);
+  
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
