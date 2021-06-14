@@ -58,8 +58,9 @@ void showPaymentsForAccount(Kin kin, String accountID) {
   var observePayments = kinContext2.observePayments();
 
   observePayments.add((payments) {
-    for (var p in payments) {
-      print('$accountID >> $p');
+    for (var i = 0; i < payments.length; ++i) {
+      var p = payments[i];
+      print('[$i]> $p');
     }
   });
 }
