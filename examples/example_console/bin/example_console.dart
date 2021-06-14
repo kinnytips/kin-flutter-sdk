@@ -20,24 +20,48 @@ void main(List<String> arguments) async {
 
   print('Ready: $kin');
 
-  print('My Address: ${ kin.addressAsBase58 } > ${ kin.addressAsStellarBase32 }') ;
+  print('My Address: ${kin.addressAsBase58} > ${kin.addressAsStellarBase32}');
 
   var kinContext = kin.getKinContext();
 
-  var account = await kinContext.getAccount(forceUpdate: true) ;
-  print('Account: $account');
-  print('Balance: ${ account.balance }');
+  var account = await kinContext.getAccount(forceUpdate: true);
+  print('My Account: $account');
+  print('My Balance: ${account.balance}');
 
+  showPaymentsForAccount(kin, 'GDNZ4TKB3FPM77ITEGG36O6EIKKXLH7ERAE4AUNBMXMEDUVS6VK5YZFQ');
 
-  var amountToSend = KinAmount.fromInt(1);
-  var destinationAccount = KinAccountId.fromIdString('3RXbFoTTTHHKXu2MikKz8NWbGLnV5PfbcTaQR8Z7oxME');
+  await sendKINToAccount(kin, '3RXbFoTTTHHKXu2MikKz8NWbGLnV5PfbcTaQR8Z7oxME', 0.10);
+}
 
-  print('amountToSend: $amountToSend');
+Future<KinPayment> sendKINToAccount(
+    Kin kin, String destinationAccountID, double amount) async {
+  var amountToSend = KinAmount.fromDouble(amount);
+  var destinationAccount = KinAccountId.fromIdString(destinationAccountID);
+
   print('destinationAccount: $destinationAccount');
+  print('amountToSend: $amountToSend');
 
-  var sentPayment = await kinContext.sendKinPayment(amountToSend, destinationAccount) ;
+  var kinContext = kin.getKinContext();
+  var sentPayment =
+      await kinContext.sendKinPayment(amountToSend, destinationAccount);
 
-  print(sentPayment);
+  print('SENT> $sentPayment');
+
+  return sentPayment;
+}
+
+void showPaymentsForAccount(Kin kin, String accountID) {
+  print('** Getting payments for account: $accountID ...');
+
+  var kinContext2 = kin.getKinContext(accountID);
+
+  var observePayments = kinContext2.observePayments();
+
+  observePayments.add((payments) {
+    for (var p in payments) {
+      print('$accountID >> $p');
+    }
+  });
 }
 
 void _onBalanceChange(KinBalance balance) {
