@@ -65,7 +65,6 @@ abstract class  KinPaymentReadOperations implements KinPaymentReadOperationsAltI
 
   Future<QuarkAmount> calculateFee(int numberOfOperations);
 
-  Future<List<KinPayment>> getPaymentsForTransactionHashNoCallback(TransactionHash transactionHash);
 }
 
 abstract class KinPaymentWriteOperationsAltIdioms {
@@ -287,12 +286,6 @@ class KinAccountContextBase implements KinAccountReadOperations , KinPaymentRead
     }
 
     return kinPayments ;
-  }
-
-  @override
-  Future<List<KinPayment>> getPaymentsForTransactionHashNoCallback(TransactionHash transactionHash) {
-    // TODO: implement getPaymentsForTransactionHashNoCallback
-    throw UnimplementedError();
   }
 
   @override
@@ -565,7 +558,7 @@ class KinAccountContextImpl extends KinAccountContextBase with KinAccountContext
     return _sendKinPaymentsImpl(payments, memo);
   }
 
-  Future<List<KinPayment>> _sendKinPaymentsImpl(List<KinPaymentItem> payments, KinMemo memo, { AccountSpec sourceAccountSpec, AccountSpec destinationAccountSpec , List<XdrDecoratedSignature> additionalSignatures, QuarkAmount feeOverride}) async {
+  Future<List<KinPayment>> _sendKinPaymentsImpl(List<KinPaymentItem> payments, KinMemo memo, { AccountSpec sourceAccountSpec, AccountSpec destinationAccountSpec , QuarkAmount feeOverride}) async {
     log.log("sendKinPayments");
 
     memo ??= KinMemo.none;
