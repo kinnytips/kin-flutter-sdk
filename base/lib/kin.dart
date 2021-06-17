@@ -175,46 +175,4 @@ class Kin {
     return 'Kin{_production: $_production, _appIndex: $_appIndex, _appName: $_appName, _credentialUser: $_credentialUser, _appInfo: $_appInfo, storageLocation: $storageLocation, accountId: $stellarBase32 ($base58)}';
   }
 
-/*
-
-    private KinEnvironment.Agora getEnvironment() {
-        String storageLoc = "/tmp/kin";
-
-        NetworkEnvironment networkEnv = this.production ? NetworkEnvironment.KinStellarMainNetKin3.INSTANCE :
-                NetworkEnvironment.KinStellarTestNetKin3.INSTANCE;
-
-        return (new KinEnvironment.Agora.Builder(networkEnv))
-                .setAppInfoProvider(new AppInfoProvider() {
-                    @NotNull
-                    private final AppInfo appInfo;
-
-                    @NotNull
-                    public AppInfo getAppInfo() {
-                        return this.appInfo;
-                    }
-
-                    @NotNull
-                    public AppUserCreds getPassthroughAppUserCredentials() {
-                        return new AppUserCreds(
-                                credentialsUser,
-                                credentialsPass
-                        );
-                    }
-
-                    {
-                        this.appInfo = new AppInfo(
-                                new AppIdx(appIndex),
-                                new KinAccount.Id(appAddress),
-                                "Example",
-                                0
-                        );
-                    }
-                })
-                .setMinApiVersion(4) //make sure we're on the Agora chain (not the former stellar)
-                .setStorage(new KinFileStorage.Builder(storageLoc))
-                .build();
-    }
-     */
-
-
 }
