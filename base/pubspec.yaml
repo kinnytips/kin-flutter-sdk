@@ -22,8 +22,8 @@ dependencies:
   protobuf: ^1.0.1
   crypto: ^2.1.5
   decimal: ^0.3.5
-  #flutter_sodium: ^0.1.8
   pointycastle: ^2.0.0
+  argon2: ^1.0.0-no-null-safety
   grpc: ^2.9.0
   logging: ^0.11.4
   toml: ^0.6.0

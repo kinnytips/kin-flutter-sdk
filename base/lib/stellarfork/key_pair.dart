@@ -135,7 +135,17 @@ class StrKey {
 class KeyPair {
   Uint8List _mPublicKey;
   Uint8List _mPrivateKey;
-  static Uint8List _mPrivateKeySeed;
+
+  static final Map<String,Uint8List> _accountsPrivateKeySeed = <String,Uint8List>{} ;
+
+  static void clearAccountsPrivateKeySeed({String accountId}) {
+    if (accountId != null) {
+      _accountsPrivateKeySeed.remove(accountId);
+    }
+    else {
+      _accountsPrivateKeySeed.clear();
+    }
+  }
 
   /// Creates a new KeyPair from the given [publicKey] and [privateKey].
   KeyPair(Uint8List publicKey, Uint8List privateKey) {
@@ -158,9 +168,11 @@ class KeyPair {
 
   /// Creates a new KeyPair object from a raw 32 byte secret [seed].
   static KeyPair fromSecretSeedBytes(Uint8List seed) {
-    _mPrivateKeySeed = seed;
     ed25519.KeyPair kp = ed25519.Signature.keyPair_fromSeed(seed);
-    return new KeyPair(kp.publicKey, kp.secretKey);
+
+    var keyPair = new KeyPair(kp.publicKey, kp.secretKey);
+    _accountsPrivateKeySeed[keyPair.accountId] = Uint8List.fromList(seed);
+    return keyPair;
   }
 
   /// Creates a new KeyPair object from a stellar [accountId].
@@ -199,6 +211,8 @@ class KeyPair {
 
   ///Returns the human readable secret seed of this key pair.
   String get secretSeed => StrKey.encodeStellarSecretSeed(_mPrivateKeySeed);
+
+  Uint8List get _mPrivateKeySeed => _accountsPrivateKeySeed[ accountId ];
 
   Uint8List get rawSecretSeed => _mPrivateKeySeed;
 
