@@ -27,9 +27,6 @@ class KinBackupRestore {
   ///
   /// It's equivalent to `libsodium` (`Sodium.crypto_pwhash`).
   Uint8List _keyHash(Uint8List passphraseBytes, Uint8List saltBytes) {
-    print(
-        '_keyHash> passphraseBytes: $passphraseBytes > saltBytes: $saltBytes');
-
     var parameters = Argon2Parameters(
       Argon2Parameters.ARGON2_id,
       saltBytes,
@@ -57,7 +54,6 @@ class KinBackupRestore {
 
   Uint8List _encryptSecretSeed(Uint8List hash, Uint8List secretSeedBytes) {
     var nonceBytes = generateRandomBytes(_SECRET_BOX_NONCE_BYTES);
-    print('_encryptSecretSeed> hash: $hash > nonceBytes: $nonceBytes');
     var encryptedBytes = SecretBox(hash).box_nonce(secretSeedBytes, nonceBytes);
     return (nonceBytes + encryptedBytes).toUint8List();
   }
@@ -67,7 +63,6 @@ class KinBackupRestore {
         Uint8List.fromList(seedBytes.sublist(0, _SECRET_BOX_NONCE_BYTES));
     var cipherBytes =
         Uint8List.fromList(seedBytes.sublist(_SECRET_BOX_NONCE_BYTES));
-    print('_encryptSecretSeed> hash: $hash > nonceBytes: $nonceBytes');
     var decryptedBytes = SecretBox(hash).open_nonce(cipherBytes, nonceBytes);
     return decryptedBytes;
   }
