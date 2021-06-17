@@ -4,7 +4,6 @@ import 'package:kin_base/base/models/kin_amount.dart';
 import 'package:kin_base/base/models/kin_balance.dart';
 import 'package:kin_base/base/models/kin_payment.dart';
 import 'package:kin_base/kin.dart';
-import 'package:kin_base/stellarfork/key_pair.dart';
 
 void main(List<String> arguments) async {
   var production = true;
@@ -20,26 +19,25 @@ void main(List<String> arguments) async {
 
   await kin.waitReady();
 
-  print('Ready: $kin');
+  print('- Ready: $kin');
 
-  print('My Address: ${kin.addressAsBase58} > ${kin.addressAsStellarBase32}');
+  print('- My Address: ${kin.addressAsBase58} > ${kin.addressAsStellarBase32}');
 
   var kinContext = kin.getKinContext();
 
   var account = await kinContext.getAccount(forceUpdate: true);
-  print('My Account: $account');
-  print('My Balance: ${account.balance}');
+  print('- My Account: $account');
+  print('- My Balance: ${account.balance}');
 
   showPaymentsForAccount(
       kin, 'GDNZ4TKB3FPM77ITEGG36O6EIKKXLH7ERAE4AUNBMXMEDUVS6VK5YZFQ');
 
   //await sendKINToAccount(kin, '3RXbFoTTTHHKXu2MikKz8NWbGLnV5PfbcTaQR8Z7oxME', 0.10);
 
-  print('AccountID: ${account.id.stellarBase32Encode()}');
+  print('** Generating Backup:');
+  print('- AccountID: ${account.id.stellarBase32Encode()}');
   var secretSeed = account.id.toKeyPair().secretSeed;
-  print('SecretSeed: $secretSeed');
-
-  KeyPair.fromSecretSeed(secretSeed);
+  print('- SecretSeed: $secretSeed');
 
   var kinBackupRestore = KinBackupRestore();
 
@@ -47,11 +45,13 @@ void main(List<String> arguments) async {
 
   var accountBackup =
       kinBackupRestore.exportWallet(backupPass, account: account);
+
+  print('- Backup JSON:');
   print(accountBackup.toJson());
 
+  print('Recovering Backup:');
   var backupKeyPair = kinBackupRestore.importWallet(accountBackup, backupPass);
-
-  print(backupKeyPair.accountId);
+  print('- Recovered KeyPair: ${backupKeyPair.accountId}');
 }
 
 Future<KinPayment> sendKINToAccount(
