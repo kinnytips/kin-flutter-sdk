@@ -15,7 +15,6 @@ import 'package:kin_base/base/network/api/agora/agora_v4_apis.dart';
 import 'models/key.dart';
 import 'models/kin_account.dart';
 import 'network/services/app_info_providers.dart';
-import 'network/services/kin_service_impl.dart';
 import 'stellar/models/api_config.dart';
 import 'stellar/models/network_environment.dart';
 import 'tools/executor_service.dart';

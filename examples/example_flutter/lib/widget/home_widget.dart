@@ -2,7 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kin_sdk_example_flutter/common/bloc/home_state.dart';
+import 'package:kin_sdk_example_flutter/common/bloc/home/home_bloc.dart';
+import 'package:kin_sdk_example_flutter/common/bloc/home/home_state.dart';
 import 'package:kin_sdk_example_flutter/common/routes/routes.dart';
 import 'package:kin_sdk_example_flutter/models/home_page_info.dart';
 

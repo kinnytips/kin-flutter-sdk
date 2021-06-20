@@ -1,27 +1,31 @@
 import 'package:bloc/bloc.dart';
+import 'package:kin_sdk_example_flutter/models/home_page_info.dart';
+import 'package:kin_sdk_example_flutter/network/response.dart';
+import 'package:kin_sdk_example_flutter/services/home_page_service.dart';
 import 'package:meta/meta.dart';
 
+import 'home_event.dart';
 import 'home_state.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
-  HomeBloc({@required this.service}) : assert(service != null);
+  HomeBloc({@required this.service}) : assert(service != null), super(null);
   final HomeService service;
 
   @override
   HomeState get initialState => HomeEmptyState();
 
-  @override
-  Stream<HomeState> transformEvents(
-    Stream<HomeEvent> events,
-    Stream<HomeState> Function(HomeEvent event) next,
-  ) {
-    return super.transformEvents(
-      events.debounceTime(
-        const Duration(milliseconds: 500),
-      ),
-      next,
-    );
-  }
+  // @override
+  // Stream<HomeState> transformEvents(
+  //   Stream<HomeEvent> events,
+  //   Stream<HomeState> Function(HomeEvent event) next,
+  // ) {
+  //   return super.transformEvents(
+  //     events.debounceTime(
+  //       const Duration(milliseconds: 500),
+  //     ),
+  //     next,
+  //   );
+  // }
 
   @override
   Stream<HomeState> mapEventToState(HomeEvent event) async* {

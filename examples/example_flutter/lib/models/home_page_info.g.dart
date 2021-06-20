@@ -10,7 +10,7 @@ HomePageInfo _$HomePageInfoFromJson(Map<String, dynamic> json) {
   return HomePageInfo(
     amount: json['amount'] == null
         ? null
-        : KinAmount.fromJson(json['amount'] as Map<String, dynamic>),
+        : KinAmount.fromInt(int.parse(json['amount'])),
     activities: (json['activities'] as List)
         ?.map((e) =>
             e == null ? null : Activity.fromJson(e as Map<String, dynamic>))

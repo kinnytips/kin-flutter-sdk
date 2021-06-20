@@ -15,7 +15,7 @@ Activity _$ActivityFromJson(Map<String, dynamic> json) {
     _$enumDecodeNullable(_$ActivityStatusEnumMap, json['activityStatus']),
     json['amount'] == null
         ? null
-        : Amount.fromJson(json['amount'] as Map<String, dynamic>),
+        : KinAmount.fromInt(int.parse(json['amount'])),
     json['activityTime'] as String,
     json['tracker'] as String,
   );
