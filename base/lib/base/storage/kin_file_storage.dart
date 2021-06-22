@@ -12,12 +12,12 @@ import 'package:kin_base/base/network/api/agora/proto_to_model_v4.dart';
 import 'package:kin_base/base/stellar/models/kin_transaction.dart';
 import 'package:kin_base/base/stellar/models/kin_transactions.dart';
 import 'package:kin_base/base/stellar/models/network_environment.dart';
+import 'package:kin_base/base/storage/file_storage.dart';
 import 'package:kin_base/base/tools/executor_service.dart';
 import 'package:kin_base/base/tools/extensions.dart' show ListKinTransactionExtension;
 import 'package:kin_base/base/tools/hex.dart';
 import 'package:kin_base/models/agora/protobuf/common/v3/model.pb.dart' as models ;
 import 'package:kin_base_storage/kin_base_storage.dart' as base_storage;
-import 'package:path/path.dart' as path;
 
 import 'package:kin_base/base/tools/extensions.dart' show ListExtension;
 
@@ -35,13 +35,15 @@ class KinFileStorage implements Storage {
 
   final ExecutorServices _executors;
 
+  final FileStorage _storageIO = FileStorage.create();
+
   KinFileStorage(
       this._filesDir, this._networkEnvironment, [ExecutorServices executors])
       : _executors = executors ?? ExecutorServices();
 
   @override
   bool addAccount(KinAccount kinAccount) {
-    return _writeToFile(
+    return _storageIO.writeToFile(
         _directoryForAccount(kinAccount.id),
         fileNameForAccountInfo,
         kinAccount.toStorageKinAccount().writeToBuffer());
@@ -61,45 +63,6 @@ class KinFileStorage implements Storage {
     return "$_filesDir/env/$hex";
   }
 
-  bool _writeToFile(String directory, String fileName, Uint8List body) {
-    var file = File(path.join(directory, fileName));
-
-    var parent = file.parent;
-    if (!parent.existsSync()) {
-      parent.createSync(recursive: true);
-    }
-
-    file.writeAsBytesSync(body);
-
-    return true;
-  }
-
-  bool _removeFile(String directory, String fileName) {
-    var file = File(path.join(directory, fileName));
-
-    if (!file.existsSync()) return true;
-
-    file.deleteSync();
-
-    return true;
-  }
-
-  Uint8List _readFile(String directory, String fileName) {
-    var file = File(path.join(directory, fileName));
-
-    if (!file.existsSync()) return Uint8List(0);
-
-    return file.readAsBytesSync();
-  }
-
-  List<String> _subdirectories(String directory) {
-    var dir = Directory(directory);
-
-    if (!dir.existsSync()) return <String>[];
-
-    return dir.listSync().map((e) => e.path).toList();
-  }
-
   @override
   Future<List<InvoiceList>> addInvoiceLists(KinAccountId accountId, List<InvoiceList> invoiceLists) async {
     if (invoiceLists.isEmpty) return invoiceLists ;
@@ -110,7 +73,7 @@ class KinFileStorage implements Storage {
       invoiceListsMap[invoice.id] = invoice ;
     }
 
-    _writeToFile(
+    _storageIO.writeToFile(
         _directoryForInvoices(accountId),
         _fileNameForInvoices(accountId),
         invoiceListsMap.toInvoices().writeToBuffer()
@@ -153,7 +116,7 @@ class KinFileStorage implements Storage {
 
   @override
   List<KinAccountId> getAllAccountIds() {
-    var accountDirectories = _subdirectories(_directoryForAllAccounts());
+    var accountDirectories = _storageIO.subdirectories(_directoryForAllAccounts());
 
     var accountIds = accountDirectories
         .map((d) => _getAccountFromAccountDirectory(d))
@@ -165,7 +128,7 @@ class KinFileStorage implements Storage {
   }
 
   KinAccount _getAccountFromAccountDirectory(String directory) {
-    var bytes = _readFile(directory, fileNameForAccountInfo);
+    var bytes = _storageIO.readFile(directory, fileNameForAccountInfo);
     if (bytes.isEmpty) return null;
 
     try {
@@ -228,7 +191,7 @@ class KinFileStorage implements Storage {
   }
 
   Future<Map<InvoiceListId, InvoiceList>> getInvoiceListsMapForAccountId(KinAccountId account) async {
-    var bytes = _readFile(
+    var bytes = _storageIO.readFile(
         _directoryForInvoices(account),
         _fileNameForInvoices(account)
     );
@@ -267,7 +230,7 @@ class KinFileStorage implements Storage {
   }
 
   KinTransactions _getTransactionsFromFile(String directory, String fileName){
-    var bytes = _readFile(directory, fileName);
+    var bytes = _storageIO.readFile(directory, fileName);
     if (bytes.isEmpty) return null;
 
     try {
@@ -374,7 +337,7 @@ class KinFileStorage implements Storage {
       mergedAccount = account ;
     }
 
-    return _writeToFile(
+    return _storageIO.writeToFile(
         _directoryForAccount(account.id),
         fileNameForAccountInfo,
         mergedAccount.toStorageKinAccount().writeToBuffer());
