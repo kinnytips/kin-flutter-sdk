@@ -11,6 +11,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  qr_flutter: ^4.0.0
+  kin_base:
+    path: ../base
+  kin_base_storage:
+    path: ../base_storage
 
 dev_dependencies:
   flutter_test:
