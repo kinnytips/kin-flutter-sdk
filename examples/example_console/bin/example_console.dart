@@ -12,8 +12,12 @@ void main(List<String> arguments) async {
   var credentialUser = 'credentialUser';
   var credentialPass = 'credentialPass';
 
-  var kin = Kin(production, appIndex, 'Example App', credentialUser,
-      credentialPass, _onBalanceChange, _onPayment, _onResolveAccountContext);
+  var kin = Kin(production, appIndex, 'Example App',
+      onBalanceChange: _onBalanceChange,
+      onPayment: _onPayment,
+      onAccountContext: _onResolveAccountContext,
+      credentialUser: credentialUser,
+      credentialPass: credentialPass);
 
   print(kin);
 
