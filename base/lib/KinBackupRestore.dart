@@ -6,7 +6,7 @@ import 'package:kin_base/base/models/kin_account.dart';
 import 'package:kin_base/base/tools/hex.dart';
 import 'package:kin_base/base/tools/random.dart';
 import 'package:kin_base/stellarfork/key_pair.dart';
-import 'package:tweetnacl/tweetnacl.dart' show SecretBox;
+import 'package:pinenacl/secret.dart';
 
 class KinBackupRestore {
   KinBackupRestore();
@@ -54,8 +54,8 @@ class KinBackupRestore {
 
   Uint8List _encryptSecretSeed(Uint8List hash, Uint8List secretSeedBytes) {
     var nonceBytes = generateRandomBytes(_SECRET_BOX_NONCE_BYTES);
-    var encryptedBytes = SecretBox(hash).box_nonce(secretSeedBytes, nonceBytes);
-    return (nonceBytes + encryptedBytes).toUint8List();
+    var encryptedBytes = SecretBox(hash).encrypt(secretSeedBytes, nonce: nonceBytes);
+    return Uint8List.fromList(encryptedBytes);
   }
 
   Uint8List _decryptSecretSeed(Uint8List seedBytes, Uint8List hash) {
@@ -63,7 +63,7 @@ class KinBackupRestore {
         Uint8List.fromList(seedBytes.sublist(0, _SECRET_BOX_NONCE_BYTES));
     var cipherBytes =
         Uint8List.fromList(seedBytes.sublist(_SECRET_BOX_NONCE_BYTES));
-    var decryptedBytes = SecretBox(hash).open_nonce(cipherBytes, nonceBytes);
+    var decryptedBytes = SecretBox(hash).decrypt(cipherBytes, nonce: nonceBytes);
     return decryptedBytes;
   }
 

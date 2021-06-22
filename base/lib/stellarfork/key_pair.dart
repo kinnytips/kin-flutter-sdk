@@ -1,7 +1,9 @@
 
 import 'package:fixnum/fixnum.dart' as fixNum;
 import 'package:kin_base/base/tools/base58.dart';
-import 'package:tweetnacl/tweetnacl.dart' as ed25519;
+import 'package:kin_base/base/tools/random.dart';
+import 'package:kin_base/base/tools/extensions.dart';
+import 'package:pinenacl/signing.dart';
 import 'dart:typed_data';
 import "util.dart";
 import 'network.dart';
@@ -168,11 +170,17 @@ class KeyPair {
 
   /// Creates a new KeyPair object from a raw 32 byte secret [seed].
   static KeyPair fromSecretSeedBytes(Uint8List seed) {
-    ed25519.KeyPair kp = ed25519.Signature.keyPair_fromSeed(seed);
-
-    var keyPair = new KeyPair(kp.publicKey, kp.secretKey);
+    var kp = _signingKeyFromSeed(seed);
+    var keyPair = new KeyPair(kp.publicKey, Uint8List.fromList(kp));
     _accountsPrivateKeySeed[keyPair.accountId] = Uint8List.fromList(seed);
     return keyPair;
+  }
+
+  static SigningKey _signingKeyFromSeed(Uint8List seed) {
+    if ( seed.length > SigningKey.seedSize ) {
+      seed = seed.sublist(0,SigningKey.seedSize);
+    }
+    return SigningKey.fromSeed(seed);
   }
 
   /// Creates a new KeyPair object from a stellar [accountId].
@@ -202,7 +210,8 @@ class KeyPair {
 
   /// Generates a random Stellar KeyPair object.
   static KeyPair random() {
-    Uint8List secret = ed25519.TweetNaclFast.randombytes(32);
+    var secret = Uint8List(32);
+    SecureRandom().nextBytes(secret);
     return fromSecretSeedBytes(secret);
   }
 
@@ -271,8 +280,10 @@ class KeyPair {
       throw new Exception(
           "KeyPair does not contain secret key. Use KeyPair.fromSecretSeed method to create a new KeyPair with a secret key.");
     }
-    ed25519.Signature sgr = ed25519.Signature(null, _mPrivateKey);
-    return sgr.detached(data);
+
+    var signingKey = _signingKeyFromSeed(_mPrivateKey);
+    var sign = signingKey.sign(data).signature.toUint8List();
+    return sign;
   }
 
   /// Sign the provided [data] with the keypair's private key.
@@ -290,8 +301,9 @@ class KeyPair {
 
   /// Verify the provided [data] and [signature] match this keypair's public key.
   bool verify(Uint8List data, Uint8List signature) {
-    ed25519.Signature sgr = ed25519.Signature(_mPublicKey, null);
-    return sgr.detached_verify(data, signature);
+    var verifyKey = VerifyKey(_mPublicKey);
+    var ok = verifyKey.verify(signature: Signature(signature), message: data);
+    return ok ;
   }
 }
 
