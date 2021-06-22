@@ -22,15 +22,15 @@ import 'base/tools/observers.dart';
 /// Environment must be indicated either eith `true` or with `false` while instantiating the instance.
 /// SDK can also be instantiated by setting an `accountId`
 class Kin {
-
   final bool _production;
   final int _appIndex;
   final String _appName;
   final String _credentialUser;
   final String _credentialPass;
-  final void Function(KinBalance kinBalance) _onBalanceChange;
-  final void Function(List<KinPayment> payments) _onPayment;
-  final void Function(Kin kin) _onAccountContext;
+
+  void Function(KinBalance kinBalance) _onBalanceChange;
+  void Function(List<KinPayment> payments) _onPayment;
+  void Function(Kin kin) _onAccountContext;
 
   final DisposeBag _lifecycle;
 
@@ -41,27 +41,49 @@ class Kin {
   Observer<List<KinPayment>> _observerPayments;
   Observer<KinBalance> _observerBalance;
 
-  final String storageLocation ;
+  final String storageLocation;
 
-  Kin(this._production,
-      this._appIndex,
-      this._appName,
-      this._credentialUser,
-      this._credentialPass,
-      this._onBalanceChange,
-      this._onPayment,
-      this._onAccountContext,
-      {this.storageLocation = "/tmp/kin-flutter"}) : _lifecycle = DisposeBag() {
-
+  Kin(
+    this._production,
+    this._appIndex,
+    this._appName, {
+    this.storageLocation = "/tmp/kin-flutter",
+    void Function(KinBalance kinBalance) onBalanceChange,
+    void Function(List<KinPayment> payments) onPayment,
+    void Function(Kin kin) onAccountContext,
+    String credentialUser,
+    String credentialPass,
+    bool initialize = true
+  })  : _onBalanceChange = onBalanceChange,
+        _onPayment = onPayment,
+        _onAccountContext = onAccountContext,
+        _credentialUser = credentialUser,
+        _credentialPass = credentialPass,
+        _lifecycle = DisposeBag() {
     _setAppInfo();
 
-    //fetch the account and set the context
     this._environment = this._getEnvironment();
 
+    if (initialize) {
+      this.initialize();
+    }
+  }
+
+  bool _initialized = false ;
+
+  bool get isInitialized => _initialized;
+
+  Kin initialize() {
+    if (_initialized) return this ;
+    _initialized = true ;
+
+    // Fetch  accounts and set the context:
     this._environment.allAccountIds().then((ids) {
-      //First get (or create) an account id for this device
+      // First get (or create) an account id for this device
       String accountId =
           ids.isEmpty ? createAccount() : ids[0].stellarBase32Encode();
+
+      assert(this._context == null);
 
       //Then set the context with that single account
       this._context = this.getKinContext(accountId);
@@ -71,19 +93,46 @@ class Kin {
         _onAccountContext(this);
       }
 
-      //handle listeners
-      if (this._onBalanceChange != null) {
-        this._watchBalance(); //watch for changes in balance
-      }
-
-      if (this._onPayment != null) {
-        this._watchPayments(); //watch for changes in payments
-      }
-
       _notifyReady();
-
-      return null;
     });
+
+    return this;
+  }
+
+  Function get onBalanceChange => _onBalanceChange;
+
+  set onBalanceChange(Function value) {
+    if (identical(_onBalanceChange, value)) return;
+
+    _onBalanceChange = value;
+
+    if (isReady && _onBalanceChange != null) {
+      this._watchBalance();
+    }
+  }
+
+  Function get onPayment => _onPayment;
+
+  set onPayment(Function value) {
+    if (identical(_onPayment, value)) return;
+
+    _onPayment = value;
+
+    if (isReady && _onPayment != null) {
+      this._watchPayments();
+    }
+  }
+
+  Function get onAccountContext => _onAccountContext;
+
+  set onAccountContext(Function value) {
+    if (identical(_onAccountContext, value)) return;
+
+    _onAccountContext = value;
+
+    if (_context != null) {
+      _onAccountContext(this);
+    }
   }
 
   final Completer<bool> _waitReady = Completer<bool>();
@@ -91,14 +140,22 @@ class Kin {
   bool get isReady => _waitReady.isCompleted;
 
   void _notifyReady() {
-    if ( _waitReady.isCompleted ) return ;
+    if (_waitReady.isCompleted) return;
     _waitReady.complete(true);
+
+    if (this._onBalanceChange != null) {
+      this._watchBalance();
+    }
+
+    if (this._onPayment != null) {
+      this._watchPayments();
+    }
   }
 
   Future<bool> waitReady() => _waitReady.future;
 
   void _setAppInfo() {
-    var accountId = this?._context?.accountId ?? KinAccountId(Uint8List(32)) ;
+    var accountId = this?._context?.accountId ?? KinAccountId(Uint8List(32));
     _appInfo = AppInfo(AppIdx(_appIndex), accountId, this._appName, 0);
   }
 
@@ -107,7 +164,7 @@ class Kin {
   }
 
   String get addressAsStellarBase32 {
-    return this._context.accountId.stellarBase32Encode() ;
+    return this._context.accountId.stellarBase32Encode();
   }
 
   String get addressAsBase58 {
@@ -115,6 +172,8 @@ class Kin {
   }
 
   void _watchPayments() {
+    if (_observerPayments != null || _onPayment == null) return;
+
     //watch for changes to this account
     _observerPayments = _context.observePayments(mode: ObservationMode.Passive);
 
@@ -128,6 +187,8 @@ class Kin {
   }
 
   void _watchBalance() {
+    if (_observerBalance != null || _onBalanceChange == null) return;
+
     //watch for changes to this account
     _observerBalance = _context.observeBalance(mode: ObservationMode.Passive);
 
@@ -159,10 +220,13 @@ class Kin {
         ? KinStellarMainNetKin3.instance
         : KinStellarTestNetKin3.instance;
 
-    var appInfoProvider = AppInfoProviderSimple(_appInfo, _credentialUser, _credentialPass);
+    var appInfoProvider =
+        AppInfoProviderSimple(_appInfo, _credentialUser, _credentialPass);
 
-    var env = KinEnvironmentAgora.build(networkEnv, appInfoProvider: appInfoProvider,
-    storageBuilder: ({NetworkEnvironment networkEnvironment}) => KinFileStorage(storageLocation, networkEnvironment));
+    var env = KinEnvironmentAgora.build(networkEnv,
+        appInfoProvider: appInfoProvider,
+        storageBuilder: ({NetworkEnvironment networkEnvironment}) =>
+            KinFileStorage(storageLocation, networkEnvironment));
 
     return env;
   }
@@ -171,8 +235,7 @@ class Kin {
   String toString() {
     var accountId = _context?.accountId;
     var stellarBase32 = accountId?.stellarBase32Encode();
-    var base58 = accountId?.base58Encode() ;
+    var base58 = accountId?.base58Encode();
     return 'Kin{_production: $_production, _appIndex: $_appIndex, _appName: $_appName, _credentialUser: $_credentialUser, _appInfo: $_appInfo, storageLocation: $storageLocation, accountId: $stellarBase32 ($base58)}';
   }
-
 }
