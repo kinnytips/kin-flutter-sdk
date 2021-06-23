@@ -5,6 +5,6 @@ class Env {
 }
 
 mixin EnvValue {
-  static final Env testKin3 = Env();
   static final Env testKin4 = Env();
+  static final Env production = Env();
 }
