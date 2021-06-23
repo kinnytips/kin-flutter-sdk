@@ -139,6 +139,8 @@ class Kin {
 
   bool get isReady => _waitReady.isCompleted;
 
+  bool get isNotReady => !isReady;
+
   void _notifyReady() {
     if (_waitReady.isCompleted) return;
     _waitReady.complete(true);

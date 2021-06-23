@@ -13,10 +13,10 @@ import 'package:qr_flutter/qr_flutter.dart';
 class KinBackupQRImage extends QrImage {
   /// Generates KIN backup the JSON data used by the QR code.
   static String generateBackupJson(String passphrase,
-      {KeyPair keyPair, KinAccount account}) {
+      {KeyPair keyPair, KinAccountId accountId, KinAccount account}) {
     var backupRestore = KinBackupRestore();
     var accountBackup = backupRestore.exportWallet(passphrase,
-        keyPair: keyPair, account: account);
+        keyPair: keyPair, accountId: accountId, account: account);
     return accountBackup.toJson();
   }
 
@@ -27,6 +27,7 @@ class KinBackupQRImage extends QrImage {
   /// - Other parameters are the same of [QrImage].
   KinBackupQRImage(String passphrase,
       {KeyPair keyPair,
+      KinAccountId accountId,
       KinAccount account,
       Key key,
       double size,
@@ -47,7 +48,7 @@ class KinBackupQRImage extends QrImage {
       bool embeddedImageEmitsError = false})
       : super(
           data: generateBackupJson(passphrase,
-              keyPair: keyPair, account: account),
+              keyPair: keyPair, accountId: accountId, account: account),
           version: version,
           size: size,
           gapless: gapless,
