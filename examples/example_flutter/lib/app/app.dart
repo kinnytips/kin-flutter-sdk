@@ -1,21 +1,44 @@
 import 'package:flutter/material.dart';
+import 'package:kin_base/base/models/kin_account.dart';
+import 'package:kin_base/kin.dart';
 import 'package:kin_sdk_example_flutter/common/constants/env.dart';
 
 class App extends StatefulWidget {
-  final Env env;
+  final Kin kin;
 
-  App({Key key, @required this.env}) : super(key: key);
+  App({Key key, @required this.kin}) : super(key: key);
 
   @override
-  _AppState createState() => _AppState();
+  _AppState createState() => _AppState(kin);
 }
 
 class _AppState extends State<App> {
+  final Kin kin ;
+
+  _AppState(this.kin);
+
+  KinAccountId get accountId => kin.getKinContext()?.accountId ;
+
+  String get accountIdStellarBase32 => accountId?.stellarBase32Encode() ?? '?' ;
+
   var homeNavigator = GlobalKey<NavigatorState>();
 
   @override
   void initState() {
+    print('--- initState');
+    print(kin);
+
+    kin.waitReady().then((value) {
+      refresh();
+    });
+
+    kin.initialize();
+
     super.initState();
+  }
+
+  void refresh() {
+    setState(() {});
   }
 
   @override
@@ -27,31 +50,26 @@ class _AppState extends State<App> {
         ),
         body: ListView(
           children: <Widget>[
-            
             ListTile(
-              title: Text('GDV4TKOCDBHB3XGCKAXWYETQRIN4RTJKSD6FQV43E2AUHORR56B4YDC4'),
+              title: Text( kin.isReady ? 'Loading...' : 'Account: $accountIdStellarBase32' ),
               onTap: (() => 1),
             ),
             ListTile(
-              title: Text('GAJYDRZZD6ST37NQ3NA562RFY2RAZACNZJOKETV3F2A6N6IITSBIEGQF'),
-              onTap: (() => 1),
-            ),
-            ListTile(
-              title: Text('GAWQUKB2KMSCCUSJ7IQHI6FDUAEOXVW2HRHD7VEVDN2HDCBJBGRVLZZJ'),
-              onTap: (() => 1),
-            ),
-            ListTile(
-              title: Text('Create New Wallet', style: TextStyle(
+              title: Text('Backup Wallet', style: TextStyle(
                 color: Colors.purple,
                 fontWeight: FontWeight.bold,
                 fontSize: 20),
                 textAlign: TextAlign.center,
               ),
-              onTap: (() => 1),
+              onTap: (backupWallet),
             )
           ],
         ),
       ),
     );
+  }
+
+  void backupWallet() {
+
   }
 }
