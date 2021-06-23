@@ -28,6 +28,12 @@ dependencies:
   json_annotation: ^4.0.1
   connectivity: ^3.0.6
   equatable: ^2.0.0
+  permission_handler: ^5.1.0+2
+  path_provider: ^1.6.28
+  prompt_dialog: ^0.1.4
+  alert_dialog: ^0.2.0
+  backup_restore:
+    path: ../../backup_restore
 
 dev_dependencies:
   flutter_test:

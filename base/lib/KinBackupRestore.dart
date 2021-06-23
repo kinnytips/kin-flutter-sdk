@@ -68,7 +68,8 @@ class KinBackupRestore {
   }
 
   AccountBackup exportWallet(String passphrase,
-      {KeyPair keyPair, KinAccount account, Uint8List saltBytes}) {
+      {KeyPair keyPair, KinAccountId accountId, KinAccount account, Uint8List saltBytes}) {
+    keyPair ??= accountId.toKeyPair();
     keyPair ??= account.id.toKeyPair();
     saltBytes ??= generateRandomBytes(SALT_LENGTH_BYTES);
 
