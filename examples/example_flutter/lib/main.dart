@@ -17,5 +17,7 @@ void main() async {
 
   var kin = Kin(true, 0, 'KIN Demo App - Flutter', storageLocation: '$storePath/kin-demo-app', initialize: false);
 
-  runApp(App(kin: kin));
+  var app = App(kin: kin);
+
+  runApp(app);
 }

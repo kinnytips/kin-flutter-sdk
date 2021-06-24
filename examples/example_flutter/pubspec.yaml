@@ -32,6 +32,7 @@ dependencies:
   path_provider: ^1.6.28
   prompt_dialog: ^0.1.4
   alert_dialog: ^0.2.0
+  gallery_saver: ^2.0.3
   backup_restore:
     path: ../../backup_restore
 

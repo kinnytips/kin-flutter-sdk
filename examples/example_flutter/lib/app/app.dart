@@ -1,9 +1,13 @@
+import 'dart:ui';
+
 import 'package:alert_dialog/alert_dialog.dart';
 import 'package:backup_restore/backup_restore.dart';
 import 'package:flutter/material.dart';
-import 'package:kin_base/KinBackupRestore.dart';
+import 'package:gallery_saver/gallery_saver.dart';
 import 'package:kin_base/base/models/kin_account.dart';
+import 'package:kin_base/base/storage/file_storage.dart';
 import 'package:kin_base/kin.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:prompt_dialog/prompt_dialog.dart';
 
@@ -54,10 +58,10 @@ class _AppState extends State<App> {
   Widget build(BuildContext context) {
     print('-- Build: $context');
 
-    var account =
+    var accountText =
         kin.isNotReady ? 'Loading...' : 'Account:\n$accountIdStellarBase32';
 
-    print('-- account: $account');
+    print('-- account: $accountText');
 
     return MaterialApp(
       home: Scaffold(
@@ -68,12 +72,12 @@ class _AppState extends State<App> {
           children: <Widget>[
             ListTile(
               title: Text(
-                account,
+                accountText,
                 textAlign: TextAlign.center,
               ),
               onTap: (() => 1),
             ),
-            BackupButton(kin),
+            if (kin.isReady) BackupButton(kin),
           ],
         ),
       ),
@@ -92,20 +96,20 @@ class _AppState extends State<App> {
 }
 
 class BackupButton extends StatelessWidget {
-  final Kin kin ;
+  final Kin kin;
 
   BackupButton(this.kin);
 
   @override
   Widget build(BuildContext context) => ListTile(
-      title: Text(
-        'Backup Wallet',
-        style: TextStyle(
-            color: Colors.purple, fontWeight: FontWeight.bold, fontSize: 20),
-        textAlign: TextAlign.center,
-      ),
-      onTap: () async => backupWallet(context),
-    );
+        title: Text(
+          'Backup Wallet',
+          style: TextStyle(
+              color: Colors.purple, fontWeight: FontWeight.bold, fontSize: 20),
+          textAlign: TextAlign.center,
+        ),
+        onTap: () async => backupWallet(context),
+      );
 
   void backupWallet(BuildContext context) async {
     String passphrase = await _promptPassword(context);
@@ -113,19 +117,23 @@ class BackupButton extends StatelessWidget {
     show(context, passphrase);
   }
 
+  KinBackupQRImage qrImage;
+
   void show(BuildContext context, String passphrase) {
-    var accountId = kin.getKinContext().accountId ;
+    var accountId = kin.getKinContext().accountId;
 
-
+    qrImage = KinBackupQRImage(passphrase, accountId: accountId);
 
     alert(
       context,
       title: Text('KIN Backup - QR Code'),
-      content:
-      Container(
-        width: 320,
-        height: 320,
-        child: KinBackupQRImage(passphrase, accountId: accountId),
+      content: GestureDetector(
+        child: Container(
+          width: 320,
+          height: 320,
+          child: qrImage,
+        ),
+        onTap: () async => _saveImage(context),
       ),
       textOK: Text('OK [I have saved this image]'),
     );
@@ -147,5 +155,42 @@ class BackupButton extends StatelessWidget {
       textCapitalization: TextCapitalization.none,
     );
     return pass;
+  }
+
+  void _saveImage(BuildContext context) async {
+    var pngData =
+        await qrImage.generateImageData(imageFormat: ImageByteFormat.png);
+
+    var account = kin.getKinContext().accountId.stellarBase32Encode();
+
+    var documentsDirectory = await getApplicationDocumentsDirectory();
+
+    var dirPath = documentsDirectory.path;
+    var fileName = 'kin-backup-$account.png';
+    var fullPath = '$dirPath/$fileName';
+
+    print('-- Saving PNG file: $fullPath > ${pngData.length} bytes...');
+    var saved = FileStorage.create().writeToFile(dirPath, fileName, pngData);
+    print('-- Saved: $saved > $fullPath');
+
+    print('-- Saving to gallery...');
+    var savedToGallery = await GallerySaver.saveImage(fullPath);
+    print('-- Saved to gallery: $savedToGallery');
+
+    if (saved && savedToGallery) {
+      alert(
+        context,
+        title: Text('KIN Backup - QR Code'),
+        content: Text('Image saved: $fileName'),
+        textOK: Text('OK'),
+      );
+    } else {
+      alert(
+        context,
+        title: Text('KIN Backup - QR Code'),
+        content: Text('Error saving image: $fileName'),
+        textOK: Text('OK'),
+      );
+    }
   }
 }
