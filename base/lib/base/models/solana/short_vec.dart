@@ -1,4 +1,3 @@
-import 'dart:ffi';
 import 'dart:typed_data';
 
 import 'package:fixnum/fixnum.dart';
@@ -23,6 +22,8 @@ class ShortVec {
 
   static List<T> decodeShortVecOf<T>(ByteInputBuffer input, int sizeOfElement,
       [T Function(Uint8List) newInstance]) {
+    newInstance ??= (e) => null ;
+
     final vecLength = decodeLen(input);
     final elements = <T>[];
 

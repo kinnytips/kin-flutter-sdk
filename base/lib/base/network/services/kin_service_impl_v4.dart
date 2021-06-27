@@ -19,6 +19,7 @@ import 'package:kin_base/base/stellar/models/network_environment.dart';
 import 'package:kin_base/base/stellar/models/paging_token.dart';
 import 'package:kin_base/base/tools/byte_utils.dart';
 import 'package:kin_base/base/tools/cache.dart';
+import 'package:kin_base/base/tools/extensions.dart';
 import 'package:kin_base/base/tools/kin_logger.dart';
 import 'package:kin_base/base/tools/network_operations_handler.dart';
 import 'package:kin_base/base/tools/observers.dart';
@@ -79,8 +80,31 @@ class KinServiceImplV4 extends KinService {
   }
 
   @override
-  Future<KinAccount> getAccount(KinAccountId accountId) {
-    throw UnimplementedError('!!!getAccount');
+  Future<KinAccount> getAccount(KinAccountId accountId) async {
+    return networkOperationsHandler.queueWork('KinServiceImplV4.getAccount', () async {
+      var response = await accountApi.getAccount(accountId);
+
+      switch(response.type) {
+        case KinServiceResponseType.ok:
+          {
+            if (response.payload == null) throw IllegalResponseError();
+            return response.payload;
+          }
+        case KinServiceResponseType.notFound: {
+          throw ItemNotFoundError();
+        }
+        case KinServiceResponseType.undefinedError: {
+          throw UnexpectedServiceError(response.error);
+        }
+        case KinServiceResponseType.transientFailure: {
+          throw TransientFailure(response.error);
+        }
+        case KinServiceResponseType.upgradeRequiredError: {
+          throw SDKUpgradeRequired(response.error);
+        }
+        default: throw StateError("Can't handle response type: ${response.type}");
+      }
+    });
   }
 
   @override
@@ -112,21 +136,77 @@ class KinServiceImplV4 extends KinService {
 
   @override
   Future<KinTransaction> buildAndSignTransaction(PrivateKey ownerKey, PublicKey sourceKey, int nonce, List<KinPaymentItem> paymentItems, KinMemo memo, QuarkAmount fee) {
-    // TODO: implement buildAndSignTransaction
-    throw UnimplementedError();
+    log.log("buildAndSignTransaction: ownerKey: $ownerKey ; sourceKey: $sourceKey ; nonce: $nonce ; paymentItems: $paymentItems ; memo: $memo ; fee:$fee");
+
+    return networkOperationsHandler.queueWork('buildAndSignTransaction', () async {
+      ServiceConfig serviceConfig ;
+      Hash recentBlockHash ;
+      try {
+        var ret = await Future.wait([
+          _cachedServiceConfig(),
+          _cachedRecentBlockHash(),
+        ]);
+
+        serviceConfig = ret[0].payload as ServiceConfig;
+        recentBlockHash = ret[1].payload as Hash;
+      }
+      catch(e) {
+        StateError("Pre-requisite response failed! $e");
+      }
+
+      var ownerAccount = ownerKey.asPublicKey();
+      PublicKey subsidizer = serviceConfig.subsidizerAccount.toKeyPair().asPublicKey() ;
+      var programKey = serviceConfig.tokenProgram.toKeyPair().asPublicKey();
+
+      var paymentInstructions = paymentItems.map((paymentItem) {
+        var destinationAccount = paymentItem.destinationAccount.toKeyPair().asPublicKey();
+
+        return TokenProgramTransfer(
+            sourceKey,
+            destinationAccount,
+            ownerAccount,
+            paymentItem.amount,
+            programKey = programKey
+        ).instruction ;
+      });
+
+      var memoInstruction = memo != KinMemo.none
+          ? (memo.type is KinMemoTypeNoEncoding
+              ? MemoProgramBase64EncodedMemo.fromBytes(memo.rawValue)
+                  .instruction
+              : MemoProgramRawMemo(memo.rawValue).instruction)
+          : null;
+
+      var tx = Transaction.newTransaction(
+        subsidizer,
+        [memoInstruction, ...(paymentInstructions.toList())].whereNotNull(),
+      ).copyAndSetRecentBlockhash(recentBlockHash).copyAndSign([ownerKey]);
+
+      var kinTransaction = SolanaKinTransaction(
+          tx.marshal(), null,
+          networkEnvironment,
+          paymentItems.toInvoiceList()
+      );
+
+
+      log.log('serviceConfig: $serviceConfig');
+      log.log('recentBlockHash: $recentBlockHash');
+      log.log('ownerAccount: $ownerAccount');
+      log.log('sourceOfFundsAccount: $sourceKey');
+      log.log('transactionHexString: ${kinTransaction.bytesValue.toHexString()}');
+
+      return kinTransaction ;
+    });
   }
 
   @override
-  Future<KinTransaction> buildSignAndSubmitTransaction(Future<KinTransaction> buildAndSignTransaction) {
-    // TODO: implement buildSignAndSubmitTransaction
-    throw UnimplementedError();
+  Future<KinTransaction> buildSignAndSubmitTransaction(Future<KinTransaction> Function() buildAndSignTransaction) async {
+    var ret = await buildAndSignTransaction();
+    return submitTransaction(ret);
   }
 
   @override
-  Future<bool> canWhitelistTransactions() {
-    // TODO: implement canWhitelistTransactions
-    throw UnimplementedError();
-  }
+  FutureOr<bool> canWhitelistTransactions() => true ;
 
   @override
   Future<KinAccount> createAccount(KinAccountId accountId, PrivateKey signer) {

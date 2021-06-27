@@ -25,7 +25,7 @@ extension KinTransactionExtension on KinTransaction {
           this.fee,
           this.memo,
           this.recordType.timestamp,
-          invoice: this?.invoiceList?.invoices[i]
+          invoice: this?.invoiceList?.invoices?.elementAt(i)
       );
     });
   }

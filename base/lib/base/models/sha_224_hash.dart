@@ -14,4 +14,21 @@ class SHA224Hash {
       SHA224Hash.fromBytes(bytes.toSha224());
 
   factory SHA224Hash.just(Uint8List bytes) => SHA224Hash.fromBytes(bytes);
+
+  Uint8List decode() => Base64Codec().decode(encodedValue);
+  
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is SHA224Hash &&
+          runtimeType == other.runtimeType &&
+          encodedValue == other.encodedValue;
+
+  @override
+  int get hashCode => encodedValue.hashCode;
+
+  @override
+  String toString() {
+    return 'SHA224Hash{$encodedValue}';
+  }
 }

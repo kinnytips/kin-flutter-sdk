@@ -1,5 +1,7 @@
 
 
+import 'dart:async';
+
 import 'package:kin_base/base/models/key.dart';
 import 'package:kin_base/base/models/kin_account.dart';
 import 'package:kin_base/base/models/kin_memo.dart';
@@ -48,16 +50,13 @@ class KinServiceImpl extends KinService {
   }
 
   @override
-  Future<KinTransaction> buildSignAndSubmitTransaction(Future<KinTransaction> buildAndSignTransaction) {
-    // TODO: implement buildSignAndSubmitTransaction
-    throw UnimplementedError();
+  Future<KinTransaction> buildSignAndSubmitTransaction(Future<KinTransaction> Function() buildAndSignTransaction) async {
+    var ret = await buildAndSignTransaction();
+    return submitTransaction(ret);
   }
 
   @override
-  Future<bool> canWhitelistTransactions() {
-    // TODO: implement canWhitelistTransactions
-    throw UnimplementedError();
-  }
+  FutureOr<bool> canWhitelistTransactions() => transactionWhitelistingApi.isWhitelistingAvailable;
 
   @override
   Future<KinAccount> createAccount(KinAccountId accountId, PrivateKey signer) {

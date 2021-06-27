@@ -20,34 +20,34 @@ enum ResultCode {
 }
 
 ResultCode parseResultCode(Uint8List resultXdrBytes) {
-  var transactionResult =
-      XdrTransactionResult.decode(XdrDataInputStream(resultXdrBytes));
+  var transactionResultCode =
+      XdrTransactionResult.decode(XdrDataInputStream(resultXdrBytes)).result.discriminant;
 
-  if (transactionResult == XdrTransactionResultCode.txSUCCESS) {
+  if (transactionResultCode == XdrTransactionResultCode.txSUCCESS) {
     return ResultCode.success;
-  } else if (transactionResult == XdrTransactionResultCode.txFAILED) {
+  } else if (transactionResultCode == XdrTransactionResultCode.txFAILED) {
     return ResultCode.failed;
-  } else if (transactionResult == XdrTransactionResultCode.txTOO_EARLY) {
+  } else if (transactionResultCode == XdrTransactionResultCode.txTOO_EARLY) {
     return ResultCode.tooEarly;
-  } else if (transactionResult == XdrTransactionResultCode.txTOO_LATE) {
+  } else if (transactionResultCode == XdrTransactionResultCode.txTOO_LATE) {
     return ResultCode.tooLate;
-  } else if (transactionResult ==
+  } else if (transactionResultCode ==
       XdrTransactionResultCode.txMISSING_OPERATION) {
     return ResultCode.missingOperation;
-  } else if (transactionResult == XdrTransactionResultCode.txBAD_SEQ) {
+  } else if (transactionResultCode == XdrTransactionResultCode.txBAD_SEQ) {
     return ResultCode.badSequenceNumber;
-  } else if (transactionResult == XdrTransactionResultCode.txBAD_AUTH) {
+  } else if (transactionResultCode == XdrTransactionResultCode.txBAD_AUTH) {
     return ResultCode.badAuth;
-  } else if (transactionResult ==
+  } else if (transactionResultCode ==
       XdrTransactionResultCode.txINSUFFICIENT_BALANCE) {
     return ResultCode.insufficientBalance;
-  } else if (transactionResult == XdrTransactionResultCode.txNO_ACCOUNT) {
+  } else if (transactionResultCode == XdrTransactionResultCode.txNO_ACCOUNT) {
     return ResultCode.noAccount;
-  } else if (transactionResult == XdrTransactionResultCode.txINSUFFICIENT_FEE) {
+  } else if (transactionResultCode == XdrTransactionResultCode.txINSUFFICIENT_FEE) {
     return ResultCode.insufficientFee;
-  } else if (transactionResult == XdrTransactionResultCode.txBAD_AUTH_EXTRA) {
+  } else if (transactionResultCode == XdrTransactionResultCode.txBAD_AUTH_EXTRA) {
     return ResultCode.badAuthExtra;
-  } else if (transactionResult == XdrTransactionResultCode.txINTERNAL_ERROR) {
+  } else if (transactionResultCode == XdrTransactionResultCode.txINTERNAL_ERROR) {
     return ResultCode.internalError;
   } else {
     return ResultCode.internalError;

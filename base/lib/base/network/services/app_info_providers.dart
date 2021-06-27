@@ -14,7 +14,7 @@ class AppInfoProviderSimple implements AppInfoProvider {
   final String credentialsUser ;
   final String credentialsPass ;
 
-  AppInfoProviderSimple(this.appInfo, this.credentialsUser, this.credentialsPass);
+  AppInfoProviderSimple(this.appInfo, this.credentialsUser, [this.credentialsPass]);
 
   @override
   AppUserCreds getPassthroughAppUserCredentials() {

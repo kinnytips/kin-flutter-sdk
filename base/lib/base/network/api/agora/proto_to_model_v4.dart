@@ -74,7 +74,12 @@ extension ModelInvoiceLineItemExtension on model_v3.Invoice_LineItem {
 extension ModelTransactionErrorExtension on model_v4.TransactionError {
 
   XdrTransactionResultCode toXdrTransactionResultCode() {
-    switch(this.reason) {
+    if (!this.hasReason()) {
+      return null ;
+    }
+
+    var reason = this.reason;
+    switch(reason) {
       case model_v4.TransactionError_Reason.NONE: {
         return XdrTransactionResultCode.txSUCCESS ;
       }
@@ -93,6 +98,7 @@ extension ModelTransactionErrorExtension on model_v4.TransactionError {
       case model_v4.TransactionError_Reason.UNKNOWN: {
         return XdrTransactionResultCode.txFAILED ;
       }
+      default : throw StateError('Unknown reason: $reason');
       /* UNRECOGNIZED non-existent
       case model_v4.TransactionError_Reason.UNRECOGNIZED: {
         return XdrTransactionResultCode.txINTERNAL_ERROR ;
@@ -101,7 +107,7 @@ extension ModelTransactionErrorExtension on model_v4.TransactionError {
     }
   }
 
-  Uint8List toResultXdr() => toXdrTransactionResultCode().toResultXdr();
+  Uint8List toResultXdr() => toXdrTransactionResultCode()?.toResultXdr();
 
 }
 
@@ -111,7 +117,8 @@ extension XdrTransactionResultCodeExtension on XdrTransactionResultCode {
     var transactionResult = XdrTransactionResult() ;
 
     transactionResult.result = XdrTransactionResultResult()
-    ..discriminant = XdrTransactionResultCode.decode( XdrDataInputStream(this.toResultXdr()) )
+    //..discriminant = XdrTransactionResultCode.decode( XdrDataInputStream(this.toResultXdr()) )
+      ..discriminant = this ;
     ;
 
     transactionResult.feeCharged = XdrInt64()..int64 = 0 ;
@@ -137,8 +144,15 @@ extension HistoryItemExtension on HistoryItem {
         this.hasInvoiceList() ? this.invoiceList.toInvoiceList() : null,
       );
     } else {
-      //TODO:
-      throw UnsupportedError('No StellarKinTransaction implementation yet');
+      return StellarKinTransaction(
+        Uint8List.fromList(stellarTransaction.envelopeXdr),
+        RecordTypeHistorical(
+            DateTime.now().millisecondsSinceEpoch,
+            transactionError.toResultXdr(),
+            PagingToken(base64.encode(cursor.value))),
+        networkEnvironment,
+        this.hasInvoiceList() ? this.invoiceList.toInvoiceList() : null,
+      );
     }
   }
 
@@ -154,8 +168,15 @@ extension HistoryItemExtension on HistoryItem {
         this.hasInvoiceList() ? this.invoiceList.toInvoiceList() : null,
       );
     } else {
-      //TODO:
-      throw UnsupportedError('No StellarKinTransaction implementation yet');
+      return StellarKinTransaction(
+        Uint8List.fromList(stellarTransaction.envelopeXdr),
+        RecordTypeAcknowledged(
+            DateTime.now().millisecondsSinceEpoch,
+            transactionError.toResultXdr(),
+        ),
+        networkEnvironment,
+        this.hasInvoiceList() ? this.invoiceList.toInvoiceList() : null,
+      );
     }
   }
 }

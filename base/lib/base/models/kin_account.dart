@@ -98,4 +98,8 @@ class KinAccount {
     return KinAccount(key, id: id, tokenAccounts: newer.tokenAccounts, balance: newer.balance, status: newer.status);
   }
 
+  @override
+  String toString() {
+    return 'KinAccount{key: $key, id: $id, tokenAccounts: $tokenAccounts, balance: $balance, status: $status}';
+  }
 }

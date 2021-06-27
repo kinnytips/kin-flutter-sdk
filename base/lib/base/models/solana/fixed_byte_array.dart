@@ -13,7 +13,7 @@ abstract class FixedByteArray {
 
   bool check() {
     if (byteArray.length == size()) return true;
-    throw Exception('Illegal Argument Exception');
+    throw Exception('Illegal Argument Exception: byteArray:${ byteArray.length } != size:${ size() }');
   }
 
   operator [](int i) => byteArray[i];

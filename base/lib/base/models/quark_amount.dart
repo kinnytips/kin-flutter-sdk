@@ -6,6 +6,21 @@ class QuarkAmount {
   final int value;
 
   QuarkAmount(this.value);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is QuarkAmount &&
+          runtimeType == other.runtimeType &&
+          value == other.value;
+
+  @override
+  int get hashCode => value.hashCode;
+
+  @override
+  String toString() {
+    return 'QuarkAmount{value: $value}';
+  }
 }
 
 const QUARK_CONVERSION_RATE = 100000;

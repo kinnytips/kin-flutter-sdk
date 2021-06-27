@@ -1,6 +1,9 @@
 
 import 'package:fixnum/fixnum.dart' as fixNum;
-import 'package:tweetnacl/tweetnacl.dart' as ed25519;
+import 'package:kin_base/base/tools/base58.dart';
+import 'package:kin_base/base/tools/random.dart';
+import 'package:kin_base/base/tools/extensions.dart';
+import 'package:pinenacl/signing.dart';
 import 'dart:typed_data';
 import "util.dart";
 import 'network.dart';
@@ -134,7 +137,17 @@ class StrKey {
 class KeyPair {
   Uint8List _mPublicKey;
   Uint8List _mPrivateKey;
-  static Uint8List _mPrivateKeySeed;
+
+  static final Map<String,Uint8List> _accountsPrivateKeySeed = <String,Uint8List>{} ;
+
+  static void clearAccountsPrivateKeySeed({String accountId}) {
+    if (accountId != null) {
+      _accountsPrivateKeySeed.remove(accountId);
+    }
+    else {
+      _accountsPrivateKeySeed.clear();
+    }
+  }
 
   /// Creates a new KeyPair from the given [publicKey] and [privateKey].
   KeyPair(Uint8List publicKey, Uint8List privateKey) {
@@ -157,9 +170,17 @@ class KeyPair {
 
   /// Creates a new KeyPair object from a raw 32 byte secret [seed].
   static KeyPair fromSecretSeedBytes(Uint8List seed) {
-    _mPrivateKeySeed = seed;
-    ed25519.KeyPair kp = ed25519.Signature.keyPair_fromSeed(seed);
-    return new KeyPair(kp.publicKey, kp.secretKey);
+    var kp = _signingKeyFromSeed(seed);
+    var keyPair = new KeyPair(kp.publicKey, Uint8List.fromList(kp));
+    _accountsPrivateKeySeed[keyPair.accountId] = Uint8List.fromList(seed);
+    return keyPair;
+  }
+
+  static SigningKey _signingKeyFromSeed(Uint8List seed) {
+    if ( seed.length > SigningKey.seedSize ) {
+      seed = seed.sublist(0,SigningKey.seedSize);
+    }
+    return SigningKey.fromSeed(seed);
   }
 
   /// Creates a new KeyPair object from a stellar [accountId].
@@ -170,7 +191,15 @@ class KeyPair {
       XdrMuxedAccountMed25519.decode(XdrDataInputStream(bytes));
       return fromPublicKey(muxMed25519.ed25519.uint256);
     }
-    Uint8List decoded = StrKey.decodeStellarAccountId(accountId);
+
+    Uint8List decoded ;
+    if ( accountId.length >= 56 ) {
+      decoded = StrKey.decodeStellarAccountId(accountId);
+    }
+    else {
+      decoded = Base58().decode(accountId);
+    }
+
     return fromPublicKey(decoded);
   }
 
@@ -181,7 +210,8 @@ class KeyPair {
 
   /// Generates a random Stellar KeyPair object.
   static KeyPair random() {
-    Uint8List secret = ed25519.TweetNaclFast.randombytes(32);
+    var secret = Uint8List(32);
+    SecureRandom().nextBytes(secret);
     return fromSecretSeedBytes(secret);
   }
 
@@ -190,6 +220,8 @@ class KeyPair {
 
   ///Returns the human readable secret seed of this key pair.
   String get secretSeed => StrKey.encodeStellarSecretSeed(_mPrivateKeySeed);
+
+  Uint8List get _mPrivateKeySeed => _accountsPrivateKeySeed[ accountId ];
 
   Uint8List get rawSecretSeed => _mPrivateKeySeed;
 
@@ -248,8 +280,10 @@ class KeyPair {
       throw new Exception(
           "KeyPair does not contain secret key. Use KeyPair.fromSecretSeed method to create a new KeyPair with a secret key.");
     }
-    ed25519.Signature sgr = ed25519.Signature(null, _mPrivateKey);
-    return sgr.detached(data);
+
+    var signingKey = _signingKeyFromSeed(_mPrivateKey);
+    var sign = signingKey.sign(data).signature.toUint8List();
+    return sign;
   }
 
   /// Sign the provided [data] with the keypair's private key.
@@ -267,8 +301,9 @@ class KeyPair {
 
   /// Verify the provided [data] and [signature] match this keypair's public key.
   bool verify(Uint8List data, Uint8List signature) {
-    ed25519.Signature sgr = ed25519.Signature(_mPublicKey, null);
-    return sgr.detached_verify(data, signature);
+    var verifyKey = VerifyKey(_mPublicKey);
+    var ok = verifyKey.verify(signature: Signature(signature), message: data);
+    return ok ;
   }
 }
 

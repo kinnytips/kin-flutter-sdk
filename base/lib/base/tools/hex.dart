@@ -60,22 +60,26 @@ class HexDecoder extends Converter<String, Uint8List> {
   Uint8List convert(String hex) {
     var str = hex.replaceAll(_regexpBlankSpace, '');
     str = str.toLowerCase();
-    if (str.length % 2 != 0) {
+
+    var strLength = str.length;
+    if (strLength % 2 != 0) {
       str = '0$str';
     }
 
-    var size = str.length ~/ 2;
-    var result = Uint8List(size);
+    var result = Uint8List(strLength ~/ 2);
+    var resultSize = 0 ;
 
-    for (int i = 1; i < size; i += 2) {
+    for (var i = 1; i < strLength; i += 2) {
       var h0 = str[i - 1];
       var h1 = str[i];
+
       var firstDigit = _ALPHABET.indexOf(h0);
       var secondDigit = _ALPHABET.indexOf(h1);
       if (firstDigit == -1 || secondDigit == -1) {
         throw new FormatException("Non-hex character detected in $hex");
       }
-      result[i] = (firstDigit << 4) + secondDigit;
+
+      result[resultSize++] = (firstDigit << 4) + secondDigit;
     }
 
     return result;

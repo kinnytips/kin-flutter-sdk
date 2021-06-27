@@ -29,12 +29,43 @@ class KinPaymentId {
     }
     return _value;
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is KinPaymentId &&
+          runtimeType == other.runtimeType &&
+          transactionHash == other.transactionHash &&
+          offset == other.offset;
+
+  @override
+  int get hashCode => transactionHash.hashCode ^ offset.hashCode;
+
+  @override
+  String toString() {
+    return 'KinPaymentId{transactionHash: $transactionHash, offset: $offset}';
+  }
 }
 
 class KinPaymentStatus {
   final int value;
 
   KinPaymentStatus(this.value);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is KinPaymentStatus &&
+          runtimeType == other.runtimeType &&
+          value == other.value;
+
+  @override
+  int get hashCode => value.hashCode;
+
+  @override
+  String toString() {
+    return '$runtimeType{value: $value}';
+  }
 }
 
 class KinPaymentStatusInFlight extends KinPaymentStatus {
@@ -94,4 +125,9 @@ class KinPayment {
       this.memo,
       this.timestamp,
       {this.invoice});
+
+  @override
+  String toString() {
+    return 'KinPayment{id: $id, status: $status, sourceAccountId: $sourceAccountId, destinationAccountId: $destinationAccountId, amount: $amount, fee: $fee, memo: $memo, timestamp: $timestamp, invoice: $invoice}';
+  }
 }

@@ -69,12 +69,12 @@ class Message {
     );
 
     // Accounts
-    final accounts = ShortVec.decodeShortVecOf<PublicKey>(input, 32);
+    final accounts = ShortVec.decodeShortVecOf<PublicKey>(input, 32, (bs) => PublicKey.fromBytes(bs));
 
     // Recent Block Hash
     final recentBlockHash =
       wrapError("failed to read block hash", () {
-        input.readBytes(Hash.SIZE_OF).toModel<Hash>((bytes) => Hash(FixedByteArray32(bytes)));
+        return input.readBytes(Hash.SIZE_OF).toModel<Hash>((bytes) => Hash(FixedByteArray32(bytes)));
       });
 
     // Instructions
