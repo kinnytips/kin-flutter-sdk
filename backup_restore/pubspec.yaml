@@ -14,9 +14,13 @@ dependencies:
     sdk: flutter
   qr_flutter: ^4.0.0
   kin_base:
-    path: ../base
+    git:
+      url: https://kinny-ci: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@github.com/kinnytips/kin-flutter-sdk.git
+      path: base
   kin_base_storage:
-    path: ../base_storage
+    git:
+      url: https://kinny-ci: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@github.com/kinnytips/kin-flutter-sdk.git
+      path: base_storage
 
 dev_dependencies:
   flutter_test:
