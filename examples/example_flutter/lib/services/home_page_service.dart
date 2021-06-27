@@ -21,13 +21,6 @@ class HomeService {
     if (response == null) {
       return DataResponse.connectivityError();
     }
-
-    if (response['amount'] != null) {
-      final HomePageInfo _homePageInfo = HomePageInfo.fromJson(response);
-      return DataResponse.success(_homePageInfo);
-    } else {
-      return DataResponse.error("Error");
-    }
   }
 
   Future<Observer<KinBalance>> _fetchHomePageInfo() async {

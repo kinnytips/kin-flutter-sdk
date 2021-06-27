@@ -2,27 +2,54 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:kin_base/base/models/kin_account.dart';
+import 'package:kin_base/kin.dart';
 import 'package:kin_sdk_example_flutter/common/bloc/home/home_bloc.dart';
 import 'package:kin_sdk_example_flutter/common/bloc/home/home_state.dart';
 import 'package:kin_sdk_example_flutter/common/routes/routes.dart';
 import 'package:kin_sdk_example_flutter/models/home_page_info.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class HomeWidget extends StatefulWidget {
   var homeNavigator = GlobalKey<NavigatorState>();
+    final Kin kin;
 
-  HomeWidget({Key key}) : super(key: key);
+  HomeWidget({Key key, this.kin}) : super(key: key);
 
   @override
-  _HomeWidgetState createState() => _HomeWidgetState();
+  _HomeWidgetState createState() => _HomeWidgetState(kin);
 }
 
 class _HomeWidgetState extends State<HomeWidget> {
-  Completer<void> _refreshCompleter;
+  final Kin kin;
+
+  KinAccountId accountId;
+
+  _HomeWidgetState(this.kin);
+
+  String get accountIdStellarBase32 => accountId?.stellarBase32Encode() ?? '?';
 
   @override
   void initState() {
+    print('--- initState');
+    print(kin);
+
+    ensurePermissions().then((ok) {
+      print('-- Permissions: $ok');
+
+      kin.waitReady().then((ready) {
+        print('-- KIN Ready: $ready ; $kin');
+
+        setState(() {
+          accountId = kin.getKinContext().accountId;
+        });
+      });
+
+      print('-- KIN initialize');
+      kin.initialize();
+    });
+
     super.initState();
-    _refreshCompleter = Completer<void>();
   }
 
   @override
@@ -45,14 +72,22 @@ class _HomeWidgetState extends State<HomeWidget> {
           return _getLoadedHomePage(state.info);
         }
         if (state is HomeLoadedState) {
-          _refreshCompleter?.complete();
-          _refreshCompleter = Completer();
           return _getLoadedHomePage(state.info);
         }
         return Container(
         );
       },
     );
+  }
+
+  Future<bool> ensurePermissions() async {
+    var status = await Permission.storage.status;
+
+    if (!status.isGranted) {
+      status = await Permission.storage.request();
+    }
+
+    return status.isGranted;
   }
 
   Widget _getLoadedHomePage(HomePageInfo info) {
@@ -94,6 +129,9 @@ class _HomeWidgetState extends State<HomeWidget> {
   }
 
   MaterialPageRoute _getDefaultHomePage(HomePageInfo info) {
+    var accountText =
+        kin.isNotReady ? 'Loading...' : 'Account:\n$accountIdStellarBase32';
+
     return MaterialPageRoute(
       builder: (context) => Scaffold(
         appBar: AppBar(
@@ -103,15 +141,10 @@ class _HomeWidgetState extends State<HomeWidget> {
           children: <Widget>[
             
             ListTile(
-              title: Text('GDV4TKOCDBHB3XGCKAXWYETQRIN4RTJKSD6FQV43E2AUHORR56B4YDC4'),
-              onTap: (() => 1),
-            ),
-            ListTile(
-              title: Text('GAJYDRZZD6ST37NQ3NA562RFY2RAZACNZJOKETV3F2A6N6IITSBIEGQF'),
-              onTap: (() => 1),
-            ),
-            ListTile(
-              title: Text('GAWQUKB2KMSCCUSJ7IQHI6FDUAEOXVW2HRHD7VEVDN2HDCBJBGRVLZZJ'),
+              title: Text(
+                accountText,
+                textAlign: TextAlign.center,
+                ),
               onTap: (() => 1),
             ),
             ListTile(
