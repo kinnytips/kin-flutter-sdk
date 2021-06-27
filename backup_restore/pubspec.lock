@@ -182,16 +182,20 @@ packages:
   kin_base:
     dependency: "direct main"
     description:
-      path: "../base"
-      relative: true
-    source: path
+      path: base
+      ref: HEAD
+      resolved-ref: "06716ec90386e445430fe9a3eca83d1e1c3238ef"
+      url: "https://kinny-ci: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@github.com/kinnytips/kin-flutter-sdk.git"
+    source: git
     version: "0.0.1"
   kin_base_storage:
     dependency: "direct main"
     description:
-      path: "../base_storage"
-      relative: true
-    source: path
+      path: base_storage
+      ref: HEAD
+      resolved-ref: "06716ec90386e445430fe9a3eca83d1e1c3238ef"
+      url: "https://kinny-ci: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@github.com/kinnytips/kin-flutter-sdk.git"
+    source: git
     version: "0.0.0"
   logging:
     dependency: transitive
