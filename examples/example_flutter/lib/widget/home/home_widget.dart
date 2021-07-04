@@ -14,7 +14,7 @@ class HomeWidget extends StatefulWidget {
   var homeNavigator = GlobalKey<NavigatorState>();
     final Kin kin;
 
-  HomeWidget({Key key, this.kin}) : super(key: key);
+  HomeWidget({Key key, @required this.kin}) : super(key: key);
 
   @override
   _HomeWidgetState createState() => _HomeWidgetState(kin);

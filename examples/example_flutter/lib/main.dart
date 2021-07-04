@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:kin_base/kin.dart';
+import 'package:kin_sdk_example_flutter/widget/home/home_widget.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'app/app.dart';
@@ -17,7 +18,7 @@ void main() async {
 
   var kin = Kin(true, 0, 'KIN Demo App - Flutter', storageLocation: '$storePath/kin-demo-app', initialize: false);
 
-  var app = App(kin: kin);
+  var app = HomeWidget(kin: kin);
 
   runApp(app);
 }
