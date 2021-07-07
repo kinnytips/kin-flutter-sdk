@@ -110,15 +110,3 @@ void showPaymentsForAccount(Kin kin, String accountID) {
     }
   });
 }
-
-void _onBalanceChange(KinBalance balance) {
-  print('[Balance Change] $balance');
-}
-
-void _onPayment(List<KinPayment> payments) {
-  print('[Payments] $payments > $payments');
-}
-
-void _onResolveAccountContext(Kin kin) {
-  print('[Account Context] $kin : address: ${kin.address}');
-}
