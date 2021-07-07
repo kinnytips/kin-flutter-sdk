@@ -19,6 +19,14 @@ class KinAccountId {
 
   KinAccountId.fromPublicKey(PublicKey publicKey) : this(publicKey.value);
 
+  factory KinAccountId.from(dynamic o) {
+    if (o is KinAccountId) return o ;
+    if (o is PrivateKey) return KinAccountId.fromPrivateKey(o) ;
+    if (o is PublicKey) return KinAccountId.fromPublicKey(o) ;
+    if (o is String) return KinAccountId.fromIdString(o) ;
+    throw StateError("Can't resolve: $o");
+  }
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
