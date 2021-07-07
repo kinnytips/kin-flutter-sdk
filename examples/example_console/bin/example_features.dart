@@ -2,15 +2,14 @@ import 'dart:io';
 
 import 'package:kin_base/base/models/kin_account.dart';
 import 'package:kin_base/base/models/kin_amount.dart';
-import 'package:kin_base/base/models/kin_balance.dart';
 import 'package:kin_base/base/models/kin_payment.dart';
 import 'package:kin_base/kin.dart';
 
 void main(List<String> args) async {
-  String walletBackupJsonFile ;
-  String walletBackupPassword ;
-  String walletBackupJson ;
-  
+  String walletBackupJsonFile;
+  String walletBackupPassword;
+  String walletBackupJson;
+
   if (args.length >= 2) {
     walletBackupJsonFile = args[0];
     walletBackupPassword = args[1];
@@ -22,30 +21,32 @@ void main(List<String> args) async {
   var production = true;
   var appIndex = 0;
 
-  var kin = Kin(production, appIndex, 'Example App',
-    storageLocation: '/tmp/kin-flutter-example-${ DateTime.now().millisecondsSinceEpoch }',
+  var kin = Kin(
+    production,
+    appIndex,
+    'Example App',
+    storageLocation:
+        '/tmp/kin-flutter-example-${DateTime.now().millisecondsSinceEpoch}',
   );
 
   print(kin);
-  
-  print('KIN storage location: ${ kin.storageLocation }');
+
+  print('KIN storage location: ${kin.storageLocation}');
 
   var allAccountIds = await kin.allAccountIds();
 
   print('Local accounts:');
   print(allAccountIds.map((e) => e.base58Encode()).toList());
 
-  KinAccountId accountId ;
+  KinAccountId accountId;
 
   if (walletBackupJson != null) {
     accountId = await kin.importWallet(walletBackupJson, walletBackupPassword);
     print('Imported wallet account: $accountId');
-  }
-  else if (allAccountIds.isNotEmpty){
+  } else if (allAccountIds.isNotEmpty) {
     accountId = await kin.loadLocalAccount();
     print('Loaded local account: $accountId');
-  }
-  else {
+  } else {
     print('Creating Account/Wallet:');
     accountId = kin.createAccount();
     print('Created account: $accountId');
@@ -58,7 +59,8 @@ void main(List<String> args) async {
   print('Current context account: $account');
   print('Current context balance: ${account.balance}');
 
-  var sentPayment = await submitTransaction(kin, '3RXbFoTTTHHKXu2MikKz8NWbGLnV5PfbcTaQR8Z7oxME', 0.10);
+  var sentPayment = await submitTransaction(
+      kin, '3RXbFoTTTHHKXu2MikKz8NWbGLnV5PfbcTaQR8Z7oxME', 0.10);
 
   if (sentPayment != null) {
     showPaymentsForAccount(kin, accountId.base58Encode());
@@ -70,15 +72,13 @@ void main(List<String> args) async {
   print(backupJson);
 
   await Future.delayed(Duration(seconds: 60));
-
 }
 
 Future<KinPayment> submitTransaction(
     Kin kin, String destinationAccountID, double amount) async {
-
   if (kin.isNotReady) {
     print("Can't send payments without a defined contexts at: $kin");
-    return null ;
+    return null;
   }
 
   var amountToSend = KinAmount.fromDouble(amount);
