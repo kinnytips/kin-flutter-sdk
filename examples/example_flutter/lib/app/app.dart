@@ -48,7 +48,7 @@ class _AppState extends State<App> {
       });
 
       print('-- KIN initialize');
-      kin.initialize();
+      kin.loadLocalAccount();
     });
 
     super.initState();

@@ -206,7 +206,11 @@ class KinAccountContextBase implements KinAccountReadOperations , KinPaymentRead
     return page ;
   }
 
-  Future<List<KinTransaction>> _requestNextPage() async {
+  Future<List<KinTransaction>> getAllTransactionsHistory() async {
+    return await _requestNextPage(true);
+  }
+
+  Future<List<KinTransaction>> _requestNextPage([bool returnAllTransactions = false]) async {
     var transactions = await storage.getStoredTransactions(accountId);
 
     List<KinTransaction> newTransactions;
@@ -217,9 +221,10 @@ class KinAccountContextBase implements KinAccountReadOperations , KinPaymentRead
       newTransactions = await service.getLatestTransactions(accountId);
     }
 
-    await storage.upsertNewTransactionsInStorage(accountId, newTransactions);
+    var allTransactions = await storage.upsertNewTransactionsInStorage(
+        accountId, newTransactions);
 
-    return newTransactions;
+    return returnAllTransactions ? allTransactions : newTransactions;
   }
 
   Future<List<KinTransaction>> _requestPreviousPage() async {
@@ -407,6 +412,19 @@ class KinAccountContextBase implements KinAccountReadOperations , KinPaymentRead
     }
   }
 
+  Future<KinAccount> getAccountUpdated() async {
+    var accountUpdated = await maybeFetchAccountDetails();
+    var accountStatus = accountUpdated.status;
+
+    if (accountStatus is KinAccountStatusRegistered && accountStatus.sequence == 0) {
+      var transactions = await getAllTransactionsHistory();
+      accountStatus.sequence = transactions.length;
+      storage.updateAccount(accountUpdated);
+    }
+
+    return accountUpdated ;
+  }
+
   @override
   Future<KinAccount> getAccount({bool forceUpdate = false, accountCallback}) async {
     log.log("getAccount");
@@ -514,7 +532,9 @@ class KinAccountContextImpl extends KinAccountContextBase with KinAccountContext
         return await _registerAccount(storedAccount);
       }
       catch(e,s) {
-        log.error('Error registering account: $storedAccount', e, s);
+        if (e is Error) {
+          log.error('Error registering account: $storedAccount', e, s);
+        }
         return maybeFetchAccountDetails() ;
       }
     }
@@ -532,6 +552,10 @@ class KinAccountContextImpl extends KinAccountContextBase with KinAccountContext
   }
 
   Future<KinAccount> _registerAccount(KinAccount account) async {
+    if (await _accountAlreadyExists(account)) {
+      throw Exception("Account already exists: $account");
+    }
+
     var serviceAccount = await service.createAccount( account.id, account.key as PrivateKey ) ;
     var accountToStore = account.merge(serviceAccount);
 
@@ -540,6 +564,21 @@ class KinAccountContextImpl extends KinAccountContextBase with KinAccountContext
     } else {
       return accountToStore;
     }
+  }
+
+  Future<bool> _accountAlreadyExists(KinAccount account) async {
+    KinAccount serviceExistingAccount ;
+    List<PublicKey> existingTokenAccounts;
+
+    try {
+      serviceExistingAccount = await service.getAccount(account.id);
+    }
+    catch(e) {
+      existingTokenAccounts = await service.resolveTokenAccounts(account.id);
+    }
+
+    return serviceExistingAccount != null ||
+        (existingTokenAccounts != null && existingTokenAccounts.isNotEmpty);
   }
 
   @override

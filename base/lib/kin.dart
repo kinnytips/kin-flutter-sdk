@@ -1,11 +1,14 @@
 import 'dart:async';
 import 'dart:typed_data';
 
+import 'package:kin_base/KinBackupRestore.dart';
 import 'package:kin_base/base/models/app_info.dart';
 import 'package:kin_base/base/models/appidx.dart';
+import 'package:kin_base/base/models/key.dart';
 import 'package:kin_base/base/network/services/app_info_providers.dart';
 import 'package:kin_base/base/storage/kin_file_storage.dart';
 import 'package:kin_base/base/tools/observers.dart';
+import 'package:kin_base/stellarfork/key_pair.dart';
 
 import 'base/kin_account_context.dart';
 import 'base/kin_environment.dart';
@@ -65,38 +68,42 @@ class Kin {
     this._environment = this._getEnvironment();
 
     if (initialize) {
-      this.initialize();
+      this.loadLocalAccount();
     }
   }
 
-  bool _initialized = false ;
-
-  bool get isInitialized => _initialized;
-
-  Kin initialize() {
-    if (_initialized) return this ;
-    _initialized = true ;
-
+  Future<KinAccountId> loadLocalAccount({bool createAccountIfEmpty = false}) async {
     // Fetch  accounts and set the context:
-    this._environment.allAccountIds().then((ids) {
-      // First get (or create) an account id for this device
-      String accountId =
-          ids.isEmpty ? createAccount() : ids[0].stellarBase32Encode();
+    var ids = await this._environment.allAccountIds();
 
-      assert(this._context == null);
+    KinAccountId accountId ;
 
-      //Then set the context with that single account
-      this._context = this.getKinContext(accountId);
-      _setAppInfo();
-
-      if (_onAccountContext != null) {
-        _onAccountContext(this);
+    if (ids.isEmpty) {
+      if (createAccountIfEmpty) {
+        accountId = createAccount();
       }
+      else {
+        return null ;
+      }
+    }
+    else {
+      accountId = ids[0];
+    }
 
-      _notifyReady();
-    });
+    setContextByAccountID(accountId);
 
-    return this;
+    return accountId;
+  }
+
+  void setContextByAccountID(dynamic accountId) {
+    this._context = this.getKinContext( KinAccountId.from(accountId) );
+    _setAppInfo();
+
+    if (_onAccountContext != null) {
+      _onAccountContext(this);
+    }
+
+    _notifyReady();
   }
 
   Function get onBalanceChange => _onBalanceChange;
@@ -203,18 +210,20 @@ class Kin {
     _observerBalance.disposedBy(_lifecycle);
   }
 
-  KinAccountContext getKinContext([String accountId]) {
+  KinAccountContext getKinContext([dynamic accountId]) {
     if (accountId == null) {
       return _context;
     }
 
     return new KinAccountContext.useExistingAccount(
-        _environment, KinAccountId.fromIdString(accountId));
+        _environment, KinAccountId.from(accountId));
   }
 
-  String createAccount() {
+  Future<List<KinAccountId>> allAccountIds() => this._environment.allAccountIds();
+
+  KinAccountId createAccount() {
     var kinContext = KinAccountContext.newAccount(_environment);
-    return kinContext.accountId.stellarBase32Encode();
+    return kinContext.accountId ;
   }
 
   KinEnvironmentAgora _getEnvironment() {
@@ -231,6 +240,42 @@ class Kin {
             KinFileStorage(storageLocation, networkEnvironment));
 
     return env;
+  }
+
+  Future<KinAccountId> importWallet(String backupJson, String backupPassword) async {
+    var kinBackupRestore = KinBackupRestore();
+    var keyPair = kinBackupRestore.importWallet(backupJson, backupPassword);
+
+    var account = KinAccount(PrivateKey.fromBytes(keyPair.privateKey));
+
+    return importAccount(account);
+  }
+
+  Future<KinAccountId> importAccount(KinAccount account, {bool overwriteStoredAccount = false}) async {
+    var accountId = account.id;
+
+    var storedAccount = _environment.storage.getAccount(accountId);
+    if ( storedAccount != null && !overwriteStoredAccount) {
+      return storedAccount.id ;
+    }
+
+    _environment.storage.addAccount(account);
+
+    var kinContext = getKinContext(accountId) as KinAccountContextBase ;
+
+    var accountUpdated = await kinContext.getAccountUpdated() ;
+
+    return accountUpdated.id ;
+  }
+
+  String backupWallet(String backupPassword,
+      {KeyPair keyPair, KinAccountId accountId, KinAccount account}) {
+    var kinBackupRestore = KinBackupRestore();
+
+    var backup = kinBackupRestore.exportWallet(backupPassword,
+        keyPair: keyPair, accountId: accountId, account: account);
+
+    return backup.toJson();
   }
 
   @override
