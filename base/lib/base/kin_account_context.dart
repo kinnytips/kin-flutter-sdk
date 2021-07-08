@@ -556,13 +556,35 @@ class KinAccountContextImpl extends KinAccountContextBase with KinAccountContext
       throw Exception("Account already exists: $account");
     }
 
+    print('-- Registering account: $account');
+
     var serviceAccount = await service.createAccount( account.id, account.key as PrivateKey ) ;
+
+    print('-- Created account: $serviceAccount');
+
     var accountToStore = account.merge(serviceAccount);
+
+    print('-- Storing account: $accountToStore');
 
     if (!storage.updateAccount(accountToStore)) {
       throw StateError("Failed to store Account Data!");
     } else {
-      return accountToStore;
+
+      try {
+        var resolveTokenAccounts = await service.resolveTokenAccounts(accountId);
+        var resolvedAccount = await storage.updateAccountInStorage(accountToStore.copy(tokenAccounts: resolveTokenAccounts));
+
+        print('-- Resolved account: $resolvedAccount');
+
+        var accountUpdated = await getAccountUpdated() ;
+
+        print('-- Account updated: $accountUpdated');
+
+        return accountUpdated ;
+      }
+      catch(e) {
+        return accountToStore;
+      }
     }
   }
 
@@ -633,7 +655,7 @@ class KinAccountContextImpl extends KinAccountContextBase with KinAccountContext
     Error lastError ;
     for (var attemptCount = 0; attemptCount < MAX_ATTEMPTS; ++attemptCount) {
       try {
-        return executors.parallelIO.execute(() async {
+        return await executors.parallelIO.execute(() async {
           return await sendKinTransaction(() => _buildPaymentTransaction(payments, memo, sourceAccountSpec, destinationAccountSpec, feeOverride, attemptCount));
         });
       }
@@ -667,6 +689,8 @@ class KinAccountContextImpl extends KinAccountContextBase with KinAccountContext
   Future<KinTransaction> _buildPaymentTransaction(List<KinPaymentItem> payments, KinMemo memo, AccountSpec sourceAccountSpec, AccountSpec destinationAccountSpec , QuarkAmount feeOverride, int attemptCount,) async {
     var account = await getAccount();
 
+    log.log('_buildPaymentTransaction> account: $account');
+
     SourceAccountSigningData sourceAccount ;
     if ((attemptCount == 0 && account.tokenAccounts.isEmpty) || sourceAccountSpec == AccountSpec.Exact) {
       sourceAccount = SourceAccountSigningData(
@@ -678,6 +702,8 @@ class KinAccountContextImpl extends KinAccountContextBase with KinAccountContext
       var resolveTokenAccounts = await service.resolveTokenAccounts(accountId);
 
       var resolvedAccount = await storage.updateAccountInStorage(account.copy(tokenAccounts: resolveTokenAccounts));
+
+      log.log('_buildPaymentTransaction> account(resolved token account): $resolvedAccount');
 
       sourceAccount = SourceAccountSigningData(
           (resolvedAccount.status as KinAccountStatusRegistered)?.sequence ?? 0,
