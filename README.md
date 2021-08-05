@@ -45,30 +45,30 @@ Now, this instance can be used to perform all the operations on the `kin` blockc
 
 ### Creating a new account
 ```
-var response = await sdk.createAccount;
+
 ```
 
 ### Adding an existing account
 ```
-var response = await sdk.addAccount;
+
 ```
 
 ### Fetching account info
 ```
-var response = await sdk.getAccountInfo;
+
 ```
 
 ### Fetching account info
 ```
-var response = await sdk.getAccountInfo;
+
 ```
 
 ### Fetching account history
 ```
-var response = await sdk.getAccountHistory;
+
 ```
 
 ### Fetching account transactions
 ```
-var response = await sdk.getTransaction(String transactionId);
+
 ```
