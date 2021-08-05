@@ -39,7 +39,7 @@ import 'package:kinny.io/kin_sdk.dart';
 ### Initiate the sdk
 
 ```
- KinSdk sdk = KinSdk("GDHCB4VCNNFIMZI3BVHLA2FVASECBR2ZXHOAXEBBFVUH5G2YAD7V3JVH");
+
 ```
 Now, this instance can be used to perform all the operations on the `kin` blockchain.
 
