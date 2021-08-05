@@ -15,20 +15,6 @@ Library&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&
 
 ## Installation
 
-### From pub.dev
-1. Add the dependency to your pubspec.yaml file:
-```
-dependencies:
-  kin_sdk: x.x.x
-```
-2. Install it (command line or IDE):
-```
-flutter pub get
-```
-3. In your source file import the SDK, initialize and use it:
-```dart
-import 'package:kinny.io/kin_sdk.dart';
-```
 
 ## Documentation
 [API](https://docs.kin.org/agora/api) <br/>
