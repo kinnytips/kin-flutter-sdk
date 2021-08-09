@@ -24,37 +24,42 @@ Library&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&
 ## How to use the SDK
 ### Initiate the sdk
 
-```
+```dart
+var kin = Kin(production, appIndex, 'Example App',
+    onBalanceChange: _onBalanceChange,
+    onPayment: _onPayment,
+    onAccountContext: _onResolveAccountContext,
+    credentialUser: credentialUser,
+    credentialPass: credentialPass);
 
+    await kin.waitReady();
 ```
 Now, this instance can be used to perform all the operations on the `kin` blockchain.
 
 ### Creating a new account
-```
-
+```dart
+var accountId = kin.createAccount();
 ```
 
 ### Adding an existing account
-```
-
-```
-
-### Fetching account info
-```
-
+```dart
+var kinBackupRestore = KinBackupRestore();
+var backupKeyPair = kinBackupRestore.importWallet(accountBackup, backupPass);
 ```
 
 ### Fetching account info
+```dart
+var kinContext = kin.getKinContext();
+
+var account = await kinContext.getAccount(forceUpdate: true);
 ```
 
+### Import account from backup
+```dart
+var accountId = await kin.importWallet(walletBackupJson, walletBackupPassword);
 ```
 
 ### Fetching account history
-```
-
-```
-
-### Fetching account transactions
-```
-
+```dart
+var transactions = await kinContext.getAllTransactionsHistory();
 ```
