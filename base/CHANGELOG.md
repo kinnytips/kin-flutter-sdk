@@ -1,4 +1,4 @@
-## 2.0.0
+## 0.1.0
 
 - Fixed upgraded dependencies usage.
 - Removed not used `horizon_kin_api.dart`.
