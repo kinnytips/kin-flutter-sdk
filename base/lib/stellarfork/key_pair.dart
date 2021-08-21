@@ -3,7 +3,7 @@ import 'package:fixnum/fixnum.dart' as fixNum;
 import 'package:kin_base/base/tools/base58.dart';
 import 'package:kin_base/base/tools/random.dart';
 import 'package:kin_base/base/tools/extensions.dart';
-import 'package:pinenacl/signing.dart';
+import 'package:pinenacl/src/signatures/ed25519.dart';
 import 'dart:typed_data';
 import "util.dart";
 import 'network.dart';
@@ -171,7 +171,7 @@ class KeyPair {
   /// Creates a new KeyPair object from a raw 32 byte secret [seed].
   static KeyPair fromSecretSeedBytes(Uint8List seed) {
     var kp = _signingKeyFromSeed(seed);
-    var keyPair = new KeyPair(kp.publicKey, Uint8List.fromList(kp));
+    var keyPair = new KeyPair(kp.publicKey.toUint8List(), Uint8List.fromList(kp));
     _accountsPrivateKeySeed[keyPair.accountId] = Uint8List.fromList(seed);
     return keyPair;
   }

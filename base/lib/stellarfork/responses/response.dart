@@ -129,8 +129,10 @@ class Page<T> extends Response implements TypedResponse<Page<T>> {
         new ResponseHandler<Page<T>>(this.type);
     String url = this.links.next.href;
 
+    var uri = Uri.parse(url);
+
     return await httpClient
-        .get(url, headers: RequestBuilder.headers)
+        .get(uri, headers: RequestBuilder.headers)
         .then((response) {
       return responseHandler.handleResponse(response);
     });

@@ -5,7 +5,7 @@
 import 'package:http/http.dart' as http;
 import 'dart:async';
 import '../../requests/request_builder.dart';
-import 'package:toml/decoder.dart';
+import 'package:toml/toml.dart';
 
 /// Parses the stellar toml data from a given string or from a given domain.
 /// See <a href="https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0001.md" target="_blank">Stellar Toml</a>
@@ -17,8 +17,7 @@ class StellarToml {
   List<Validator> validators;
 
   StellarToml(String toml) {
-    var parser = new TomlParser();
-    var document = parser.parse(toml).value;
+    var document = TomlDocument.parse(toml).toMap() ;
 
     generalInformation = GeneralInformation();
     generalInformation.version = document['VERSION'];
@@ -134,8 +133,8 @@ class StellarToml {
         throw Exception(
             "Currency toml not found, response status code ${response.statusCode}");
       }
-      var parser = new TomlParser();
-      var document = parser.parse(response.body).value;
+      
+      var document = TomlDocument.parse(response.body).toMap();
       return _currencyFromItem(document);
     });
   }

@@ -10,7 +10,6 @@ import '../responses/response.dart';
 import 'request_builder.dart';
 import '../responses/trade_response.dart';
 import '../util.dart';
-import "package:eventsource/eventsource.dart";
 import 'dart:convert';
 
 
@@ -97,18 +96,6 @@ class TradesRequestBuilder extends RequestBuilder {
   /// responses as ledgers close.
   /// See: <a href="https://developers.stellar.org/api/introduction/streaming/" target="_blank">Streaming</a>
   Stream<TradeResponse> stream() {
-    StreamController<TradeResponse> listener =
-    new StreamController.broadcast();
-    EventSource.connect(this.buildUri()).then((eventSource) {
-      eventSource.listen((Event event) {
-        if (event.data == "\"hello\"" || event.event == "close") {
-          return null;
-        }
-        TradeResponse tradeResponse =
-        TradeResponse.fromJson(json.decode(event.data));
-        listener.add(tradeResponse);
-      });
-    });
-    return listener.stream;
+    throw UnsupportedError("No Stellar Horizon API");
   }
 }

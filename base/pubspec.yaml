@@ -1,6 +1,6 @@
 name: kin_base
 description: Flutter SDK for kin
-version: 0.0.1
+version: 2.0.0
 author: Kinny.io development team 
 homepage: https://kinny.io
 
@@ -12,26 +12,24 @@ dependencies:
 #  flutter:
 #    sdk: flutter
   #stellar_flutter_sdk: ^1.1.2
-  pinenacl: ^0.1.5
-  eventsource: ^0.2.3 # Should be substituted, not maintained package.
-  base32: ^1.1.2
-  fast_base58: ^0.1.9
-  http: ^0.12.2
-  sse_client: ^0.0.3
-  fixnum: ^0.10.11
-  protobuf: ^1.0.1
-  crypto: ^2.1.5
-  decimal: ^0.3.5
-  pointycastle: ^2.0.0
-  argon2: ^1.0.0-no-null-safety
-  grpc: ^2.9.0
-  logging: ^0.11.4
-  toml: ^0.6.0
+  pinenacl: ^0.3.3
+  #eventsource: ^0.2.3 # Should be substituted, not maintained package.
+  base32: ^2.0.0
+  fast_base58: ^0.2.0
+  http: ^0.13.3
+  sse_client: ^0.1.0
+  fixnum: ^1.0.0
+  protobuf: ^2.0.0
+  crypto: ^3.0.1
+  decimal: ^1.3.0
+  pointycastle: ^3.3.1
+  argon2: ^1.0.1
+  grpc: ^3.0.2
+  logging: ^1.0.1
+  toml: ^0.11.0
   path: ^1.8.0
   kin_base_storage:
-    git:
-      url: https://kinny-ci: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@github.com/kinnytips/kin-flutter-sdk.git
-      path: base_storage
+    path: ../base_storage
 
 dev_dependencies:
-  test: ^1.16.0
+  test: ^1.17.11

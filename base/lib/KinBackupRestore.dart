@@ -6,7 +6,7 @@ import 'package:kin_base/base/models/kin_account.dart';
 import 'package:kin_base/base/tools/hex.dart';
 import 'package:kin_base/base/tools/random.dart';
 import 'package:kin_base/stellarfork/key_pair.dart';
-import 'package:pinenacl/secret.dart';
+import 'package:pinenacl/x25519.dart' hide IntListExtension;
 
 class KinBackupRestore {
   KinBackupRestore();
@@ -62,7 +62,7 @@ class KinBackupRestore {
     var nonceBytes =
         Uint8List.fromList(seedBytes.sublist(0, _SECRET_BOX_NONCE_BYTES));
     var cipherBytes =
-        Uint8List.fromList(seedBytes.sublist(_SECRET_BOX_NONCE_BYTES));
+        ByteList.fromList(seedBytes.sublist(_SECRET_BOX_NONCE_BYTES));
     var decryptedBytes = SecretBox(hash).decrypt(cipherBytes, nonce: nonceBytes);
     return decryptedBytes;
   }
