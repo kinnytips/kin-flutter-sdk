@@ -127,16 +127,22 @@ class KinAccountContextReadOnlyImpl extends KinAccountContextBase implements Kin
       Storage storage, KinAccountId accountId, KinLoggerFactory logger) :
         super(executors, service, storage, accountId, logger);
 
-
   Future<KinAccount> getAccount({ bool forceUpdate = false , Callback<KinAccount> accountCallback }) async {
     log.log("getAccount");
 
     var storedAccount = storage.getStoredAccount(accountId);
-    if (forceUpdate) {
-      return storedAccount;
-    }
 
-    return storedAccount;
+    if (storedAccount != null) {
+      if (!forceUpdate) {
+        return storedAccount;
+      }
+      else {
+        return maybeFetchAccountDetails();
+      }
+    }
+    else {
+      return maybeFetchAccountDetails();
+    }
   }
 
 }
