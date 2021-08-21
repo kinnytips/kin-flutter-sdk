@@ -3,6 +3,7 @@
 - Dart format.
 - Migrate from `pedantic` (deprecated) to `lints`.
   - lints: ^1.0.1
+- Re-build `.proto` files to generate Null Safety compatible code.
 - Upgrade to Null Safety.
   - fixnum: ^1.0.0
   - protobuf: ^2.0.0
