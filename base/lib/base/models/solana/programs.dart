@@ -173,7 +173,7 @@ class CreateAccount {
 
 class TokenProgram {
   // Reference: https://github.com/solana-labs/solana-program-library/blob/11b1e3eefdd4e523768d63f7c70a7aa391ea0d02/token/program/src/state.rs#L125
-  int accountSize = 165;
+  static const int accountSize = 165;
 
   // ProgramKey is the address of the token program that should be used.
   //

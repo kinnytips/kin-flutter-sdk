@@ -7,6 +7,7 @@ import 'package:kin_base/base/models/kin_account.dart';
 import 'package:kin_base/base/models/kin_memo.dart';
 import 'package:kin_base/base/models/kin_payment_item.dart';
 import 'package:kin_base/base/models/quark_amount.dart';
+import 'package:kin_base/base/models/solana/instruction.dart';
 import 'package:kin_base/base/models/transaction_hash.dart';
 import 'package:kin_base/base/network/api/kin_transaction_api.dart';
 import 'package:kin_base/base/network/api/kin_account_api.dart';
@@ -16,6 +17,7 @@ import 'package:kin_base/base/network/api/kin_transaction_whitelisting_api.dart'
 import 'package:kin_base/base/stellar/models/kin_transaction.dart';
 import 'package:kin_base/base/stellar/models/network_environment.dart';
 import 'package:kin_base/base/stellar/models/paging_token.dart';
+import 'package:kin_base/base/tools/cache.dart';
 import 'package:kin_base/base/tools/kin_logger.dart';
 import 'package:kin_base/base/tools/network_operations_handler.dart';
 import 'package:kin_base/base/tools/observers.dart';
@@ -44,7 +46,9 @@ class KinServiceImpl extends KinService {
       this.logger);
 
   @override
-  Future<KinTransaction> buildAndSignTransaction(PrivateKey ownerKey, PublicKey sourceKey, int nonce, List<KinPaymentItem> paymentItems, KinMemo? memo, QuarkAmount fee) {
+  Future<KinTransaction> buildAndSignTransaction(PrivateKey ownerKey, PublicKey sourceKey, int nonce, List<KinPaymentItem> paymentItems, KinMemo? memo,
+      List<Instruction> createAccountInstructions,
+      List<PrivateKey> additionalSigners) {
     // TODO: implement buildAndSignTransaction
     throw UnimplementedError();
   }
@@ -61,6 +65,10 @@ class KinServiceImpl extends KinService {
   @override
   Future<KinAccount> createAccount(KinAccountId accountId, PrivateKey signer) {
     // TODO: implement createAccount
+    throw UnimplementedError();
+  }
+
+  Future<Pair<List<Instruction>, PrivateKey>> createTokenAccountForDestinationOwner(PublicKey owner) {
     throw UnimplementedError();
   }
 

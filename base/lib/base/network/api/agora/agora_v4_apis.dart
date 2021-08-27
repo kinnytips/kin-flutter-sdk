@@ -4,6 +4,7 @@ import 'package:grpc/grpc.dart';
 import 'package:kin_base/base/models/invoices.dart';
 import 'package:kin_base/base/models/key.dart';
 import 'package:kin_base/base/models/kin_account.dart';
+import 'package:kin_base/base/models/kin_amount.dart';
 import 'package:kin_base/base/models/quark_amount.dart';
 import 'package:kin_base/base/models/solana/transaction.dart';
 import 'package:kin_base/base/models/stellar_base_type_conversions.dart';
@@ -240,7 +241,13 @@ class AgoraKinTransactionsApiV4 extends GrpcApi implements KinTransactionApiV4 {
 
   @override
   Future<KinServiceInvoiceResponse<KinTransaction>> submitTransaction(Transaction transaction, InvoiceList? invoiceList) async {
-    var amount = transaction.totalAmount ;
+    KinAmount amount ;
+    try {
+      amount = transaction.totalAmount;
+    } catch(e){
+      amount = KinAmount.one;
+    }
+
     var commitment ;
 
     if (amount.value < Decimal.fromInt(50000) ) { // ~1 $USD

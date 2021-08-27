@@ -6,6 +6,7 @@ import 'package:kin_base/base/models/kin_account.dart';
 import 'package:kin_base/base/models/kin_memo.dart';
 import 'package:kin_base/base/models/kin_payment_item.dart';
 import 'package:kin_base/base/models/quark_amount.dart';
+import 'package:kin_base/base/models/solana/instruction.dart';
 import 'package:kin_base/base/models/solana/programs.dart';
 import 'package:kin_base/base/models/solana/transaction.dart';
 import 'package:kin_base/base/models/stellar_base_type_conversions.dart';
@@ -74,7 +75,7 @@ class KinServiceImplV4 extends KinService {
   Future<KinServiceResponse<int>?> _cachedMinRentExemption() async {
     return await _cache.resolve("minRentExemption", timeoutOverride: Duration(minutes: 30), fault: (key) {
       return networkOperationsHandler.queueWork('KinServiceImplV4._cachedMinRentExemption', () async {
-        return await transactionApi.getMinimumBalanceForRentExemption( TokenProgram().accountSize );
+        return await transactionApi.getMinimumBalanceForRentExemption( TokenProgram.accountSize );
       });
     });
   }
@@ -134,41 +135,95 @@ class KinServiceImplV4 extends KinService {
     });
   }
 
+  Future<Pair<List<Instruction>, PrivateKey>> createTokenAccountForDestinationOwner(PublicKey owner) async{
+    ServiceConfig serviceConfig ;
+    int minRentExemption ;
+    try {
+      var ret = await Future.wait([
+        _cachedServiceConfig(),
+        _cachedMinRentExemption(),
+      ]);
+
+      serviceConfig = ret[0]!.payload as ServiceConfig;
+      minRentExemption = ret[1]!.payload as int;
+    }
+    catch(e) {
+      throw StateError("Pre-requisite response failed! $e");
+    }
+
+    var subsidizer = serviceConfig.subsidizerAccount.toKeyPair().asPublicKey();
+    var programKey = serviceConfig.tokenProgram.toKeyPair().asPublicKey();
+    var token = serviceConfig.token.toKeyPair().asPublicKey();
+
+    return createTokenAccountForDest(
+        owner,
+        subsidizer,
+        programKey,
+        token,
+        minRentExemption
+    );
+  }
+
+  Pair<List<Instruction>, PrivateKey> createTokenAccountForDest(
+    PublicKey dest,
+    PublicKey subsidizer,
+    PublicKey programKey,
+    PublicKey token,
+    int lamports, {
+    int accountSize = TokenProgram.accountSize,
+  }) {
+    var ephemeralKeypair = PrivateKey.random();
+    var pub = ephemeralKeypair.asPublicKey();
+
+    return Pair([
+      CreateAccount(subsidizer, pub, programKey, lamports, accountSize)
+          .instruction!,
+      TokenProgramInitializeAccount(pub, token, pub, programKey).instruction!,
+      SetAuthority(pub, pub, subsidizer,
+              TokenProgramAuthorityTypeCloseAccount(), programKey)
+          .instruction!,
+      SetAuthority(pub, pub, dest, TokenProgramAuthorityTypeAccountHolder(),
+              programKey)
+          .instruction!,
+    ], ephemeralKeypair.toSigningKeyPair().asPrivateKey());
+  }
+
   @override
-  Future<KinTransaction> buildAndSignTransaction(PrivateKey ownerKey, PublicKey sourceKey, int nonce, List<KinPaymentItem> paymentItems, KinMemo? memo, QuarkAmount fee) {
-    log!.log("buildAndSignTransaction: ownerKey: $ownerKey ; sourceKey: $sourceKey ; nonce: $nonce ; paymentItems: $paymentItems ; memo: $memo ; fee:$fee");
+  Future<KinTransaction> buildAndSignTransaction(PrivateKey ownerKey, PublicKey sourceKey, int nonce, List<KinPaymentItem> paymentItems, KinMemo? memo,
+  List<Instruction> createAccountInstructions,
+      List<PrivateKey> additionalSigners) {
+    log!.log("buildAndSignTransaction: ownerKey: $ownerKey ; sourceKey: $sourceKey ; nonce: $nonce ; paymentItems: $paymentItems ; memo: $memo ; createAccountInstructions:$createAccountInstructions ; additionalSigners: $additionalSigners");
 
     return networkOperationsHandler.queueWork('buildAndSignTransaction', () async {
-      ServiceConfig? serviceConfig ;
-      Hash? recentBlockHash ;
+      ServiceConfig serviceConfig ;
+      Hash recentBlockHash ;
       try {
         var ret = await Future.wait([
           _cachedServiceConfig(),
           _cachedRecentBlockHash(),
         ]);
 
-        serviceConfig = ret[0]!.payload as ServiceConfig?;
-        recentBlockHash = ret[1]!.payload as Hash?;
+        serviceConfig = ret[0]!.payload as ServiceConfig;
+        recentBlockHash = ret[1]!.payload as Hash;
       }
       catch(e) {
-        StateError("Pre-requisite response failed! $e");
+        throw StateError("Pre-requisite response failed! $e");
       }
 
       var ownerAccount = ownerKey.asPublicKey();
-      PublicKey subsidizer = serviceConfig!.subsidizerAccount.toKeyPair().asPublicKey() ;
+      PublicKey subsidizer = serviceConfig.subsidizerAccount.toKeyPair().asPublicKey() ;
       var programKey = serviceConfig.tokenProgram.toKeyPair().asPublicKey();
 
       var paymentInstructions = paymentItems.map((paymentItem) {
         var destinationAccount = paymentItem.destinationAccount.toKeyPair().asPublicKey();
-
         return TokenProgramTransfer(
             sourceKey,
             destinationAccount,
             ownerAccount,
             paymentItem.amount,
             programKey = programKey
-        ).instruction ;
-      });
+        ).instruction! ;
+      }).toList();
 
       var memoInstruction = memo != KinMemo.none
           ? (memo!.type is KinMemoTypeNoEncoding
@@ -179,15 +234,20 @@ class KinServiceImplV4 extends KinService {
 
       var tx = Transaction.newTransaction(
         subsidizer,
-        [memoInstruction, ...(paymentInstructions.toList())].whereNotNull(),
-      ).copyAndSetRecentBlockhash(recentBlockHash).copyAndSign([ownerKey]);
+        [
+          memoInstruction,
+          ...createAccountInstructions,
+          ...paymentInstructions,
+        ].whereNotNull<Instruction>(),
+      )
+          .copyAndSetRecentBlockhash(recentBlockHash)
+          .copyAndSign([ownerKey, ...additionalSigners]);
 
       var kinTransaction = SolanaKinTransaction(
           tx.marshal(), null,
           networkEnvironment,
           paymentItems.toInvoiceList()
       );
-
 
       log!.log('serviceConfig: $serviceConfig');
       log!.log('recentBlockHash: $recentBlockHash');
@@ -248,21 +308,21 @@ class KinServiceImplV4 extends KinService {
             tokenAccountPub,
             programKey,
             minRentExemption,
-            TokenProgram().accountSize,
-          ).instruction,
+            TokenProgram.accountSize,
+          ).instruction!,
           TokenProgramInitializeAccount(
             tokenAccountPub,
             mint,
             owner,
             programKey,
-          ).instruction,
+          ).instruction!,
           SetAuthority(
             tokenAccountPub,
             owner,
             subsidizer,
             TokenProgramAuthorityTypeCloseAccount(),
             programKey,
-          ).instruction
+          ).instruction!
         ]).copyAndSetRecentBlockhash(recentBlockHash).copyAndSign(
             [tokenAccount, signer]);
 

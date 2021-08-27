@@ -25,8 +25,7 @@ void main(List<String> args) async {
     production,
     appIndex,
     'Example App',
-    storageLocation:
-        '/tmp/kin-flutter-example-${DateTime.now().millisecondsSinceEpoch}',
+    //storageLocation: '/tmp/kin-flutter-example-${DateTime.now().millisecondsSinceEpoch}',
   );
 
   print(kin);
@@ -58,13 +57,15 @@ void main(List<String> args) async {
 
   kin.setContextByAccountID(accountId);
 
-  var account = await kin.getKinContext()!.getAccount();
+  var account = await kin.getKinContext()!.getAccountUpdated();
 
   print('Current context account: $account');
-  print('Current context balance: ${account?.balance}');
+  print('Current context balance: ${account.balance}');
 
-  var sentPayment = await submitTransaction(
-      kin, '3RXbFoTTTHHKXu2MikKz8NWbGLnV5PfbcTaQR8Z7oxME', 0.10);
+  //await Future.delayed(Duration(seconds: 10));
+
+  var sentPayment = await submitTransaction(kin, '3RXbFoTTTHHKXu2MikKz8NWbGLnV5PfbcTaQR8Z7oxME', 0.10);
+  //var sentPayment = await submitTransaction(kin, '26toq28ewEfQZxXZh7MrZTkP3aTKkWemG2PQNg6TixXr', 0.10);
 
   if (sentPayment != null) {
     showPaymentsForAccount(kin, accountId.base58Encode());

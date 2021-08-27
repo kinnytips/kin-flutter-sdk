@@ -169,7 +169,7 @@ class Transaction {
       );
 
   static Transaction newTransaction(
-      PublicKey payer, List<Instruction?> instructions) {
+      PublicKey payer, List<Instruction> instructions) {
     final accounts = [
       AccountMeta(
         publicKey: payer,
@@ -181,7 +181,7 @@ class Transaction {
 
     // Extract all of the unique accounts from the instructions.
     instructions.forEach((element) {
-      accounts.add(AccountMeta(publicKey: element!.program, isProgram: true));
+      accounts.add(AccountMeta(publicKey: element.program, isProgram: true));
       accounts.addAll(element.accounts!);
     });
 
@@ -207,7 +207,7 @@ class Transaction {
 
     final messageInstructions = instructions.map((e) {
       return CompiledInstruction(
-        programIndex: _indexOf(accountPublicKeys, e!.program),
+        programIndex: _indexOf(accountPublicKeys, e.program),
         data: e.data,
         accounts: Uint8List.fromList(e.accounts!.map((e2) => _indexOf(accountPublicKeys, e2.publicKey)).toList()),
       );
