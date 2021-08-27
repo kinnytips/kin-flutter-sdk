@@ -12,7 +12,7 @@ abstract class  NetworkEnvironment {
   static final _kin2IssuerTest = KeyPair.fromAccountId("GBC3SG6NGTSZ2OMH3FFGB7UVRQWILW367U4GSOOF4TFSZONV42UJXUH7");
 
   final String networkPassphrase;
-  final KeyPair issuer;
+  final KeyPair? issuer;
 
   const NetworkEnvironment(this.networkPassphrase, [this.issuer]) ;
 

@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:grpc/grpc.dart';
 import 'package:kin_base/base/models/key.dart';
 import 'package:kin_base/base/models/kin_account.dart';
@@ -37,7 +39,7 @@ class AgoraKinAccountsApi extends GrpcApi
     var createAccountRequest = CreateAccountRequest()
       ..transaction = transaction;
     try {
-      var response = await AccountClient(managedChannel)
+      await AccountClient(managedChannel)
           .createAccount(createAccountRequest)
           .timeout(Duration(seconds: 10));
       return KinServiceResponse<KinAccount>(KinServiceResponseType.ok);
@@ -64,7 +66,7 @@ class AgoraKinAccountsApi extends GrpcApi
     }
 
     var info = response.accountInfo;
-    var id = KinAccountId(info.accountId.value);
+    var id = KinAccountId(info.accountId.value as Uint8List?);
     var publicKey = PublicKey(id.base58Encode());
 
     var balance = KinBalance(KinAmount.fromInt(info.balance.toInt()));

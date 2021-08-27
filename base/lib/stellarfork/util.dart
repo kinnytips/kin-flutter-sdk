@@ -9,14 +9,14 @@ import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'requests/request_builder.dart';
 
-checkNotNull(var reference, String errorMessage) {
+T checkNotNull<T>(T? reference, String errorMessage) {
   if (reference == null) {
     throw new Exception(errorMessage);
   }
   return reference;
 }
 
-checkArgument(bool expression, String errorMessage) {
+void checkArgument(bool expression, String errorMessage) {
   if (!expression) {
     throw new Exception(errorMessage);
   }
@@ -50,12 +50,12 @@ class Util {
 
   /// Returns bytes from hex [s].
   static Uint8List hexToBytes(String s) {
-    return hex.decode(s);
+    return hex.decode(s) as Uint8List;
   }
 
   /// Returns SHA-256 hash of [data].
   static Uint8List hash(Uint8List data) {
-    return sha256.convert(data).bytes;
+    return sha256.convert(data).bytes as Uint8List;
   }
 
   ///Pads [bytes] array to [length] with zeros.
@@ -67,7 +67,7 @@ class Util {
 
   ///Pads [string] to [length] with zeros.
   static Uint8List paddedByteArrayString(String string, int length) {
-    return Util.paddedByteArray(utf8.encode(string), length);
+    return Util.paddedByteArray(utf8.encode(string) as Uint8List, length);
   }
 
   ///Remove zeros from the end of [bytes] array.

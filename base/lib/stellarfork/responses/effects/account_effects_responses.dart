@@ -10,17 +10,17 @@ import '../response.dart';
 /// Represents an account_created effect response.
 /// See: <a href="https://developers.stellar.org/api/resources/effects/" target="_blank">Effects</a>.
 class AccountCreatedEffectResponse extends EffectResponse {
-  String startingBalance;
+  String? startingBalance;
 
   AccountCreatedEffectResponse(this.startingBalance);
 
   factory AccountCreatedEffectResponse.fromJson(Map<String, dynamic> json) =>
-      new AccountCreatedEffectResponse(json['starting_balance'] as String)
-        ..id = json['id'] as String
+      new AccountCreatedEffectResponse(json['starting_balance'] as String?)
+        ..id = json['id'] as String?
         ..account = json['account'] == null ? null : json['account']
-        ..type = json['type'] as String
-        ..createdAt = json['created_at'] as String
-        ..pagingToken = json['paging_token'] as String
+        ..type = json['type'] as String?
+        ..createdAt = json['created_at'] as String?
+        ..pagingToken = json['paging_token'] as String?
         ..links = json['_links'] == null
             ? null
             : new EffectResponseLinks.fromJson(
@@ -34,11 +34,11 @@ class AccountRemovedEffectResponse extends EffectResponse {
 
   factory AccountRemovedEffectResponse.fromJson(Map<String, dynamic> json) =>
       new AccountRemovedEffectResponse()
-        ..id = json['id'] as String
+        ..id = json['id'] as String?
         ..account = json['account'] == null ? null : json['account']
-        ..type = json['type'] as String
-        ..createdAt = json['created_at'] as String
-        ..pagingToken = json['paging_token'] as String
+        ..type = json['type'] as String?
+        ..createdAt = json['created_at'] as String?
+        ..pagingToken = json['paging_token'] as String?
         ..links = json['_links'] == null
             ? null
             : new EffectResponseLinks.fromJson(
@@ -48,10 +48,10 @@ class AccountRemovedEffectResponse extends EffectResponse {
 /// Represents account_credited effect response.
 /// See: <a href="https://developers.stellar.org/api/resources/effects/" target="_blank">Effects</a>.
 class AccountCreditedEffectResponse extends EffectResponse {
-  String amount;
-  String assetType;
-  String assetCode;
-  String assetIssuer;
+  String? amount;
+  String? assetType;
+  String? assetCode;
+  String? assetIssuer;
 
   AccountCreditedEffectResponse(
       this.amount, this.assetType, this.assetCode, this.assetIssuer);
@@ -60,21 +60,21 @@ class AccountCreditedEffectResponse extends EffectResponse {
     if (assetType == Asset.TYPE_NATIVE) {
       return new AssetTypeNative();
     } else {
-      return Asset.createNonNativeAsset(assetCode, assetIssuer);
+      return Asset.createNonNativeAsset(assetCode!, assetIssuer!);
     }
   }
 
   factory AccountCreditedEffectResponse.fromJson(Map<String, dynamic> json) =>
       new AccountCreditedEffectResponse(
-          json['amount'] as String,
-          json['asset_type'] as String,
-          json['asset_code'] as String,
-          json['asset_issuer'] as String)
-        ..id = json['id'] as String
+          json['amount'] as String?,
+          json['asset_type'] as String?,
+          json['asset_code'] as String?,
+          json['asset_issuer'] as String?)
+        ..id = json['id'] as String?
         ..account = json['account'] == null ? null : json['account']
-        ..type = json['type'] as String
-        ..createdAt = json['created_at'] as String
-        ..pagingToken = json['paging_token'] as String
+        ..type = json['type'] as String?
+        ..createdAt = json['created_at'] as String?
+        ..pagingToken = json['paging_token'] as String?
         ..links = json['_links'] == null
             ? null
             : new EffectResponseLinks.fromJson(
@@ -84,10 +84,10 @@ class AccountCreditedEffectResponse extends EffectResponse {
 /// Represents account_debited effect response.
 /// See: <a href="https://developers.stellar.org/api/resources/effects/" target="_blank">Effects</a>.
 class AccountDebitedEffectResponse extends EffectResponse {
-  String amount;
-  String assetType;
-  String assetCode;
-  String assetIssuer;
+  String? amount;
+  String? assetType;
+  String? assetCode;
+  String? assetIssuer;
 
   AccountDebitedEffectResponse(
       this.amount, this.assetType, this.assetCode, this.assetIssuer);
@@ -96,21 +96,21 @@ class AccountDebitedEffectResponse extends EffectResponse {
     if (assetType == Asset.TYPE_NATIVE) {
       return new AssetTypeNative();
     } else {
-      return Asset.createNonNativeAsset(assetCode, assetIssuer);
+      return Asset.createNonNativeAsset(assetCode!, assetIssuer!);
     }
   }
 
   factory AccountDebitedEffectResponse.fromJson(Map<String, dynamic> json) =>
       new AccountDebitedEffectResponse(
-          json['amount'] as String,
-          json['asset_type'] as String,
-          json['asset_code'] as String,
-          json['asset_issuer'] as String)
-        ..id = json['id'] as String
+          json['amount'] as String?,
+          json['asset_type'] as String?,
+          json['asset_code'] as String?,
+          json['asset_issuer'] as String?)
+        ..id = json['id'] as String?
         ..account = json['account'] == null ? null : json['account']
-        ..type = json['type'] as String
-        ..createdAt = json['created_at'] as String
-        ..pagingToken = json['paging_token'] as String
+        ..type = json['type'] as String?
+        ..createdAt = json['created_at'] as String?
+        ..pagingToken = json['paging_token'] as String?
         ..links = json['_links'] == null
             ? null
             : new EffectResponseLinks.fromJson(
@@ -120,9 +120,9 @@ class AccountDebitedEffectResponse extends EffectResponse {
 /// Represents account_thresholds_updated effect response.
 /// See: <a href="https://developers.stellar.org/api/resources/effects/" target="_blank">Effects</a>.
 class AccountThresholdsUpdatedEffectResponse extends EffectResponse {
-  int lowThreshold;
-  int medThreshold;
-  int highThreshold;
+  int? lowThreshold;
+  int? medThreshold;
+  int? highThreshold;
 
   AccountThresholdsUpdatedEffectResponse(
       this.lowThreshold, this.medThreshold, this.highThreshold);
@@ -133,11 +133,11 @@ class AccountThresholdsUpdatedEffectResponse extends EffectResponse {
           convertInt(json['low_threshold']),
           convertInt(json['med_threshold']),
           convertInt(json['high_threshold']))
-        ..id = json['id'] as String
+        ..id = json['id'] as String?
         ..account = json['account'] == null ? null : json['account']
-        ..type = json['type'] as String
-        ..createdAt = json['created_at'] as String
-        ..pagingToken = json['paging_token'] as String
+        ..type = json['type'] as String?
+        ..createdAt = json['created_at'] as String?
+        ..pagingToken = json['paging_token'] as String?
         ..links = json['_links'] == null
             ? null
             : new EffectResponseLinks.fromJson(
@@ -147,18 +147,18 @@ class AccountThresholdsUpdatedEffectResponse extends EffectResponse {
 /// Represents account_home_domain_updated effect response.
 /// See: <a href="https://developers.stellar.org/api/resources/effects/" target="_blank">Effects</a>.
 class AccountHomeDomainUpdatedEffectResponse extends EffectResponse {
-  String homeDomain;
+  String? homeDomain;
 
   AccountHomeDomainUpdatedEffectResponse(this.homeDomain);
 
   factory AccountHomeDomainUpdatedEffectResponse.fromJson(
           Map<String, dynamic> json) =>
-      new AccountHomeDomainUpdatedEffectResponse(json['home_domain'] as String)
-        ..id = json['id'] as String
+      new AccountHomeDomainUpdatedEffectResponse(json['home_domain'] as String?)
+        ..id = json['id'] as String?
         ..account = json['account'] == null ? null : json['account']
-        ..type = json['type'] as String
-        ..createdAt = json['created_at'] as String
-        ..pagingToken = json['paging_token'] as String
+        ..type = json['type'] as String?
+        ..createdAt = json['created_at'] as String?
+        ..pagingToken = json['paging_token'] as String?
         ..links = json['_links'] == null
             ? null
             : new EffectResponseLinks.fromJson(
@@ -168,21 +168,21 @@ class AccountHomeDomainUpdatedEffectResponse extends EffectResponse {
 /// Represents account_flags_updated effect response.
 /// See: <a href="https://developers.stellar.org/api/resources/effects/" target="_blank">Effects</a>.
 class AccountFlagsUpdatedEffectResponse extends EffectResponse {
-  bool authRequiredFlag;
-  bool authRevokableFlag;
+  bool? authRequiredFlag;
+  bool? authRevokableFlag;
 
   AccountFlagsUpdatedEffectResponse(
       this.authRequiredFlag, this.authRevokableFlag);
 
   factory AccountFlagsUpdatedEffectResponse.fromJson(
           Map<String, dynamic> json) =>
-      new AccountFlagsUpdatedEffectResponse(json['auth_required_flag'] as bool,
-          json['auth_revokable_flag'] as bool)
-        ..id = json['id'] as String
+      new AccountFlagsUpdatedEffectResponse(json['auth_required_flag'] as bool?,
+          json['auth_revokable_flag'] as bool?)
+        ..id = json['id'] as String?
         ..account = json['account'] == null ? null : json['account']
-        ..type = json['type'] as String
-        ..createdAt = json['created_at'] as String
-        ..pagingToken = json['paging_token'] as String
+        ..type = json['type'] as String?
+        ..createdAt = json['created_at'] as String?
+        ..pagingToken = json['paging_token'] as String?
         ..links = json['_links'] == null
             ? null
             : new EffectResponseLinks.fromJson(
@@ -197,11 +197,11 @@ class AccountInflationDestinationUpdatedEffectResponse extends EffectResponse {
   factory AccountInflationDestinationUpdatedEffectResponse.fromJson(
           Map<String, dynamic> json) =>
       new AccountInflationDestinationUpdatedEffectResponse()
-        ..id = json['id'] as String
+        ..id = json['id'] as String?
         ..account = json['account'] == null ? null : json['account']
-        ..type = json['type'] as String
-        ..createdAt = json['created_at'] as String
-        ..pagingToken = json['paging_token'] as String
+        ..type = json['type'] as String?
+        ..createdAt = json['created_at'] as String?
+        ..pagingToken = json['paging_token'] as String?
         ..links = json['_links'] == null
             ? null
             : new EffectResponseLinks.fromJson(

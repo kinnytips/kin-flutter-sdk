@@ -139,21 +139,21 @@ class CreateAccount {
 
   final PublicKey address;
   final PublicKey owner;
-  final int lamports;
+  final int? lamports;
   final int size;
 
   CreateAccount(
       this.subsidizer, this.address, this.owner, this.lamports, this.size);
 
-  Instruction _instruction;
+  Instruction? _instruction;
 
-  Instruction get instruction {
+  Instruction? get instruction {
     if (_instruction == null) {
       var bout = ByteOutputBuffer(32)
       ..writeBytes(SystemProgramCommandCreateAccount().value.toInt32Bytes())
-      ..writeBytes(lamports.toInt64Bytes())
+      ..writeBytes(lamports!.toInt64Bytes())
       ..writeBytes(size.toInt64Bytes())
-      ..writeAll(owner.value);
+      ..writeAll(owner.value!);
 
       var data = bout.toBytes();
 
@@ -350,9 +350,9 @@ class TokenProgramInitializeAccount {
   TokenProgramInitializeAccount(
       this.account, this.mint, this.owner, this.programKey);
 
-  Instruction _instruction;
+  Instruction? _instruction;
 
-  Instruction get instruction {
+  Instruction? get instruction {
     if (_instruction == null) {
       _instruction = Instruction.newInstruction(programKey,
           TokenProgramCommandInitializeAccount().value.toUint8List(), [
@@ -374,22 +374,22 @@ class TokenProgramTransfer {
 
   final PublicKey owner;
 
-  final KinAmount amount;
+  final KinAmount? amount;
 
   final PublicKey programKey;
 
   TokenProgramTransfer(
       this.source, this.destination, this.owner, this.amount, this.programKey);
 
-  Instruction _instruction;
+  Instruction? _instruction;
 
-  Instruction get instruction {
+  Instruction? get instruction {
     if (_instruction == null) {
       _instruction = Instruction.newInstruction(
           programKey,
           Uint8List.fromList([
             TokenProgramCommandTransfer().value,
-            ...amount.toQuarks().value.toInt64Uint8List()
+            ...amount!.toQuarks().value!.toInt64Uint8List()
           ]),
           [
             AccountMeta.newAccountMeta(source, false),
@@ -457,19 +457,18 @@ class SetAuthority {
   SetAuthority(this.account, this.currentAuthority, this.newAuthority,
       this.authorityType, this.programKey);
 
-  Instruction _instruction;
+  Instruction? _instruction;
 
-  Instruction get instruction {
+  Instruction? get instruction {
     if (_instruction == null) {
       var data = <int>[
         TokenProgramCommandSetAuthority().value,
         authorityType.value,
         0
       ];
-      if (newAuthority != null) {
-        data[2] = 1;
-        data.addAll(newAuthority.value);
-      }
+
+      data[2] = 1;
+      data.addAll(newAuthority.value!);
 
       _instruction = Instruction.newInstruction(programKey, data.toUint8List(), [
         AccountMeta.newAccountMeta(account, false),
@@ -501,9 +500,9 @@ class MemoProgramBase64EncodedMemo extends MemoProgram {
   factory MemoProgramBase64EncodedMemo.fromBytes(Uint8List bytes) =>
       MemoProgramBase64EncodedMemo(base64.encode(bytes));
 
-  Instruction _instruction;
+  Instruction? _instruction;
 
-  Instruction get instruction {
+  Instruction? get instruction {
     if (_instruction == null) {
       _instruction = Instruction.newInstruction(
           MemoProgram.PROGRAM_KEY, base64Value.toBytesUTF8());
@@ -513,13 +512,13 @@ class MemoProgramBase64EncodedMemo extends MemoProgram {
 }
 
 class MemoProgramRawMemo {
-  final Uint8List bytes;
+  final Uint8List? bytes;
 
   MemoProgramRawMemo(this.bytes);
 
-  Instruction _instruction;
+  Instruction? _instruction;
 
-  Instruction get instruction {
+  Instruction? get instruction {
     if (_instruction == null) {
       _instruction = Instruction.newInstruction(MemoProgram.PROGRAM_KEY, bytes);
     }

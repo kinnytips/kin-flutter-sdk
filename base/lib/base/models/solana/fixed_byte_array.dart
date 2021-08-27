@@ -23,7 +23,7 @@ abstract class FixedByteArray {
   @override
   bool operator ==(Object other) {
     if (this == other) return true;
-    if (this.runtimeType != other?.runtimeType) return false;
+    if (this.runtimeType != other.runtimeType) return false;
     if (other is FixedByteArray) {
       if (!byteArray.equalsContent(other.byteArray)) return false;
     } else {
@@ -38,7 +38,7 @@ abstract class FixedByteArray {
 }
 
 class FixedByteArray32 extends FixedByteArray {
-  FixedByteArray32([Uint8List byteArray]) : super(byteArray ?? Uint8List(32)) ;
+  FixedByteArray32([Uint8List? byteArray]) : super(byteArray ?? Uint8List(32)) ;
 
   @override
   int size() => 32;
@@ -49,7 +49,7 @@ class FixedByteArray32 extends FixedByteArray {
 
 class FixedByteArray64 extends FixedByteArray {
 
-  FixedByteArray64([Uint8List byteArray]) : super(byteArray ?? Uint8List(64)) ;
+  FixedByteArray64([Uint8List? byteArray]) : super(byteArray ?? Uint8List(64)) ;
 
   @override
   int size() => 64;

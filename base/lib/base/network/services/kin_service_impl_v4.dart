@@ -33,7 +33,7 @@ class KinServiceImplV4 extends KinService {
   final NetworkOperationsHandler networkOperationsHandler ;
   final KinAccountApiV4 accountApi ;
   final KinTransactionApiV4 transactionApi ;
-  final KinStreamingApiV4 streamingApi ;
+  final KinStreamingApiV4? streamingApi ;
   final KinAccountCreationApiV4 accountCreationApi ;
   final KinLoggerFactory logger;
 
@@ -46,15 +46,15 @@ class KinServiceImplV4 extends KinService {
       this.accountCreationApi,
       this.logger);
 
-  KinLogger _log ;
-  KinLogger get log {
+  KinLogger? _log ;
+  KinLogger? get log {
     _log ??= logger.getLogger('$runtimeType') ;
     return _log ;
   }
 
   final Cache<String> _cache = Cache<String>();
 
-  Future<KinServiceResponse<ServiceConfig>> _cachedServiceConfig() async {
+  Future<KinServiceResponse<ServiceConfig>?> _cachedServiceConfig() async {
     return await _cache.resolve("serviceConfig", timeoutOverride: Duration(minutes: 30), fault: (key) {
       return networkOperationsHandler.queueWork('KinServiceImplV4._cachedServiceConfig', () async {
         return await transactionApi.getServiceConfig();
@@ -62,7 +62,7 @@ class KinServiceImplV4 extends KinService {
     });
   }
 
-  Future<KinServiceResponse<Hash>> _cachedRecentBlockHash() async {
+  Future<KinServiceResponse<Hash>?> _cachedRecentBlockHash() async {
     return await _cache.resolve("recentBlockHash", timeoutOverride: Duration(minutes: 2), fault: (key) {
       return networkOperationsHandler.queueWork('KinServiceImplV4._cachedRecentBlockHash', () async {
         return await transactionApi.getRecentBlockHash();
@@ -71,7 +71,7 @@ class KinServiceImplV4 extends KinService {
   }
 
 
-  Future<KinServiceResponse<int>> _cachedMinRentExemption() async {
+  Future<KinServiceResponse<int>?> _cachedMinRentExemption() async {
     return await _cache.resolve("minRentExemption", timeoutOverride: Duration(minutes: 30), fault: (key) {
       return networkOperationsHandler.queueWork('KinServiceImplV4._cachedMinRentExemption', () async {
         return await transactionApi.getMinimumBalanceForRentExemption( TokenProgram().accountSize );
@@ -80,7 +80,7 @@ class KinServiceImplV4 extends KinService {
   }
 
   @override
-  Future<KinAccount> getAccount(KinAccountId accountId) async {
+  Future<KinAccount?> getAccount(KinAccountId accountId) async {
     return networkOperationsHandler.queueWork('KinServiceImplV4.getAccount', () async {
       var response = await accountApi.getAccount(accountId);
 
@@ -108,7 +108,7 @@ class KinServiceImplV4 extends KinService {
   }
 
   @override
-  Future<List<KinTransaction>> getLatestTransactions(KinAccountId kinAccountId) async {
+  Future<List<KinTransaction>?> getLatestTransactions(KinAccountId kinAccountId) async {
     return networkOperationsHandler.queueWork('KinServiceImplV4.getLatestTransactions', () async {
       var response = await transactionApi.getTransactionHistory(kinAccountId) ;
 
@@ -135,27 +135,27 @@ class KinServiceImplV4 extends KinService {
   }
 
   @override
-  Future<KinTransaction> buildAndSignTransaction(PrivateKey ownerKey, PublicKey sourceKey, int nonce, List<KinPaymentItem> paymentItems, KinMemo memo, QuarkAmount fee) {
-    log.log("buildAndSignTransaction: ownerKey: $ownerKey ; sourceKey: $sourceKey ; nonce: $nonce ; paymentItems: $paymentItems ; memo: $memo ; fee:$fee");
+  Future<KinTransaction> buildAndSignTransaction(PrivateKey ownerKey, PublicKey sourceKey, int nonce, List<KinPaymentItem> paymentItems, KinMemo? memo, QuarkAmount fee) {
+    log!.log("buildAndSignTransaction: ownerKey: $ownerKey ; sourceKey: $sourceKey ; nonce: $nonce ; paymentItems: $paymentItems ; memo: $memo ; fee:$fee");
 
     return networkOperationsHandler.queueWork('buildAndSignTransaction', () async {
-      ServiceConfig serviceConfig ;
-      Hash recentBlockHash ;
+      ServiceConfig? serviceConfig ;
+      Hash? recentBlockHash ;
       try {
         var ret = await Future.wait([
           _cachedServiceConfig(),
           _cachedRecentBlockHash(),
         ]);
 
-        serviceConfig = ret[0].payload as ServiceConfig;
-        recentBlockHash = ret[1].payload as Hash;
+        serviceConfig = ret[0]!.payload as ServiceConfig?;
+        recentBlockHash = ret[1]!.payload as Hash?;
       }
       catch(e) {
         StateError("Pre-requisite response failed! $e");
       }
 
       var ownerAccount = ownerKey.asPublicKey();
-      PublicKey subsidizer = serviceConfig.subsidizerAccount.toKeyPair().asPublicKey() ;
+      PublicKey subsidizer = serviceConfig!.subsidizerAccount.toKeyPair().asPublicKey() ;
       var programKey = serviceConfig.tokenProgram.toKeyPair().asPublicKey();
 
       var paymentInstructions = paymentItems.map((paymentItem) {
@@ -171,8 +171,8 @@ class KinServiceImplV4 extends KinService {
       });
 
       var memoInstruction = memo != KinMemo.none
-          ? (memo.type is KinMemoTypeNoEncoding
-              ? MemoProgramBase64EncodedMemo.fromBytes(memo.rawValue)
+          ? (memo!.type is KinMemoTypeNoEncoding
+              ? MemoProgramBase64EncodedMemo.fromBytes(memo.rawValue!)
                   .instruction
               : MemoProgramRawMemo(memo.rawValue).instruction)
           : null;
@@ -189,11 +189,11 @@ class KinServiceImplV4 extends KinService {
       );
 
 
-      log.log('serviceConfig: $serviceConfig');
-      log.log('recentBlockHash: $recentBlockHash');
-      log.log('ownerAccount: $ownerAccount');
-      log.log('sourceOfFundsAccount: $sourceKey');
-      log.log('transactionHexString: ${kinTransaction.bytesValue.toHexString()}');
+      log!.log('serviceConfig: $serviceConfig');
+      log!.log('recentBlockHash: $recentBlockHash');
+      log!.log('ownerAccount: $ownerAccount');
+      log!.log('sourceOfFundsAccount: $sourceKey');
+      log!.log('transactionHexString: ${kinTransaction.bytesValue.toHexString()}');
 
       return kinTransaction ;
     });
@@ -209,7 +209,7 @@ class KinServiceImplV4 extends KinService {
   FutureOr<bool> canWhitelistTransactions() => true ;
 
   @override
-  Future<KinAccount> createAccount(KinAccountId accountId, PrivateKey signer) {
+  Future<KinAccount?> createAccount(KinAccountId accountId, PrivateKey signer) {
     return networkOperationsHandler.queueWork('KinServiceImplV4.createAccount', () async {
       try {
         var ret = await Future.wait([
@@ -217,15 +217,15 @@ class KinServiceImplV4 extends KinService {
           _cachedRecentBlockHash(),
           _cachedMinRentExemption()
         ]);
-        log.log("createAccount:");
+        log!.log("createAccount:");
 
-        var serviceConfig = ret[0].payload as ServiceConfig;
-        var recentBlockHash = ret[1].payload as Hash;
-        var minRentExemption = ret[2].payload as int;
+        var serviceConfig = ret[0]!.payload as ServiceConfig;
+        var recentBlockHash = ret[1]!.payload as Hash?;
+        var minRentExemption = ret[2]!.payload as int?;
 
         var tokenAccountSeed = signer
             .toSigningKeyPair()
-            .rawSecretSeed
+            .rawSecretSeed!
             .toSha256();
         var tokenAccount = KeyPair.fromSecretSeedBytes(tokenAccountSeed)
             .asPrivateKey();
@@ -237,10 +237,10 @@ class KinServiceImplV4 extends KinService {
         var programKey = serviceConfig.tokenProgram.toKeyPair().asPublicKey();
         var mint = serviceConfig.token.toKeyPair().asPublicKey();
 
-        log.log("- subsidizer: $subsidizer");
-        log.log("- owner: $owner");
-        log.log("- programKey: $programKey");
-        log.log("- mint: $mint");
+        log!.log("- subsidizer: $subsidizer");
+        log!.log("- owner: $owner");
+        log!.log("- programKey: $programKey");
+        log!.log("- mint: $mint");
 
         var transaction = Transaction.newTransaction(subsidizer, [
           CreateAccount(
@@ -266,10 +266,10 @@ class KinServiceImplV4 extends KinService {
         ]).copyAndSetRecentBlockhash(recentBlockHash).copyAndSign(
             [tokenAccount, signer]);
 
-        log.log("- serviceConfig: $serviceConfig");
-        log.log("- recentBlockHash: $recentBlockHash");
-        log.log("- minRentExemption: $minRentExemption");
-        log.log("- createTransaction: ${transaction.marshal().toHex()}");
+        log!.log("- serviceConfig: $serviceConfig");
+        log!.log("- recentBlockHash: $recentBlockHash");
+        log!.log("- minRentExemption: $minRentExemption");
+        log!.log("- createTransaction: ${transaction.marshal().toHex()}");
 
         var response = await accountCreationApi.createAccountV4(transaction);
 
@@ -323,7 +323,7 @@ class KinServiceImplV4 extends KinService {
   }
 
   @override
-  Future<KinTransaction> getTransaction(TransactionHash transactionHash) async {
+  Future<KinTransaction?> getTransaction(TransactionHash transactionHash) async {
     return networkOperationsHandler.queueWork('KinServiceImplV4.getTransaction', () async {
       var response = await transactionApi.getTransaction(transactionHash);
 
@@ -345,7 +345,7 @@ class KinServiceImplV4 extends KinService {
   }
 
   @override
-  Future<List<KinTransaction>> getTransactionPage(KinAccountId kinAccountId, PagingToken pagingToken, KinServiceOrder order) async {
+  Future<List<KinTransaction>?> getTransactionPage(KinAccountId kinAccountId, PagingToken? pagingToken, KinServiceOrder order) async {
     return networkOperationsHandler.queueWork('KinServiceImplV4.getTransactionPage', () async {
       var response = await transactionApi.getTransactionHistory(kinAccountId, pagingToken: pagingToken, order: order);
 
@@ -381,33 +381,40 @@ class KinServiceImplV4 extends KinService {
   Future<List<PublicKey>> resolveTokenAccounts(KinAccountId accountId) async {
     var cacheKey = "resolvedAccounts:${accountId.stellarBase32Encode()}";
 
-    var tokenAccounts = await _cache.resolve(cacheKey, fault: (k) async {
-      return networkOperationsHandler.queueWork('KinServiceImplV4.resolveTokenAccounts', () async {
-        var response = await accountApi.resolveTokenAccounts(accountId) ;
+    List<PublicKey>? tokenAccounts;
 
-        if ( response.type == KinServiceResponseType.ok ) {
-          return response.payload ;
-        }
-        else if ( response.type == KinServiceResponseType.undefinedError ) {
-          throw UnexpectedServiceError(response.error);
-        }
-        else if ( response.type == KinServiceResponseType.transientFailure ) {
-          throw TransientFailure(response.error);
-        }
-        else if ( response.type == KinServiceResponseType.upgradeRequiredError ) {
-          throw SDKUpgradeRequired();
-        }
-        else {
-          throw StateError("Can't handle response.type: ${ response.type }") ;
-        }
+    try {
+      tokenAccounts = await _cache.resolve(cacheKey, fault: (k) async {
+        return networkOperationsHandler.queueWork(
+            'KinServiceImplV4.resolveTokenAccounts', () async {
+          var response = await accountApi.resolveTokenAccounts(accountId);
+
+          if (response.type == KinServiceResponseType.ok) {
+            return response.payload!;
+          }
+          else if (response.type == KinServiceResponseType.undefinedError) {
+            throw UnexpectedServiceError(response.error);
+          }
+          else if (response.type == KinServiceResponseType.transientFailure) {
+            throw TransientFailure(response.error);
+          }
+          else
+          if (response.type == KinServiceResponseType.upgradeRequiredError) {
+            throw SDKUpgradeRequired();
+          }
+          else {
+            throw StateError("Can't handle response.type: ${ response.type }");
+          }
+        });
       });
-    });
 
-    if (tokenAccounts == null || tokenAccounts.isEmpty) {
-      _cache.invalidate(cacheKey);
+      return tokenAccounts ?? <PublicKey>[];
     }
-
-    return tokenAccounts;
+    finally {
+      if (tokenAccounts == null || tokenAccounts.isEmpty) {
+        _cache.invalidate(cacheKey);
+      }
+    }
   }
 
   @override
@@ -431,7 +438,7 @@ class KinServiceImplV4 extends KinService {
       );
 
       if (response.type == KinServiceResponseType.ok) {
-        return response.payload;
+        return response.payload!;
       }
       else if (response.type == KinServiceResponseType.insufficientFee) {
         throw InsufficientFeeInRequestError(response.error);

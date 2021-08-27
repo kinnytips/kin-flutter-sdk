@@ -21,39 +21,39 @@ class StrictReceivePathsRequestBuilder extends RequestBuilder {
   /// Sets the source account. For this search, Horizon loads a list of assets available to the sender (based on source_account or source_assets) and displays the possible paths from the different source assets to the destination asset.
   /// See: <a href="https://developers.stellar.org/api/aggregations/paths/strict-receive/" target="_blank">List Strict Receive Payment Paths</a>
   StrictReceivePathsRequestBuilder sourceAccount(String accountId) {
-    if (queryParameters.containsKey("source_assets")) {
+    if (queryParameters!.containsKey("source_assets")) {
       throw Exception("cannot set both source_assets and source_account");
     }
-    queryParameters.addAll({"source_account": accountId});
+    queryParameters!.addAll({"source_account": accountId});
     return this;
   }
 
   /// Sets the source assets. For this search, Horizon loads a list of assets available to the sender (based on source_account or source_assets) and displays the possible paths from the different source assets to the destination asset.
   /// See: <a href="https://developers.stellar.org/api/aggregations/paths/strict-receive/" target="_blank">List Strict Receive Payment Paths</a>
   StrictReceivePathsRequestBuilder sourceAssets(List<Asset> sourceAssets) {
-    if (queryParameters.containsKey("source_account")) {
+    if (queryParameters!.containsKey("source_account")) {
       throw Exception("cannot set both source_assets and source_account");
     }
-    queryParameters.addAll({"source_assets": encodeAssets(sourceAssets)});
+    queryParameters!.addAll({"source_assets": encodeAssets(sourceAssets)});
     return this;
   }
 
   /// Sets the destination amount. The [amount] of the destination asset that should be received.
   /// See: <a href="https://developers.stellar.org/api/aggregations/paths/strict-receive/" target="_blank">List Strict Receive Payment Paths</a>
   StrictReceivePathsRequestBuilder destinationAmount(String amount) {
-    queryParameters.addAll({"destination_amount": amount});
+    queryParameters!.addAll({"destination_amount": amount});
     return this;
   }
 
   /// Sets the destination asset.
   /// See: <a href="https://developers.stellar.org/api/aggregations/paths/strict-receive/" target="_blank">List Strict Receive Payment Paths</a>
   StrictReceivePathsRequestBuilder destinationAsset(Asset asset) {
-    queryParameters.addAll({"destination_asset_type": asset.type});
+    queryParameters!.addAll({"destination_asset_type": asset.type});
     if (asset is AssetTypeCreditAlphaNum) {
       AssetTypeCreditAlphaNum creditAlphaNumAsset = asset;
-      queryParameters
+      queryParameters!
           .addAll({"destination_asset_code": creditAlphaNumAsset.code});
-      queryParameters
+      queryParameters!
           .addAll({"destination_asset_issuer": creditAlphaNumAsset.issuerId});
     }
     return this;
@@ -61,7 +61,7 @@ class StrictReceivePathsRequestBuilder extends RequestBuilder {
 
   static Future<Page<PathResponse>> requestExecute(
       http.Client httpClient, Uri uri) async {
-    TypeToken type = new TypeToken<Page<PathResponse>>();
+    var type = new TypeToken<Page<PathResponse>>();
     ResponseHandler<Page<PathResponse>> responseHandler =
         new ResponseHandler<Page<PathResponse>>(type);
 
@@ -74,7 +74,7 @@ class StrictReceivePathsRequestBuilder extends RequestBuilder {
 
   Future<Page<PathResponse>> execute() {
     return StrictReceivePathsRequestBuilder.requestExecute(
-        this.httpClient, this.buildUri());
+        this.httpClient, this.buildUri()!);
   }
 }
 
@@ -89,11 +89,11 @@ class StrictSendPathsRequestBuilder extends RequestBuilder {
   /// Sets the destination account.For this search, Horizon loads a list of assets that the recipient can recieve (based on destination_account or destination_assets) and displays the possible paths from the different source assets to the destination asset. Only paths that satisfy the source_amount are returned.
   /// See: <a href="https://developers.stellar.org/api/aggregations/paths/strict-send/" target="_blank">List Strict Send Payment Paths</a>
   StrictSendPathsRequestBuilder destinationAccount(String accountId) {
-    if (queryParameters.containsKey("destination_assets")) {
+    if (queryParameters!.containsKey("destination_assets")) {
       throw Exception(
           "cannot set both destination_assets and destination_account");
     }
-    queryParameters.addAll({"destination_account": accountId});
+    queryParameters!.addAll({"destination_account": accountId});
     return this;
   }
 
@@ -101,11 +101,11 @@ class StrictSendPathsRequestBuilder extends RequestBuilder {
   /// See: <a href="https://developers.stellar.org/api/aggregations/paths/strict-send/" target="_blank">List Strict Send Payment Paths</a>
   StrictSendPathsRequestBuilder destinationAssets(
       List<Asset> destinationAssets) {
-    if (queryParameters.containsKey("destination_account")) {
+    if (queryParameters!.containsKey("destination_account")) {
       throw Exception(
           "cannot set both destination_assets and destination_account");
     }
-    queryParameters
+    queryParameters!
         .addAll({"destination_assets": encodeAssets(destinationAssets)});
     return this;
   }
@@ -113,18 +113,18 @@ class StrictSendPathsRequestBuilder extends RequestBuilder {
   /// Sets the source amount.
   /// See: <a href="https://developers.stellar.org/api/aggregations/paths/strict-send/" target="_blank">List Strict Send Payment Paths</a>
   StrictSendPathsRequestBuilder sourceAmount(String amount) {
-    queryParameters.addAll({"source_amount": amount});
+    queryParameters!.addAll({"source_amount": amount});
     return this;
   }
 
   /// Sets the source asset.
   /// See: <a href="https://developers.stellar.org/api/aggregations/paths/strict-send/" target="_blank">List Strict Send Payment Paths</a>
   StrictSendPathsRequestBuilder sourceAsset(Asset asset) {
-    queryParameters.addAll({"source_asset_type": asset.type});
+    queryParameters!.addAll({"source_asset_type": asset.type});
     if (asset is AssetTypeCreditAlphaNum) {
       AssetTypeCreditAlphaNum creditAlphaNumAsset = asset;
-      queryParameters.addAll({"source_asset_code": creditAlphaNumAsset.code});
-      queryParameters
+      queryParameters!.addAll({"source_asset_code": creditAlphaNumAsset.code});
+      queryParameters!
           .addAll({"source_asset_issuer": creditAlphaNumAsset.issuerId});
     }
     return this;
@@ -132,7 +132,7 @@ class StrictSendPathsRequestBuilder extends RequestBuilder {
 
   static Future<Page<PathResponse>> requestExecute(
       http.Client httpClient, Uri uri) async {
-    TypeToken type = new TypeToken<Page<PathResponse>>();
+    var type = new TypeToken<Page<PathResponse>>();
     ResponseHandler<Page<PathResponse>> responseHandler =
         new ResponseHandler<Page<PathResponse>>(type);
 
@@ -145,6 +145,6 @@ class StrictSendPathsRequestBuilder extends RequestBuilder {
 
   Future<Page<PathResponse>> execute() {
     return StrictSendPathsRequestBuilder.requestExecute(
-        this.httpClient, this.buildUri());
+        this.httpClient, this.buildUri()!);
   }
 }

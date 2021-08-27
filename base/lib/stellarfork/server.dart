@@ -8,7 +8,7 @@ import 'package:kin_base/stellarfork/requests/accounts_request_builder.dart';
 class Server implements KinServer {
   String uri;
   HttpClient httpClient;
-  Uri _serverURI;
+  Uri? _serverURI;
 
   Server(this.uri, this.httpClient) {
     _serverURI = createUri(uri);

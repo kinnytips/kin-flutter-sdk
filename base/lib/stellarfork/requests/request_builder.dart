@@ -13,8 +13,8 @@ import '../responses/response.dart';
 import '../assets.dart';
 
 class StreamingProtocol<ListenerType> {
-    SseClient stream(EventListener<ListenerType> listener) {
-
+    SseClient stream(EventListener<ListenerType>? listener) {
+      throw UnsupportedError("No stream support. Live API only for the latests Kin protocol");
     }
 }
 
@@ -65,21 +65,21 @@ class RequestBuilderOrder {
 
 /// Abstract class for request builders.
 abstract class RequestBuilder {
-  Uri uriBuilder;
-  http.Client httpClient;
-  List<String> _segments;
+  Uri? uriBuilder;
+  late http.Client httpClient;
+  List<String>? _segments;
   bool _segmentsAdded = false;
-  Map<String, String> queryParameters;
+  Map<String, String?>? queryParameters;
   static final Map<String, String> headers = {
     "X-Client-Name": "stellar_flutter_sdk",
     "X-Client-Version": "1.0.7"
   };
 
   RequestBuilder(
-      http.Client httpClient, Uri serverURI, List<String> defaultSegment) {
+      http.Client httpClient, Uri serverURI, List<String>? defaultSegment) {
     this.httpClient = httpClient;
     uriBuilder = serverURI;
-    _segments = List<String>();
+    _segments = <String>[];
     if (defaultSegment != null) {
       this.setSegments(defaultSegment);
     }
@@ -94,9 +94,9 @@ abstract class RequestBuilder {
 
     _segmentsAdded = true;
     // Remove default segments
-    this._segments.clear();
+    this._segments!.clear();
     for (String segment in segments) {
-      this._segments.add(segment);
+      this._segments!.add(segment);
     }
 
     return this;
@@ -106,7 +106,7 @@ abstract class RequestBuilder {
   /// A cursor is a value that points to a specific location in a collection of resources.
   /// The cursor attribute itself is an opaque value meaning that users should not try to parse it.
   RequestBuilder cursor(String cursor) {
-    queryParameters.addAll({"cursor": cursor});
+    queryParameters!.addAll({"cursor": cursor});
     return this;
   }
 
@@ -114,26 +114,26 @@ abstract class RequestBuilder {
   /// It defines maximum number of records to return.
   /// For range and default values check documentation of the endpoint requested.
   RequestBuilder limit(int number) {
-    queryParameters.addAll({"limit": number.toString()});
+    queryParameters!.addAll({"limit": number.toString()});
     return this;
   }
 
   /// Sets [order] parameter on the request.
   RequestBuilder order(RequestBuilderOrder direction) {
-    queryParameters.addAll({"order": direction.value});
+    queryParameters!.addAll({"order": direction.value});
     return this;
   }
 
-  Uri buildUri() {
-    Uri build = uriBuilder;
+  Uri? buildUri() {
+    Uri? build = uriBuilder;
 
-    if (_segments.length > 0) {
-      build = build.replace(
+    if (_segments!.length > 0) {
+      build = build!.replace(
         pathSegments: _segments,
       );
     }
-    if (queryParameters.length > 0) {
-      build = build.replace(queryParameters: queryParameters);
+    if (queryParameters!.length > 0) {
+      build = build!.replace(queryParameters: queryParameters);
     }
 
     return build;
@@ -151,7 +151,7 @@ abstract class RequestBuilder {
   }
 
   String encodeAssets(List<Asset> assets) {
-    List<String> encodedAssets = List<String>();
+    List<String> encodedAssets = <String>[];
     for (Asset next in assets) {
       encodedAssets.add(encodeAsset(next));
     }
@@ -162,14 +162,12 @@ abstract class RequestBuilder {
 class ResponseHandler<T> {
   TypeToken<T> _type;
 
-  ResponseHandler(TypeToken<T> type) {
-    this._type = type;
-  }
+  ResponseHandler(this._type) ;
 
   T handleResponse(final http.Response response) {
     // Too Many Requests
     if (response.statusCode == 429) {
-      int retryAfter = int.parse(response.headers["Retry-After"]);
+      int retryAfter = int.parse(response.headers["Retry-After"]!);
       throw TooManyRequestsException(retryAfter);
     }
 

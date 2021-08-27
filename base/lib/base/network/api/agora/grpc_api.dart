@@ -17,7 +17,7 @@ class UnrecognizedProtoResponse extends Error {
 class UnrecognizedResultException implements Exception {
   final String message = "Received an unknown result type";
 
-  final Error cause;
+  final Object? cause;
 
   UnrecognizedResultException([this.cause]);
 

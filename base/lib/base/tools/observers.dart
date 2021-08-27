@@ -29,7 +29,7 @@ abstract class Observer<T> extends Disposable<T> {
 
   Observer<T> requestInvalidation();
 
-  Observer<V> map<V>(V Function(T e) function);
+  Observer<V?> map<V>(V Function(T e) function);
 
   Future<V> mapPromise<V>(V Function(T e) map);
 
@@ -44,16 +44,16 @@ extension ObserverExtension<T> on Observer<T> {
   }
 }
 
-typedef Callback<T> = void Function(T value, [Error error, StackTrace s]);
+typedef Callback<T> = void Function(T value, [Object? error, StackTrace? s]);
 
 class ObservableCallback<T> {
-  final void Function(T value) onNext;
+  final void Function(T value)? onNext;
 
-  final void Function() onCompleted;
+  final void Function()? onCompleted;
   final void Function(Error error) onError;
 
   ObservableCallback(
-      {this.onNext, this.onCompleted, void Function(Error error) onError})
+      {this.onNext, this.onCompleted, void Function(Object? error)? onError})
       : onError = onError ?? ((e) => throw e);
 }
 
@@ -64,7 +64,7 @@ abstract class ValueListener<T> {
 }
 
 extension FutureCallbackExtension<T> on Future<T> {
-  void callback(Callback<T> callback) {
+  void callback(Callback<T?> callback) {
     this.then((value) {
       callback(value);
     }, onError: (error, stackStrace) => callback(null, error, stackStrace));
@@ -84,19 +84,19 @@ abstract class ListObserver<T> extends Observer<List<T>>
 }
 
 extension ListObserverExtension<T> on ListObserver<T> {
-  ListObserver<T> listen(ValueListener<List<T>> listener) {
+  ListObserver<T> listen(ValueListener<List<T>?> listener) {
     return add((e) => listener.onNext(e));
   }
 }
 
 class ValueSubject<T> extends Observer<T> {
-  final void Function() _triggerInvalidation;
+  final void Function()? _triggerInvalidation;
 
   ValueSubject([this._triggerInvalidation]);
 
   final List<void Function(T e)> _listeners = <void Function(T)>[];
 
-  T _currentValue;
+  T? _currentValue;
 
   final List<void Function()> _onDisposed = <void Function()>[];
 
@@ -106,7 +106,7 @@ class ValueSubject<T> extends Observer<T> {
   Observer<T> add(void Function(T e) listener) {
     _listeners.add(listener);
     if (_currentValue != null) {
-      listener(_currentValue);
+      listener(_currentValue!);
     }
     return this;
   }
@@ -144,7 +144,7 @@ class ValueSubject<T> extends Observer<T> {
 
   @override
   Observer<T> requestInvalidation() {
-    if (_triggerInvalidation != null) _triggerInvalidation();
+    if (_triggerInvalidation != null) _triggerInvalidation!();
     return this;
   }
 
@@ -213,12 +213,12 @@ class ValueSubject<T> extends Observer<T> {
 }
 
 class ListSubject<T> extends ValueSubject<List<T>> implements ListObserver<T> {
-  final void Function() _fetchNextPage;
+  final void Function()? _fetchNextPage;
 
-  final void Function() _fetchPreviousPage;
+  final void Function()? _fetchPreviousPage;
 
   ListSubject([this._fetchNextPage, this._fetchPreviousPage,
-      void Function() triggerInvalidation])
+      void Function()? triggerInvalidation])
       : super(triggerInvalidation);
 
   @override
@@ -230,7 +230,7 @@ class ListSubject<T> extends ValueSubject<List<T>> implements ListObserver<T> {
   @override
   ListObserver<T> requestNextPage() {
     if (_fetchNextPage != null) {
-      _fetchNextPage();
+      _fetchNextPage!();
     }
     return this;
   }
@@ -238,7 +238,7 @@ class ListSubject<T> extends ValueSubject<List<T>> implements ListObserver<T> {
   @override
   ListObserver<T> requestPreviousPage() {
     if (_fetchPreviousPage != null) {
-      _fetchPreviousPage();
+      _fetchPreviousPage!();
     }
     return this;
   }

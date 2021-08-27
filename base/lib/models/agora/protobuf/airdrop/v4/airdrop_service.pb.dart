@@ -2,7 +2,7 @@
 //  Generated code. Do not modify.
 //  source: airdrop/v4/airdrop_service.proto
 //
-// @dart = 2.7
+
 // ignore_for_file: annotate_overrides,camel_case_types,unnecessary_const,non_constant_identifier_names,library_prefixes,unused_import,unused_shown_name,return_of_invalid_type,unnecessary_this,prefer_final_fields
 
 import 'dart:core' as $core;
@@ -27,9 +27,9 @@ class RequestAirdropRequest extends $pb.GeneratedMessage {
 
   RequestAirdropRequest._() : super();
   factory RequestAirdropRequest({
-    $8.SolanaAccountId accountId,
-    $fixnum.Int64 quarks,
-    $8.Commitment commitment,
+    $8.SolanaAccountId? accountId,
+    $fixnum.Int64? quarks,
+    $8.Commitment? commitment,
   }) {
     final _result = create();
     if (accountId != null) {
@@ -62,7 +62,7 @@ class RequestAirdropRequest extends $pb.GeneratedMessage {
   static $pb.PbList<RequestAirdropRequest> createRepeated() => $pb.PbList<RequestAirdropRequest>();
   @$core.pragma('dart2js:noInline')
   static RequestAirdropRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<RequestAirdropRequest>(create);
-  static RequestAirdropRequest _defaultInstance;
+  static RequestAirdropRequest? _defaultInstance;
 
   @$pb.TagNumber(1)
   $8.SolanaAccountId get accountId => $_getN(0);
@@ -103,8 +103,8 @@ class RequestAirdropResponse extends $pb.GeneratedMessage {
 
   RequestAirdropResponse._() : super();
   factory RequestAirdropResponse({
-    RequestAirdropResponse_Result result,
-    $8.TransactionSignature signature,
+    RequestAirdropResponse_Result? result,
+    $8.TransactionSignature? signature,
   }) {
     final _result = create();
     if (result != null) {
@@ -134,7 +134,7 @@ class RequestAirdropResponse extends $pb.GeneratedMessage {
   static $pb.PbList<RequestAirdropResponse> createRepeated() => $pb.PbList<RequestAirdropResponse>();
   @$core.pragma('dart2js:noInline')
   static RequestAirdropResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<RequestAirdropResponse>(create);
-  static RequestAirdropResponse _defaultInstance;
+  static RequestAirdropResponse? _defaultInstance;
 
   @$pb.TagNumber(1)
   RequestAirdropResponse_Result get result => $_getN(0);

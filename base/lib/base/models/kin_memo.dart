@@ -59,22 +59,22 @@ class KinMemoTypeCharsetEncoded extends KinMemoType {
 class KinMemo {
   static final KinMemo none = KinMemo(Uint8List(0), KinMemoTypeNoEncoding());
 
-  final Uint8List rawValue;
+  final Uint8List? rawValue;
 
   final KinMemoType type;
 
-  KinMemo(this.rawValue, [KinMemoType type])
+  KinMemo(this.rawValue, [KinMemoType? type])
       : type = type ?? KinMemoTypeNoEncoding();
 
-  factory KinMemo.fromText(String text, [Charset charset]) {
+  factory KinMemo.fromText(String text, [Charset? charset]) {
     charset ??= Charset.utf8;
     var bytes = charset.encode(text);
     return KinMemo(bytes, KinMemoTypeCharsetEncoded(charset));
   }
 
-  KinBinaryMemo getAgoraMemo() {
+  KinBinaryMemo? getAgoraMemo() {
     try {
-      return KinBinaryMemo.decode(rawValue) ;
+      return KinBinaryMemo.decode(rawValue!) ;
     } on Error {
       return null;
     }
@@ -85,7 +85,7 @@ class KinMemo {
       identical(this, other) ||
       other is KinMemo &&
           runtimeType == other.runtimeType &&
-          rawValue.equalsContent(other.rawValue) &&
+          rawValue!.equalsContent(other.rawValue) &&
           type == other.type;
 
   @override
@@ -97,7 +97,7 @@ class KinMemo {
     if (type is KinMemoTypeNoEncoding) {
       return rawValue.toString();
     } else if (type is KinMemoTypeCharsetEncoded) {
-      return type.charset.decode(rawValue);
+      return type.charset.decode(rawValue!);
     } else {
       throw UnsupportedError("$type");
     }

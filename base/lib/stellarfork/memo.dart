@@ -61,13 +61,13 @@ abstract class Memo {
       case XdrMemoType.MEMO_NONE:
         return none();
       case XdrMemoType.MEMO_ID:
-        return id(memo.id.uint64);
+        return id(memo.id!.uint64);
       case XdrMemoType.MEMO_TEXT:
-        return text(memo.text);
+        return text(memo.text!);
       case XdrMemoType.MEMO_HASH:
-        return hash(memo.hash.hash);
+        return hash(memo.hash!.hash);
       case XdrMemoType.MEMO_RETURN:
-        return returnHash(memo.retHash.hash);
+        return returnHash(memo.retHash!.hash);
       default:
         throw Exception("Unknown memo type");
     }
@@ -79,21 +79,21 @@ abstract class Memo {
   bool operator ==(Object o);
 
   factory Memo.fromJson(Map<String, dynamic> json) {
-    String memoType = json["memo_type"] as String;
+    String? memoType = json["memo_type"] as String?;
     Memo memo;
     if (memoType == "none") {
       memo = Memo.none();
     } else {
       if (memoType == "text") {
-        memo = Memo.text(json["memo"] as String ?? "");
+        memo = Memo.text(json["memo"] as String? ?? "");
       } else {
-        String memoValue = json["memo"] as String;
+        String? memoValue = json["memo"] as String?;
         if (memoType == "id") {
-          memo = Memo.id(fixnum.Int64.parseInt(memoValue).toInt());
+          memo = Memo.id(fixnum.Int64.parseInt(memoValue!).toInt());
         } else if (memoType == "hash") {
-          memo = Memo.hash(base64.decode(memoValue));
+          memo = Memo.hash(base64.decode(memoValue!));
         } else if (memoType == "return") {
-          memo = Memo.returnHash(base64.decode(memoValue));
+          memo = Memo.returnHash(base64.decode(memoValue!));
         } else {
           throw new Exception("Unknown memo type.");
         }
@@ -114,8 +114,7 @@ class MemoHash extends MemoHashAbstract {
     XdrMemo memo = XdrMemo();
     memo.discriminant = XdrMemoType.MEMO_HASH;
 
-    XdrHash hash = XdrHash();
-    hash.hash = _bytes;
+    XdrHash hash = XdrHash(_bytes);
 
     memo.hash = hash;
     return memo;
@@ -123,7 +122,7 @@ class MemoHash extends MemoHashAbstract {
 }
 
 abstract class MemoHashAbstract extends Memo {
-  Uint8List _bytes;
+  late Uint8List _bytes;
 
   MemoHashAbstract(Uint8List bytes) {
     if (bytes.length < 32) {
@@ -147,7 +146,7 @@ abstract class MemoHashAbstract extends Memo {
   }
 
   ///Returns 32 bytes long array contained in this memo.
-  Uint8List get bytes => _bytes;
+  Uint8List? get bytes => _bytes;
 
   ///<p>Returns hex representation of bytes contained in this memo.</p>
   String get hexValue => Util.bytesToHex(this._bytes);
@@ -160,8 +159,8 @@ abstract class MemoHashAbstract extends Memo {
 
   @override
   bool operator ==(Object o) {
-    if (o == null || !(o is MemoHashAbstract)) return false;
-    MemoHashAbstract that = o as MemoHashAbstract;
+    if (o is! MemoHashAbstract) return false;
+    MemoHashAbstract that = o;
     return ListEquality().equals(_bytes, that.bytes);
   }
 }
@@ -177,14 +176,14 @@ class MemoNone extends Memo {
 
   @override
   bool operator ==(Object o) {
-    if (o == null || !(o is MemoNone)) return false;
+    if (o is! MemoNone) return false;
     return true;
   }
 }
 
 ///Represents MEMO_ID.
 class MemoId extends Memo {
-  int _id;
+  late int _id;
 
   MemoId(int id) {
     if (fixnum.Int64(id).toRadixStringUnsigned(10) == "0") {
@@ -193,22 +192,21 @@ class MemoId extends Memo {
     this._id = id;
   }
 
-  int getId() => _id;
+  int? getId() => _id;
 
   @override
   XdrMemo toXdr() {
     XdrMemo memo = XdrMemo();
     memo.discriminant = XdrMemoType.MEMO_ID;
-    XdrUint64 idXdr = XdrUint64();
-    idXdr.uint64 = _id;
+    XdrUint64 idXdr = XdrUint64(_id);
     memo.id = idXdr;
     return memo;
   }
 
   @override
   bool operator ==(Object o) {
-    if (o == null || !(o is MemoId)) return false;
-    MemoId memoId = o as MemoId;
+    if (o is! MemoId) return false;
+    MemoId memoId = o;
     return _id == memoId.getId();
   }
 }
@@ -223,8 +221,7 @@ class MemoReturnHash extends MemoHashAbstract {
     XdrMemo memo = XdrMemo();
     memo.discriminant = XdrMemoType.MEMO_RETURN;
 
-    XdrHash hash = XdrHash();
-    hash.hash = _bytes;
+    XdrHash hash = XdrHash(_bytes);
 
     memo.retHash = hash;
     return memo;
@@ -233,18 +230,17 @@ class MemoReturnHash extends MemoHashAbstract {
 
 ///Represents MEMO_TEXT.
 class MemoText extends Memo {
-  String _text;
+  String? _text;
 
   MemoText(String text) {
-    this._text = checkNotNull(text, "text cannot be null");
-
+    this._text = text;
     int length = utf8.encode(text).length;
     if (length > 28) {
       throw MemoTooLongException("text must be <= 28 bytes. length=$length");
     }
   }
 
-  String get text => _text;
+  String? get text => _text;
 
   @override
   XdrMemo toXdr() {
@@ -256,8 +252,8 @@ class MemoText extends Memo {
 
   @override
   bool operator ==(Object o) {
-    if (o == null || !(o is MemoText)) return false;
-    MemoText memoText = o as MemoText;
+    if (o is! MemoText) return false;
+    MemoText memoText = o;
     return _text == memoText.text;
   }
 }

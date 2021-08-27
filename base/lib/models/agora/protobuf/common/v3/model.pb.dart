@@ -2,7 +2,7 @@
 //  Generated code. Do not modify.
 //  source: common/v3/model.proto
 //
-// @dart = 2.7
+
 // ignore_for_file: annotate_overrides,camel_case_types,unnecessary_const,non_constant_identifier_names,library_prefixes,unused_import,unused_shown_name,return_of_invalid_type,unnecessary_this,prefer_final_fields
 
 import 'dart:core' as $core;
@@ -22,7 +22,7 @@ class StellarAccountId extends $pb.GeneratedMessage {
 
   StellarAccountId._() : super();
   factory StellarAccountId({
-    $core.String value,
+    $core.String? value,
   }) {
     final _result = create();
     if (value != null) {
@@ -49,7 +49,7 @@ class StellarAccountId extends $pb.GeneratedMessage {
   static $pb.PbList<StellarAccountId> createRepeated() => $pb.PbList<StellarAccountId>();
   @$core.pragma('dart2js:noInline')
   static StellarAccountId getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<StellarAccountId>(create);
-  static StellarAccountId _defaultInstance;
+  static StellarAccountId? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.String get value => $_getSZ(0);
@@ -69,7 +69,7 @@ class TransactionHash extends $pb.GeneratedMessage {
 
   TransactionHash._() : super();
   factory TransactionHash({
-    $core.List<$core.int> value,
+    $core.List<$core.int>? value,
   }) {
     final _result = create();
     if (value != null) {
@@ -96,7 +96,7 @@ class TransactionHash extends $pb.GeneratedMessage {
   static $pb.PbList<TransactionHash> createRepeated() => $pb.PbList<TransactionHash>();
   @$core.pragma('dart2js:noInline')
   static TransactionHash getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<TransactionHash>(create);
-  static TransactionHash _defaultInstance;
+  static TransactionHash? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.List<$core.int> get value => $_getN(0);
@@ -116,7 +116,7 @@ class InvoiceHash extends $pb.GeneratedMessage {
 
   InvoiceHash._() : super();
   factory InvoiceHash({
-    $core.List<$core.int> value,
+    $core.List<$core.int>? value,
   }) {
     final _result = create();
     if (value != null) {
@@ -143,7 +143,7 @@ class InvoiceHash extends $pb.GeneratedMessage {
   static $pb.PbList<InvoiceHash> createRepeated() => $pb.PbList<InvoiceHash>();
   @$core.pragma('dart2js:noInline')
   static InvoiceHash getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<InvoiceHash>(create);
-  static InvoiceHash _defaultInstance;
+  static InvoiceHash? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.List<$core.int> get value => $_getN(0);
@@ -166,10 +166,10 @@ class Invoice_LineItem extends $pb.GeneratedMessage {
 
   Invoice_LineItem._() : super();
   factory Invoice_LineItem({
-    $core.String title,
-    $core.String description,
-    $fixnum.Int64 amount,
-    $core.List<$core.int> sku,
+    $core.String? title,
+    $core.String? description,
+    $fixnum.Int64? amount,
+    $core.List<$core.int>? sku,
   }) {
     final _result = create();
     if (title != null) {
@@ -205,7 +205,7 @@ class Invoice_LineItem extends $pb.GeneratedMessage {
   static $pb.PbList<Invoice_LineItem> createRepeated() => $pb.PbList<Invoice_LineItem>();
   @$core.pragma('dart2js:noInline')
   static Invoice_LineItem getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<Invoice_LineItem>(create);
-  static Invoice_LineItem _defaultInstance;
+  static Invoice_LineItem? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.String get title => $_getSZ(0);
@@ -252,7 +252,7 @@ class Invoice extends $pb.GeneratedMessage {
 
   Invoice._() : super();
   factory Invoice({
-    $core.Iterable<Invoice_LineItem> items,
+    $core.Iterable<Invoice_LineItem>? items,
   }) {
     final _result = create();
     if (items != null) {
@@ -279,7 +279,7 @@ class Invoice extends $pb.GeneratedMessage {
   static $pb.PbList<Invoice> createRepeated() => $pb.PbList<Invoice>();
   @$core.pragma('dart2js:noInline')
   static Invoice getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<Invoice>(create);
-  static Invoice _defaultInstance;
+  static Invoice? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.List<Invoice_LineItem> get items => $_getList(0);
@@ -293,7 +293,7 @@ class InvoiceList extends $pb.GeneratedMessage {
 
   InvoiceList._() : super();
   factory InvoiceList({
-    $core.Iterable<Invoice> invoices,
+    $core.Iterable<Invoice>? invoices,
   }) {
     final _result = create();
     if (invoices != null) {
@@ -320,7 +320,7 @@ class InvoiceList extends $pb.GeneratedMessage {
   static $pb.PbList<InvoiceList> createRepeated() => $pb.PbList<InvoiceList>();
   @$core.pragma('dart2js:noInline')
   static InvoiceList getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<InvoiceList>(create);
-  static InvoiceList _defaultInstance;
+  static InvoiceList? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.List<Invoice> get invoices => $_getList(0);
@@ -336,9 +336,9 @@ class InvoiceError extends $pb.GeneratedMessage {
 
   InvoiceError._() : super();
   factory InvoiceError({
-    $core.int opIndex,
-    Invoice invoice,
-    InvoiceError_Reason reason,
+    $core.int? opIndex,
+    Invoice? invoice,
+    InvoiceError_Reason? reason,
   }) {
     final _result = create();
     if (opIndex != null) {
@@ -371,7 +371,7 @@ class InvoiceError extends $pb.GeneratedMessage {
   static $pb.PbList<InvoiceError> createRepeated() => $pb.PbList<InvoiceError>();
   @$core.pragma('dart2js:noInline')
   static InvoiceError getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<InvoiceError>(create);
-  static InvoiceError _defaultInstance;
+  static InvoiceError? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.int get opIndex => $_getIZ(0);

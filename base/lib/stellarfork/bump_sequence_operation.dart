@@ -5,7 +5,6 @@
 import 'muxed_account.dart';
 
 import 'operation.dart';
-import 'util.dart';
 import 'xdr/xdr_account.dart';
 import 'xdr/xdr_operation.dart';
 import 'xdr/xdr_type.dart';
@@ -15,17 +14,14 @@ import 'xdr/xdr_type.dart';
 class BumpSequenceOperation extends Operation {
   int _bumpTo;
 
-  BumpSequenceOperation(int bumpTo) {
-    this._bumpTo = bumpTo;
-  }
+  BumpSequenceOperation(this._bumpTo) ;
 
-  int get bumpTo => _bumpTo;
+  int? get bumpTo => _bumpTo;
 
   @override
   XdrOperationBody toOperationBody() {
     XdrBumpSequenceOp op = new XdrBumpSequenceOp();
-    XdrInt64 bumpTo = new XdrInt64();
-    bumpTo.int64 = this._bumpTo;
+    XdrInt64 bumpTo = new XdrInt64(this._bumpTo);
     XdrSequenceNumber sequenceNumber = new XdrSequenceNumber();
     sequenceNumber.sequenceNumber = bumpTo;
     op.bumpTo = sequenceNumber;
@@ -39,22 +35,19 @@ class BumpSequenceOperation extends Operation {
 
   /// Construct a new BumpSequence builder from a BumpSequence XDR.
   static BumpSequenceOperationBuilder builder(XdrBumpSequenceOp op) {
-    return BumpSequenceOperationBuilder(op.bumpTo.sequenceNumber.int64);
+    return BumpSequenceOperationBuilder(op.bumpTo!.sequenceNumber!.int64);
   }
 }
 
 class BumpSequenceOperationBuilder {
   int _bumpTo;
-  MuxedAccount _mSourceAccount;
+  MuxedAccount? _mSourceAccount;
 
   /// Creates a new BumpSequence builder.
-  BumpSequenceOperationBuilder(int bumpTo) {
-    this._bumpTo = bumpTo;
-  }
+  BumpSequenceOperationBuilder(this._bumpTo) ;
 
   /// Sets the source account for this operation.
   BumpSequenceOperationBuilder setSourceAccount(String sourceAccount) {
-    checkNotNull(sourceAccount, "sourceAccount cannot be null");
     _mSourceAccount = MuxedAccount(sourceAccount, null);
     return this;
   }
@@ -62,8 +55,7 @@ class BumpSequenceOperationBuilder {
   /// Sets the muxed source account for this operation.
   BumpSequenceOperationBuilder setMuxedSourceAccount(
       MuxedAccount sourceAccount) {
-    _mSourceAccount =
-        checkNotNull(sourceAccount, "sourceAccount cannot be null");
+    _mSourceAccount = sourceAccount;
     return this;
   }
 
@@ -71,7 +63,7 @@ class BumpSequenceOperationBuilder {
   BumpSequenceOperation build() {
     BumpSequenceOperation operation = new BumpSequenceOperation(_bumpTo);
     if (_mSourceAccount != null) {
-      operation.sourceAccount = _mSourceAccount;
+      operation.sourceAccount = _mSourceAccount!;
     }
     return operation;
   }

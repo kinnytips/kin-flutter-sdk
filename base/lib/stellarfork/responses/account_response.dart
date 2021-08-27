@@ -14,23 +14,23 @@ import 'response.dart';
 /// Represents an account response received from horizon. Users interact with the Stellar network through accounts. Everything else in the ledger—assets, offers, trustlines, etc.—are owned by accounts, and accounts must authorize all changes to the ledger through signed transactions.
 /// See: <a href="https://developers.stellar.org/api/resources/accounts/" target="_blank">Account documentation</a>.
 class AccountResponse extends Response implements TransactionBuilderAccount {
-  String accountId;
-  int _sequenceNumber;
-  String pagingToken;
-  int subentryCount;
-  String inflationDestination;
-  String homeDomain;
-  int lastModifiedLedger;
-  Thresholds thresholds;
-  Flags flags;
-  List<Balance> balances;
-  List<Signer> signers;
-  AccountResponseData data;
-  AccountResponseLinks links;
-  String sponsor;
-  int numSponsoring;
-  int numSponsored;
-  int muxedAccountMed25519Id; // ID to be used if this account is used as MuxedAccountMed25519
+  String? accountId;
+  int? _sequenceNumber;
+  String? pagingToken;
+  int? subentryCount;
+  String? inflationDestination;
+  String? homeDomain;
+  int? lastModifiedLedger;
+  Thresholds? thresholds;
+  Flags? flags;
+  List<Balance>? balances;
+  List<Signer>? signers;
+  AccountResponseData? data;
+  AccountResponseLinks? links;
+  String? sponsor;
+  int? numSponsoring;
+  int? numSponsored;
+  int? muxedAccountMed25519Id; // ID to be used if this account is used as MuxedAccountMed25519
 
   AccountResponse(
       this.accountId,
@@ -50,30 +50,37 @@ class AccountResponse extends Response implements TransactionBuilderAccount {
       this.numSponsored,
       this.numSponsoring);
 
-  @override
-  KeyPair get keypair => KeyPair.fromAccountId(accountId);
+  KeyPair get keypair => KeyPair.fromAccountId(accountId!);
 
   @override
-  int get sequenceNumber => _sequenceNumber;
+  int? get sequenceNumber => _sequenceNumber;
 
   @override
-  int get incrementedSequenceNumber => _sequenceNumber + 1;
+  int get incrementedSequenceNumber => _sequenceNumber! + 1;
 
   @override
-  void incrementSequenceNumber() => _sequenceNumber++;
+  void incrementSequenceNumber() {
+    var sequenceNumber = _sequenceNumber ;
+    if (sequenceNumber == null) {
+      _sequenceNumber = 1 ;
+    }
+    else {
+      _sequenceNumber = sequenceNumber+1;
+    }
+  }
 
   @override
   MuxedAccount get muxedAccount =>
-      MuxedAccount(accountId, muxedAccountMed25519Id);
+      MuxedAccount(accountId!, muxedAccountMed25519Id);
 
   factory AccountResponse.fromJson(Map<String, dynamic> json) =>
       new AccountResponse(
-        json['account_id'] as String,
+        json['account_id'] as String?,
         convertInt(json['sequence']),
-        json['paging_token'] as String,
+        json['paging_token'] as String?,
         convertInt(json['subentry_count']),
-        json['inflation_destination'] as String,
-        json['home_domain'] as String,
+        json['inflation_destination'] as String?,
+        json['home_domain'] as String?,
         convertInt(json['last_modified_ledger']),
         json['thresholds'] == null
             ? null
@@ -82,24 +89,24 @@ class AccountResponse extends Response implements TransactionBuilderAccount {
         json['flags'] == null
             ? null
             : new Flags.fromJson(json['flags'] as Map<String, dynamic>),
-        (json['balances'] as List)
-            ?.map((e) => e == null
+        (json['balances'] as List? ?? [])
+            .map((e) => e == null
                 ? null
                 : new Balance.fromJson(e as Map<String, dynamic>))
-            ?.toList(),
-        (json['signers'] as List)
-            ?.map((e) => e == null
+            .whereType<Balance>().toList(),
+        (json['signers'] as List? ?? [])
+            .map((e) => e == null
                 ? null
                 : new Signer.fromJson(e as Map<String, dynamic>))
-            ?.toList(),
+            .whereType<Signer>().toList(),
         json['data'] == null
             ? null
-            : new AccountResponseData(json['data'] as Map<String, dynamic>),
+            : new AccountResponseData(json['data'] as Map<String, dynamic>?),
         json['_links'] == null
             ? null
             : new AccountResponseLinks.fromJson(
                 json['_links'] as Map<String, dynamic>),
-        json['sponsor'] as String,
+        json['sponsor'] as String?,
         convertInt(json['num_sponsoring']),
         convertInt(json['num_sponsored']),
       );
@@ -107,9 +114,9 @@ class AccountResponse extends Response implements TransactionBuilderAccount {
 
 /// Represents account thresholds from the horizon account response.
 class Thresholds {
-  int lowThreshold;
-  int medThreshold;
-  int highThreshold;
+  int? lowThreshold;
+  int? medThreshold;
+  int? highThreshold;
 
   Thresholds(this.lowThreshold, this.medThreshold, this.highThreshold);
 
@@ -121,31 +128,31 @@ class Thresholds {
 
 /// Represents account flags from the horizon account response.
 class Flags {
-  bool authRequired;
-  bool authRevocable;
-  bool authImmutable;
+  bool? authRequired;
+  bool? authRevocable;
+  bool? authImmutable;
 
   Flags(this.authRequired, this.authRevocable, this.authImmutable);
 
   factory Flags.fromJson(Map<String, dynamic> json) => new Flags(
-      json['auth_required'] as bool,
-      json['auth_revocable'] as bool,
-      json['auth_immutable'] as bool);
+      json['auth_required'] as bool?,
+      json['auth_revocable'] as bool?,
+      json['auth_immutable'] as bool?);
 }
 
 /// Represents account balance from the horizon account response.
 class Balance {
-  String assetType;
-  String assetCode;
-  String assetIssuer;
-  String limit;
-  String balance;
-  String buyingLiabilities;
-  String sellingLiabilities;
-  bool isAuthorized;
-  bool isAuthorizedToMaintainLiabilities;
-  int lastModifiedLedger;
-  String sponsor;
+  String? assetType;
+  String? assetCode;
+  String? assetIssuer;
+  String? limit;
+  String? balance;
+  String? buyingLiabilities;
+  String? sellingLiabilities;
+  bool? isAuthorized;
+  bool? isAuthorizedToMaintainLiabilities;
+  int? lastModifiedLedger;
+  String? sponsor;
 
   Balance(
       this.assetType,
@@ -164,66 +171,66 @@ class Balance {
     if (assetType == Asset.TYPE_NATIVE) {
       return new AssetTypeNative();
     } else {
-      return Asset.createNonNativeAsset(assetCode, assetIssuer);
+      return Asset.createNonNativeAsset(assetCode!, assetIssuer!);
     }
   }
 
   factory Balance.fromJson(Map<String, dynamic> json) => new Balance(
-      json['asset_type'] as String,
-      json['asset_code'] as String,
-      json['asset_issuer'] as String,
-      json['balance'] as String,
-      json['limit'] as String,
-      json['buying_liabilities'] as String,
-      json['selling_liabilities'] as String,
-      json['is_authorized'] as bool,
-      json['is_authorized_to_maintain_liabilities'] as bool,
+      json['asset_type'] as String?,
+      json['asset_code'] as String?,
+      json['asset_issuer'] as String?,
+      json['balance'] as String?,
+      json['limit'] as String?,
+      json['buying_liabilities'] as String?,
+      json['selling_liabilities'] as String?,
+      json['is_authorized'] as bool?,
+      json['is_authorized_to_maintain_liabilities'] as bool?,
       convertInt(json['last_modified_ledger']),
-      json['sponsor'] as String);
+      json['sponsor'] as String?);
 }
 
 /// Represents account signers from the horizon account response.
 class Signer {
-  String key;
-  String type;
-  int weight;
-  String sponsor;
+  String? key;
+  String? type;
+  int? weight;
+  String? sponsor;
 
   Signer(this.key, this.type, this.weight, this.sponsor);
 
-  String get accountId => key;
+  String? get accountId => key;
 
   factory Signer.fromJson(Map<String, dynamic> json) => new Signer(
-      json['key'] as String,
-      json['type'] as String,
+      json['key'] as String?,
+      json['type'] as String?,
       convertInt(json['weight']),
-      json['sponsor'] as String);
+      json['sponsor'] as String?);
 }
 
 /// Data connected to account from the horizon account response.
 class AccountResponseData {
-  Map<String, dynamic> _map = {};
+  Map<String, dynamic>? _map = {};
 
   AccountResponseData(this._map);
 
-  int get length => _map.length;
+  int get length => _map!.length;
 
-  Iterable<String> get keys => _map.keys;
+  Iterable<String> get keys => _map!.keys;
 
   /// Gets base64-encoded value for a given [key].
-  String operator [](Object key) => _map[key] as String;
+  String? operator [](Object key) => _map![key as String] as String?;
 
   /// Gets raw value for a given [key].
-  Uint8List getDecoded(String key) => base64Decode(this[key]);
+  Uint8List getDecoded(String key) => base64Decode(this[key]!);
 }
 
 /// Links from the account response.
 class AccountResponseLinks {
-  Link effects;
-  Link offers;
-  Link operations;
-  Link self;
-  Link transactions;
+  Link? effects;
+  Link? offers;
+  Link? operations;
+  Link? self;
+  Link? transactions;
 
   AccountResponseLinks(
       this.effects, this.offers, this.operations, this.self, this.transactions);

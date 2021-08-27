@@ -7,10 +7,8 @@ import 'dart:async';
 import 'request_builder.dart';
 import '../responses/response.dart';
 import '../responses/offer_response.dart';
-import '../util.dart';
 import '../assets.dart';
 
-import 'dart:convert';
 
 /// Builds requests connected to offers. Offers are statements about how much of an asset an account wants to buy or sell.
 /// See: <a href="https://developers.stellar.org/api/resources/offers/" target="_blank">Offers</a>
@@ -21,7 +19,7 @@ class OffersRequestBuilder extends RequestBuilder {
   /// Requests specific [uri] and returns OfferResponse.
   /// This method is helpful for getting the links.
   Future<OfferResponse> offersURI(Uri uri) async {
-    TypeToken type = new TypeToken<OfferResponse>();
+    var type = new TypeToken<OfferResponse>();
     ResponseHandler<OfferResponse> responseHandler =
         ResponseHandler<OfferResponse>(type);
 
@@ -36,13 +34,12 @@ class OffersRequestBuilder extends RequestBuilder {
   /// See: <a href="https://developers.stellar.org/api/resources/offers/single/" target="_blank">Retrieve an Offer</a>
   Future<OfferResponse> offer(String offerId) {
     this.setSegments(["offers", offerId]);
-    return this.offersURI(this.buildUri());
+    return this.offersURI(this.buildUri()!);
   }
 
   /// Returns all offers a given account has currently open.
   /// See: <a href="https://developers.stellar.org/api/resources/accounts/offers/" target="_blank">Offers for Account</a>
   OffersRequestBuilder forAccount(String accountId) {
-    accountId = checkNotNull(accountId, "accountId cannot be null");
     this.setSegments(["accounts", accountId, "offers"]);
     return this;
   }
@@ -50,33 +47,28 @@ class OffersRequestBuilder extends RequestBuilder {
   /// Returns all offers where the given account is the seller.
   /// See <a href="https://developers.stellar.org/api/resources/offers/list/" target="_blank">Offers</a>
   OffersRequestBuilder forSeller(String seller) {
-    seller = checkNotNull(seller, "seller cannot be null");
-    queryParameters.addAll({"seller": seller});
+    queryParameters!.addAll({"seller": seller});
     return this;
   }
 
   /// Returns all offers buying an [asset].
   /// See <a href="https://developers.stellar.org/api/resources/offers/list/" target="_blank">Offers</a>
   OffersRequestBuilder forBuyingAsset(Asset asset) {
-    asset = checkNotNull(asset, "asset cannot be null");
-    queryParameters.addAll({"buying": encodeAsset(asset)});
+    queryParameters!.addAll({"buying": encodeAsset(asset)});
     return this;
   }
 
   /// Returns all selling buying an [asset].
   /// See <a href="https://developers.stellar.org/api/resources/offers/list/" target="_blank">Offers</a>
   OffersRequestBuilder forSellingAsset(Asset asset) {
-    asset = checkNotNull(asset, "asset cannot be null");
-    queryParameters.addAll({"selling": encodeAsset(asset)});
+    queryParameters!.addAll({"selling": encodeAsset(asset)});
     return this;
   }
 
   /// Returns all offers sponsored by a given sponsor.
   /// See <a href="https://developers.stellar.org/api/resources/offers/list/" target="_blank">Offers</a>
   OffersRequestBuilder forSponsor(String sponsorAccountId) {
-    sponsorAccountId =
-        checkNotNull(sponsorAccountId, "sponsorAccountId cannot be null");
-    queryParameters.addAll({"sponsor": sponsorAccountId});
+    queryParameters!.addAll({"sponsor": sponsorAccountId});
     return this;
   }
 
@@ -84,7 +76,7 @@ class OffersRequestBuilder extends RequestBuilder {
   /// This method is helpful for getting the next set of results.
   static Future<Page<OfferResponse>> requestExecute(
       http.Client httpClient, Uri uri) async {
-    TypeToken type = new TypeToken<Page<OfferResponse>>();
+    var type = new TypeToken<Page<OfferResponse>>();
     ResponseHandler<Page<OfferResponse>> responseHandler =
         new ResponseHandler<Page<OfferResponse>>(type);
 
@@ -107,7 +99,7 @@ class OffersRequestBuilder extends RequestBuilder {
   /// Build and execute request.
   Future<Page<OfferResponse>> execute() {
     return OffersRequestBuilder.requestExecute(
-        this.httpClient, this.buildUri());
+        this.httpClient, this.buildUri()!);
   }
 
   @override

@@ -7,7 +7,6 @@ import 'dart:async';
 import '../0001/stellar_toml.dart';
 import '../../responses/response.dart';
 import '../../requests/request_builder.dart';
-import '../../util.dart';
 
 /// Implements Federation protocol.
 /// See <a href="https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0002.md" target="_blank">Federation Protocol</a>
@@ -16,14 +15,13 @@ class Federation {
   /// Returns a [FederationResponse] object.
   static Future<FederationResponse> resolveStellarAddress(
       String address) async {
-    String addr = checkNotNull(address, "address can not be null");
-    if (!addr.contains("*")) {
-      throw new Exception("invalid federation address: $addr");
+    if (!address.contains("*")) {
+      throw new Exception("invalid federation address: $address");
     }
 
-    String domain = addr.split("*").last;
+    String domain = address.split("*").last;
     StellarToml toml = await StellarToml.fromDomain(domain);
-    String federationServer = toml.generalInformation.federationServer;
+    String? federationServer = toml.generalInformation.federationServer;
     if (federationServer == null) {
       throw new Exception("no federation server found for domain $domain");
     }
@@ -34,7 +32,7 @@ class Federation {
     _FederationRequestBuilder requestBuilder =
         new _FederationRequestBuilder(httpClient, serverURI);
     FederationResponse response =
-        await requestBuilder.forStringToLookUp(addr).forType("name").execute();
+        await requestBuilder.forStringToLookUp(address).forType("name").execute();
     return response;
   }
 
@@ -43,17 +41,13 @@ class Federation {
   /// Returns a [FederationResponse] object.
   static Future<FederationResponse> resolveStellarAccountId(
       String accountId, String federationServerUrl) async {
-    String id = checkNotNull(accountId, "accountId can not be null");
-    String server = checkNotNull(
-        federationServerUrl, "federationServerUrl can not be null");
-
-    Uri serverURI = Uri.parse(server);
+    Uri serverURI = Uri.parse(federationServerUrl);
     http.Client httpClient = new http.Client();
 
     _FederationRequestBuilder requestBuilder =
         new _FederationRequestBuilder(httpClient, serverURI);
     FederationResponse response =
-        await requestBuilder.forStringToLookUp(id).forType("id").execute();
+        await requestBuilder.forStringToLookUp(accountId).forType("id").execute();
     return response;
   }
 
@@ -62,17 +56,14 @@ class Federation {
   /// Returns a [FederationResponse] object.
   static Future<FederationResponse> resolveStellarTransactionId(
       String txId, String federationServerUrl) async {
-    String id = checkNotNull(txId, "txId can not be null");
-    String server = checkNotNull(
-        federationServerUrl, "federationServerUrl can not be null");
 
-    Uri serverURI = Uri.parse(server);
+    Uri serverURI = Uri.parse(federationServerUrl);
     http.Client httpClient = new http.Client();
 
     _FederationRequestBuilder requestBuilder =
         new _FederationRequestBuilder(httpClient, serverURI);
     FederationResponse response =
-        await requestBuilder.forStringToLookUp(id).forType("txid").execute();
+        await requestBuilder.forStringToLookUp(txId).forType("txid").execute();
     return response;
   }
 
@@ -82,19 +73,14 @@ class Federation {
   static Future<FederationResponse> resolveForward(
       Map<String, String> forwardQueryParameters,
       String federationServerUrl) async {
-    Map params = checkNotNull(
-        forwardQueryParameters, "forwardQueryParameters can not be null");
-    String server = checkNotNull(
-        federationServerUrl, "federationServerUrl can not be null");
-
-    Uri serverURI = Uri.parse(server);
+    Uri serverURI = Uri.parse(federationServerUrl);
     http.Client httpClient = new http.Client();
 
     _FederationRequestBuilder requestBuilder =
         new _FederationRequestBuilder(httpClient, serverURI);
     FederationResponse response = await requestBuilder
         .forType("forward")
-        .forQueryParameters(params)
+        .forQueryParameters(forwardQueryParameters)
         .execute();
     return response;
   }
@@ -103,20 +89,20 @@ class Federation {
 /// Represents an federation server response.
 /// See <a href="https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0002.md" target="_blank">Federation Protocol</a>.
 class FederationResponse extends Response {
-  String stellarAddress;
-  String accountId;
-  String memoType;
-  String memo;
+  String? stellarAddress;
+  String? accountId;
+  String? memoType;
+  String? memo;
 
   FederationResponse(
       this.stellarAddress, this.accountId, this.memoType, this.memo);
 
   factory FederationResponse.fromJson(Map<String, dynamic> json) =>
       new FederationResponse(
-          json['stellar_address'] as String,
-          json['account_id'] as String,
-          json['memo_type'] == null ? null : json['memo_type'] as String,
-          json['memo'] == null ? null : json['memo'] as String);
+          json['stellar_address'] as String?,
+          json['account_id'] as String?,
+          json['memo_type'] == null ? null : json['memo_type'] as String?,
+          json['memo'] == null ? null : json['memo'] as String?);
 }
 
 // Requests the federation data.
@@ -125,7 +111,7 @@ class _FederationRequestBuilder extends RequestBuilder {
       : super(httpClient, serverURI, null);
 
   Future<FederationResponse> federationURI(Uri uri) async {
-    TypeToken type = new TypeToken<FederationResponse>();
+    var type = new TypeToken<FederationResponse>();
     ResponseHandler<FederationResponse> responseHandler =
         ResponseHandler<FederationResponse>(type);
 
@@ -137,24 +123,24 @@ class _FederationRequestBuilder extends RequestBuilder {
   }
 
   _FederationRequestBuilder forType(String type) {
-    queryParameters.addAll({"type": type});
+    queryParameters!.addAll({"type": type});
     return this;
   }
 
   _FederationRequestBuilder forStringToLookUp(String stringToLookUp) {
-    queryParameters.addAll({"q": stringToLookUp});
+    queryParameters!.addAll({"q": stringToLookUp});
     return this;
   }
 
   _FederationRequestBuilder forQueryParameters(
       Map<String, String> queryParams) {
-    queryParameters.addAll(queryParams);
+    queryParameters!.addAll(queryParams);
     return this;
   }
 
   static Future<FederationResponse> requestExecute(
       http.Client httpClient, Uri uri) async {
-    TypeToken type = new TypeToken<FederationResponse>();
+    var type = new TypeToken<FederationResponse>();
     ResponseHandler<FederationResponse> responseHandler =
         new ResponseHandler<FederationResponse>(type);
 
@@ -167,6 +153,6 @@ class _FederationRequestBuilder extends RequestBuilder {
 
   Future<FederationResponse> execute() {
     return _FederationRequestBuilder.requestExecute(
-        this.httpClient, this.buildUri());
+        this.httpClient, this.buildUri()!);
   }
 }

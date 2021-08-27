@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:grpc/grpc.dart';
 import 'package:kin_base/base/network/services/kin_service_impl_v4.dart';
@@ -32,7 +31,7 @@ class KinEnvironment {
   KinEnvironment(this.networkEnvironment, this.logger, this.service,
       this.storage, this.executors, this.networkHandler);
 
-  Future<bool> importPrivateKey(PrivateKey privateKey, [ Callback<bool> callback ]) async {
+  Future<bool> importPrivateKey(PrivateKey privateKey, [ Callback<bool>? callback ]) async {
     var accountId = KinAccountId.fromPrivateKey(privateKey);
 
     if ( storage.getAccount(accountId) == null ) {
@@ -92,15 +91,15 @@ class KinEnvironmentAgora extends KinEnvironment {
 
 
   factory KinEnvironmentAgora.build(NetworkEnvironment networkEnvironment, {
-    ClientChannel managedChannel,
-    KinLoggerFactory logger ,
-    bool enableLogging,
-    KinService service,
-    Storage storage,
-    StorageBuilder storageBuilder,
-    ExecutorServices executors,
-    NetworkOperationsHandler networkHandler,
-    AppInfoProvider appInfoProvider,
+    ClientChannel? managedChannel,
+    KinLoggerFactory? logger ,
+    bool? enableLogging,
+    KinService? service,
+    Storage? storage,
+    StorageBuilder? storageBuilder,
+    ExecutorServices? executors,
+    NetworkOperationsHandler? networkHandler,
+    AppInfoProvider? appInfoProvider,
 }) {
 
     logger ??= KinLoggerFactoryImpl(enableLogging) ;
@@ -137,7 +136,7 @@ class KinEnvironmentAgora extends KinEnvironment {
     }
 
     if (storage == null) {
-      storage = storageBuilder(networkEnvironment: networkEnvironment) ;
+      storage = storageBuilder!(networkEnvironment: networkEnvironment) ;
     }
 
     var agora = KinEnvironmentAgora(managedChannel, networkEnvironment, logger, service, storage, executors, networkHandler, appInfoProvider);

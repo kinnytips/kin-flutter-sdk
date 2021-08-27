@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'package:fixnum/fixnum.dart';
-import 'util.dart';
 import 'xdr/xdr_other.dart';
 import 'xdr/xdr_type.dart';
 
@@ -30,8 +29,6 @@ class Price {
   /// Please remember that this function can give unexpected results for values that cannot be represented as a
   /// fraction with 32-bit numerator and denominator. It's safer to create a Price object using the constructor.
   static Price fromString(String price) {
-    checkNotNull(price, "price cannot be null");
-
     List<String> two = price.split(".");
     BigInt number = BigInt.parse(two[0]);
     double f = 0.0;
@@ -40,7 +37,7 @@ class Price {
     }
     BigInt maxInt = BigInt.from(Int32.MAX_VALUE.toInt());
     BigInt a;
-    List<List<BigInt>> fractions = List<List<BigInt>>();
+    List<List<BigInt>> fractions = <List<BigInt>>[];
     fractions.add([BigInt.zero, BigInt.one]);
     fractions.add([BigInt.one, BigInt.zero]);
     int i = 2;
@@ -71,10 +68,8 @@ class Price {
   /// Generates Price XDR object.
   XdrPrice toXdr() {
     XdrPrice xdrPrice = new XdrPrice();
-    XdrInt32 n = new XdrInt32();
-    XdrInt32 d = new XdrInt32();
-    n.int32 = this.n;
-    d.int32 = this.d;
+    XdrInt32 n = new XdrInt32(this.n);
+    XdrInt32 d = new XdrInt32(this.d);
     xdrPrice.n = n;
     xdrPrice.d = d;
     return xdrPrice;
@@ -85,7 +80,7 @@ class Price {
     if (!(object is Price)) {
       return false;
     }
-    Price price = object as Price;
+    Price price = object;
     return this.numerator == price.numerator &&
         this.denominator == price.denominator;
   }

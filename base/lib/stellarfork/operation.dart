@@ -4,7 +4,6 @@
 
 import 'dart:convert';
 import 'muxed_account.dart';
-import 'util.dart';
 import 'xdr/xdr_data_io.dart';
 import 'xdr/xdr_operation.dart';
 import 'create_account_operation.dart';
@@ -28,13 +27,11 @@ import 'end_sponsoring_future_reserves_operation.dart';
 abstract class Operation {
   Operation();
 
-  MuxedAccount _sourceAccount;
+  MuxedAccount? _sourceAccount;
 
   static final BigInt one = BigInt.from(10).pow(7);
 
   static int toXdrAmount(String value) {
-    value = checkNotNull(value, "value cannot be null");
-
     List<String> two = value.split(".");
     BigInt amount = BigInt.parse(two[0]) * BigInt.from(10000000);
 
@@ -58,7 +55,7 @@ abstract class Operation {
     return amount.toInt();
   }
 
-  static String fromXdrAmount(int value) {
+  static String fromXdrAmount(int? value) {
     String amoutString = value.toString();
     if (amoutString.length > 7) {
       amoutString = amoutString.substring(0, amoutString.length - 7) +
@@ -76,7 +73,7 @@ abstract class Operation {
   // Generates an Operation XDR object from this operation.
   XdrOperation toXdr() {
     XdrOperation xdrOp = XdrOperation();
-    if (sourceAccount != null) {
+    if (_sourceAccount != null) {
       xdrOp.sourceAccount = sourceAccount.toXdr();
     }
     xdrOp.body = toOperationBody();
@@ -97,60 +94,60 @@ abstract class Operation {
 
   /// Returns Operation object from an Operation XDR object [xdrOp].
   static Operation fromXdr(XdrOperation xdrOp) {
-    XdrOperationBody body = xdrOp.body;
+    XdrOperationBody body = xdrOp.body!;
     Operation operation;
     switch (body.discriminant) {
       case XdrOperationType.CREATE_ACCOUNT:
         operation =
-            CreateAccountOperation.builder(body.createAccountOp).build();
+            CreateAccountOperation.builder(body.createAccountOp!).build();
         break;
       case XdrOperationType.PAYMENT:
-        operation = PaymentOperation.builder(body.paymentOp).build();
+        operation = PaymentOperation.builder(body.paymentOp!).build();
         break;
       case XdrOperationType.PATH_PAYMENT_STRICT_RECEIVE:
         operation = PathPaymentStrictReceiveOperation.builder(
-                body.pathPaymentStrictReceiveOp)
+                body.pathPaymentStrictReceiveOp!)
             .build();
         break;
       case XdrOperationType.MANAGE_SELL_OFFER:
         operation =
-            ManageSellOfferOperation.builder(body.manageSellOfferOp).build();
+            ManageSellOfferOperation.builder(body.manageSellOfferOp!).build();
         break;
       case XdrOperationType.CREATE_PASSIVE_SELL_OFFER:
         operation = CreatePassiveSellOfferOperation.builder(
-                body.createPassiveSellOfferOp)
+                body.createPassiveSellOfferOp!)
             .build();
         break;
       case XdrOperationType.SET_OPTIONS:
-        operation = SetOptionsOperation.builder(body.setOptionsOp).build();
+        operation = SetOptionsOperation.builder(body.setOptionsOp!).build();
         break;
       case XdrOperationType.CHANGE_TRUST:
-        operation = ChangeTrustOperation.builder(body.changeTrustOp).build();
+        operation = ChangeTrustOperation.builder(body.changeTrustOp!).build();
         break;
       case XdrOperationType.ALLOW_TRUST:
-        operation = AllowTrustOperation.builder(body.allowTrustOp).build();
+        operation = AllowTrustOperation.builder(body.allowTrustOp!).build();
         break;
       case XdrOperationType.ACCOUNT_MERGE:
         operation = AccountMergeOperation.builder(body).build();
         break;
       case XdrOperationType.MANAGE_DATA:
-        operation = ManageDataOperation.builder(body.manageDataOp).build();
+        operation = ManageDataOperation.builder(body.manageDataOp!).build();
         break;
       case XdrOperationType.BUMP_SEQUENCE:
-        operation = BumpSequenceOperation.builder(body.bumpSequenceOp).build();
+        operation = BumpSequenceOperation.builder(body.bumpSequenceOp!).build();
         break;
       case XdrOperationType.MANAGE_BUY_OFFER:
         operation =
-            ManageBuyOfferOperation.builder(body.manageBuyOfferOp).build();
+            ManageBuyOfferOperation.builder(body.manageBuyOfferOp!).build();
         break;
       case XdrOperationType.PATH_PAYMENT_STRICT_SEND:
         operation =
-            PathPaymentStrictSendOperation.builder(body.pathPaymentStrictSendOp)
+            PathPaymentStrictSendOperation.builder(body.pathPaymentStrictSendOp!)
                 .build();
         break;
       case XdrOperationType.BEGIN_SPONSORING_FUTURE_RESERVES:
         final op = BeginSponsoringFutureReservesOperation.builder(
-            body.beginSponsoringFutureReservesOp);
+            body.beginSponsoringFutureReservesOp!);
         operation =
             BeginSponsoringFutureReservesOperationBuilder(op.sponsoredId)
                 .build();
@@ -162,18 +159,17 @@ abstract class Operation {
         throw Exception("Unknown operation body ${body.discriminant}");
     }
     if (xdrOp.sourceAccount != null) {
-      operation.sourceAccount = MuxedAccount.fromXdr(xdrOp.sourceAccount);
+      operation.sourceAccount = MuxedAccount.fromXdr(xdrOp.sourceAccount!);
     }
     return operation;
   }
 
   /// Returns the operation source account.
-  MuxedAccount get sourceAccount => _sourceAccount;
+  MuxedAccount get sourceAccount => _sourceAccount!;
 
   /// Sets the operation source account represented by [sourceAccount].
   set sourceAccount(MuxedAccount sourceAccount) {
-    _sourceAccount =
-        checkNotNull(sourceAccount, "source account cannot be null");
+    _sourceAccount = sourceAccount;
   }
 
   /// Generates OperationBody XDR object.

@@ -29,7 +29,7 @@ import 'package:kin_base/stellarfork/xdr/xdr_type.dart';
 extension AccountInfoExtension on AccountInfo {
 
   KinAccount toKinAccount() {
-    var key = PublicKey.fromBytes( this.accountId.value );
+    var key = PublicKey.fromBytes( this.accountId.value as Uint8List? );
     var amount = QuarkAmount(this.balance.toInt()).toKin() ;
     var balance = KinBalance(amount);
     var kinAccount = KinAccount(key, balance: balance, status:  KinAccountStatusRegistered(0) );
@@ -42,7 +42,7 @@ extension ModelInvoiceListExtension on model_v3.InvoiceList {
   InvoiceList toInvoiceList() {
     return InvoiceList(
         InvoiceListId( this.sha224Hash() ) ,
-        this.invoices.map((e) => e.toInvoice() )
+        this.invoices.map((e) => e.toInvoice() ) as List<Invoice>
     );
   }
 
@@ -51,7 +51,7 @@ extension ModelInvoiceListExtension on model_v3.InvoiceList {
 
 extension ModelInvoiceExtension on model_v3.Invoice {
   Invoice toInvoice() {
-    return Invoice(InvoiceId(sha224Hash()), this.items.map((e) => e.toLineItem()) );
+    return Invoice(InvoiceId(sha224Hash()), this.items.map((e) => e.toLineItem()) as List<LineItem> );
   }
 
   SHA224Hash sha224Hash() => SHA224Hash.fromBytes( this.writeToBuffer() );
@@ -65,7 +65,7 @@ extension ModelInvoiceLineItemExtension on model_v3.Invoice_LineItem {
         this.title,
         this.description,
         QuarkAmount(this.amount.toInt()).toKin(),
-        sku.isEmpty ? null : SKU(this.sku)
+        sku.isEmpty ? null : SKU(this.sku as Uint8List)
     );
   }
 
@@ -73,7 +73,7 @@ extension ModelInvoiceLineItemExtension on model_v3.Invoice_LineItem {
 
 extension ModelTransactionErrorExtension on model_v4.TransactionError {
 
-  XdrTransactionResultCode toXdrTransactionResultCode() {
+  XdrTransactionResultCode? toXdrTransactionResultCode() {
     if (!this.hasReason()) {
       return null ;
     }
@@ -107,7 +107,7 @@ extension ModelTransactionErrorExtension on model_v4.TransactionError {
     }
   }
 
-  Uint8List toResultXdr() => toXdrTransactionResultCode()?.toResultXdr();
+  Uint8List? toResultXdr() => toXdrTransactionResultCode()?.toResultXdr();
 
 }
 
@@ -121,7 +121,7 @@ extension XdrTransactionResultCodeExtension on XdrTransactionResultCode {
       ..discriminant = this ;
     ;
 
-    transactionResult.feeCharged = XdrInt64()..int64 = 0 ;
+    transactionResult.feeCharged = XdrInt64(0);
 
     transactionResult.ext = XdrTransactionResultExt()..discriminant = 0 ;
 
@@ -184,17 +184,17 @@ extension HistoryItemExtension on HistoryItem {
 extension TransactionSignatureExtension on model_v4.TransactionSignature {
 
   Signature toModel() {
-    return Signature(value: FixedByteArray64( this.value ));
+    return Signature(value: FixedByteArray64( this.value as Uint8List? ));
   }
 
 }
 
 extension ModelBlockhashExtension on model_v4.Blockhash {
-  Hash toModel() => Hash( FixedByteArray32( this.value ) );
+  Hash toModel() => Hash( FixedByteArray32( this.value as Uint8List? ) );
 }
 
 extension SolanaAccountIdExtension on model_v4.SolanaAccountId {
 
-  PublicKey toPublicKey() => KeyPair.fromPublicKey(value).asPublicKey() ;
+  PublicKey toPublicKey() => KeyPair.fromPublicKey(value as Uint8List?).asPublicKey() ;
 
 }

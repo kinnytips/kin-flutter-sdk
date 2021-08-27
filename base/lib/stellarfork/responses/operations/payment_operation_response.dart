@@ -6,15 +6,15 @@ import 'operation_responses.dart';
 /// Represents Payment operation response.
 /// See: <a href="https://developers.stellar.org/api/resources/operations/" target="_blank">Operation documentation</a>
 class PaymentOperationResponse extends OperationResponse {
-  String amount;
-  String assetType;
-  String assetCode;
-  String assetIssuer;
-  KeyPair from;
-  KeyPair to;
+  String? amount;
+  String? assetType;
+  String? assetCode;
+  String? assetIssuer;
+  KeyPair? from;
+  KeyPair? to;
 
-  PaymentOperationResponse(String amount, String assetType, String assetCode,
-      String assetIssuer, KeyPair from, KeyPair to) {
+  PaymentOperationResponse(String? amount, String? assetType, String? assetCode,
+      String? assetIssuer, KeyPair? from, KeyPair? to) {
     this.amount = amount;
     this.assetType = assetType;
     this.assetCode = assetCode;
@@ -27,16 +27,16 @@ class PaymentOperationResponse extends OperationResponse {
     if (assetType == Asset.TYPE_NATIVE) {
       return new AssetTypeNative();
     } else {
-      return Asset.createNonNativeAsset(assetCode, assetIssuer);
+      return Asset.createNonNativeAsset(assetCode!, assetIssuer!);
     }
   }
 
   factory PaymentOperationResponse.fromJson(Map<String, dynamic> json) =>
       new PaymentOperationResponse(
-          json['amount'] as String,
-          json['asset_type'] as String,
-          json['asset_code'] as String,
-          json['asset_issuer'] as String,
+          json['amount'] as String?,
+          json['asset_type'] as String?,
+          json['asset_code'] as String?,
+          json['asset_issuer'] as String?,
           json['from'] == null
               ? null
               : KeyPair.fromAccountId(json['from'] as String),
@@ -46,11 +46,11 @@ class PaymentOperationResponse extends OperationResponse {
         ..id = int.parse(json['id'] as String)
         ..sourceAccount =
             json['source_account'] == null ? null : json['source_account']
-        ..pagingToken = json['paging_token'] as String
-        ..createdAt = json['created_at'] as String
-        ..transactionHash = json['transaction_hash'] as String
-        ..transactionSuccessful = json['transaction_successful'] as bool
-        ..type = json['type'] as String
+        ..pagingToken = json['paging_token'] as String?
+        ..createdAt = json['created_at'] as String?
+        ..transactionHash = json['transaction_hash'] as String?
+        ..transactionSuccessful = json['transaction_successful'] as bool?
+        ..type = json['type'] as String?
         ..links = json['_links'] == null
             ? null
             : new OperationResponseLinks.fromJson(

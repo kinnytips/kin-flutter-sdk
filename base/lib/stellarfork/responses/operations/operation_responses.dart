@@ -1,4 +1,3 @@
-import '../../key_pair.dart';
 import '../response.dart';
 import '../transaction_response.dart';
 import 'account_merge_operation_response.dart';
@@ -21,20 +20,20 @@ import 'sponsorship_operations_responses.dart';
 /// Abstract class for operation responses.
 /// See: <a href="https://developers.stellar.org/api/resources/operations/" target="_blank">Operation documentation</a>
 abstract class OperationResponse extends Response {
-  int id;
-  String sourceAccount;
-  String pagingToken;
-  String createdAt;
-  String transactionHash;
-  bool transactionSuccessful;
-  String type;
-  OperationResponseLinks links;
-  TransactionResponse transaction;
+  int? id;
+  String? sourceAccount;
+  String? pagingToken;
+  String? createdAt;
+  String? transactionHash;
+  bool? transactionSuccessful;
+  String? type;
+  OperationResponseLinks? links;
+  TransactionResponse? transaction;
 
   OperationResponse();
 
   factory OperationResponse.fromJson(Map<String, dynamic> json) {
-    int type = convertInt(json["type_i"]);
+    int? type = convertInt(json["type_i"]);
     switch (type) {
       case 0:
         return CreateAccountOperationResponse.fromJson(json);
@@ -82,11 +81,11 @@ abstract class OperationResponse extends Response {
 
 /// Represents the operation response links.
 class OperationResponseLinks {
-  Link effects;
-  Link precedes;
-  Link self;
-  Link succeeds;
-  Link transaction;
+  Link? effects;
+  Link? precedes;
+  Link? self;
+  Link? succeeds;
+  Link? transaction;
 
   OperationResponseLinks(
       this.effects, this.precedes, this.self, this.succeeds, this.transaction);

@@ -6,7 +6,6 @@ import 'muxed_account.dart';
 
 import 'operation.dart';
 import 'key_pair.dart';
-import 'util.dart';
 import 'xdr/xdr_operation.dart';
 import 'xdr/xdr_account.dart';
 import 'xdr/xdr_type.dart';
@@ -17,11 +16,7 @@ class CreateAccountOperation extends Operation {
   String _destination;
   String _startingBalance;
 
-  CreateAccountOperation(String destination, String startingBalance) {
-    this._destination = checkNotNull(destination, "destination cannot be null");
-    this._startingBalance =
-        checkNotNull(startingBalance, "startingBalance cannot be null");
-  }
+  CreateAccountOperation(this._destination, this._startingBalance) ;
 
   /// Amount of XLM to send to the newly created account.
   String get startingBalance => _startingBalance;
@@ -36,9 +31,7 @@ class CreateAccountOperation extends Operation {
     destination.accountID =
         KeyPair.fromAccountId(this.destination).xdrPublicKey;
     op.destination = destination;
-    XdrInt64 startingBalance = XdrInt64();
-    startingBalance.int64 = Operation.toXdrAmount(this.startingBalance);
-    op.startingBalance = startingBalance;
+    op.startingBalance = XdrInt64(Operation.toXdrAmount(this.startingBalance));
 
     XdrOperationBody body = XdrOperationBody();
     body.discriminant = XdrOperationType.CREATE_ACCOUNT;
@@ -49,22 +42,21 @@ class CreateAccountOperation extends Operation {
   /// Builds CreateAccount operation.
   static CreateAccountOperationBuilder builder(XdrCreateAccountOp op) {
     return CreateAccountOperationBuilder(
-        KeyPair.fromXdrPublicKey(op.destination.accountID).accountId,
-        Operation.fromXdrAmount(op.startingBalance.int64.toInt()));
+        KeyPair.fromXdrPublicKey(op.destination!.accountID!).accountId,
+        Operation.fromXdrAmount(op.startingBalance!.int64.toInt()));
   }
 }
 
 class CreateAccountOperationBuilder {
   String _destination;
   String _startingBalance;
-  MuxedAccount _mSourceAccount;
+  MuxedAccount? _mSourceAccount;
 
   /// Creates a CreateAccount builder.
   CreateAccountOperationBuilder(this._destination, this._startingBalance);
 
   /// Sets the source account for this operation represented by [sourceAccount].
   CreateAccountOperationBuilder setSourceAccount(String sourceAccount) {
-    checkNotNull(sourceAccount, "sourceAccount cannot be null");
     _mSourceAccount = MuxedAccount(sourceAccount, null);
     return this;
   }
@@ -72,8 +64,7 @@ class CreateAccountOperationBuilder {
   /// Sets the muxed source account for this operation represented by [sourceAccountId].
   CreateAccountOperationBuilder setMuxedSourceAccount(
       MuxedAccount sourceAccount) {
-    _mSourceAccount =
-        checkNotNull(sourceAccount, "sourceAccount cannot be null");
+    _mSourceAccount = sourceAccount;
     return this;
   }
 
@@ -82,7 +73,7 @@ class CreateAccountOperationBuilder {
     CreateAccountOperation operation =
         CreateAccountOperation(_destination, _startingBalance);
     if (_mSourceAccount != null) {
-      operation.sourceAccount = _mSourceAccount;
+      operation.sourceAccount = _mSourceAccount!;
     }
     return operation;
   }

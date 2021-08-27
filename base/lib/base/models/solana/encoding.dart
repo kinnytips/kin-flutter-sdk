@@ -13,7 +13,7 @@ extension TransactionMarshal on Transaction {
     final output = ByteOutputBuffer(32);
 
     // Signatures
-    ShortVec.encodeShortVecOf<Signature>(output, signatures, (s) => s.marshal() );
+    ShortVec.encodeShortVecOf<Signature?>(output, signatures, (s) => s!.marshal() );
 
     // Message
     output.writeAll(message.marshal());
@@ -51,15 +51,15 @@ extension CompiledInstructionMarshal on CompiledInstruction {
     output.writeAll(accounts);
 
     // Data
-    ShortVec.encodeLen(output, data.length);
-    output.writeAll(data);
+    ShortVec.encodeLen(output, data!.length);
+    output.writeAll(data!);
 
     return output.toBytes();
   }
 }
 
 extension KeyMarshal on Key {
-  Uint8List marshal() => value;
+  Uint8List? marshal() => value;
 }
 
 extension HashMarshal on Hash {
@@ -71,14 +71,14 @@ extension MessageMarshal on Message {
     final output = ByteOutputBuffer(32);
 
     // Header
-    output.write(header.numSignatures);
-    output.write(header.numReadOnlySigned);
-    output.write(header.numReadOnly);
+    output.write(header.numSignatures!);
+    output.write(header.numReadOnlySigned!);
+    output.write(header.numReadOnly!);
 
     // Accounts (panic?)
-    ShortVec.encodeShortVecOf(output, accounts, (o) {
+    ShortVec.encodeShortVecOf(output, accounts, (dynamic o) {
       var publicKey = o is PublicKey ? o : PublicKey(o);
-      return publicKey.marshal();
+      return publicKey.marshal()!;
     });
 
     // Recent Blockhash
@@ -107,7 +107,7 @@ extension MessageMarshal on Message {
     final accounts = ShortVec.decodeShortVecOf<PublicKey>(input, 32);
 
     // Recent Block Hash
-    final recentBlockHash =
+    final dynamic recentBlockHash =
       wrapError("failed to read block hash", () {
         input.readBytes(Hash.SIZE_OF).toModel<Hash>((bytes) => Hash(FixedByteArray32(bytes)));
       });

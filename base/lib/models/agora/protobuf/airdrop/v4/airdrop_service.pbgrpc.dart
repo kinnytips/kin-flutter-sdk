@@ -2,7 +2,7 @@
 //  Generated code. Do not modify.
 //  source: airdrop/v4/airdrop_service.proto
 //
-// @dart = 2.7
+
 // ignore_for_file: annotate_overrides,camel_case_types,unnecessary_const,non_constant_identifier_names,library_prefixes,unused_import,unused_shown_name,return_of_invalid_type,unnecessary_this,prefer_final_fields
 
 import 'dart:async' as $async;
@@ -22,13 +22,13 @@ class AirdropClient extends $grpc.Client {
               $5.RequestAirdropResponse.fromBuffer(value));
 
   AirdropClient($grpc.ClientChannel channel,
-      {$grpc.CallOptions options,
-      $core.Iterable<$grpc.ClientInterceptor> interceptors})
+      {$grpc.CallOptions? options,
+      $core.Iterable<$grpc.ClientInterceptor>? interceptors})
       : super(channel, options: options, interceptors: interceptors);
 
   $grpc.ResponseFuture<$5.RequestAirdropResponse> requestAirdrop(
       $5.RequestAirdropRequest request,
-      {$grpc.CallOptions options}) {
+      {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$requestAirdrop, request, options: options);
   }
 }

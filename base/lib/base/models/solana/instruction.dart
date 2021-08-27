@@ -3,7 +3,6 @@ import 'dart:typed_data';
 
 import 'package:kin_base/base/models/key.dart';
 import 'package:kin_base/base/tools/extensions.dart';
-import 'package:meta/meta.dart';
 
 /// AccountMeta represents the account information required
 /// for building transactions.
@@ -15,7 +14,7 @@ class AccountMeta implements Comparable<AccountMeta> {
   final bool isProgram;
 
   AccountMeta({
-    @required this.publicKey,
+    required this.publicKey,
     this.isSigner = false,
     this.isWritable = false,
     this.isPayer = false,
@@ -89,8 +88,8 @@ class AccountMeta implements Comparable<AccountMeta> {
 /// Instruction represents a transaction instruction.
 class Instruction {
   final PublicKey program;
-  final List<AccountMeta> accounts;
-  final Uint8List data;
+  final List<AccountMeta>? accounts;
+  final Uint8List? data;
 
   Instruction(
     this.program,
@@ -98,8 +97,8 @@ class Instruction {
     this.data,
   );
 
-  static Instruction newInstruction(PublicKey program, Uint8List data,
-      [List<AccountMeta> accounts]) {
+  static Instruction newInstruction(PublicKey program, Uint8List? data,
+      [List<AccountMeta>? accounts]) {
     return Instruction(program, accounts, data);
   }
 
@@ -109,8 +108,8 @@ class Instruction {
 //    if (other is! Instruction) return false;
     if (other is Instruction) {
       if (program != other.program) return false;
-      if (!accounts.equalsContent(other.accounts)) return false;
-      if (!data.equalsContent(other.data)) return false;
+      if (!accounts!.equalsContent(other.accounts)) return false;
+      if (!data!.equalsContent(other.data)) return false;
     } else {
       return false;
     }
@@ -121,7 +120,7 @@ class Instruction {
   int get hashCode {
     var result = program.hashCode;
     result = 31 * result + accounts.hashCode;
-    result = 31 * result + data.computeHashCode();
+    result = 31 * result + data!.computeHashCode();
     return result;
   }
 }
@@ -129,12 +128,12 @@ class Instruction {
 class CompiledInstruction {
   final int programIndex;
   final Uint8List accounts;
-  final Uint8List data;
+  final Uint8List? data;
 
   CompiledInstruction({
-    @required this.programIndex,
-    @required this.accounts,
-    @required this.data,
+    required this.programIndex,
+    required this.accounts,
+    required this.data,
   });
 
   @override
@@ -144,7 +143,7 @@ class CompiledInstruction {
     if (other is CompiledInstruction) {
       if (programIndex.toInt() != other.programIndex.toInt()) return false;
       if (!accounts.equalsContent(other.accounts)) return false;
-      if (!data.equalsContent(other.data)) return false;
+      if (!data!.equalsContent(other.data)) return false;
     } else {
       return false;
     }
@@ -156,7 +155,7 @@ class CompiledInstruction {
   int get hashCode {
     var result = programIndex.toInt();
     result = 31 * result + accounts.computeHashCode();
-    result = 31 * result + data.computeHashCode();
+    result = 31 * result + data!.computeHashCode();
     return result;
   }
 }

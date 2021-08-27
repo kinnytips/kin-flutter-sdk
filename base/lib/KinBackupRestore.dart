@@ -68,15 +68,15 @@ class KinBackupRestore {
   }
 
   AccountBackup exportWallet(String passphrase,
-      {KeyPair keyPair, KinAccountId accountId, KinAccount account, Uint8List saltBytes}) {
+      {KeyPair? keyPair, KinAccountId? accountId, KinAccount? account, Uint8List? saltBytes}) {
     keyPair ??= accountId?.toKeyPair();
-    keyPair ??= account?.id?.toKeyPair();
+    keyPair ??= account?.id.toKeyPair();
     saltBytes ??= generateRandomBytes(SALT_LENGTH_BYTES);
 
     var passphraseBytes = convert.utf8.encode(passphrase);
-    var hash = _keyHash(passphraseBytes, saltBytes);
+    var hash = _keyHash(passphraseBytes as Uint8List, saltBytes);
 
-    var secretSeedBytes = keyPair.rawSecretSeed;
+    var secretSeedBytes = keyPair!.rawSecretSeed!;
     var encryptedSeed = _encryptSecretSeed(hash, secretSeedBytes);
 
     var saltHex = saltBytes.toHexString();
@@ -93,7 +93,7 @@ class KinBackupRestore {
     var passphraseBytes = convert.utf8.encode(passphrase);
     var saltBytes = accountBackupResolved.saltBytes;
 
-    var hash = _keyHash(passphraseBytes, saltBytes);
+    var hash = _keyHash(passphraseBytes as Uint8List, saltBytes);
 
     var seedBytes = accountBackupResolved.encryptedSeedBytes;
 
@@ -103,11 +103,11 @@ class KinBackupRestore {
 }
 
 class AccountBackup {
-  String publicAddress;
+  String? publicAddress;
 
-  String saltHexString;
+  String? saltHexString;
 
-  String encryptedSeedHexString;
+  String? encryptedSeedHexString;
 
   AccountBackup(
       this.publicAddress, this.saltHexString, this.encryptedSeedHexString);
@@ -118,7 +118,7 @@ class AccountBackup {
 
   factory AccountBackup.fromJson(dynamic json) {
     return AccountBackup.fromMap(json is Map
-        ? json
+        ? json as Map<String, String>
         : (convert.json.decode('$json') as Map)
             .map((key, value) => MapEntry('$key', '$value')));
   }
@@ -135,12 +135,12 @@ class AccountBackup {
 
   Uint8List get encryptedSeedBytes => _hexToBytes(encryptedSeedHexString);
 
-  Uint8List _hexToBytes(String hex) {
-    var decode = HexCodec().decode(hex);
+  Uint8List _hexToBytes(String? hex) {
+    List<int> decode = HexCodec().decode(hex);
     return decode.toUint8List();
   }
 
-  Map<String, String> toMap() => <String, String>{
+  Map<String, String?> toMap() => <String, String?>{
         'pkey': publicAddress,
         'seed': encryptedSeedHexString,
         'salt': saltHexString

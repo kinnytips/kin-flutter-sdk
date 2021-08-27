@@ -25,35 +25,35 @@ class TradeAggregationsRequestBuilder extends RequestBuilder {
       : super(httpClient, serverURI, ["trade_aggregations"]) {
     this._baseAsset(baseAsset);
     this._counterAsset(counterAsset);
-    queryParameters.addAll({"start_time": startTime.toString()});
-    queryParameters.addAll({"end_time": endTime.toString()});
-    queryParameters.addAll({"resolution": resolution.toString()});
-    queryParameters.addAll({"offset": offset.toString()});
+    queryParameters!.addAll({"start_time": startTime.toString()});
+    queryParameters!.addAll({"end_time": endTime.toString()});
+    queryParameters!.addAll({"resolution": resolution.toString()});
+    queryParameters!.addAll({"offset": offset.toString()});
   }
 
   void _baseAsset(Asset asset) {
-    queryParameters.addAll({"base_asset_type": asset.type});
+    queryParameters!.addAll({"base_asset_type": asset.type});
     if (asset is AssetTypeCreditAlphaNum) {
       AssetTypeCreditAlphaNum creditAlphaNumAsset = asset;
-      queryParameters.addAll({"base_asset_code": creditAlphaNumAsset.code});
-      queryParameters
+      queryParameters!.addAll({"base_asset_code": creditAlphaNumAsset.code});
+      queryParameters!
           .addAll({"base_asset_issuer": creditAlphaNumAsset.issuerId});
     }
   }
 
   void _counterAsset(Asset asset) {
-    queryParameters.addAll({"counter_asset_type": asset.type});
+    queryParameters!.addAll({"counter_asset_type": asset.type});
     if (asset is AssetTypeCreditAlphaNum) {
       AssetTypeCreditAlphaNum creditAlphaNumAsset = asset;
-      queryParameters.addAll({"counter_asset_code": creditAlphaNumAsset.code});
-      queryParameters
+      queryParameters!.addAll({"counter_asset_code": creditAlphaNumAsset.code});
+      queryParameters!
           .addAll({"counter_asset_issuer": creditAlphaNumAsset.issuerId});
     }
   }
 
   static Future<Page<TradeAggregationResponse>> requestExecute(
       http.Client httpClient, Uri uri) async {
-    TypeToken type = new TypeToken<Page<TradeAggregationResponse>>();
+    var type = new TypeToken<Page<TradeAggregationResponse>>();
     ResponseHandler<Page<TradeAggregationResponse>> responseHandler =
         new ResponseHandler<Page<TradeAggregationResponse>>(type);
 
@@ -66,6 +66,6 @@ class TradeAggregationsRequestBuilder extends RequestBuilder {
 
   Future<Page<TradeAggregationResponse>> execute() {
     return TradeAggregationsRequestBuilder.requestExecute(
-        this.httpClient, this.buildUri());
+        this.httpClient, this.buildUri()!);
   }
 }

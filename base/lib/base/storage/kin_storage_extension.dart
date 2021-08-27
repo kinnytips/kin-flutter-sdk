@@ -37,15 +37,15 @@ extension KinAccountExtension on KinAccount {
     var key = this.key;
 
     if (key is PublicKey) {
-      var publicKey = base_storage.PublicKey.create()..value = key.value;
+      var publicKey = base_storage.PublicKey.create()..value = key.value!;
       storageKinAccount.publicKey = publicKey;
     } else if (key is PrivateKey) {
-      var privateKey = base_storage.PrivateKey.create()..value = key.value;
+      var privateKey = base_storage.PrivateKey.create()..value = key.value!;
       storageKinAccount.privateKey = privateKey;
     }
 
     storageKinAccount.accounts.addAll(this.tokenAccounts.map((e) {
-      return base_storage.PublicKey.create()..value = e.value;
+      return base_storage.PublicKey.create()..value = e.value!;
     }));
 
     return storageKinAccount;
@@ -55,17 +55,17 @@ extension KinAccountExtension on KinAccount {
 extension KinBalanceExtension on KinBalance {
   base_storage.KinBalance toStorageKinBalance() {
     return base_storage.KinBalance.create()
-      ..quarkAmount = fixnum.Int64(this.amount.toQuarks().value)
-      ..pendingQuarkAmount = fixnum.Int64(this.pendingAmount.toQuarks().value);
+      ..quarkAmount = fixnum.Int64(this.amount.toQuarks().value!)
+      ..pendingQuarkAmount = fixnum.Int64(this.pendingAmount.toQuarks().value!);
   }
 }
 
-extension InvoiceListMapExtension on Map<InvoiceListId,InvoiceList> {
+extension InvoiceListMapExtension on Map<InvoiceListId,InvoiceList?> {
 
   base_storage.Invoices toInvoices() {
     var invoices = base_storage.Invoices() ;
     for (var entry in this.entries) {
-      var blob = base_storage.InvoiceListBlob(networkInvoiceList: entry.value.toProto().writeToBuffer());
+      var blob = base_storage.InvoiceListBlob(networkInvoiceList: entry.value!.toProto().writeToBuffer());
       invoices.invoiceLists[ entry.key.invoiceHash.encodedValue ] = blob ;
     }
     return invoices ;
@@ -89,9 +89,7 @@ extension StorageKinAccountExtension on base_storage.KinAccount {
     var sequence = this.sequenceNumber.toInt();
 
     KinAccountStatus status;
-    if (this.status == null) {
-      throw InvalidProtocolBufferException.truncatedMessage();
-    } else if (this.status.value ==
+    if (this.status.value ==
         base_storage.KinAccount_Status.REGISTERED.value) {
       status = KinAccountStatusRegistered(sequence);
     } else if (this.status.value ==
@@ -120,18 +118,18 @@ extension StorageKinBalanceExtension on base_storage.KinBalance {
 }
 
 extension StoragePublicKeyExtension on base_storage.PublicKey {
-  PublicKey toPublicKey() => PublicKey.fromBytes(this.value);
+  PublicKey toPublicKey() => PublicKey.fromBytes(this.value as Uint8List?);
 }
 
 extension StoragePrivateKeyExtension on base_storage.PrivateKey {
-  PrivateKey toPrivateKey() => PrivateKey.fromBytes(this.value);
+  PrivateKey toPrivateKey() => PrivateKey.fromBytes(this.value as Uint8List);
 }
 
 extension StorageKinTransactionsExtension on base_storage.KinTransactions {
 
-  KinTransactions toKinTransactions(NetworkEnvironment networkEnvironment) {
+  KinTransactions toKinTransactions(NetworkEnvironment? networkEnvironment) {
     return KinTransactions(
-      this.items.map( (e) => e.toKinTransaction(networkEnvironment) ) ,
+      this.items.map( (e) => e.toKinTransaction(networkEnvironment) ) as List<KinTransaction> ,
         PagingToken(headPagingToken),
         PagingToken(tailPagingToken)
     );
@@ -141,8 +139,8 @@ extension StorageKinTransactionsExtension on base_storage.KinTransactions {
 
 extension StorageKinTransactionExtension on base_storage.KinTransaction {
 
-  KinTransaction toKinTransaction(NetworkEnvironment networkEnvironment) {
-    RecordType recordType ;
+  KinTransaction toKinTransaction(NetworkEnvironment? networkEnvironment) {
+    RecordType? recordType ;
     if (this.status.value == base_storage.KinTransaction_Status.INFLIGHT.value ) {
       recordType = RecordType( this.timestamp.toInt() ) ;
     }

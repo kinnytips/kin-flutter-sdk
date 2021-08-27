@@ -5,8 +5,8 @@ import 'kin_transaction.dart';
 class KinTransactions {
   final List<KinTransaction> items;
 
-  final PagingToken headPagingToken;
-  final PagingToken tailPagingToken;
+  final PagingToken? headPagingToken;
+  final PagingToken? tailPagingToken;
 
   KinTransactions(this.items, [this.headPagingToken, this.tailPagingToken]);
 }

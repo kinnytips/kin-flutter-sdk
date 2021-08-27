@@ -6,7 +6,7 @@ import 'package:kin_base/models/app/interfaces/status.dart';
 class RetrieveKinAccountResponse extends AccountResponse {
   final GetAccountInfoResponse_Result result;
 
-  RetrieveKinAccountResponse(AccountInfo accountInfo, this.result,
+  RetrieveKinAccountResponse(AccountInfo? accountInfo, this.result,
       Status operationStatus, MetaInformation meta)
       : super(accountInfo, operationStatus, meta);
 }

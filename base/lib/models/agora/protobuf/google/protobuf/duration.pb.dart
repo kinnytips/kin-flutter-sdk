@@ -2,7 +2,7 @@
 //  Generated code. Do not modify.
 //  source: duration.proto
 //
-// @dart = 2.7
+
 // ignore_for_file: annotate_overrides,camel_case_types,unnecessary_const,non_constant_identifier_names,library_prefixes,unused_import,unused_shown_name,return_of_invalid_type,unnecessary_this,prefer_final_fields
 
 import 'dart:core' as $core;
@@ -21,8 +21,8 @@ class Duration extends $pb.GeneratedMessage with $mixin.DurationMixin {
 
   Duration._() : super();
   factory Duration({
-    $fixnum.Int64 seconds,
-    $core.int nanos,
+    $fixnum.Int64? seconds,
+    $core.int? nanos,
   }) {
     final _result = create();
     if (seconds != null) {
@@ -52,7 +52,7 @@ class Duration extends $pb.GeneratedMessage with $mixin.DurationMixin {
   static $pb.PbList<Duration> createRepeated() => $pb.PbList<Duration>();
   @$core.pragma('dart2js:noInline')
   static Duration getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<Duration>(create);
-  static Duration _defaultInstance;
+  static Duration? _defaultInstance;
 
   @$pb.TagNumber(1)
   $fixnum.Int64 get seconds => $_getI64(0);

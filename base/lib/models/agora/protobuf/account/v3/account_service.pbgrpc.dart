@@ -2,7 +2,7 @@
 //  Generated code. Do not modify.
 //  source: account/v3/account_service.proto
 //
-// @dart = 2.7
+
 // ignore_for_file: annotate_overrides,camel_case_types,unnecessary_const,non_constant_identifier_names,library_prefixes,unused_import,unused_shown_name,return_of_invalid_type,unnecessary_this,prefer_final_fields
 
 import 'dart:async' as $async;
@@ -32,24 +32,24 @@ class AccountClient extends $grpc.Client {
       ($core.List<$core.int> value) => $3.Events.fromBuffer(value));
 
   AccountClient($grpc.ClientChannel channel,
-      {$grpc.CallOptions options,
-      $core.Iterable<$grpc.ClientInterceptor> interceptors})
+      {$grpc.CallOptions? options,
+      $core.Iterable<$grpc.ClientInterceptor>? interceptors})
       : super(channel, options: options, interceptors: interceptors);
 
   $grpc.ResponseFuture<$3.CreateAccountResponse> createAccount(
       $3.CreateAccountRequest request,
-      {$grpc.CallOptions options}) {
+      {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$createAccount, request, options: options);
   }
 
   $grpc.ResponseFuture<$3.GetAccountInfoResponse> getAccountInfo(
       $3.GetAccountInfoRequest request,
-      {$grpc.CallOptions options}) {
+      {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$getAccountInfo, request, options: options);
   }
 
   $grpc.ResponseStream<$3.Events> getEvents($3.GetEventsRequest request,
-      {$grpc.CallOptions options}) {
+      {$grpc.CallOptions? options}) {
     return $createStreamingCall(
         _$getEvents, $async.Stream.fromIterable([request]),
         options: options);

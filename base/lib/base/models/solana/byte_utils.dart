@@ -10,7 +10,7 @@ extension Uint8ListExtension on Uint8List {
   //Uint8List readRemainingBytes() ;
 
   T toModel<T>(T Function(Uint8List) newInstance) {
-    return newInstance(this) ?? Uint8List.fromList(this) ;
+    return newInstance(this) ?? Uint8List.fromList(this) as T ;
         // The Kotlin code was creating a ByteArray with bytes from this.
         // In Dart is an Uint8List.
         //T::class.java.getConstructor(ByteArray::class.java).newInstance(this);

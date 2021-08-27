@@ -9,8 +9,6 @@ import '../asset_type_credit_alphanum.dart';
 import '../responses/response.dart';
 import 'request_builder.dart';
 import '../responses/trade_response.dart';
-import '../util.dart';
-import 'dart:convert';
 
 
 /// Builds requests connected to trades. When an offer is fully or partially fulfilled, a trade happens. Trades can also be caused by successful path payments, because path payments involve fulfilling offers. A trade occurs between two parties—base and counter. Which is which is either arbitrary or determined by the calling query.
@@ -20,22 +18,22 @@ class TradesRequestBuilder extends RequestBuilder {
       : super(httpClient, serverURI, ["trades"]);
 
   TradesRequestBuilder baseAsset(Asset asset) {
-    queryParameters.addAll({"base_asset_type": asset.type});
+    queryParameters!.addAll({"base_asset_type": asset.type});
     if (asset is AssetTypeCreditAlphaNum) {
       AssetTypeCreditAlphaNum creditAlphaNumAsset = asset;
-      queryParameters.addAll({"base_asset_code": creditAlphaNumAsset.code});
-      queryParameters
+      queryParameters!.addAll({"base_asset_code": creditAlphaNumAsset.code});
+      queryParameters!
           .addAll({"base_asset_issuer": creditAlphaNumAsset.issuerId});
     }
     return this;
   }
 
   TradesRequestBuilder counterAsset(Asset asset) {
-    queryParameters.addAll({"counter_asset_type": asset.type});
+    queryParameters!.addAll({"counter_asset_type": asset.type});
     if (asset is AssetTypeCreditAlphaNum) {
       AssetTypeCreditAlphaNum creditAlphaNumAsset = asset;
-      queryParameters.addAll({"counter_asset_code": creditAlphaNumAsset.code});
-      queryParameters
+      queryParameters!.addAll({"counter_asset_code": creditAlphaNumAsset.code});
+      queryParameters!
           .addAll({"counter_asset_issuer": creditAlphaNumAsset.issuerId});
     }
     return this;
@@ -44,14 +42,13 @@ class TradesRequestBuilder extends RequestBuilder {
   /// Returns the trades for a given account by [accountId].
   /// See: <a href="https://www.stellar.org/developers/horizon/reference/endpoints/trades-for-account.html">Trades for Account</a>
   TradesRequestBuilder forAccount(String accountId) {
-    accountId = checkNotNull(accountId, "accountId cannot be null");
     this.setSegments(["accounts", accountId, "trades"]);
     return this;
   }
 
   static Future<Page<TradeResponse>> requestExecute(
       http.Client httpClient, Uri uri) async {
-    TypeToken type = new TypeToken<Page<TradeResponse>>();
+    var type = new TypeToken<Page<TradeResponse>>();
     ResponseHandler<Page<TradeResponse>> responseHandler =
         new ResponseHandler<Page<TradeResponse>>(type);
 
@@ -64,11 +61,11 @@ class TradesRequestBuilder extends RequestBuilder {
 
   Future<Page<TradeResponse>> execute() {
     return TradesRequestBuilder.requestExecute(
-        this.httpClient, this.buildUri());
+        this.httpClient, this.buildUri()!);
   }
 
   TradesRequestBuilder offerId(String offerId) {
-    queryParameters.addAll({"offer_id": offerId});
+    queryParameters!.addAll({"offer_id": offerId});
     return this;
   }
 

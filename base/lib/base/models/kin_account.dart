@@ -8,7 +8,7 @@ import 'key.dart';
 import 'kin_balance.dart';
 
 class KinAccountId {
-  final Uint8List value;
+  final Uint8List? value;
 
   KinAccountId(this.value);
 
@@ -32,10 +32,10 @@ class KinAccountId {
       identical(this, other) ||
       other is KinAccountId &&
           runtimeType == other.runtimeType &&
-          value.equalsContent(other.value);
+          value!.equalsContent(other.value);
 
   @override
-  int get hashCode => value.computeHashCode();
+  int get hashCode => value!.computeHashCode();
 
   String toString() {
     return "Id(value=${stellarBase32Encode()}, b58=${base58Encode()})";
@@ -43,7 +43,7 @@ class KinAccountId {
 
   String stellarBase32Encode() => toKeyPair().accountId;
 
-  String base58Encode() => Base58().encode(value);
+  String base58Encode() => Base58().encode(value!);
 
   KeyPair toKeyPair() => KeyPair.fromPublicKey(value);
 }
@@ -81,18 +81,18 @@ class KinAccount {
   final KinAccountStatus status;
 
   KinAccount(this.key,
-      {KinAccountId id,
-      List<PublicKey> tokenAccounts,
-      KinBalance balance,
-      KinAccountStatus status})
+      {KinAccountId? id,
+      List<PublicKey>? tokenAccounts,
+      KinBalance? balance,
+      KinAccountStatus? status})
       : id = id ?? KinAccountId(key.asPublicKey().value),
         tokenAccounts = tokenAccounts ?? <PublicKey>[],
         balance = balance ?? KinBalance(),
         status = status ?? KinAccountStatusUnregistered();
 
-  KinAccount copy({Key key , KinAccountId id , List<PublicKey> tokenAccounts,
-    KinBalance balance,
-    KinAccountStatus status
+  KinAccount copy({Key? key , KinAccountId? id , List<PublicKey>? tokenAccounts,
+    KinBalance? balance,
+    KinAccountStatus? status
   }) {
     key ??= this.key ;
     id ??= this.id ;

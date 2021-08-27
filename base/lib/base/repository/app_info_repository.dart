@@ -4,7 +4,7 @@ import 'package:kin_base/base/models/appidx.dart';
 abstract class AppInfoRepository {
   void addAppInfo(AppInfo appInfo);
 
-  Future<AppInfo> appInfoByAppIndex(AppIdx appIndex);
+  Future<AppInfo?> appInfoByAppIndex(AppIdx appIndex);
 }
 
 class InMemoryAppInfoRepositoryImpl implements AppInfoRepository {
@@ -16,7 +16,7 @@ class InMemoryAppInfoRepositoryImpl implements AppInfoRepository {
   }
 
   @override
-  Future<AppInfo> appInfoByAppIndex(AppIdx appIndex) async {
+  Future<AppInfo?> appInfoByAppIndex(AppIdx appIndex) async {
     return _storage[appIndex];
   }
 }

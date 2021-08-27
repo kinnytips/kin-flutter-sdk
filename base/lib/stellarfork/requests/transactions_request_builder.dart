@@ -5,10 +5,8 @@
 import 'package:http/http.dart' as http;
 import 'request_builder.dart';
 import 'dart:async';
-import 'dart:convert';
 import '../responses/response.dart';
 import '../responses/transaction_response.dart';
-import '../util.dart';
 
 /// Builds requests connected to transactions. Transactions are commands that modify the ledger state and consist of one or more operations.
 /// See: <a href="https://developers.stellar.org/api/resources/transactions/" target="_blank">Transactions</a>
@@ -20,13 +18,12 @@ class TransactionsRequestBuilder extends RequestBuilder {
   /// See:  @see <a href="https://developers.stellar.org/api/resources/transactions/single/" target="_blank">Retrieve a Transaction</a>
   Future<TransactionResponse> transaction(String transactionId) {
     this.setSegments(["transactions", transactionId]);
-    return this.transactionURI(this.buildUri());
+    return this.transactionURI(this.buildUri()!);
   }
 
   /// Returns successful transactions for a given account identified by [accountId].
   /// See:<a href="https://developers.stellar.org/api/resources/accounts/transactions/" target="_blank">Retrieve an Account's Transactions</a>
   TransactionsRequestBuilder forAccount(String accountId) {
-    accountId = checkNotNull(accountId, "accountId cannot be null");
     this.setSegments(["accounts", accountId, "transactions"]);
     return this;
   }
@@ -40,15 +37,14 @@ class TransactionsRequestBuilder extends RequestBuilder {
 
   /// Adds a parameter defining whether to include failed transactions. By default only successful transactions are returned.
   TransactionsRequestBuilder includeFailed(bool value) {
-    value = checkNotNull(value, "value cannot be null");
-    queryParameters.addAll({"include_failed": value.toString()});
+    queryParameters!.addAll({"include_failed": value.toString()});
     return this;
   }
 
   /// Requests specific uri and returns TransactionResponse.
   /// This method is helpful for getting the links.
   Future<TransactionResponse> transactionURI(Uri uri) async {
-    TypeToken type = new TypeToken<TransactionResponse>();
+    var type = new TypeToken<TransactionResponse>();
     ResponseHandler<TransactionResponse> responseHandler =
     new ResponseHandler<TransactionResponse>(type);
 
@@ -63,7 +59,7 @@ class TransactionsRequestBuilder extends RequestBuilder {
   /// This method is helpful for getting the next set of results.
   static Future<Page<TransactionResponse>> requestExecute(
       http.Client httpClient, Uri uri) async {
-    TypeToken type = new TypeToken<Page<TransactionResponse>>();
+    var type = new TypeToken<Page<TransactionResponse>>();
     ResponseHandler<Page<TransactionResponse>> responseHandler =
         new ResponseHandler<Page<TransactionResponse>>(type);
 
@@ -86,7 +82,7 @@ class TransactionsRequestBuilder extends RequestBuilder {
   /// Build and execute request.
   Future<Page<TransactionResponse>> execute() {
     return TransactionsRequestBuilder.requestExecute(
-        this.httpClient, this.buildUri());
+        this.httpClient, this.buildUri()!);
   }
 
   @override

@@ -10,7 +10,7 @@ class ByteInputBuffer {
 
   int _position = 0;
 
-  ByteInputBuffer(this._bytes, [int offset, int length])
+  ByteInputBuffer(this._bytes, [int? offset, int? length])
       : this._offset = (offset ?? 0),
         this._end = (offset ?? 0) + (length ?? _bytes.length) {
     if (_offset < 0 || _offset >= _bytes.length) throw ArgumentError('Invalid offset: $_offset');

@@ -8,7 +8,7 @@ class AccountResponse implements Response {
   final MetaInformation meta;
   @override
   final Status operationStatus;
-  final AccountInfo accountInfo;
+  final AccountInfo? accountInfo;
 
   AccountResponse(this.accountInfo, this.operationStatus, this.meta);
 }

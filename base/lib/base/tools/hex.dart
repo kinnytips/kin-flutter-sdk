@@ -13,7 +13,7 @@ const HEX = const HexCodec();
 
 /// A codec for encoding and decoding byte arrays to and from
 /// hexadecimal strings.
-class HexCodec extends Codec<List<int>, String> {
+class HexCodec extends Codec<List<int>, String?> {
   const HexCodec();
 
   @override

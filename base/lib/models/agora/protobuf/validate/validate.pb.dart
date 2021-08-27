@@ -2,7 +2,7 @@
 //  Generated code. Do not modify.
 //  source: validate/validate.proto
 //
-// @dart = 2.7
+
 // ignore_for_file: annotate_overrides,camel_case_types,unnecessary_const,non_constant_identifier_names,library_prefixes,unused_import,unused_shown_name,return_of_invalid_type,unnecessary_this,prefer_final_fields
 
 import 'dart:core' as $core;
@@ -96,28 +96,28 @@ class FieldRules extends $pb.GeneratedMessage {
 
   FieldRules._() : super();
   factory FieldRules({
-    FloatRules float,
-    DoubleRules double_2,
-    Int32Rules int32,
-    Int64Rules int64,
-    UInt32Rules uint32,
-    UInt64Rules uint64,
-    SInt32Rules sint32,
-    SInt64Rules sint64,
-    Fixed32Rules fixed32,
-    Fixed64Rules fixed64,
-    SFixed32Rules sfixed32,
-    SFixed64Rules sfixed64,
-    BoolRules bool_13,
-    StringRules string,
-    BytesRules bytes,
-    EnumRules enum_16,
-    MessageRules message,
-    RepeatedRules repeated,
-    MapRules map,
-    AnyRules any,
-    DurationRules duration,
-    TimestampRules timestamp,
+    FloatRules? float,
+    DoubleRules? double_2,
+    Int32Rules? int32,
+    Int64Rules? int64,
+    UInt32Rules? uint32,
+    UInt64Rules? uint64,
+    SInt32Rules? sint32,
+    SInt64Rules? sint64,
+    Fixed32Rules? fixed32,
+    Fixed64Rules? fixed64,
+    SFixed32Rules? sfixed32,
+    SFixed64Rules? sfixed64,
+    BoolRules? bool_13,
+    StringRules? string,
+    BytesRules? bytes,
+    EnumRules? enum_16,
+    MessageRules? message,
+    RepeatedRules? repeated,
+    MapRules? map,
+    AnyRules? any,
+    DurationRules? duration,
+    TimestampRules? timestamp,
   }) {
     final _result = create();
     if (float != null) {
@@ -207,9 +207,9 @@ class FieldRules extends $pb.GeneratedMessage {
   static $pb.PbList<FieldRules> createRepeated() => $pb.PbList<FieldRules>();
   @$core.pragma('dart2js:noInline')
   static FieldRules getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<FieldRules>(create);
-  static FieldRules _defaultInstance;
+  static FieldRules? _defaultInstance;
 
-  FieldRules_Type whichType() => _FieldRules_TypeByTag[$_whichOneof(0)];
+  FieldRules_Type? whichType() => _FieldRules_TypeByTag[$_whichOneof(0)];
   void clearType() => clearField($_whichOneof(0));
 
   @$pb.TagNumber(1)
@@ -469,13 +469,13 @@ class FloatRules extends $pb.GeneratedMessage {
 
   FloatRules._() : super();
   factory FloatRules({
-    $core.double const_1,
-    $core.double lt,
-    $core.double lte,
-    $core.double gt,
-    $core.double gte,
-    $core.Iterable<$core.double> in_6,
-    $core.Iterable<$core.double> notIn,
+    $core.double? const_1,
+    $core.double? lt,
+    $core.double? lte,
+    $core.double? gt,
+    $core.double? gte,
+    $core.Iterable<$core.double>? in_6,
+    $core.Iterable<$core.double>? notIn,
   }) {
     final _result = create();
     if (const_1 != null) {
@@ -520,7 +520,7 @@ class FloatRules extends $pb.GeneratedMessage {
   static $pb.PbList<FloatRules> createRepeated() => $pb.PbList<FloatRules>();
   @$core.pragma('dart2js:noInline')
   static FloatRules getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<FloatRules>(create);
-  static FloatRules _defaultInstance;
+  static FloatRules? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.double get const_1 => $_getN(0);
@@ -588,13 +588,13 @@ class DoubleRules extends $pb.GeneratedMessage {
 
   DoubleRules._() : super();
   factory DoubleRules({
-    $core.double const_1,
-    $core.double lt,
-    $core.double lte,
-    $core.double gt,
-    $core.double gte,
-    $core.Iterable<$core.double> in_6,
-    $core.Iterable<$core.double> notIn,
+    $core.double? const_1,
+    $core.double? lt,
+    $core.double? lte,
+    $core.double? gt,
+    $core.double? gte,
+    $core.Iterable<$core.double>? in_6,
+    $core.Iterable<$core.double>? notIn,
   }) {
     final _result = create();
     if (const_1 != null) {
@@ -639,7 +639,7 @@ class DoubleRules extends $pb.GeneratedMessage {
   static $pb.PbList<DoubleRules> createRepeated() => $pb.PbList<DoubleRules>();
   @$core.pragma('dart2js:noInline')
   static DoubleRules getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<DoubleRules>(create);
-  static DoubleRules _defaultInstance;
+  static DoubleRules? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.double get const_1 => $_getN(0);
@@ -707,13 +707,13 @@ class Int32Rules extends $pb.GeneratedMessage {
 
   Int32Rules._() : super();
   factory Int32Rules({
-    $core.int const_1,
-    $core.int lt,
-    $core.int lte,
-    $core.int gt,
-    $core.int gte,
-    $core.Iterable<$core.int> in_6,
-    $core.Iterable<$core.int> notIn,
+    $core.int? const_1,
+    $core.int? lt,
+    $core.int? lte,
+    $core.int? gt,
+    $core.int? gte,
+    $core.Iterable<$core.int>? in_6,
+    $core.Iterable<$core.int>? notIn,
   }) {
     final _result = create();
     if (const_1 != null) {
@@ -758,7 +758,7 @@ class Int32Rules extends $pb.GeneratedMessage {
   static $pb.PbList<Int32Rules> createRepeated() => $pb.PbList<Int32Rules>();
   @$core.pragma('dart2js:noInline')
   static Int32Rules getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<Int32Rules>(create);
-  static Int32Rules _defaultInstance;
+  static Int32Rules? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.int get const_1 => $_getIZ(0);
@@ -826,13 +826,13 @@ class Int64Rules extends $pb.GeneratedMessage {
 
   Int64Rules._() : super();
   factory Int64Rules({
-    $fixnum.Int64 const_1,
-    $fixnum.Int64 lt,
-    $fixnum.Int64 lte,
-    $fixnum.Int64 gt,
-    $fixnum.Int64 gte,
-    $core.Iterable<$fixnum.Int64> in_6,
-    $core.Iterable<$fixnum.Int64> notIn,
+    $fixnum.Int64? const_1,
+    $fixnum.Int64? lt,
+    $fixnum.Int64? lte,
+    $fixnum.Int64? gt,
+    $fixnum.Int64? gte,
+    $core.Iterable<$fixnum.Int64>? in_6,
+    $core.Iterable<$fixnum.Int64>? notIn,
   }) {
     final _result = create();
     if (const_1 != null) {
@@ -877,7 +877,7 @@ class Int64Rules extends $pb.GeneratedMessage {
   static $pb.PbList<Int64Rules> createRepeated() => $pb.PbList<Int64Rules>();
   @$core.pragma('dart2js:noInline')
   static Int64Rules getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<Int64Rules>(create);
-  static Int64Rules _defaultInstance;
+  static Int64Rules? _defaultInstance;
 
   @$pb.TagNumber(1)
   $fixnum.Int64 get const_1 => $_getI64(0);
@@ -945,13 +945,13 @@ class UInt32Rules extends $pb.GeneratedMessage {
 
   UInt32Rules._() : super();
   factory UInt32Rules({
-    $core.int const_1,
-    $core.int lt,
-    $core.int lte,
-    $core.int gt,
-    $core.int gte,
-    $core.Iterable<$core.int> in_6,
-    $core.Iterable<$core.int> notIn,
+    $core.int? const_1,
+    $core.int? lt,
+    $core.int? lte,
+    $core.int? gt,
+    $core.int? gte,
+    $core.Iterable<$core.int>? in_6,
+    $core.Iterable<$core.int>? notIn,
   }) {
     final _result = create();
     if (const_1 != null) {
@@ -996,7 +996,7 @@ class UInt32Rules extends $pb.GeneratedMessage {
   static $pb.PbList<UInt32Rules> createRepeated() => $pb.PbList<UInt32Rules>();
   @$core.pragma('dart2js:noInline')
   static UInt32Rules getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<UInt32Rules>(create);
-  static UInt32Rules _defaultInstance;
+  static UInt32Rules? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.int get const_1 => $_getIZ(0);
@@ -1064,13 +1064,13 @@ class UInt64Rules extends $pb.GeneratedMessage {
 
   UInt64Rules._() : super();
   factory UInt64Rules({
-    $fixnum.Int64 const_1,
-    $fixnum.Int64 lt,
-    $fixnum.Int64 lte,
-    $fixnum.Int64 gt,
-    $fixnum.Int64 gte,
-    $core.Iterable<$fixnum.Int64> in_6,
-    $core.Iterable<$fixnum.Int64> notIn,
+    $fixnum.Int64? const_1,
+    $fixnum.Int64? lt,
+    $fixnum.Int64? lte,
+    $fixnum.Int64? gt,
+    $fixnum.Int64? gte,
+    $core.Iterable<$fixnum.Int64>? in_6,
+    $core.Iterable<$fixnum.Int64>? notIn,
   }) {
     final _result = create();
     if (const_1 != null) {
@@ -1115,7 +1115,7 @@ class UInt64Rules extends $pb.GeneratedMessage {
   static $pb.PbList<UInt64Rules> createRepeated() => $pb.PbList<UInt64Rules>();
   @$core.pragma('dart2js:noInline')
   static UInt64Rules getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<UInt64Rules>(create);
-  static UInt64Rules _defaultInstance;
+  static UInt64Rules? _defaultInstance;
 
   @$pb.TagNumber(1)
   $fixnum.Int64 get const_1 => $_getI64(0);
@@ -1183,13 +1183,13 @@ class SInt32Rules extends $pb.GeneratedMessage {
 
   SInt32Rules._() : super();
   factory SInt32Rules({
-    $core.int const_1,
-    $core.int lt,
-    $core.int lte,
-    $core.int gt,
-    $core.int gte,
-    $core.Iterable<$core.int> in_6,
-    $core.Iterable<$core.int> notIn,
+    $core.int? const_1,
+    $core.int? lt,
+    $core.int? lte,
+    $core.int? gt,
+    $core.int? gte,
+    $core.Iterable<$core.int>? in_6,
+    $core.Iterable<$core.int>? notIn,
   }) {
     final _result = create();
     if (const_1 != null) {
@@ -1234,7 +1234,7 @@ class SInt32Rules extends $pb.GeneratedMessage {
   static $pb.PbList<SInt32Rules> createRepeated() => $pb.PbList<SInt32Rules>();
   @$core.pragma('dart2js:noInline')
   static SInt32Rules getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<SInt32Rules>(create);
-  static SInt32Rules _defaultInstance;
+  static SInt32Rules? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.int get const_1 => $_getIZ(0);
@@ -1302,13 +1302,13 @@ class SInt64Rules extends $pb.GeneratedMessage {
 
   SInt64Rules._() : super();
   factory SInt64Rules({
-    $fixnum.Int64 const_1,
-    $fixnum.Int64 lt,
-    $fixnum.Int64 lte,
-    $fixnum.Int64 gt,
-    $fixnum.Int64 gte,
-    $core.Iterable<$fixnum.Int64> in_6,
-    $core.Iterable<$fixnum.Int64> notIn,
+    $fixnum.Int64? const_1,
+    $fixnum.Int64? lt,
+    $fixnum.Int64? lte,
+    $fixnum.Int64? gt,
+    $fixnum.Int64? gte,
+    $core.Iterable<$fixnum.Int64>? in_6,
+    $core.Iterable<$fixnum.Int64>? notIn,
   }) {
     final _result = create();
     if (const_1 != null) {
@@ -1353,7 +1353,7 @@ class SInt64Rules extends $pb.GeneratedMessage {
   static $pb.PbList<SInt64Rules> createRepeated() => $pb.PbList<SInt64Rules>();
   @$core.pragma('dart2js:noInline')
   static SInt64Rules getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<SInt64Rules>(create);
-  static SInt64Rules _defaultInstance;
+  static SInt64Rules? _defaultInstance;
 
   @$pb.TagNumber(1)
   $fixnum.Int64 get const_1 => $_getI64(0);
@@ -1421,13 +1421,13 @@ class Fixed32Rules extends $pb.GeneratedMessage {
 
   Fixed32Rules._() : super();
   factory Fixed32Rules({
-    $core.int const_1,
-    $core.int lt,
-    $core.int lte,
-    $core.int gt,
-    $core.int gte,
-    $core.Iterable<$core.int> in_6,
-    $core.Iterable<$core.int> notIn,
+    $core.int? const_1,
+    $core.int? lt,
+    $core.int? lte,
+    $core.int? gt,
+    $core.int? gte,
+    $core.Iterable<$core.int>? in_6,
+    $core.Iterable<$core.int>? notIn,
   }) {
     final _result = create();
     if (const_1 != null) {
@@ -1472,7 +1472,7 @@ class Fixed32Rules extends $pb.GeneratedMessage {
   static $pb.PbList<Fixed32Rules> createRepeated() => $pb.PbList<Fixed32Rules>();
   @$core.pragma('dart2js:noInline')
   static Fixed32Rules getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<Fixed32Rules>(create);
-  static Fixed32Rules _defaultInstance;
+  static Fixed32Rules? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.int get const_1 => $_getIZ(0);
@@ -1540,13 +1540,13 @@ class Fixed64Rules extends $pb.GeneratedMessage {
 
   Fixed64Rules._() : super();
   factory Fixed64Rules({
-    $fixnum.Int64 const_1,
-    $fixnum.Int64 lt,
-    $fixnum.Int64 lte,
-    $fixnum.Int64 gt,
-    $fixnum.Int64 gte,
-    $core.Iterable<$fixnum.Int64> in_6,
-    $core.Iterable<$fixnum.Int64> notIn,
+    $fixnum.Int64? const_1,
+    $fixnum.Int64? lt,
+    $fixnum.Int64? lte,
+    $fixnum.Int64? gt,
+    $fixnum.Int64? gte,
+    $core.Iterable<$fixnum.Int64>? in_6,
+    $core.Iterable<$fixnum.Int64>? notIn,
   }) {
     final _result = create();
     if (const_1 != null) {
@@ -1591,7 +1591,7 @@ class Fixed64Rules extends $pb.GeneratedMessage {
   static $pb.PbList<Fixed64Rules> createRepeated() => $pb.PbList<Fixed64Rules>();
   @$core.pragma('dart2js:noInline')
   static Fixed64Rules getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<Fixed64Rules>(create);
-  static Fixed64Rules _defaultInstance;
+  static Fixed64Rules? _defaultInstance;
 
   @$pb.TagNumber(1)
   $fixnum.Int64 get const_1 => $_getI64(0);
@@ -1659,13 +1659,13 @@ class SFixed32Rules extends $pb.GeneratedMessage {
 
   SFixed32Rules._() : super();
   factory SFixed32Rules({
-    $core.int const_1,
-    $core.int lt,
-    $core.int lte,
-    $core.int gt,
-    $core.int gte,
-    $core.Iterable<$core.int> in_6,
-    $core.Iterable<$core.int> notIn,
+    $core.int? const_1,
+    $core.int? lt,
+    $core.int? lte,
+    $core.int? gt,
+    $core.int? gte,
+    $core.Iterable<$core.int>? in_6,
+    $core.Iterable<$core.int>? notIn,
   }) {
     final _result = create();
     if (const_1 != null) {
@@ -1710,7 +1710,7 @@ class SFixed32Rules extends $pb.GeneratedMessage {
   static $pb.PbList<SFixed32Rules> createRepeated() => $pb.PbList<SFixed32Rules>();
   @$core.pragma('dart2js:noInline')
   static SFixed32Rules getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<SFixed32Rules>(create);
-  static SFixed32Rules _defaultInstance;
+  static SFixed32Rules? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.int get const_1 => $_getIZ(0);
@@ -1778,13 +1778,13 @@ class SFixed64Rules extends $pb.GeneratedMessage {
 
   SFixed64Rules._() : super();
   factory SFixed64Rules({
-    $fixnum.Int64 const_1,
-    $fixnum.Int64 lt,
-    $fixnum.Int64 lte,
-    $fixnum.Int64 gt,
-    $fixnum.Int64 gte,
-    $core.Iterable<$fixnum.Int64> in_6,
-    $core.Iterable<$fixnum.Int64> notIn,
+    $fixnum.Int64? const_1,
+    $fixnum.Int64? lt,
+    $fixnum.Int64? lte,
+    $fixnum.Int64? gt,
+    $fixnum.Int64? gte,
+    $core.Iterable<$fixnum.Int64>? in_6,
+    $core.Iterable<$fixnum.Int64>? notIn,
   }) {
     final _result = create();
     if (const_1 != null) {
@@ -1829,7 +1829,7 @@ class SFixed64Rules extends $pb.GeneratedMessage {
   static $pb.PbList<SFixed64Rules> createRepeated() => $pb.PbList<SFixed64Rules>();
   @$core.pragma('dart2js:noInline')
   static SFixed64Rules getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<SFixed64Rules>(create);
-  static SFixed64Rules _defaultInstance;
+  static SFixed64Rules? _defaultInstance;
 
   @$pb.TagNumber(1)
   $fixnum.Int64 get const_1 => $_getI64(0);
@@ -1891,7 +1891,7 @@ class BoolRules extends $pb.GeneratedMessage {
 
   BoolRules._() : super();
   factory BoolRules({
-    $core.bool const_1,
+    $core.bool? const_1,
   }) {
     final _result = create();
     if (const_1 != null) {
@@ -1918,7 +1918,7 @@ class BoolRules extends $pb.GeneratedMessage {
   static $pb.PbList<BoolRules> createRepeated() => $pb.PbList<BoolRules>();
   @$core.pragma('dart2js:noInline')
   static BoolRules getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<BoolRules>(create);
-  static BoolRules _defaultInstance;
+  static BoolRules? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.bool get const_1 => $_getBF(0);
@@ -1990,31 +1990,31 @@ class StringRules extends $pb.GeneratedMessage {
 
   StringRules._() : super();
   factory StringRules({
-    $core.String const_1,
-    $fixnum.Int64 minLen,
-    $fixnum.Int64 maxLen,
-    $fixnum.Int64 minBytes,
-    $fixnum.Int64 maxBytes,
-    $core.String pattern,
-    $core.String prefix,
-    $core.String suffix,
-    $core.String contains,
-    $core.Iterable<$core.String> in_10,
-    $core.Iterable<$core.String> notIn,
-    $core.bool email,
-    $core.bool hostname,
-    $core.bool ip,
-    $core.bool ipv4,
-    $core.bool ipv6,
-    $core.bool uri,
-    $core.bool uriRef,
-    $fixnum.Int64 len,
-    $fixnum.Int64 lenBytes,
-    $core.bool address,
-    $core.bool uuid,
-    $core.String notContains,
-    KnownRegex wellKnownRegex,
-    $core.bool strict,
+    $core.String? const_1,
+    $fixnum.Int64? minLen,
+    $fixnum.Int64? maxLen,
+    $fixnum.Int64? minBytes,
+    $fixnum.Int64? maxBytes,
+    $core.String? pattern,
+    $core.String? prefix,
+    $core.String? suffix,
+    $core.String? contains,
+    $core.Iterable<$core.String>? in_10,
+    $core.Iterable<$core.String>? notIn,
+    $core.bool? email,
+    $core.bool? hostname,
+    $core.bool? ip,
+    $core.bool? ipv4,
+    $core.bool? ipv6,
+    $core.bool? uri,
+    $core.bool? uriRef,
+    $fixnum.Int64? len,
+    $fixnum.Int64? lenBytes,
+    $core.bool? address,
+    $core.bool? uuid,
+    $core.String? notContains,
+    KnownRegex? wellKnownRegex,
+    $core.bool? strict,
   }) {
     final _result = create();
     if (const_1 != null) {
@@ -2113,9 +2113,9 @@ class StringRules extends $pb.GeneratedMessage {
   static $pb.PbList<StringRules> createRepeated() => $pb.PbList<StringRules>();
   @$core.pragma('dart2js:noInline')
   static StringRules getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<StringRules>(create);
-  static StringRules _defaultInstance;
+  static StringRules? _defaultInstance;
 
-  StringRules_WellKnown whichWellKnown() => _StringRules_WellKnownByTag[$_whichOneof(0)];
+  StringRules_WellKnown? whichWellKnown() => _StringRules_WellKnownByTag[$_whichOneof(0)];
   void clearWellKnown() => clearField($_whichOneof(0));
 
   @$pb.TagNumber(1)
@@ -2366,19 +2366,19 @@ class BytesRules extends $pb.GeneratedMessage {
 
   BytesRules._() : super();
   factory BytesRules({
-    $core.List<$core.int> const_1,
-    $fixnum.Int64 minLen,
-    $fixnum.Int64 maxLen,
-    $core.String pattern,
-    $core.List<$core.int> prefix,
-    $core.List<$core.int> suffix,
-    $core.List<$core.int> contains,
-    $core.Iterable<$core.List<$core.int>> in_8,
-    $core.Iterable<$core.List<$core.int>> notIn,
-    $core.bool ip,
-    $core.bool ipv4,
-    $core.bool ipv6,
-    $fixnum.Int64 len,
+    $core.List<$core.int>? const_1,
+    $fixnum.Int64? minLen,
+    $fixnum.Int64? maxLen,
+    $core.String? pattern,
+    $core.List<$core.int>? prefix,
+    $core.List<$core.int>? suffix,
+    $core.List<$core.int>? contains,
+    $core.Iterable<$core.List<$core.int>>? in_8,
+    $core.Iterable<$core.List<$core.int>>? notIn,
+    $core.bool? ip,
+    $core.bool? ipv4,
+    $core.bool? ipv6,
+    $fixnum.Int64? len,
   }) {
     final _result = create();
     if (const_1 != null) {
@@ -2441,9 +2441,9 @@ class BytesRules extends $pb.GeneratedMessage {
   static $pb.PbList<BytesRules> createRepeated() => $pb.PbList<BytesRules>();
   @$core.pragma('dart2js:noInline')
   static BytesRules getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<BytesRules>(create);
-  static BytesRules _defaultInstance;
+  static BytesRules? _defaultInstance;
 
-  BytesRules_WellKnown whichWellKnown() => _BytesRules_WellKnownByTag[$_whichOneof(0)];
+  BytesRules_WellKnown? whichWellKnown() => _BytesRules_WellKnownByTag[$_whichOneof(0)];
   void clearWellKnown() => clearField($_whichOneof(0));
 
   @$pb.TagNumber(1)
@@ -2563,10 +2563,10 @@ class EnumRules extends $pb.GeneratedMessage {
 
   EnumRules._() : super();
   factory EnumRules({
-    $core.int const_1,
-    $core.bool definedOnly,
-    $core.Iterable<$core.int> in_3,
-    $core.Iterable<$core.int> notIn,
+    $core.int? const_1,
+    $core.bool? definedOnly,
+    $core.Iterable<$core.int>? in_3,
+    $core.Iterable<$core.int>? notIn,
   }) {
     final _result = create();
     if (const_1 != null) {
@@ -2602,7 +2602,7 @@ class EnumRules extends $pb.GeneratedMessage {
   static $pb.PbList<EnumRules> createRepeated() => $pb.PbList<EnumRules>();
   @$core.pragma('dart2js:noInline')
   static EnumRules getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<EnumRules>(create);
-  static EnumRules _defaultInstance;
+  static EnumRules? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.int get const_1 => $_getIZ(0);
@@ -2638,8 +2638,8 @@ class MessageRules extends $pb.GeneratedMessage {
 
   MessageRules._() : super();
   factory MessageRules({
-    $core.bool skip,
-    $core.bool required,
+    $core.bool? skip,
+    $core.bool? required,
   }) {
     final _result = create();
     if (skip != null) {
@@ -2669,7 +2669,7 @@ class MessageRules extends $pb.GeneratedMessage {
   static $pb.PbList<MessageRules> createRepeated() => $pb.PbList<MessageRules>();
   @$core.pragma('dart2js:noInline')
   static MessageRules getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<MessageRules>(create);
-  static MessageRules _defaultInstance;
+  static MessageRules? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.bool get skip => $_getBF(0);
@@ -2701,10 +2701,10 @@ class RepeatedRules extends $pb.GeneratedMessage {
 
   RepeatedRules._() : super();
   factory RepeatedRules({
-    $fixnum.Int64 minItems,
-    $fixnum.Int64 maxItems,
-    $core.bool unique,
-    FieldRules items,
+    $fixnum.Int64? minItems,
+    $fixnum.Int64? maxItems,
+    $core.bool? unique,
+    FieldRules? items,
   }) {
     final _result = create();
     if (minItems != null) {
@@ -2740,7 +2740,7 @@ class RepeatedRules extends $pb.GeneratedMessage {
   static $pb.PbList<RepeatedRules> createRepeated() => $pb.PbList<RepeatedRules>();
   @$core.pragma('dart2js:noInline')
   static RepeatedRules getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<RepeatedRules>(create);
-  static RepeatedRules _defaultInstance;
+  static RepeatedRules? _defaultInstance;
 
   @$pb.TagNumber(1)
   $fixnum.Int64 get minItems => $_getI64(0);
@@ -2793,11 +2793,11 @@ class MapRules extends $pb.GeneratedMessage {
 
   MapRules._() : super();
   factory MapRules({
-    $fixnum.Int64 minPairs,
-    $fixnum.Int64 maxPairs,
-    $core.bool noSparse,
-    FieldRules keys,
-    FieldRules values,
+    $fixnum.Int64? minPairs,
+    $fixnum.Int64? maxPairs,
+    $core.bool? noSparse,
+    FieldRules? keys,
+    FieldRules? values,
   }) {
     final _result = create();
     if (minPairs != null) {
@@ -2836,7 +2836,7 @@ class MapRules extends $pb.GeneratedMessage {
   static $pb.PbList<MapRules> createRepeated() => $pb.PbList<MapRules>();
   @$core.pragma('dart2js:noInline')
   static MapRules getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<MapRules>(create);
-  static MapRules _defaultInstance;
+  static MapRules? _defaultInstance;
 
   @$pb.TagNumber(1)
   $fixnum.Int64 get minPairs => $_getI64(0);
@@ -2898,9 +2898,9 @@ class AnyRules extends $pb.GeneratedMessage {
 
   AnyRules._() : super();
   factory AnyRules({
-    $core.bool required,
-    $core.Iterable<$core.String> in_2,
-    $core.Iterable<$core.String> notIn,
+    $core.bool? required,
+    $core.Iterable<$core.String>? in_2,
+    $core.Iterable<$core.String>? notIn,
   }) {
     final _result = create();
     if (required != null) {
@@ -2933,7 +2933,7 @@ class AnyRules extends $pb.GeneratedMessage {
   static $pb.PbList<AnyRules> createRepeated() => $pb.PbList<AnyRules>();
   @$core.pragma('dart2js:noInline')
   static AnyRules getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<AnyRules>(create);
-  static AnyRules _defaultInstance;
+  static AnyRules? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.bool get required => $_getBF(0);
@@ -2966,14 +2966,14 @@ class DurationRules extends $pb.GeneratedMessage {
 
   DurationRules._() : super();
   factory DurationRules({
-    $core.bool required,
-    $6.Duration const_2,
-    $6.Duration lt,
-    $6.Duration lte,
-    $6.Duration gt,
-    $6.Duration gte,
-    $core.Iterable<$6.Duration> in_7,
-    $core.Iterable<$6.Duration> notIn,
+    $core.bool? required,
+    $6.Duration? const_2,
+    $6.Duration? lt,
+    $6.Duration? lte,
+    $6.Duration? gt,
+    $6.Duration? gte,
+    $core.Iterable<$6.Duration>? in_7,
+    $core.Iterable<$6.Duration>? notIn,
   }) {
     final _result = create();
     if (required != null) {
@@ -3021,7 +3021,7 @@ class DurationRules extends $pb.GeneratedMessage {
   static $pb.PbList<DurationRules> createRepeated() => $pb.PbList<DurationRules>();
   @$core.pragma('dart2js:noInline')
   static DurationRules getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<DurationRules>(create);
-  static DurationRules _defaultInstance;
+  static DurationRules? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.bool get required => $_getBF(0);
@@ -3110,15 +3110,15 @@ class TimestampRules extends $pb.GeneratedMessage {
 
   TimestampRules._() : super();
   factory TimestampRules({
-    $core.bool required,
-    $7.Timestamp const_2,
-    $7.Timestamp lt,
-    $7.Timestamp lte,
-    $7.Timestamp gt,
-    $7.Timestamp gte,
-    $core.bool ltNow,
-    $core.bool gtNow,
-    $6.Duration within,
+    $core.bool? required,
+    $7.Timestamp? const_2,
+    $7.Timestamp? lt,
+    $7.Timestamp? lte,
+    $7.Timestamp? gt,
+    $7.Timestamp? gte,
+    $core.bool? ltNow,
+    $core.bool? gtNow,
+    $6.Duration? within,
   }) {
     final _result = create();
     if (required != null) {
@@ -3169,7 +3169,7 @@ class TimestampRules extends $pb.GeneratedMessage {
   static $pb.PbList<TimestampRules> createRepeated() => $pb.PbList<TimestampRules>();
   @$core.pragma('dart2js:noInline')
   static TimestampRules getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<TimestampRules>(create);
-  static TimestampRules _defaultInstance;
+  static TimestampRules? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.bool get required => $_getBF(0);

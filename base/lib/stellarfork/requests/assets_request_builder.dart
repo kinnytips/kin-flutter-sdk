@@ -15,18 +15,18 @@ class AssetsRequestBuilder extends RequestBuilder {
       : super(httpClient, serverURI, ["assets"]);
 
   AssetsRequestBuilder assetCode(String assetCode) {
-    queryParameters.addAll({"asset_code": assetCode});
+    queryParameters!.addAll({"asset_code": assetCode});
     return this;
   }
 
   AssetsRequestBuilder assetIssuer(String assetIssuer) {
-    queryParameters.addAll({"asset_issuer": assetIssuer});
+    queryParameters!.addAll({"asset_issuer": assetIssuer});
     return this;
   }
 
   static Future<Page<AssetResponse>> requestExecute(
       http.Client httpClient, Uri uri) async {
-    TypeToken type = new TypeToken<Page<AssetResponse>>();
+    var type = new TypeToken<Page<AssetResponse>>();
     ResponseHandler<Page<AssetResponse>> responseHandler =
         new ResponseHandler<Page<AssetResponse>>(type);
 
@@ -39,7 +39,7 @@ class AssetsRequestBuilder extends RequestBuilder {
 
   Future<Page<AssetResponse>> execute() {
     return AssetsRequestBuilder.requestExecute(
-        this.httpClient, this.buildUri());
+        this.httpClient, this.buildUri()!);
   }
 
   @override

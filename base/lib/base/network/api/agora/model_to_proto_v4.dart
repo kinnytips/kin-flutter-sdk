@@ -8,7 +8,7 @@ import 'package:kin_base/models/agora/protobuf/transaction/v4/transaction_servic
 
 extension KinAccountIdToProto on KinAccountId {
   SolanaAccountId toProtoSolanaAccountId() =>
-      SolanaAccountId(value: Uint8List.fromList(this.value));
+      SolanaAccountId(value: Uint8List.fromList(this.value!));
 }
 
 extension PagingTokenToProtoV4 on PagingToken {

@@ -5,13 +5,13 @@ abstract class KinLogger {
 
   void warning(String msg);
 
-  void error(String msg, [Error error, StackTrace stackTrace]);
+  void error(String msg, [Error? error, StackTrace? stackTrace]);
 
-  bool isLoggingEnabled;
+  bool? isLoggingEnabled;
 }
 
 abstract class KinLoggerFactory {
-  bool isLoggingEnabled;
+  bool? isLoggingEnabled;
 
   KinLogger getLogger(String name);
 }
@@ -21,14 +21,14 @@ class KinLoggerImpl implements KinLogger {
   final String name;
 
   @override
-  bool isLoggingEnabled;
+  bool? isLoggingEnabled;
 
-  KinLoggerImpl(this.name, [bool isLoggingEnabled])
+  KinLoggerImpl(this.name, [bool? isLoggingEnabled])
       : isLoggingEnabled = isLoggingEnabled ?? true ;
 
   @override
-  void error(String msg, [Error error, StackTrace stackTrace]) {
-    if (!isLoggingEnabled) return;
+  void error(String msg, [Error? error, StackTrace? stackTrace]) {
+    if (!isLoggingEnabled!) return;
     print('[ERROR] $name> $msg');
     if (error != null) print(error);
     if (stackTrace != null) print(stackTrace);
@@ -36,7 +36,7 @@ class KinLoggerImpl implements KinLogger {
 
   @override
   void log(String msg) {
-    if (!isLoggingEnabled) return;
+    if (!isLoggingEnabled!) return;
     print('[INFO] $name> $msg');
   }
 
@@ -47,14 +47,14 @@ class KinLoggerImpl implements KinLogger {
 
   @override
   void warning(String msg) {
-    if (!isLoggingEnabled) return;
+    if (!isLoggingEnabled!) return;
     print('[WARN] $name> $msg');
   }
 }
 
 class KinLoggerFactoryImpl implements KinLoggerFactory {
   @override
-  bool isLoggingEnabled;
+  bool? isLoggingEnabled;
 
   KinLoggerFactoryImpl([this.isLoggingEnabled = false]);
 
