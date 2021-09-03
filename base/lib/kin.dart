@@ -50,7 +50,7 @@ class Kin {
     this._production,
     this._appIndex,
     this._appName, {
-    this.storageLocation = "/tmp/kin-flutter",
+    required this.storageLocation,
     void Function(KinBalance kinBalance)? onBalanceChange,
     void Function(List<KinPayment> payments)? onPayment,
     void Function(Kin kin)? onAccountContext,

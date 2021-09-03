@@ -16,6 +16,7 @@ void main(List<String> arguments) async {
     production,
     appIndex,
     'Example App',
+    storageLocation: '/tmp/kin-flutter',
     onBalanceChange: _onBalanceChange,
     onPayment: _onPayment,
     onAccountContext: _onResolveAccountContext,
