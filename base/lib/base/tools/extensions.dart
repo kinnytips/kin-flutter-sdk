@@ -69,6 +69,23 @@ extension ListIntExtension on List<int> {
 
   Uint8List toUint8List() => Uint8List.fromList(this);
 
+  int computeJavaHashcode() {
+    if (isEmpty) return 0;
+
+    int result = 1;
+
+    for (var n in this) {
+      var b = n > 127 ? -256 + n : n;
+      var h = (31 * result) & 0xFFFFFFFF;
+      result = (h + b) & 0xFFFFFFFF;
+    }
+
+    while (result > 2147483647) {
+      result = -4294967294 + result;
+    }
+
+    return result;
+  }
 }
 
 extension ListExtension<T> on List<T> {

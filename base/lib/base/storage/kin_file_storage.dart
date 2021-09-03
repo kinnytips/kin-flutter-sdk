@@ -49,7 +49,7 @@ class KinFileStorage implements Storage {
 
 
   String _directoryForAccount(KinAccountId accountId) {
-    return _directoryForAllAccounts() + "${accountId.hashCode}/";
+    return _directoryForAllAccounts() + "${accountId.javaHashCode}/";
   }
 
   String _directoryForAllAccounts() =>
@@ -109,7 +109,8 @@ class KinFileStorage implements Storage {
 
   @override
   KinAccount? getAccount(KinAccountId accountId) {
-    var account = this._getAccountFromAccountDirectory(_directoryForAccount(accountId)) ;
+    var directoryForAccount = _directoryForAccount(accountId);
+    var account = this._getAccountFromAccountDirectory(directoryForAccount) ;
     return account;
   }
 
@@ -212,7 +213,7 @@ class KinFileStorage implements Storage {
   }
 
   String _fileNameForInvoices(KinAccountId accountId) {
-    return "${accountId.hashCode}_invoices";
+    return "${accountId.javaHashCode}_invoices";
   }
 
   @override
@@ -244,7 +245,7 @@ class KinFileStorage implements Storage {
 
 
   String _fileNameForTransactions(KinAccountId accountId) {
-    return "${accountId.hashCode}_transactions" ;
+    return "${accountId.javaHashCode}_transactions" ;
   }
 
   @override
