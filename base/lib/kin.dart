@@ -77,17 +77,15 @@ class Kin {
     // Fetch  accounts and set the context:
     var ids = await this._environment.allAccountIds();
 
-    KinAccountId accountId ;
+    KinAccountId accountId;
 
     if (ids.isEmpty) {
       if (createAccountIfEmpty) {
         accountId = createAccount();
+      } else {
+        return null;
       }
-      else {
-        return null ;
-      }
-    }
-    else {
+    } else {
       accountId = ids[0];
     }
 
@@ -97,7 +95,7 @@ class Kin {
   }
 
   void setContextByAccountID(dynamic accountId) {
-    this._context = this.getKinContext( KinAccountId.from(accountId) );
+    this._context = this.getKinContext(KinAccountId.from(accountId));
     _setAppInfo();
 
     if (_onAccountContext != null) {
@@ -220,11 +218,12 @@ class Kin {
         _environment, KinAccountId.from(accountId));
   }
 
-  Future<List<KinAccountId>> allAccountIds() => this._environment.allAccountIds();
+  Future<List<KinAccountId>> allAccountIds() =>
+      this._environment.allAccountIds();
 
   KinAccountId createAccount() {
     var kinContext = KinAccountContext.newAccount(_environment);
-    return kinContext.accountId ;
+    return kinContext.accountId;
   }
 
   KinEnvironmentAgora _getEnvironment() {
@@ -243,7 +242,8 @@ class Kin {
     return env;
   }
 
-  Future<KinAccountId> importWallet(String backupJson, String backupPassword) async {
+  Future<KinAccountId> importWallet(
+      String backupJson, String backupPassword) async {
     var kinBackupRestore = KinBackupRestore();
     var keyPair = kinBackupRestore.importWallet(backupJson, backupPassword);
 
@@ -252,21 +252,22 @@ class Kin {
     return importAccount(account);
   }
 
-  Future<KinAccountId> importAccount(KinAccount account, {bool overwriteStoredAccount = false}) async {
+  Future<KinAccountId> importAccount(KinAccount account,
+      {bool overwriteStoredAccount = false}) async {
     var accountId = account.id;
 
     var storedAccount = _environment.storage.getAccount(accountId);
-    if ( storedAccount != null && !overwriteStoredAccount) {
-      return storedAccount.id ;
+    if (storedAccount != null && !overwriteStoredAccount) {
+      return storedAccount.id;
     }
 
     _environment.storage.addAccount(account);
 
-    var kinContext = getKinContext(accountId) as KinAccountContextBase ;
+    var kinContext = getKinContext(accountId) as KinAccountContextBase;
 
-    var accountUpdated = await kinContext.getAccountUpdated() ;
+    var accountUpdated = await kinContext.getAccountUpdated();
 
-    return accountUpdated.id ;
+    return accountUpdated.id;
   }
 
   String backupWallet(String backupPassword,
