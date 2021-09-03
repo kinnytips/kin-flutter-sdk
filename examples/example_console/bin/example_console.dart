@@ -12,14 +12,17 @@ void main(List<String> arguments) async {
   var credentialUser = 'credentialUser';
   var credentialPass = 'credentialPass';
 
-  var kin = Kin(production, appIndex, 'Example App',
-      onBalanceChange: _onBalanceChange,
-      onPayment: _onPayment,
-      onAccountContext: _onResolveAccountContext,
-      credentialUser: credentialUser,
-      credentialPass: credentialPass);
-
-  print(kin);
+  var kin = Kin(
+    production,
+    appIndex,
+    'Example App',
+    onBalanceChange: _onBalanceChange,
+    onPayment: _onPayment,
+    onAccountContext: _onResolveAccountContext,
+    credentialUser: credentialUser,
+    credentialPass: credentialPass,
+    createAccountIfEmpty: true,
+  );
 
   await kin.waitReady();
 
@@ -36,7 +39,8 @@ void main(List<String> arguments) async {
   showPaymentsForAccount(
       kin, 'GDNZ4TKB3FPM77ITEGG36O6EIKKXLH7ERAE4AUNBMXMEDUVS6VK5YZFQ');
 
-  //await sendKINToAccount(kin, '3RXbFoTTTHHKXu2MikKz8NWbGLnV5PfbcTaQR8Z7oxME', 0.10);
+  await sendKINToAccount(
+      kin, '3RXbFoTTTHHKXu2MikKz8NWbGLnV5PfbcTaQR8Z7oxME', 0.10);
 
   print('** Generating Backup:');
   print('- AccountID: ${account.id.stellarBase32Encode()}');

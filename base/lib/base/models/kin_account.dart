@@ -35,7 +35,13 @@ class KinAccountId {
           value.equalsContent(other.value);
 
   @override
-  int get hashCode => value.computeHashCode();
+  int get hashCode {
+    return value.computeHashCode();
+  }
+
+  int get javaHashCode {
+    return value.computeJavaHashcode();
+  }
 
   String toString() {
     return "Id(value=${stellarBase32Encode()}, b58=${base58Encode()})";

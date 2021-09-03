@@ -56,7 +56,8 @@ class Kin {
     void Function(Kin kin) onAccountContext,
     String credentialUser,
     String credentialPass,
-    bool initialize = true
+    bool initialize = true,
+    bool createAccountIfEmpty = false,
   })  : _onBalanceChange = onBalanceChange,
         _onPayment = onPayment,
         _onAccountContext = onAccountContext,
@@ -68,7 +69,7 @@ class Kin {
     this._environment = this._getEnvironment();
 
     if (initialize) {
-      this.loadLocalAccount();
+      this.loadLocalAccount(createAccountIfEmpty: createAccountIfEmpty);
     }
   }
 

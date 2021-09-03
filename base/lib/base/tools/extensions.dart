@@ -69,7 +69,66 @@ extension ListIntExtension on List<int> {
 
   Uint8List toUint8List() => Uint8List.fromList(this);
 
+  int computeJavaHashcode() {
+    if (isEmpty) return 0 ;
+
+    int result = 1;
+
+    for (var n in this) {
+      var b = n > 127 ? -256+n : n ;
+      var h = (31 * result) & 0xFFFFFFFF ;
+      result = (h + b) & 0xFFFFFFFF ;
+    }
+
+    while (result > 2147483647) {
+      result = -4294967294 + result;
+    }
+
+    return result;
+  }
+
 }
+
+/*
+void main() {
+  var bs = Uint8List.fromList([
+    66,
+    160,
+    142,
+    43,
+    110,
+    147,
+    139,
+    246,
+    53,
+    238,
+    96,
+    192,
+    54,
+    195,
+    92,
+    66,
+    52,
+    97,
+    11,
+    146,
+    53,
+    228,
+    6,
+    168,
+    55,
+    67,
+    200,
+    99,
+    19,
+    82,
+    161,
+    165
+  ]);
+
+  print( "bs: ${bs.computeJavaHashcode()}" );
+}
+ */
 
 extension ListExtension<T> on List<T> {
   static const ListEquality _listEquality = ListEquality();
