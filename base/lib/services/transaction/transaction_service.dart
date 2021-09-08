@@ -21,7 +21,7 @@ class TransactionService {
     // TODO add the transaction class to submit the transaction
     var transaction = SubmitTransactionRequest();
     try {
-      var response = await TransactionClient(ClientChannel(endpoint))
+      await TransactionClient(ClientChannel(endpoint))
           .submitTransaction(transaction)
           .timeout(Duration(seconds: 10));
 
@@ -52,7 +52,7 @@ class TransactionService {
     // TODO SolanaAccountId needs string id converted to ByteArrays
     var request = GetHistoryRequest()..accountId = SolanaAccountId();
     try {
-      var response = await TransactionClient(ClientChannel(endpoint))
+      await TransactionClient(ClientChannel(endpoint))
           .getHistory(request)
           .timeout(Duration(seconds: 10));
 

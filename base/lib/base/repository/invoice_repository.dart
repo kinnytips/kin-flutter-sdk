@@ -8,9 +8,9 @@ abstract class InvoiceRepository {
 
   Future<List<Invoice>> addAllInvoices(List<Invoice> invoices);
 
-  Observer<List<Invoice>> allInvoices();
+  Observer<List<Invoice>?> allInvoices();
 
-  Future<Invoice> invoiceById(InvoiceId id);
+  Future<Invoice?> invoiceById(InvoiceId id);
 }
 
 class InMemoryInvoiceRepositoryImpl extends InvoiceRepository {
@@ -22,31 +22,37 @@ class InMemoryInvoiceRepositoryImpl extends InvoiceRepository {
 
   @override
   Future<Invoice> addInvoice(Invoice invoice) async {
-    return _executorService.execute(() {
+    var future = _executorService.execute(() {
       _storage[invoice.id] = invoice;
       _invoicesSubject.onNext(_storage.values.toList());
       return invoice ;
     });
+
+    var ret = await future ;
+    return ret! ;
   }
 
   @override
   Future<List<Invoice>> addAllInvoices(List<Invoice> invoices) async {
-    return _executorService.execute(() {
+    var future = _executorService.execute(() {
       for (var invoice in invoices) {
         _storage[invoice.id] = invoice;
       }
       _invoicesSubject.onNext(_storage.values.toList());
       return invoices ;
     });
+
+    var ret = await future ;
+    return ret! ;
   }
 
-  Observer<List<Invoice>> allInvoices(){
+  Observer<List<Invoice>?> allInvoices(){
     _invoicesSubject.onNext(_storage.values.toList());
     return _invoicesSubject ;
   }
 
   @override
-  Future<Invoice> invoiceById(InvoiceId id) async {
+  Future<Invoice?> invoiceById(InvoiceId id) async {
     var invoice = _storage[id];
     return invoice;
   }

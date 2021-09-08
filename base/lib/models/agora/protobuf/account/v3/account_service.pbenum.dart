@@ -2,7 +2,7 @@
 //  Generated code. Do not modify.
 //  source: account/v3/account_service.proto
 //
-// @dart = 2.7
+
 // ignore_for_file: annotate_overrides,camel_case_types,unnecessary_const,non_constant_identifier_names,library_prefixes,unused_import,unused_shown_name,return_of_invalid_type,unnecessary_this,prefer_final_fields
 
 // ignore_for_file: UNDEFINED_SHOWN_NAME
@@ -19,7 +19,7 @@ class CreateAccountResponse_Result extends $pb.ProtobufEnum {
   ];
 
   static final $core.Map<$core.int, CreateAccountResponse_Result> _byValue = $pb.ProtobufEnum.initByValue(values);
-  static CreateAccountResponse_Result valueOf($core.int value) => _byValue[value];
+  static CreateAccountResponse_Result? valueOf($core.int value) => _byValue[value];
 
   const CreateAccountResponse_Result._($core.int v, $core.String n) : super(v, n);
 }
@@ -34,7 +34,7 @@ class GetAccountInfoResponse_Result extends $pb.ProtobufEnum {
   ];
 
   static final $core.Map<$core.int, GetAccountInfoResponse_Result> _byValue = $pb.ProtobufEnum.initByValue(values);
-  static GetAccountInfoResponse_Result valueOf($core.int value) => _byValue[value];
+  static GetAccountInfoResponse_Result? valueOf($core.int value) => _byValue[value];
 
   const GetAccountInfoResponse_Result._($core.int v, $core.String n) : super(v, n);
 }
@@ -49,7 +49,7 @@ class Events_Result extends $pb.ProtobufEnum {
   ];
 
   static final $core.Map<$core.int, Events_Result> _byValue = $pb.ProtobufEnum.initByValue(values);
-  static Events_Result valueOf($core.int value) => _byValue[value];
+  static Events_Result? valueOf($core.int value) => _byValue[value];
 
   const Events_Result._($core.int v, $core.String n) : super(v, n);
 }

@@ -2,10 +2,8 @@
 // Use of this source code is governed by a license that can be
 // found in the LICENSE file.
 
-import "package:eventsource/eventsource.dart";
 import 'package:http/http.dart' as http;
 import 'dart:async';
-import 'dart:convert';
 import 'request_builder.dart';
 import '../responses/response.dart';
 import '../responses/ledger_response.dart';
@@ -19,7 +17,7 @@ class LedgersRequestBuilder extends RequestBuilder {
   /// Requests specific uri and returns LedgerResponse.
   /// This method is helpful for getting the links.
   Future<LedgerResponse> ledgerURI(Uri uri) async {
-    TypeToken type = new TypeToken<LedgerResponse>();
+    var type = new TypeToken<LedgerResponse>();
     ResponseHandler<LedgerResponse> responseHandler =
         new ResponseHandler<LedgerResponse>(type);
 
@@ -34,14 +32,14 @@ class LedgersRequestBuilder extends RequestBuilder {
   /// See: <a href="https://developers.stellar.org/api/resources/ledgers/single/" target="_blank">Ledger Details</a>
   Future<LedgerResponse> ledger(int ledgerSeq) {
     this.setSegments(["ledgers", ledgerSeq.toString()]);
-    return this.ledgerURI(this.buildUri());
+    return this.ledgerURI(this.buildUri()!);
   }
 
   /// Requests specific uri and returns Page of LedgerResponse.
   /// This method is helpful for getting the next set of results.
   static Future<Page<LedgerResponse>> requestExecute(
       http.Client httpClient, Uri uri) async {
-    TypeToken type = new TypeToken<Page<LedgerResponse>>();
+    var type = new TypeToken<Page<LedgerResponse>>();
     ResponseHandler<Page<LedgerResponse>> responseHandler =
         new ResponseHandler<Page<LedgerResponse>>(type);
 
@@ -58,25 +56,13 @@ class LedgersRequestBuilder extends RequestBuilder {
   /// responses as ledgers close.
   /// See: <a href="https://developers.stellar.org/api/introduction/streaming/" target="_blank">Streaming</a>
   Stream<LedgerResponse> stream() {
-    StreamController<LedgerResponse> listener =
-        new StreamController.broadcast();
-    EventSource.connect(this.buildUri()).then((eventSource) {
-      eventSource.listen((Event event) {
-        if (event.data == "\"hello\"" || event.event == "close") {
-          return null;
-        }
-        LedgerResponse ledgerResponse =
-            LedgerResponse.fromJson(json.decode(event.data));
-        listener.add(ledgerResponse);
-      });
-    });
-    return listener.stream;
+    throw UnsupportedError("No Stellar Horizon API");
   }
 
   /// Build and execute request.
   Future<Page<LedgerResponse>> execute() {
     return LedgersRequestBuilder.requestExecute(
-        this.httpClient, this.buildUri());
+        this.httpClient, this.buildUri()!);
   }
 
   @override

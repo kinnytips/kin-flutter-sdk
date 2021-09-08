@@ -5,20 +5,20 @@ import '../../asset_type_native.dart';
 /// Represents PathPaymentStrictReceive operation response.
 /// See: <a href="https://developers.stellar.org/api/resources/operations/" target="_blank">Operation documentation</a>
 class PathPaymentStrictReceiveOperationResponse extends OperationResponse {
-  String amount;
-  String sourceAmount;
-  String sourceMax;
-  String from;
-  String to;
+  String? amount;
+  String? sourceAmount;
+  String? sourceMax;
+  String? from;
+  String? to;
 
-  String assetType;
-  String assetCode;
-  String assetIssuer;
+  String? assetType;
+  String? assetCode;
+  String? assetIssuer;
 
-  String sourceAssetType;
-  String sourceAssetCode;
-  String sourceAssetIssuer;
-  List<Asset> path;
+  String? sourceAssetType;
+  String? sourceAssetCode;
+  String? sourceAssetIssuer;
+  List<Asset>? path;
 
   PathPaymentStrictReceiveOperationResponse(
       this.amount,
@@ -38,7 +38,7 @@ class PathPaymentStrictReceiveOperationResponse extends OperationResponse {
     if (assetType == Asset.TYPE_NATIVE) {
       return new AssetTypeNative();
     } else {
-      return Asset.createNonNativeAsset(assetCode, assetIssuer);
+      return Asset.createNonNativeAsset(assetCode!, assetIssuer!);
     }
   }
 
@@ -46,37 +46,39 @@ class PathPaymentStrictReceiveOperationResponse extends OperationResponse {
     if (sourceAssetType == Asset.TYPE_NATIVE) {
       return new AssetTypeNative();
     } else {
-      return Asset.createNonNativeAsset(sourceAssetCode, sourceAssetIssuer);
+      return Asset.createNonNativeAsset(sourceAssetCode!, sourceAssetIssuer!);
     }
   }
 
   factory PathPaymentStrictReceiveOperationResponse.fromJson(
           Map<String, dynamic> json) =>
       new PathPaymentStrictReceiveOperationResponse(
-          json['amount'] as String,
-          json['source_amount'] as String,
-          json['source_max'] as String,
+          json['amount'] as String?,
+          json['source_amount'] as String?,
+          json['source_max'] as String?,
           json['from'] == null ? null : json['from'],
           json['to'] == null ? null : json['to'],
-          json['asset_type'] as String,
-          json['asset_code'] as String,
-          json['asset_issuer'] as String,
-          json['source_asset_type'] as String,
-          json['source_asset_code'] as String,
-          json['source_asset_issuer'] as String,
-          (json['path'] as List)
-              ?.map((e) => e == null
+          json['asset_type'] as String?,
+          json['asset_code'] as String?,
+          json['asset_issuer'] as String?,
+          json['source_asset_type'] as String?,
+          json['source_asset_code'] as String?,
+          json['source_asset_issuer'] as String?,
+
+          (json['path'] as List? ?? [])
+              .map((e) => e == null
                   ? null
                   : new Asset.fromJson(e as Map<String, dynamic>))
-              ?.toList())
+              .whereType<Asset>().toList(),
+      )
         ..id = int.parse(json['id'] as String)
         ..sourceAccount =
             json['source_account'] == null ? null : json['source_account']
-        ..pagingToken = json['paging_token'] as String
-        ..createdAt = json['created_at'] as String
-        ..transactionHash = json['transaction_hash'] as String
-        ..transactionSuccessful = json['transaction_successful'] as bool
-        ..type = json['type'] as String
+        ..pagingToken = json['paging_token'] as String?
+        ..createdAt = json['created_at'] as String?
+        ..transactionHash = json['transaction_hash'] as String?
+        ..transactionSuccessful = json['transaction_successful'] as bool?
+        ..type = json['type'] as String?
         ..links = json['_links'] == null
             ? null
             : new OperationResponseLinks.fromJson(

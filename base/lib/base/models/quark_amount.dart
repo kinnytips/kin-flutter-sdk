@@ -3,7 +3,7 @@ import 'package:decimal/decimal.dart';
 import 'kin_amount.dart';
 
 class QuarkAmount {
-  final int value;
+  final int? value;
 
   QuarkAmount(this.value);
 
@@ -30,5 +30,5 @@ extension KinToQuark on KinAmount {
 }
 
 extension QuarkToKin on QuarkAmount {
-  KinAmount toKin() => KinAmount(Decimal.fromInt(value) / Decimal.fromInt(QUARK_CONVERSION_RATE));
+  KinAmount toKin() => KinAmount(Decimal.fromInt(value!) / Decimal.fromInt(QUARK_CONVERSION_RATE));
 }

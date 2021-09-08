@@ -7,7 +7,8 @@ import 'xdr_data_io.dart';
 
 class XdrInt32 {
   int _int32;
-  XdrInt32();
+  XdrInt32(this._int32);
+
   int get int32 => this._int32;
   set int32(int value) => this._int32 = value;
 
@@ -16,15 +17,16 @@ class XdrInt32 {
   }
 
   static XdrInt32 decode(XdrDataInputStream stream) {
-    XdrInt32 decodedInt32 = XdrInt32();
-    decodedInt32.int32 = stream.readInt();
+    var value = stream.readInt();
+    XdrInt32 decodedInt32 = XdrInt32(value);
     return decodedInt32;
   }
 }
 
 class XdrInt64 {
   int _int64;
-  XdrInt64();
+  XdrInt64(this._int64);
+
   int get int64 => this._int64;
   set int64(int value) => this._int64 = value;
 
@@ -33,15 +35,16 @@ class XdrInt64 {
   }
 
   static XdrInt64 decode(XdrDataInputStream stream) {
-    XdrInt64 decodedInt64 = XdrInt64();
-    decodedInt64.int64 = stream.readLong();
+    var value = stream.readLong();
+    XdrInt64 decodedInt64 = XdrInt64(value);
     return decodedInt64;
   }
 }
 
 class XdrUint32 {
   int _uint32;
-  XdrUint32();
+  XdrUint32(this._uint32);
+
   int get uint32 => this._uint32;
   set uint32(int value) => this._uint32 = value;
 
@@ -50,15 +53,16 @@ class XdrUint32 {
   }
 
   static XdrUint32 decode(XdrDataInputStream stream) {
-    XdrUint32 decodedUint32 = XdrUint32();
-    decodedUint32.uint32 = stream.readInt();
+    var value = stream.readInt();
+    XdrUint32 decodedUint32 = XdrUint32(value);
     return decodedUint32;
   }
 }
 
 class XdrUint64 {
   int _uint64;
-  XdrUint64();
+  XdrUint64(this._uint64);
+
   int get uint64 => this._uint64;
   set uint64(int value) => this._uint64 = value;
 
@@ -67,15 +71,16 @@ class XdrUint64 {
   }
 
   static XdrUint64 decode(XdrDataInputStream stream) {
-    XdrUint64 decodedUint64 = XdrUint64();
-    decodedUint64.uint64 = stream.readLong();
+    var value = stream.readLong();
+    XdrUint64 decodedUint64 = XdrUint64(value);
     return decodedUint64;
   }
 }
 
 class XdrUint256 {
   Uint8List _uint256;
-  XdrUint256();
+  XdrUint256(this._uint256);
+
   Uint8List get uint256 => this._uint256;
   set uint256(Uint8List value) => this._uint256 = value;
 
@@ -84,16 +89,17 @@ class XdrUint256 {
   }
 
   static XdrUint256 decode(XdrDataInputStream stream) {
-    XdrUint256 decodedUint256 = XdrUint256();
     int uint256size = 32;
-    decodedUint256.uint256 = stream.readBytes(uint256size);
+    var bytes = stream.readBytes(uint256size);
+    XdrUint256 decodedUint256 = XdrUint256(bytes);
     return decodedUint256;
   }
 }
 
 class XdrString32 {
   String _string32;
-  XdrString32();
+  XdrString32(this._string32);
+
   String get string32 => this._string32;
   set string32(String value) => this._string32 = value;
 
@@ -102,15 +108,16 @@ class XdrString32 {
   }
 
   static XdrString32 decode(XdrDataInputStream stream) {
-    XdrString32 decodedString32 = XdrString32();
-    decodedString32.string32 = stream.readString();
+    var s = stream.readString();
+    XdrString32 decodedString32 = XdrString32(s);
     return decodedString32;
   }
 }
 
 class XdrString64 {
   String _string64;
-  XdrString64();
+  XdrString64(this._string64);
+
   String get string64 => this._string64;
   set string64(String value) => this._string64 = value;
 
@@ -119,15 +126,16 @@ class XdrString64 {
   }
 
   static XdrString64 decode(XdrDataInputStream stream) {
-    XdrString64 decodedString64 = XdrString64();
-    decodedString64.string64 = stream.readString();
+    var s = stream.readString();
+    XdrString64 decodedString64 = XdrString64(s);
     return decodedString64;
   }
 }
 
 class XdrHash {
   Uint8List _hash;
-  XdrHash();
+  XdrHash(this._hash);
+
   Uint8List get hash => this._hash;
   set hash(Uint8List value) => this._hash = value;
 
@@ -136,16 +144,17 @@ class XdrHash {
   }
 
   static XdrHash decode(XdrDataInputStream stream) {
-    XdrHash decodedHash = XdrHash();
     int hashSize = 32;
-    decodedHash.hash = stream.readBytes(hashSize);
+    var bytes = stream.readBytes(hashSize);
+    XdrHash decodedHash = XdrHash( bytes );
     return decodedHash;
   }
 }
 
 class XdrCurve25519Public {
   Uint8List _key;
-  XdrCurve25519Public();
+  XdrCurve25519Public(this._key);
+
   Uint8List get key => this._key;
   set key(Uint8List value) => this._key = value;
 
@@ -155,16 +164,17 @@ class XdrCurve25519Public {
   }
 
   static XdrCurve25519Public decode(XdrDataInputStream stream) {
-    XdrCurve25519Public decodedCurve25519Public = XdrCurve25519Public();
-    int keysize = 32;
-    decodedCurve25519Public.key = stream.readBytes(keysize);
+    int keySize = 32;
+    var bytes = stream.readBytes(keySize);
+    XdrCurve25519Public decodedCurve25519Public = XdrCurve25519Public(bytes);
     return decodedCurve25519Public;
   }
 }
 
 class XdrHmacSha256Key {
   Uint8List _key;
-  XdrHmacSha256Key();
+  XdrHmacSha256Key(this._key);
+
   Uint8List get key => this._key;
   set key(Uint8List value) => this._key = value;
 
@@ -174,16 +184,17 @@ class XdrHmacSha256Key {
   }
 
   static XdrHmacSha256Key decode(XdrDataInputStream stream) {
-    XdrHmacSha256Key decodedHmacSha256Key = XdrHmacSha256Key();
-    int keysize = 32;
-    decodedHmacSha256Key.key = stream.readBytes(keysize);
+    int keySize = 32;
+    var bytes = stream.readBytes(keySize);
+    XdrHmacSha256Key decodedHmacSha256Key = XdrHmacSha256Key(bytes);
     return decodedHmacSha256Key;
   }
 }
 
 class XdrHmacSha256Mac {
   Uint8List _key;
-  XdrHmacSha256Mac();
+  XdrHmacSha256Mac(this._key);
+
   Uint8List get key => this._key;
   set key(Uint8List value) => this._key = value;
 
@@ -193,16 +204,17 @@ class XdrHmacSha256Mac {
   }
 
   static XdrHmacSha256Mac decode(XdrDataInputStream stream) {
-    XdrHmacSha256Mac decodedHmacSha256Mac = XdrHmacSha256Mac();
-    int keysize = 32;
-    decodedHmacSha256Mac.key = stream.readBytes(keysize);
+    int keySize = 32;
+    var bytes = stream.readBytes(keySize);
+    XdrHmacSha256Mac decodedHmacSha256Mac = XdrHmacSha256Mac(bytes);
     return decodedHmacSha256Mac;
   }
 }
 
 class XdrCurve25519Secret {
   Uint8List _key;
-  XdrCurve25519Secret();
+  XdrCurve25519Secret(this._key);
+
   Uint8List get key => this._key;
   set key(Uint8List value) => this._key = value;
 
@@ -212,16 +224,17 @@ class XdrCurve25519Secret {
   }
 
   static XdrCurve25519Secret decode(XdrDataInputStream stream) {
-    XdrCurve25519Secret decodedCurve25519Secret = XdrCurve25519Secret();
-    int keysize = 32;
-    decodedCurve25519Secret.key = stream.readBytes(keysize);
+    int keySize = 32;
+    var bytes = stream.readBytes(keySize);
+    XdrCurve25519Secret decodedCurve25519Secret = XdrCurve25519Secret(bytes);
     return decodedCurve25519Secret;
   }
 }
 
 class XdrThresholds {
   Uint8List _thresholds;
-  XdrThresholds();
+  XdrThresholds(this._thresholds);
+
   Uint8List get thresholds => this._thresholds;
   set thresholds(Uint8List value) => this._thresholds = value;
 
@@ -230,29 +243,30 @@ class XdrThresholds {
   }
 
   static XdrThresholds decode(XdrDataInputStream stream) {
-    XdrThresholds decodedThresholds = XdrThresholds();
-    int thresholdssize = 4;
-    decodedThresholds.thresholds = stream.readBytes(thresholdssize);
+    int thresholdsSize = 4;
+    var bytes = stream.readBytes(thresholdsSize);
+    XdrThresholds decodedThresholds = XdrThresholds(bytes);
     return decodedThresholds;
   }
 }
 
 class XdrUpgradeType {
   Uint8List _upgradeType;
-  XdrUpgradeType();
+  XdrUpgradeType(this._upgradeType);
+
   Uint8List get upgradeType => this._upgradeType;
   set upgradeType(Uint8List value) => this._upgradeType = value;
 
   static encode(XdrDataOutputStream stream, XdrUpgradeType encodedUpgradeType) {
-    int upgradeTypesize = encodedUpgradeType.upgradeType.length;
-    stream.writeInt(upgradeTypesize);
+    int upgradeTypeSize = encodedUpgradeType.upgradeType.length;
+    stream.writeInt(upgradeTypeSize);
     stream.write(encodedUpgradeType.upgradeType);
   }
 
   static XdrUpgradeType decode(XdrDataInputStream stream) {
-    XdrUpgradeType decodedUpgradeType = XdrUpgradeType();
-    int upgradeTypesize = stream.readInt();
-    decodedUpgradeType.upgradeType = stream.readBytes(upgradeTypesize);
+    int upgradeTypeSize = stream.readInt();
+    var bytes = stream.readBytes(upgradeTypeSize);
+    XdrUpgradeType decodedUpgradeType = XdrUpgradeType(bytes);
     return decodedUpgradeType;
   }
 }
@@ -283,20 +297,20 @@ class XdrPublicKeyType {
 
 class XdrPublicKey {
   XdrPublicKey();
-  XdrPublicKeyType _type;
-  XdrPublicKeyType getDiscriminant() => this._type;
+  XdrPublicKeyType? _type;
+  XdrPublicKeyType? getDiscriminant() => this._type;
   void setDiscriminant(XdrPublicKeyType value) => this._type = value;
 
-  XdrUint256 _ed25519;
-  XdrUint256 getEd25519() => this._ed25519;
+  XdrUint256? _ed25519;
+  XdrUint256? getEd25519() => this._ed25519;
   void setEd25519(XdrUint256 value) => this._ed25519 = value;
 
   static void encode(
       XdrDataOutputStream stream, XdrPublicKey encodedPublicKey) {
-    stream.writeInt(encodedPublicKey.getDiscriminant().value);
+    stream.writeInt(encodedPublicKey.getDiscriminant()!.value);
     switch (encodedPublicKey.getDiscriminant()) {
       case XdrPublicKeyType.PUBLIC_KEY_TYPE_ED25519:
-        XdrUint256.encode(stream, encodedPublicKey._ed25519);
+        XdrUint256.encode(stream, encodedPublicKey._ed25519!);
         break;
     }
   }
@@ -315,15 +329,15 @@ class XdrPublicKey {
 }
 
 class XdrValue {
-  Uint8List _value;
+  Uint8List? _value;
   XdrValue();
-  Uint8List get value => this._value;
-  set value(Uint8List value) => this._value = value;
+  Uint8List? get value => this._value;
+  set value(Uint8List? value) => this._value = value;
 
   static encode(XdrDataOutputStream stream, XdrValue encodedValue) {
-    int valuesize = encodedValue.value.length;
+    int valuesize = encodedValue.value!.length;
     stream.writeInt(valuesize);
-    stream.write(encodedValue.value);
+    stream.write(encodedValue.value!);
   }
 
   static XdrValue decode(XdrDataInputStream stream) {

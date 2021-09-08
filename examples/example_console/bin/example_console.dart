@@ -12,31 +12,39 @@ void main(List<String> arguments) async {
   var credentialUser = 'credentialUser';
   var credentialPass = 'credentialPass';
 
-  var kin = Kin(production, appIndex, 'Example App',
-      onBalanceChange: _onBalanceChange,
-      onPayment: _onPayment,
-      onAccountContext: _onResolveAccountContext,
-      credentialUser: credentialUser,
-      credentialPass: credentialPass);
+  var kin = Kin(
+    production,
+    appIndex,
+    'Example App',
+    storageLocation: '/tmp/kin-flutter',
+    onBalanceChange: _onBalanceChange,
+    onPayment: _onPayment,
+    onAccountContext: _onResolveAccountContext,
+    credentialUser: credentialUser,
+    credentialPass: credentialPass,
+    initialize: true,
+    createAccountIfEmpty: true,
+  );
 
   print(kin);
 
-  await kin.waitReady();
+  await kin.loadLocalAccount(createAccountIfEmpty: true);
 
   print('- Ready: $kin');
 
   print('- My Address: ${kin.addressAsBase58} > ${kin.addressAsStellarBase32}');
 
-  var kinContext = kin.getKinContext();
+  var kinContext = kin.getKinContext()!;
 
-  var account = await kinContext.getAccount(forceUpdate: true);
+  var account = (await kinContext.getAccount(forceUpdate: true))!;
   print('- My Account: $account');
   print('- My Balance: ${account.balance}');
 
   showPaymentsForAccount(
       kin, 'GDNZ4TKB3FPM77ITEGG36O6EIKKXLH7ERAE4AUNBMXMEDUVS6VK5YZFQ');
 
-  //await sendKINToAccount(kin, '3RXbFoTTTHHKXu2MikKz8NWbGLnV5PfbcTaQR8Z7oxME', 0.10);
+  await sendKINToAccount(
+      kin, '3RXbFoTTTHHKXu2MikKz8NWbGLnV5PfbcTaQR8Z7oxME', 0.10);
 
   print('** Generating Backup:');
   print('- AccountID: ${account.id.stellarBase32Encode()}');
@@ -66,7 +74,7 @@ Future<KinPayment> sendKINToAccount(
   print('destinationAccount: $destinationAccount');
   print('amountToSend: $amountToSend');
 
-  var kinContext = kin.getKinContext();
+  var kinContext = kin.getKinContext()!;
   var sentPayment =
       await kinContext.sendKinPayment(amountToSend, destinationAccount);
 
@@ -78,7 +86,7 @@ Future<KinPayment> sendKINToAccount(
 void showPaymentsForAccount(Kin kin, String accountID) {
   print('** Getting payments for account: $accountID ...');
 
-  var kinContext2 = kin.getKinContext(accountID);
+  var kinContext2 = kin.getKinContext(accountID)!;
 
   var observePayments = kinContext2.observePayments();
 

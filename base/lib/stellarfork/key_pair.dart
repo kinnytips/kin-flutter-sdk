@@ -3,9 +3,8 @@ import 'package:fixnum/fixnum.dart' as fixNum;
 import 'package:kin_base/base/tools/base58.dart';
 import 'package:kin_base/base/tools/random.dart';
 import 'package:kin_base/base/tools/extensions.dart';
-import 'package:pinenacl/signing.dart';
+import 'package:pinenacl/src/signatures/ed25519.dart';
 import 'dart:typed_data';
-import "util.dart";
 import 'network.dart';
 import 'transaction.dart';
 import 'xdr/xdr_data_io.dart';
@@ -72,7 +71,7 @@ class StrKey {
   }
 
   static String encodeCheck(VersionByte versionByte, Uint8List data) {
-    List<int> output = List();
+    List<int> output = <int>[];
     output.add(versionByte.getValue());
     output.addAll(data);
 
@@ -135,12 +134,12 @@ class StrKey {
 
 /// Holds a Stellar keypair.
 class KeyPair {
-  Uint8List _mPublicKey;
-  Uint8List _mPrivateKey;
+  Uint8List? _mPublicKey;
+  Uint8List? _mPrivateKey;
 
   static final Map<String,Uint8List> _accountsPrivateKeySeed = <String,Uint8List>{} ;
 
-  static void clearAccountsPrivateKeySeed({String accountId}) {
+  static void clearAccountsPrivateKeySeed({String? accountId}) {
     if (accountId != null) {
       _accountsPrivateKeySeed.remove(accountId);
     }
@@ -150,10 +149,7 @@ class KeyPair {
   }
 
   /// Creates a new KeyPair from the given [publicKey] and [privateKey].
-  KeyPair(Uint8List publicKey, Uint8List privateKey) {
-    _mPublicKey = checkNotNull(publicKey, "publicKey cannot be null");
-    _mPrivateKey = privateKey;
-  }
+  KeyPair(this._mPublicKey, this._mPrivateKey) ;
 
   /// Returns true if this Keypair is capable of signing.
   bool canSign() {
@@ -171,7 +167,7 @@ class KeyPair {
   /// Creates a new KeyPair object from a raw 32 byte secret [seed].
   static KeyPair fromSecretSeedBytes(Uint8List seed) {
     var kp = _signingKeyFromSeed(seed);
-    var keyPair = new KeyPair(kp.publicKey, Uint8List.fromList(kp));
+    var keyPair = new KeyPair(kp.publicKey.toUint8List(), Uint8List.fromList(kp));
     _accountsPrivateKeySeed[keyPair.accountId] = Uint8List.fromList(seed);
     return keyPair;
   }
@@ -189,7 +185,7 @@ class KeyPair {
       Uint8List bytes = StrKey.decodeStellarMuxedAccountId(accountId);
       XdrMuxedAccountMed25519 muxMed25519 =
       XdrMuxedAccountMed25519.decode(XdrDataInputStream(bytes));
-      return fromPublicKey(muxMed25519.ed25519.uint256);
+      return fromPublicKey(muxMed25519.ed25519!.uint256);
     }
 
     Uint8List decoded ;
@@ -204,7 +200,7 @@ class KeyPair {
   }
 
   /// Creates a new KeyPair object from a 32 byte [publicKey] address.
-  static KeyPair fromPublicKey(Uint8List publicKey) {
+  static KeyPair fromPublicKey(Uint8List? publicKey) {
     return new KeyPair(publicKey, null);
   }
 
@@ -216,17 +212,17 @@ class KeyPair {
   }
 
   /// Returns the human readable account ID of this key pair.
-  String get accountId => StrKey.encodeStellarAccountId(_mPublicKey);
+  String get accountId => StrKey.encodeStellarAccountId(_mPublicKey!);
 
   ///Returns the human readable secret seed of this key pair.
-  String get secretSeed => StrKey.encodeStellarSecretSeed(_mPrivateKeySeed);
+  String get secretSeed => StrKey.encodeStellarSecretSeed(_mPrivateKeySeed!);
 
-  Uint8List get _mPrivateKeySeed => _accountsPrivateKeySeed[ accountId ];
+  Uint8List? get _mPrivateKeySeed => _accountsPrivateKeySeed[ accountId ];
 
-  Uint8List get rawSecretSeed => _mPrivateKeySeed;
+  Uint8List? get rawSecretSeed => _mPrivateKeySeed;
 
-  Uint8List get publicKey => _mPublicKey;
-  Uint8List get privateKey => _mPrivateKey;
+  Uint8List? get publicKey => _mPublicKey;
+  Uint8List? get privateKey => _mPrivateKey;
 
   XdrSignatureHint get signatureHint {
     XdrDataOutputStream xdrOutputStream = new XdrDataOutputStream();
@@ -251,8 +247,8 @@ class KeyPair {
   XdrPublicKey get xdrPublicKey {
     XdrPublicKey publicKey = new XdrPublicKey();
     publicKey.setDiscriminant(XdrPublicKeyType.PUBLIC_KEY_TYPE_ED25519);
-    XdrUint256 uint256 = new XdrUint256();
-    uint256.uint256 = this.publicKey;
+    XdrUint256 uint256 = new XdrUint256(this.publicKey!);
+
     publicKey.setEd25519(uint256);
     return publicKey;
   }
@@ -260,18 +256,17 @@ class KeyPair {
   XdrSignerKey get xdrSignerKey {
     XdrSignerKey signerKey = new XdrSignerKey();
     signerKey.discriminant = XdrSignerKeyType.SIGNER_KEY_TYPE_ED25519;
-    XdrUint256 uint256 = new XdrUint256();
-    uint256.uint256 = this.publicKey;
+    XdrUint256 uint256 = new XdrUint256(this.publicKey!);
     signerKey.ed25519 = uint256;
     return signerKey;
   }
 
   static KeyPair fromXdrPublicKey(XdrPublicKey key) {
-    return KeyPair.fromPublicKey(key.getEd25519().uint256);
+    return KeyPair.fromPublicKey(key.getEd25519()!.uint256);
   }
 
   static KeyPair fromXdrSignerKey(XdrSignerKey key) {
-    return KeyPair.fromPublicKey(key.ed25519.uint256);
+    return KeyPair.fromPublicKey(key.ed25519!.uint256);
   }
 
   /// Sign the provided data with the keypair's private key [data].
@@ -281,7 +276,7 @@ class KeyPair {
           "KeyPair does not contain secret key. Use KeyPair.fromSecretSeed method to create a new KeyPair with a secret key.");
     }
 
-    var signingKey = _signingKeyFromSeed(_mPrivateKey);
+    var signingKey = _signingKeyFromSeed(_mPrivateKey!);
     var sign = signingKey.sign(data).signature.toUint8List();
     return sign;
   }
@@ -301,7 +296,7 @@ class KeyPair {
 
   /// Verify the provided [data] and [signature] match this keypair's public key.
   bool verify(Uint8List data, Uint8List signature) {
-    var verifyKey = VerifyKey(_mPublicKey);
+    var verifyKey = VerifyKey(_mPublicKey!);
     var ok = verifyKey.verify(signature: Signature(signature), message: data);
     return ok ;
   }
@@ -311,13 +306,11 @@ class KeyPair {
 class SignerKey {
   /// Create <code>ed25519PublicKey</code> XdrSignerKey from the given [keyPair].
   static XdrSignerKey ed25519PublicKey(KeyPair keyPair) {
-    checkNotNull(keyPair, "keyPair cannot be null");
     return keyPair.xdrSignerKey;
   }
 
   /// Create <code>sha256Hash</code> XdrSignerKey from a sha256 [hash] of a preimage.
   static XdrSignerKey sha256Hash(Uint8List hash) {
-    checkNotNull(hash, "hash cannot be null");
     XdrSignerKey signerKey = new XdrSignerKey();
     XdrUint256 value = SignerKey._createUint256(hash);
 
@@ -329,7 +322,6 @@ class SignerKey {
 
   /// Create <code>preAuthTx</code> XdrSignerKey from a Transaction [tx].
   static XdrSignerKey preAuthTx(Transaction tx, Network network) {
-    checkNotNull(tx, "tx cannot be null");
     XdrSignerKey signerKey = new XdrSignerKey();
     XdrUint256 value = SignerKey._createUint256(tx.hash(network));
 
@@ -341,7 +333,6 @@ class SignerKey {
 
   /// Create <code>preAuthTx</code> XdrSignerKey from a transaction [hash].
   static XdrSignerKey preAuthTxHash(Uint8List hash) {
-    checkNotNull(hash, "hash cannot be null");
     XdrSignerKey signerKey = new XdrSignerKey();
     XdrUint256 value = SignerKey._createUint256(hash);
 
@@ -355,8 +346,7 @@ class SignerKey {
     if (hash.length != 32) {
       throw new Exception("hash must be 32 bytes long");
     }
-    XdrUint256 value = new XdrUint256();
-    value.uint256 = hash;
+    XdrUint256 value = new XdrUint256(hash);
     return value;
   }
 }

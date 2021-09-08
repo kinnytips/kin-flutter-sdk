@@ -8,8 +8,8 @@
 ///
 ///
 class AppUserCreds {
-  final String appUserId;
-  final String appUserPasskey;
+  final String? appUserId;
+  final String? appUserPasskey;
 
   AppUserCreds(this.appUserId, this.appUserPasskey);
 }

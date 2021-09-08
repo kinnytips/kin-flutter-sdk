@@ -2,10 +2,8 @@
 // Use of this source code is governed by a license that can be
 // found in the LICENSE file.
 
-import "package:eventsource/eventsource.dart";
 import 'package:http/http.dart' as http;
 import 'dart:async';
-import 'dart:convert';
 import '../responses/response.dart';
 import '../responses/account_response.dart';
 import 'request_builder.dart';
@@ -24,7 +22,7 @@ class AccountsRequestBuilder extends RequestBuilder {
   /// Requests specific [uri] and returns AccountResponse.
   /// This method is helpful for getting the links.
   Future<AccountResponse> accountURI(Uri uri) async {
-    TypeToken type = new TypeToken<AccountResponse>();
+    var type = new TypeToken<AccountResponse>();
     ResponseHandler<AccountResponse> responseHandler =
         ResponseHandler<AccountResponse>(type);
 
@@ -39,33 +37,33 @@ class AccountsRequestBuilder extends RequestBuilder {
   /// See <a href="https://developers.stellar.org/api/resources/accounts/single/" target="_blank">Account Details</a>
   Future<AccountResponse> account(String accountId) {
     this.setSegments(["accounts", accountId]);
-    return this.accountURI(this.buildUri());
+    return this.accountURI(this.buildUri()!);
   }
 
   /// Returns all accounts that contain a specific signer given by the [signerAccountId]
   /// See: <a href="https://developers.stellar.org/api/resources/accounts/" target="_blank">Accounts</a>
   AccountsRequestBuilder forSigner(String signerAccountId) {
-    if (queryParameters.containsKey(ASSET_PARAMETER_NAME)) {
+    if (queryParameters!.containsKey(ASSET_PARAMETER_NAME)) {
       throw new Exception("cannot set both signer and asset");
     }
-    queryParameters.addAll({SIGNER_PARAMETER_NAME: signerAccountId});
+    queryParameters!.addAll({SIGNER_PARAMETER_NAME: signerAccountId});
     return this;
   }
 
   /// Returns all accounts that contain a specific sponsor given by the [sponsorAccountId]
   /// See: <a href="https://developers.stellar.org/api/resources/accounts/" target="_blank">Accounts</a>
   AccountsRequestBuilder forSponsor(String sponsorAccountId) {
-    queryParameters.addAll({SPONSOR_PARAMETER_NAME: sponsorAccountId});
+    queryParameters!.addAll({SPONSOR_PARAMETER_NAME: sponsorAccountId});
     return this;
   }
 
   /// Returns all accounts who are trustees to a specific [asset].
   /// See: <a href="https://developers.stellar.org/api/resources/accounts/" target="_blank">Accounts</a>
   AccountsRequestBuilder forAsset(Asset asset) {
-    if (queryParameters.containsKey(SIGNER_PARAMETER_NAME)) {
+    if (queryParameters!.containsKey(SIGNER_PARAMETER_NAME)) {
       throw new Exception("cannot set both signer and asset");
     }
-    queryParameters.addAll({ASSET_PARAMETER_NAME: encodeAsset(asset)});
+    queryParameters!.addAll({ASSET_PARAMETER_NAME: encodeAsset(asset)});
     return this;
   }
 
@@ -75,7 +73,7 @@ class AccountsRequestBuilder extends RequestBuilder {
       http.Client httpClient, Uri uri) async {
     TypeToken type = new TypeToken<Page<AccountResponse>>();
     ResponseHandler<Page<AccountResponse>> responseHandler =
-        new ResponseHandler<Page<AccountResponse>>(type);
+        new ResponseHandler<Page<AccountResponse>>(type as TypeToken<Page<AccountResponse>>);
 
     return await httpClient
         .get(uri, headers: RequestBuilder.headers)
@@ -90,25 +88,13 @@ class AccountsRequestBuilder extends RequestBuilder {
   /// responses as ledgers close.
   /// See: <a href="https://developers.stellar.org/api/introduction/streaming/" target="_blank">Streaming</a>
   Stream<AccountResponse> stream() {
-    StreamController<AccountResponse> listener =
-        new StreamController.broadcast();
-    EventSource.connect(this.buildUri()).then((eventSource) {
-      eventSource.listen((Event event) {
-        if (event.data == "\"hello\"" || event.event == "close") {
-          return null;
-        }
-        AccountResponse accountResponse =
-            AccountResponse.fromJson(json.decode(event.data));
-        listener.add(accountResponse);
-      });
-    });
-    return listener.stream;
+    throw UnsupportedError("No Stellar Horizon API");
   }
 
   /// Build and execute request.
   Future<Page<AccountResponse>> execute() {
     return AccountsRequestBuilder.requestExecute(
-        this.httpClient, this.buildUri());
+        this.httpClient, this.buildUri()!);
   }
 
   @override

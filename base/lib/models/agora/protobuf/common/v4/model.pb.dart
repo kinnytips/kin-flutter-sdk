@@ -2,7 +2,7 @@
 //  Generated code. Do not modify.
 //  source: common/v4/model.proto
 //
-// @dart = 2.7
+
 // ignore_for_file: annotate_overrides,camel_case_types,unnecessary_const,non_constant_identifier_names,library_prefixes,unused_import,unused_shown_name,return_of_invalid_type,unnecessary_this,prefer_final_fields
 
 import 'dart:core' as $core;
@@ -21,7 +21,7 @@ class SolanaAccountId extends $pb.GeneratedMessage {
 
   SolanaAccountId._() : super();
   factory SolanaAccountId({
-    $core.List<$core.int> value,
+    $core.List<$core.int>? value,
   }) {
     final _result = create();
     if (value != null) {
@@ -48,7 +48,7 @@ class SolanaAccountId extends $pb.GeneratedMessage {
   static $pb.PbList<SolanaAccountId> createRepeated() => $pb.PbList<SolanaAccountId>();
   @$core.pragma('dart2js:noInline')
   static SolanaAccountId getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<SolanaAccountId>(create);
-  static SolanaAccountId _defaultInstance;
+  static SolanaAccountId? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.List<$core.int> get value => $_getN(0);
@@ -68,7 +68,7 @@ class TransactionId extends $pb.GeneratedMessage {
 
   TransactionId._() : super();
   factory TransactionId({
-    $core.List<$core.int> value,
+    $core.List<$core.int>? value,
   }) {
     final _result = create();
     if (value != null) {
@@ -95,7 +95,7 @@ class TransactionId extends $pb.GeneratedMessage {
   static $pb.PbList<TransactionId> createRepeated() => $pb.PbList<TransactionId>();
   @$core.pragma('dart2js:noInline')
   static TransactionId getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<TransactionId>(create);
-  static TransactionId _defaultInstance;
+  static TransactionId? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.List<$core.int> get value => $_getN(0);
@@ -115,7 +115,7 @@ class Blockhash extends $pb.GeneratedMessage {
 
   Blockhash._() : super();
   factory Blockhash({
-    $core.List<$core.int> value,
+    $core.List<$core.int>? value,
   }) {
     final _result = create();
     if (value != null) {
@@ -142,7 +142,7 @@ class Blockhash extends $pb.GeneratedMessage {
   static $pb.PbList<Blockhash> createRepeated() => $pb.PbList<Blockhash>();
   @$core.pragma('dart2js:noInline')
   static Blockhash getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<Blockhash>(create);
-  static Blockhash _defaultInstance;
+  static Blockhash? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.List<$core.int> get value => $_getN(0);
@@ -162,7 +162,7 @@ class TransactionSignature extends $pb.GeneratedMessage {
 
   TransactionSignature._() : super();
   factory TransactionSignature({
-    $core.List<$core.int> value,
+    $core.List<$core.int>? value,
   }) {
     final _result = create();
     if (value != null) {
@@ -189,7 +189,7 @@ class TransactionSignature extends $pb.GeneratedMessage {
   static $pb.PbList<TransactionSignature> createRepeated() => $pb.PbList<TransactionSignature>();
   @$core.pragma('dart2js:noInline')
   static TransactionSignature getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<TransactionSignature>(create);
-  static TransactionSignature _defaultInstance;
+  static TransactionSignature? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.List<$core.int> get value => $_getN(0);
@@ -209,7 +209,7 @@ class Transaction extends $pb.GeneratedMessage {
 
   Transaction._() : super();
   factory Transaction({
-    $core.List<$core.int> value,
+    $core.List<$core.int>? value,
   }) {
     final _result = create();
     if (value != null) {
@@ -236,7 +236,7 @@ class Transaction extends $pb.GeneratedMessage {
   static $pb.PbList<Transaction> createRepeated() => $pb.PbList<Transaction>();
   @$core.pragma('dart2js:noInline')
   static Transaction getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<Transaction>(create);
-  static Transaction _defaultInstance;
+  static Transaction? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.List<$core.int> get value => $_getN(0);
@@ -258,9 +258,9 @@ class TransactionError extends $pb.GeneratedMessage {
 
   TransactionError._() : super();
   factory TransactionError({
-    TransactionError_Reason reason,
-    $core.int instructionIndex,
-    $core.List<$core.int> raw,
+    TransactionError_Reason? reason,
+    $core.int? instructionIndex,
+    $core.List<$core.int>? raw,
   }) {
     final _result = create();
     if (reason != null) {
@@ -293,7 +293,7 @@ class TransactionError extends $pb.GeneratedMessage {
   static $pb.PbList<TransactionError> createRepeated() => $pb.PbList<TransactionError>();
   @$core.pragma('dart2js:noInline')
   static TransactionError getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<TransactionError>(create);
-  static TransactionError _defaultInstance;
+  static TransactionError? _defaultInstance;
 
   @$pb.TagNumber(1)
   TransactionError_Reason get reason => $_getN(0);
@@ -332,8 +332,8 @@ class StellarTransaction extends $pb.GeneratedMessage {
 
   StellarTransaction._() : super();
   factory StellarTransaction({
-    $core.List<$core.int> resultXdr,
-    $core.List<$core.int> envelopeXdr,
+    $core.List<$core.int>? resultXdr,
+    $core.List<$core.int>? envelopeXdr,
   }) {
     final _result = create();
     if (resultXdr != null) {
@@ -363,7 +363,7 @@ class StellarTransaction extends $pb.GeneratedMessage {
   static $pb.PbList<StellarTransaction> createRepeated() => $pb.PbList<StellarTransaction>();
   @$core.pragma('dart2js:noInline')
   static StellarTransaction getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<StellarTransaction>(create);
-  static StellarTransaction _defaultInstance;
+  static StellarTransaction? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.List<$core.int> get resultXdr => $_getN(0);

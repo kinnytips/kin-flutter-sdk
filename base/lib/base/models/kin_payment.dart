@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 
 import 'package:kin_base/base/models/kin_account.dart';
-import 'package:kin_base/base/network/api/kin_account_creation_api.dart';
 import 'package:kin_base/base/tools/extensions.dart';
 
 import 'invoices.dart';
@@ -11,17 +10,17 @@ import 'quark_amount.dart';
 import 'transaction_hash.dart';
 
 class KinPaymentId {
-  final TransactionHash transactionHash;
+  final TransactionHash? transactionHash;
 
   final int offset;
 
   KinPaymentId(this.transactionHash, this.offset);
 
-  Uint8List _value;
+  Uint8List? _value;
 
-  Uint8List get value {
+  Uint8List? get value {
     if (_value == null) {
-      var rawValue = transactionHash.rawValue;
+      var rawValue = transactionHash!.rawValue;
       var offsetBytes = offset.toUint8List();
       _value = Uint8List(rawValue.length + offsetBytes.length)
         ..addAll(rawValue)
@@ -109,11 +108,11 @@ class KinPayment {
 
   final KinAmount amount;
 
-  final QuarkAmount fee;
+  final QuarkAmount? fee;
 
-  final KinMemo memo;
-  final int timestamp;
-  final Invoice invoice;
+  final KinMemo? memo;
+  final int? timestamp;
+  final Invoice? invoice;
 
   KinPayment(
       this.id,

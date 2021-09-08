@@ -21,7 +21,7 @@ class ClaimableBalancesRequestBuilder extends RequestBuilder {
   /// Requests specific [uri] and returns ClaimableBalancesResponse.
   /// This method is helpful for getting the links.
   Future<ClaimableBalanceResponse> claimableBalance(Uri uri) async {
-    TypeToken type = new TypeToken<ClaimableBalanceResponse>();
+    var type = new TypeToken<ClaimableBalanceResponse>();
     ResponseHandler<ClaimableBalanceResponse> responseHandler =
         ResponseHandler<ClaimableBalanceResponse>(type);
 
@@ -36,27 +36,27 @@ class ClaimableBalancesRequestBuilder extends RequestBuilder {
   /// See <a href="https://developers.stellar.org/api/resources/claimablebalances/" target="_blank">Claimable Balances</a>
   Future<ClaimableBalanceResponse> forBalanceId(String balanceId) {
     this.setSegments(["claimable_balances", balanceId]);
-    return this.claimableBalance(this.buildUri());
+    return this.claimableBalance(this.buildUri()!);
   }
 
   /// Returns all claimable balances for the account id of the sponsor who is paying the reserves for this claimable balances.
   /// See: <a href="https://developers.stellar.org/api/resources/accounts/" target="_blank">Claimable Balances</a>
   ClaimableBalancesRequestBuilder forSponsor(String signerAccountId) {
-    queryParameters.addAll({SPONSOR_PARAMETER_NAME: signerAccountId});
+    queryParameters!.addAll({SPONSOR_PARAMETER_NAME: signerAccountId});
     return this;
   }
 
   /// Returns all claimable balances for the accountId of a claimant.
   /// See: <a href="https://developers.stellar.org/api/resources/accounts/" target="_blank">Claimable Balances</a>
   ClaimableBalancesRequestBuilder forClaimant(String claimantAccountId) {
-    queryParameters.addAll({CLAIMANT_PARAMETER_NAME: claimantAccountId});
+    queryParameters!.addAll({CLAIMANT_PARAMETER_NAME: claimantAccountId});
     return this;
   }
 
   /// Returns all claimable balances for an asset.
   /// See: <a href="https://developers.stellar.org/api/resources/accounts/" target="_blank">Claimable Balances</a>
   ClaimableBalancesRequestBuilder forAsset(Asset asset) {
-    queryParameters.addAll({ASSET_PARAMETER_NAME: Asset.canonicalForm(asset)});
+    queryParameters!.addAll({ASSET_PARAMETER_NAME: Asset.canonicalForm(asset)});
     return this;
   }
 
@@ -65,7 +65,7 @@ class ClaimableBalancesRequestBuilder extends RequestBuilder {
   static Future<Page<ClaimableBalanceResponse>> requestExecute(
       http.Client httpClient, Uri uri) async {
     print(uri.toString());
-    TypeToken type = new TypeToken<Page<ClaimableBalanceResponse>>();
+    var type = new TypeToken<Page<ClaimableBalanceResponse>>();
     ResponseHandler<Page<ClaimableBalanceResponse>> responseHandler =
         new ResponseHandler<Page<ClaimableBalanceResponse>>(type);
 
@@ -79,7 +79,7 @@ class ClaimableBalancesRequestBuilder extends RequestBuilder {
   /// Build and execute request.
   Future<Page<ClaimableBalanceResponse>> execute() {
     return ClaimableBalancesRequestBuilder.requestExecute(
-        this.httpClient, this.buildUri());
+        this.httpClient, this.buildUri()!);
   }
 
   @override

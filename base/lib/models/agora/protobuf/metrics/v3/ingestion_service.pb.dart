@@ -2,7 +2,7 @@
 //  Generated code. Do not modify.
 //  source: metrics/v3/ingestion_service.proto
 //
-// @dart = 2.7
+
 // ignore_for_file: annotate_overrides,camel_case_types,unnecessary_const,non_constant_identifier_names,library_prefixes,unused_import,unused_shown_name,return_of_invalid_type,unnecessary_this,prefer_final_fields
 
 import 'dart:core' as $core;
@@ -39,7 +39,7 @@ class SubmitRequest extends $pb.GeneratedMessage {
   static $pb.PbList<SubmitRequest> createRepeated() => $pb.PbList<SubmitRequest>();
   @$core.pragma('dart2js:noInline')
   static SubmitRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<SubmitRequest>(create);
-  static SubmitRequest _defaultInstance;
+  static SubmitRequest? _defaultInstance;
 }
 
 class SubmitResponse extends $pb.GeneratedMessage {
@@ -50,7 +50,7 @@ class SubmitResponse extends $pb.GeneratedMessage {
 
   SubmitResponse._() : super();
   factory SubmitResponse({
-    SubmitResponse_Result result,
+    SubmitResponse_Result? result,
   }) {
     final _result = create();
     if (result != null) {
@@ -77,7 +77,7 @@ class SubmitResponse extends $pb.GeneratedMessage {
   static $pb.PbList<SubmitResponse> createRepeated() => $pb.PbList<SubmitResponse>();
   @$core.pragma('dart2js:noInline')
   static SubmitResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<SubmitResponse>(create);
-  static SubmitResponse _defaultInstance;
+  static SubmitResponse? _defaultInstance;
 
   @$pb.TagNumber(1)
   SubmitResponse_Result get result => $_getN(0);

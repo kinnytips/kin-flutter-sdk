@@ -2,7 +2,7 @@
 //  Generated code. Do not modify.
 //  source: transaction/v3/transaction_service.proto
 //
-// @dart = 2.7
+
 // ignore_for_file: annotate_overrides,camel_case_types,unnecessary_const,non_constant_identifier_names,library_prefixes,unused_import,unused_shown_name,return_of_invalid_type,unnecessary_this,prefer_final_fields
 
 // ignore_for_file: UNDEFINED_SHOWN_NAME
@@ -19,7 +19,7 @@ class GetHistoryRequest_Direction extends $pb.ProtobufEnum {
   ];
 
   static final $core.Map<$core.int, GetHistoryRequest_Direction> _byValue = $pb.ProtobufEnum.initByValue(values);
-  static GetHistoryRequest_Direction valueOf($core.int value) => _byValue[value];
+  static GetHistoryRequest_Direction? valueOf($core.int value) => _byValue[value];
 
   const GetHistoryRequest_Direction._($core.int v, $core.String n) : super(v, n);
 }
@@ -34,7 +34,7 @@ class GetHistoryResponse_Result extends $pb.ProtobufEnum {
   ];
 
   static final $core.Map<$core.int, GetHistoryResponse_Result> _byValue = $pb.ProtobufEnum.initByValue(values);
-  static GetHistoryResponse_Result valueOf($core.int value) => _byValue[value];
+  static GetHistoryResponse_Result? valueOf($core.int value) => _byValue[value];
 
   const GetHistoryResponse_Result._($core.int v, $core.String n) : super(v, n);
 }
@@ -53,7 +53,7 @@ class SubmitTransactionResponse_Result extends $pb.ProtobufEnum {
   ];
 
   static final $core.Map<$core.int, SubmitTransactionResponse_Result> _byValue = $pb.ProtobufEnum.initByValue(values);
-  static SubmitTransactionResponse_Result valueOf($core.int value) => _byValue[value];
+  static SubmitTransactionResponse_Result? valueOf($core.int value) => _byValue[value];
 
   const SubmitTransactionResponse_Result._($core.int v, $core.String n) : super(v, n);
 }
@@ -68,7 +68,7 @@ class GetTransactionResponse_State extends $pb.ProtobufEnum {
   ];
 
   static final $core.Map<$core.int, GetTransactionResponse_State> _byValue = $pb.ProtobufEnum.initByValue(values);
-  static GetTransactionResponse_State valueOf($core.int value) => _byValue[value];
+  static GetTransactionResponse_State? valueOf($core.int value) => _byValue[value];
 
   const GetTransactionResponse_State._($core.int v, $core.String n) : super(v, n);
 }

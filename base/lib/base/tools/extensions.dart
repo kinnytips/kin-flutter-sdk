@@ -37,7 +37,7 @@ extension IntExtension on int {
 }
 
 extension StringExtension on String {
-  Uint8List toBytesUTF8() => utf8.encode(this);
+  Uint8List toBytesUTF8() => utf8.encode(this) as Uint8List;
 
   Uint8List toBytesLatin1() => latin1.encode(this);
 }
@@ -69,6 +69,23 @@ extension ListIntExtension on List<int> {
 
   Uint8List toUint8List() => Uint8List.fromList(this);
 
+  int computeJavaHashcode() {
+    if (isEmpty) return 0;
+
+    int result = 1;
+
+    for (var n in this) {
+      var b = n > 127 ? -256 + n : n;
+      var h = (31 * result) & 0xFFFFFFFF;
+      result = (h + b) & 0xFFFFFFFF;
+    }
+
+    while (result > 2147483647) {
+      result = -4294967294 + result;
+    }
+
+    return result;
+  }
 }
 
 extension ListExtension<T> on List<T> {
@@ -76,7 +93,7 @@ extension ListExtension<T> on List<T> {
 
   int computeHashCode() => _listEquality.hash(this);
 
-  bool equalsContent(List<T> other) => _listEquality.equals(this, other);
+  bool equalsContent(List<T>? other) => _listEquality.equals(this, other);
 
   List<T> requireNoNulls() {
     for (var e in this) {
@@ -87,7 +104,7 @@ extension ListExtension<T> on List<T> {
 
   List<T> whereNotNull() => where((e) => e != null).toList();
 
-  T get firstOrNull => isEmpty ? null : first ;
+  T? get firstOrNull => isEmpty ? null : first ;
 }
 
 
@@ -96,12 +113,12 @@ extension IterableExtension<T> on Iterable<T> {
     for (var e in this) {
       if (e == null) throw StateError('Null element found in: $this');
     }
-    return this ;
+    return this as List<T> ;
   }
 
   List<T> whereNotNull() => where((e) => e != null).toList();
 
-  T get firstOrNull => isEmpty ? null : first ;
+  T? get firstOrNull => isEmpty ? null : first ;
 }
 
 extension ModelInvoice_LineItemParser on Model.Invoice_LineItem {
@@ -122,7 +139,7 @@ extension ModelInvoiceParser on Model.Invoice {
 
   Invoice toInvoice() {
     var lineItems = this.items.map((e) => e.toLineItem());
-    return Invoice.fromListOfLineItem(lineItems);
+    return Invoice.fromListOfLineItem(lineItems as List<LineItem>);
   }
 
   SHA224Hash sha224Hash() => SHA224Hash.fromBytes(this.writeToBuffer());
@@ -135,7 +152,7 @@ extension ModelInvoiceListParser on Model.InvoiceList {
 
   InvoiceList toInvoiceList() {
     var invoices = this.invoices.map((e) => e.toInvoice());
-    return InvoiceList.fromListOfInvoice(invoices);
+    return InvoiceList.fromListOfInvoice(invoices as List<Invoice>);
   }
 
   SHA224Hash sha224Hash() => SHA224Hash.fromBytes(this.writeToBuffer());
@@ -143,15 +160,15 @@ extension ModelInvoiceListParser on Model.InvoiceList {
 
 extension ListKinTransactionExtension on List<KinTransaction> {
 
-  PagingToken findHeadHistoricalTransaction() {
+  PagingToken? findHeadHistoricalTransaction() {
     return findHistoricalTransaction(this);
   }
 
-  PagingToken findTailHistoricalTransaction() {
+  PagingToken? findTailHistoricalTransaction() {
     return findHistoricalTransaction(this.reversed.toList());
   }
 
-  static PagingToken findHistoricalTransaction(List<KinTransaction> transactions) {
+  static PagingToken? findHistoricalTransaction(List<KinTransaction> transactions) {
     var recordTypes = transactions.map((t) => t.recordType).toList();
     var historicalTransactions = recordTypes.whereType<RecordTypeHistorical>();
     return historicalTransactions.isNotEmpty ? historicalTransactions.first.pagingToken : null ;
@@ -161,8 +178,8 @@ extension ListKinTransactionExtension on List<KinTransaction> {
 
 extension ListKinPaymentItemExtension on List<KinPaymentItem> {
 
-  InvoiceList toInvoiceList() {
-    var list = this.map((e) => e?.invoice).whereNotNull().toList();
+  InvoiceList? toInvoiceList() {
+    var list = this.map((e) => e.invoice).whereType<Invoice>().toList() ;
     return list.isNotEmpty
         ? InvoiceList(InvoiceListId(list.toProto().sha224Hash()), list)
         : null;

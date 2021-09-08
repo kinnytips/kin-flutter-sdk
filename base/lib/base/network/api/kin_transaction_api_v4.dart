@@ -24,7 +24,7 @@ class ServiceConfig {
 
 abstract class KinTransactionApiV4 implements KinTransactionApi {
   Future<KinServiceInvoiceResponse<KinTransaction>> submitTransaction(
-      Transaction transaction, InvoiceList invoiceList);
+      Transaction transaction, InvoiceList? invoiceList);
 
   Future<KinServiceResponse<ServiceConfig>> getServiceConfig();
 

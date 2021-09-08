@@ -2,17 +2,17 @@ import 'package:kin_base/base/models/app_info.dart';
 import 'package:kin_base/base/models/app_user_creds.dart';
 
 abstract class AppInfoProvider {
-  AppInfo appInfo;
+  AppInfo? appInfo;
   AppUserCreds getPassthroughAppUserCredentials() ;
 }
 
 class AppInfoProviderSimple implements AppInfoProvider {
 
   @override
-  AppInfo appInfo;
+  AppInfo? appInfo;
 
-  final String credentialsUser ;
-  final String credentialsPass ;
+  final String? credentialsUser ;
+  final String? credentialsPass ;
 
   AppInfoProviderSimple(this.appInfo, this.credentialsUser, [this.credentialsPass]);
 

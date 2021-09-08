@@ -17,12 +17,12 @@ class FeeStatsRequestBuilder extends RequestBuilder {
   /// Requests fee stats from horizon.
   /// See: <a href="https://developers.stellar.org/api/aggregations/fee-stats/" target="_blank">Fee stats</a>
   Future<FeeStatsResponse> execute() async {
-    TypeToken type = new TypeToken<FeeStatsResponse>();
+    var type = new TypeToken<FeeStatsResponse>();
     ResponseHandler<FeeStatsResponse> responseHandler =
         new ResponseHandler<FeeStatsResponse>(type);
 
     return await httpClient
-        .get(this.buildUri(), headers: RequestBuilder.headers)
+        .get(this.buildUri()!, headers: RequestBuilder.headers)
         .then((response) {
       return responseHandler.handleResponse(response);
     });

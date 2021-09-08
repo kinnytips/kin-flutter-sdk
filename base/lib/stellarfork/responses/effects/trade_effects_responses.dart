@@ -5,7 +5,6 @@
 import 'effect_responses.dart';
 import '../../assets.dart';
 import '../../asset_type_native.dart';
-import '../response.dart';
 
 /// Represents offer_created effect response.
 /// See: <a href="https://developers.stellar.org/api/resources/effects/" target="_blank">Effects</a>.
@@ -14,11 +13,11 @@ class OfferCreatedEffectResponse extends EffectResponse {
 
   factory OfferCreatedEffectResponse.fromJson(Map<String, dynamic> json) =>
       new OfferCreatedEffectResponse()
-        ..id = json['id'] as String
+        ..id = json['id'] as String?
         ..account = json['account'] == null ? null : json['account']
-        ..type = json['type'] as String
-        ..createdAt = json['created_at'] as String
-        ..pagingToken = json['paging_token'] as String
+        ..type = json['type'] as String?
+        ..createdAt = json['created_at'] as String?
+        ..pagingToken = json['paging_token'] as String?
         ..links = json['_links'] == null
             ? null
             : new EffectResponseLinks.fromJson(
@@ -32,11 +31,11 @@ class OfferRemovedEffectResponse extends EffectResponse {
 
   factory OfferRemovedEffectResponse.fromJson(Map<String, dynamic> json) =>
       new OfferRemovedEffectResponse()
-        ..id = json['id'] as String
+        ..id = json['id'] as String?
         ..account = json['account'] == null ? null : json['account']
-        ..type = json['type'] as String
-        ..createdAt = json['created_at'] as String
-        ..pagingToken = json['paging_token'] as String
+        ..type = json['type'] as String?
+        ..createdAt = json['created_at'] as String?
+        ..pagingToken = json['paging_token'] as String?
         ..links = json['_links'] == null
             ? null
             : new EffectResponseLinks.fromJson(
@@ -50,11 +49,11 @@ class OfferUpdatedEffectResponse extends EffectResponse {
 
   factory OfferUpdatedEffectResponse.fromJson(Map<String, dynamic> json) =>
       new OfferUpdatedEffectResponse()
-        ..id = json['id'] as String
+        ..id = json['id'] as String?
         ..account = json['account'] == null ? null : json['account']
-        ..type = json['type'] as String
-        ..createdAt = json['created_at'] as String
-        ..pagingToken = json['paging_token'] as String
+        ..type = json['type'] as String?
+        ..createdAt = json['created_at'] as String?
+        ..pagingToken = json['paging_token'] as String?
         ..links = json['_links'] == null
             ? null
             : new EffectResponseLinks.fromJson(
@@ -64,18 +63,18 @@ class OfferUpdatedEffectResponse extends EffectResponse {
 /// Represents trade effect response.
 /// See: <a href="https://developers.stellar.org/api/resources/effects/" target="_blank">Effects</a>.
 class TradeEffectResponse extends EffectResponse {
-  String seller;
-  String offerId;
+  String? seller;
+  String? offerId;
 
-  String soldAmount;
-  String soldAssetType;
-  String soldAssetCode;
-  String soldAssetIssuer;
+  String? soldAmount;
+  String? soldAssetType;
+  String? soldAssetCode;
+  String? soldAssetIssuer;
 
-  String boughtAmount;
-  String boughtAssetType;
-  String boughtAssetCode;
-  String boughtAssetIssuer;
+  String? boughtAmount;
+  String? boughtAssetType;
+  String? boughtAssetCode;
+  String? boughtAssetIssuer;
 
   TradeEffectResponse(
       this.seller,
@@ -93,7 +92,7 @@ class TradeEffectResponse extends EffectResponse {
     if (soldAssetType == Asset.TYPE_NATIVE) {
       return new AssetTypeNative();
     } else {
-      return Asset.createNonNativeAsset(soldAssetCode, soldAssetIssuer);
+      return Asset.createNonNativeAsset(soldAssetCode!, soldAssetIssuer!);
     }
   }
 
@@ -101,27 +100,27 @@ class TradeEffectResponse extends EffectResponse {
     if (boughtAssetType == Asset.TYPE_NATIVE) {
       return new AssetTypeNative();
     } else {
-      return Asset.createNonNativeAsset(boughtAssetCode, boughtAssetIssuer);
+      return Asset.createNonNativeAsset(boughtAssetCode!, boughtAssetIssuer!);
     }
   }
 
   factory TradeEffectResponse.fromJson(Map<String, dynamic> json) =>
       new TradeEffectResponse(
           json['seller'] == null ? null : json['seller'],
-          json['offer_id'] as String,
-          json['sold_amount'] as String,
-          json['sold_asset_type'] as String,
-          json['sold_asset_code'] as String,
-          json['sold_asset_issuer'] as String,
-          json['bought_amount'] as String,
-          json['bought_asset_type'] as String,
-          json['bought_asset_code'] as String,
-          json['bought_asset_issuer'] as String)
-        ..id = json['id'] as String
+          json['offer_id'] as String?,
+          json['sold_amount'] as String?,
+          json['sold_asset_type'] as String?,
+          json['sold_asset_code'] as String?,
+          json['sold_asset_issuer'] as String?,
+          json['bought_amount'] as String?,
+          json['bought_asset_type'] as String?,
+          json['bought_asset_code'] as String?,
+          json['bought_asset_issuer'] as String?)
+        ..id = json['id'] as String?
         ..account = json['account'] == null ? null : json['account']
-        ..type = json['type'] as String
-        ..createdAt = json['created_at'] as String
-        ..pagingToken = json['paging_token'] as String
+        ..type = json['type'] as String?
+        ..createdAt = json['created_at'] as String?
+        ..pagingToken = json['paging_token'] as String?
         ..links = json['_links'] == null
             ? null
             : new EffectResponseLinks.fromJson(

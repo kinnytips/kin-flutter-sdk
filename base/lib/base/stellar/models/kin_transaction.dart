@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:collection/collection.dart' show IterableExtension;
 import 'package:kin_base/base/models/invoices.dart';
 import 'package:kin_base/base/models/kin_account.dart';
 import 'package:kin_base/base/models/kin_amount.dart';
@@ -31,17 +32,17 @@ extension TransactionExtension on Transaction {
 
   KinAmount get totalAmount => this.paymentOperations.map((e) => e.amount).reduce((value, element) => value + element ) ;
 
-  TransactionHash get transactionHash => TransactionHash(signatures.first.value.byteArray) ;
+  TransactionHash get transactionHash => TransactionHash(signatures.first!.value.byteArray) ;
 
-  KinAccountId get signingSource => message.accounts[0].asKinAccountId() ;
+  KinAccountId get signingSource => message.accounts[0]!.asKinAccountId() ;
 
   QuarkAmount get fee => QuarkAmount(0);
 
   KinMemo get memo {
-    var instruction = message.instructions.firstWhere((e) => message.accounts[e.programIndex] == MemoProgram.PROGRAM_KEY , orElse: () => null) ;
+    var instruction = message.instructions.firstWhereOrNull((e) => message.accounts[e.programIndex] == MemoProgram.PROGRAM_KEY ) ;
     if (instruction == null) return KinMemo.none ;
 
-    var stringBase64 = utf8.decode(instruction.data);
+    var stringBase64 = utf8.decode(instruction.data!);
     var decodedBase64 = stringBase64.isNotEmpty ? base64.decode(stringBase64) : null ;
 
     if (decodedBase64 != null && decodedBase64.isNotEmpty) {
@@ -63,13 +64,13 @@ extension TransactionExtension on Transaction {
       var programKey = message.accounts[e.programIndex] ;
       return programKey != MemoProgram.PROGRAM_KEY
           && programKey != SystemProgram.PROGRAM_KEY
-          && e.data.first.toInt() == TokenProgramCommandTransfer().value ;
+          && e.data!.first.toInt() == TokenProgramCommandTransfer().value ;
     }).map((e) {
-      var int64list = e.data.sublist(1).buffer.asInt64List();
+      var int64list = e.data!.sublist(1).buffer.asInt64List();
       var amountAsLong = int64list[0] ;
       var amount = QuarkAmount(amountAsLong).toKin() ;
-      var source = message.accounts[e.accounts[0]].asKinAccountId() ;
-      var destination = message.accounts[e.accounts[1]].asKinAccountId() ;
+      var source = message.accounts[e.accounts[0]]!.asKinAccountId() ;
+      var destination = message.accounts[e.accounts[1]]!.asKinAccountId() ;
       return KinOperationPayment(amount, source, destination);
     }).toList();
   }
@@ -78,12 +79,12 @@ extension TransactionExtension on Transaction {
 abstract class KinTransaction {
   final Uint8List bytesValue;
   final RecordType recordType;
-  final NetworkEnvironment networkEnvironment;
-  final QuarkAmount fee;
-  final KinMemo memo;
-  final TransactionHash transactionHash;
-  final List<KinOperationPayment> paymentOperations;
-  final InvoiceList invoiceList;
+  final NetworkEnvironment? networkEnvironment;
+  final QuarkAmount? fee;
+  final KinMemo? memo;
+  final TransactionHash? transactionHash;
+  final List<KinOperationPayment>? paymentOperations;
+  final InvoiceList? invoiceList;
 
   KinTransaction(
       this.bytesValue,
@@ -118,10 +119,10 @@ abstract class KinTransaction {
 
 class SolanaKinTransaction extends KinTransaction {
 
-  Transaction _transaction;
+  late Transaction _transaction;
 
-  SolanaKinTransaction(Uint8List bytesValue, RecordType recordType,
-      NetworkEnvironment networkEnvironment, [InvoiceList invoiceLis])
+  SolanaKinTransaction(Uint8List bytesValue, RecordType? recordType,
+      NetworkEnvironment? networkEnvironment, [InvoiceList? invoiceLis])
       : super(
             bytesValue,
             recordType ?? RecordTypeInflight(DateTime.now().millisecondsSinceEpoch),
@@ -139,7 +140,7 @@ class SolanaKinTransaction extends KinTransaction {
 
   List<KinOperationPayment> get paymentOperations => _transaction.paymentOperations ;
 
-  SolanaKinTransaction copyWithInvoiceList(InvoiceList invoiceList) {
+  SolanaKinTransaction copyWithInvoiceList(InvoiceList? invoiceList) {
     return SolanaKinTransaction(bytesValue, recordType, networkEnvironment, invoiceList);
   }
 
@@ -148,8 +149,8 @@ class SolanaKinTransaction extends KinTransaction {
 
 class StellarKinTransaction extends KinTransaction {
 
-  StellarKinTransaction(Uint8List bytesValue, RecordType recordType,
-      NetworkEnvironment networkEnvironment, [InvoiceList invoiceLis])
+  StellarKinTransaction(Uint8List bytesValue, [RecordType? recordType,
+      NetworkEnvironment? networkEnvironment, InvoiceList? invoiceLis])
       : super(
       bytesValue,
       recordType ?? RecordTypeInflight(DateTime.now().millisecondsSinceEpoch),
@@ -170,16 +171,19 @@ class StellarKinTransaction extends KinTransaction {
       .discriminant == XdrOperationType.PAYMENT;
 
   PaymentOperation _toPaymentOperation(Operation op) {
-    var paymentOp = op.toOperationBody().paymentOp;
+    var paymentOp = op.toOperationBody().paymentOp!;
 
-    var destinationAccount = MuxedAccount.fromXdr(paymentOp.destination);
-    var asset = Asset.fromXdr(paymentOp.asset);
-    var amount = paymentOp.amount.int64 ;
+    var destinationAccount = MuxedAccount.fromXdr(paymentOp.destination!);
+    var asset = Asset.fromXdr(paymentOp.asset!);
+    var amount = paymentOp.amount!.int64 ;
 
-    return PaymentOperationBuilder.forMuxedDestinationAccount(destinationAccount, asset, '$amount').build() ;
+    var paymentOperation = PaymentOperationBuilder.forMuxedDestinationAccount(destinationAccount, asset, '$amount').build();
+    paymentOperation.sourceAccount = op.sourceAccount ;
+
+    return paymentOperation ;
   }
 
-  XdrTransactionEnvelope _transactionEnvelope;
+  XdrTransactionEnvelope? _transactionEnvelope;
 
   XdrTransactionEnvelope get transactionEnvelope =>
       _transactionEnvelope ??= _buildTransactionEnvelope();
@@ -190,48 +194,45 @@ class StellarKinTransaction extends KinTransaction {
 
   stellarfork_tx.Transaction get _transactionEnvelopeTX {
     var tx = transactionEnvelope.v0 != null ?
-    stellarfork_tx.Transaction.fromV0EnvelopeXdr(transactionEnvelope.v0) :
-    stellarfork_tx.Transaction.fromV1EnvelopeXdr(transactionEnvelope.v1) ;
+    stellarfork_tx.Transaction.fromV0EnvelopeXdr(transactionEnvelope.v0!) :
+    stellarfork_tx.Transaction.fromV1EnvelopeXdr(transactionEnvelope.v1!) ;
     return tx;
   }
 
-  TransactionHash _transactionHash;
+  TransactionHash? _transactionHash;
 
   TransactionHash get transactionHash =>
       _transactionHash ??= TransactionHash(
-          _transactionEnvelopeTX.hash(networkEnvironment.network));
+          _transactionEnvelopeTX.hash(networkEnvironment!.network));
 
-  KinAccountId _signingSource;
+  KinAccountId? _signingSource;
 
   KinAccountId get signingSource => _signingSource ??=
-      KinAccountId.fromIdString(_transactionEnvelopeTX.sourceAccount.accountId);
+      KinAccountId.fromIdString(_transactionEnvelopeTX.sourceAccount.accountId!);
 
-  QuarkAmount _fee;
+  QuarkAmount? _fee;
 
   QuarkAmount get fee => _fee ??= QuarkAmount(_transactionEnvelopeTX.fee);
 
-  KinMemo _memo ;
+  KinMemo? _memo ;
 
   KinMemo get memo => _memo ??= _buildMemo();
 
   KinMemo _buildMemo() {
-    Memo memo = _transactionEnvelopeTX.memo ;
+    Memo? memo = _transactionEnvelopeTX.memo ;
 
-    if (memo == null) {
-      return KinMemo.none;
-    }
     if (memo is MemoHash) {
       return KinMemo(memo.bytes);
     }
     else if (memo is MemoText) {
-      return KinMemo.fromText(memo.text, Charset.utf8);
+      return KinMemo.fromText(memo.text!, Charset.utf8);
     }
     else {
       return KinMemo.none;
     }
   }
 
-  List<KinOperationPayment> _paymentOperations ;
+  List<KinOperationPayment>? _paymentOperations ;
 
   List<KinOperationPayment> get paymentOperations => _paymentOperations ??= _buildPaymentOperations();
 
@@ -242,10 +243,8 @@ class StellarKinTransaction extends KinTransaction {
         .map((payOp) {
       return KinOperationPayment(
           KinAmount.fromString(payOp.amount),
-          (payOp.sourceAccount != null
-              ? KinAccountId.fromIdString(payOp.sourceAccount.ed25519AccountId)
-              : signingSource),
-          KinAccountId.fromIdString(payOp.destination.ed25519AccountId));
+          KinAccountId.fromIdString(payOp.sourceAccount.ed25519AccountId!),
+          KinAccountId.fromIdString(payOp.destination.ed25519AccountId!));
     }).toList();
   }
 

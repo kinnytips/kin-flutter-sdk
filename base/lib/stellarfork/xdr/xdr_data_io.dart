@@ -10,13 +10,13 @@ class DataInput {
   int _fileLength;
   ByteData view;
   int _offset = 0;
+
   int get offset => _offset;
   int get fileLength => _fileLength;
 
-  DataInput.fromUint8List(this.data) {
-    this.view = ByteData.view(data.buffer);
-    _fileLength = data.lengthInBytes;
-  }
+  DataInput.fromUint8List(this.data) : view = ByteData.view(data.buffer) ,
+        _fileLength = data.lengthInBytes;
+
 
   /// Returns the byte(-128 - 127) at [offset]. if [eofException] is false then
   /// if it reaches the end of the stream it will return -129.
@@ -95,17 +95,17 @@ class DataInput {
 
   double readFloat([Endian endian = Endian.big]) {
     var oldOffset = _offset;
-    _offset += 4;
+    _offset +=  4;
     return view.getFloat32(oldOffset, endian);
   }
 
   double readDouble([Endian endian = Endian.big]) {
     var oldOffset = _offset;
-    _offset += 8;
+    _offset +=  8;
     return view.getFloat64(oldOffset, endian);
   }
 
-  String readLine([Endian endian = Endian.big]) {
+  String? readLine([Endian endian = Endian.big]) {
     var byte = readUnsignedByte(false);
     if (byte == -1) return null;
 
@@ -127,16 +127,16 @@ class DataInput {
     return readByte() != 0;
   }
 
-  void readFully(List bytes, {int len, int off, Endian endian = Endian.big}) {
+  void readFully(List bytes, {int? len, int? off, Endian endian = Endian.big}) {
     if (len != null || off != null) {
       if ((len != null && off == null) || (len == null && off != null))
         throw ArgumentError("You must supply both [len] and [off] values.");
-      if (len < 0 || off < 0) throw RangeError("$off - $len is out of bounds");
+      if (len! < 0 || off! < 0) throw RangeError("$off - $len is out of bounds");
       if (len == 0) return;
     }
 
     if (len != null) {
-      bytes.addAll(data.getRange(off, len));
+      bytes.addAll(data.getRange(off!, len));
     } else {
       fillList(bytes, readBytes(bytes.length));
     }
@@ -167,12 +167,12 @@ class DataInput {
 }
 
 class DataOutput {
-  List<int> data = List();
+  List<int> data = <int>[];
   int offset = 0;
   int get fileLength => data.length;
 
   Uint8List _buffer = Uint8List(8);
-  ByteData _view;
+  late ByteData _view;
 
   DataOutput() {
     _view = ByteData.view(_buffer.buffer);
@@ -242,7 +242,6 @@ class DataOutput {
   }
 
   void writeUTF(String s, [Endian endian = Endian.big]) {
-    if (s == null) throw ArgumentError("String cannot be null");
     List<int> bytesNeeded = utf8.encode(s);
     if (bytesNeeded.length > 65535)
       throw FormatException("Length cannot be greater than 65535");
@@ -268,34 +267,31 @@ class XdrDataInputStream extends DataInput {
 
   List<int> readIntArray() {
     var l = readInt();
-    var result = List<int>(l);
-    for (int i = 0; i < l; i++) {
-      result[i] = readInt();
-    }
+    var result = List<int>.generate(l, (i) {
+      return readInt();
+    });
     return result;
   }
 
   List<double> readFloatArray() {
     var l = readInt();
-    var result = List<double>(l);
-    for (int i = 0; i < l; i++) {
-      result[i] = readFloat();
-    }
+    var result = List<double>.generate(l, (i) {
+      return readFloat();
+    });
     return result;
   }
 
   List<double> readDoubleArray() {
     var l = readInt();
-    var result = List<double>(l);
-    for (int i = 0; i < l; i++) {
-      result[i] = readDouble();
-    }
+    var result = List<double>.generate(l, (i){
+      return readDouble();
+    });
     return result;
   }
 }
 
 class XdrDataOutputStream extends DataOutput {
-  writeString(String s) {
+  writeString(String? s) {
     if (s == null) throw ArgumentError("String cannot be null");
     List<int> bytesNeeded = utf8.encode(s);
     if (bytesNeeded.length > 65535)

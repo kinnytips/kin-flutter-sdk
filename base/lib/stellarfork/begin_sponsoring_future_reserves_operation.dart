@@ -5,18 +5,15 @@
 import 'key_pair.dart';
 import 'muxed_account.dart';
 import 'operation.dart';
-import 'util.dart';
 import 'xdr/xdr_operation.dart';
 import 'xdr/xdr_account.dart';
 
 class BeginSponsoringFutureReservesOperation extends Operation {
-  String _sponsoredId;
+  String? _sponsoredId;
 
-  BeginSponsoringFutureReservesOperation(String sponsoredId) {
-    this._sponsoredId = checkNotNull(sponsoredId, "sponsoredId cannot be null");
-  }
+  BeginSponsoringFutureReservesOperation(this._sponsoredId) ;
 
-  String get sponsoredId => _sponsoredId;
+  String? get sponsoredId => _sponsoredId;
 
   @override
   XdrOperationBody toOperationBody() {
@@ -25,7 +22,7 @@ class BeginSponsoringFutureReservesOperation extends Operation {
 
     XdrAccountID sponsoredAId = XdrAccountID();
     sponsoredAId.accountID =
-        KeyPair.fromAccountId(this.sponsoredId).xdrPublicKey;
+        KeyPair.fromAccountId(this.sponsoredId!).xdrPublicKey;
     op.sponsoredID = sponsoredAId;
 
     XdrOperationBody body = XdrOperationBody();
@@ -37,21 +34,20 @@ class BeginSponsoringFutureReservesOperation extends Operation {
   static BeginSponsoringFutureReservesOperation builder(
       XdrBeginSponsoringFutureReservesOp op) {
     String sponsoredId =
-        KeyPair.fromXdrPublicKey(op.sponsoredID.accountID).accountId;
+        KeyPair.fromXdrPublicKey(op.sponsoredID!.accountID!).accountId;
     return BeginSponsoringFutureReservesOperation(sponsoredId);
   }
 }
 
 class BeginSponsoringFutureReservesOperationBuilder {
-  String _sponsoredId;
-  MuxedAccount _mSourceAccount;
+  String? _sponsoredId;
+  MuxedAccount? _mSourceAccount;
 
   BeginSponsoringFutureReservesOperationBuilder(this._sponsoredId);
 
   /// Sets the source account for this operation represented by [sourceAccount].
   BeginSponsoringFutureReservesOperationBuilder setSourceAccount(
       String sourceAccount) {
-    checkNotNull(sourceAccount, "sourceAccount cannot be null");
     _mSourceAccount = MuxedAccount(sourceAccount, null);
     return this;
   }
@@ -59,8 +55,7 @@ class BeginSponsoringFutureReservesOperationBuilder {
   /// Sets the muxed source account for this operation represented by [sourceAccountId].
   BeginSponsoringFutureReservesOperationBuilder setMuxedSourceAccount(
       MuxedAccount sourceAccount) {
-    _mSourceAccount =
-        checkNotNull(sourceAccount, "sourceAccount cannot be null");
+    _mSourceAccount = sourceAccount;
     return this;
   }
 
@@ -69,7 +64,7 @@ class BeginSponsoringFutureReservesOperationBuilder {
     BeginSponsoringFutureReservesOperation operation =
     BeginSponsoringFutureReservesOperation(_sponsoredId);
     if (_mSourceAccount != null) {
-      operation.sourceAccount = _mSourceAccount;
+      operation.sourceAccount = _mSourceAccount!;
     }
     return operation;
   }

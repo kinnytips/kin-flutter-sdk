@@ -4,7 +4,7 @@ import 'paging_token.dart';
 
 class RecordType {
   int value ;
-  int timestamp;
+  int? timestamp;
 
   RecordType(this.value, {this.timestamp});
 
@@ -29,7 +29,7 @@ class RecordTypeInflight extends RecordType {
 class RecordTypeAcknowledged extends RecordType {
   static const defaultValue = 1 ;
 
-  final Uint8List resultXdrBytes ;
+  final Uint8List? resultXdrBytes ;
 
   RecordTypeAcknowledged(int timestamp, this.resultXdrBytes) : super(defaultValue, timestamp: timestamp);
 }
@@ -37,7 +37,7 @@ class RecordTypeAcknowledged extends RecordType {
 class RecordTypeHistorical extends RecordType {
   static const defaultValue = 2 ;
 
-  final Uint8List resultXdrBytes ;
+  final Uint8List? resultXdrBytes ;
   final PagingToken pagingToken;
 
   RecordTypeHistorical(int timestamp, this.resultXdrBytes, this.pagingToken) : super(defaultValue, timestamp: timestamp);

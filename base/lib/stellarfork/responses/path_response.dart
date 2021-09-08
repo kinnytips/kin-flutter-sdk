@@ -9,19 +9,19 @@ import '../asset_type_native.dart';
 /// Represents a path response received from the horizon server.
 /// See: <a href="https://developers.stellar.org/api/aggregations/paths/" target="_blank">Path documentation</a>
 class PathResponse extends Response {
-  String destinationAmount;
-  String destinationAssetType;
-  String destinationAssetCode;
-  String destinationAssetIssuer;
+  String? destinationAmount;
+  String? destinationAssetType;
+  String? destinationAssetCode;
+  String? destinationAssetIssuer;
 
-  String sourceAmount;
-  String sourceAssetType;
-  String sourceAssetCode;
-  String sourceAssetIssuer;
+  String? sourceAmount;
+  String? sourceAssetType;
+  String? sourceAssetCode;
+  String? sourceAssetIssuer;
 
-  List<Asset> path;
+  List<Asset>? path;
 
-  PathResponseLinks links;
+  PathResponseLinks? links;
 
   PathResponse(
       this.destinationAmount,
@@ -40,7 +40,7 @@ class PathResponse extends Response {
       return new AssetTypeNative();
     } else {
       return Asset.createNonNativeAsset(
-          destinationAssetCode, destinationAssetIssuer);
+          destinationAssetCode!, destinationAssetIssuer!);
     }
   }
 
@@ -48,25 +48,25 @@ class PathResponse extends Response {
     if (sourceAssetType == Asset.TYPE_NATIVE) {
       return new AssetTypeNative();
     } else {
-      return Asset.createNonNativeAsset(sourceAssetCode, sourceAssetIssuer);
+      return Asset.createNonNativeAsset(sourceAssetCode!, sourceAssetIssuer!);
     }
   }
 
   factory PathResponse.fromJson(Map<String, dynamic> json) => new PathResponse(
-      json['destination_amount'] as String,
-      json['destination_asset_type'] as String,
-      json['destination_asset_code'] as String,
-      json['destination_asset_issuer'] as String,
-      json['source_amount'] as String,
-      json['source_asset_type'] as String,
-      json['source_asset_code'] as String,
-      json['source_asset_issuer'] as String,
+      json['destination_amount'] as String?,
+      json['destination_asset_type'] as String?,
+      json['destination_asset_code'] as String?,
+      json['destination_asset_issuer'] as String?,
+      json['source_amount'] as String?,
+      json['source_asset_type'] as String?,
+      json['source_asset_code'] as String?,
+      json['source_asset_issuer'] as String?,
       json['path'] == null
           ? null
-          : (json['path'] as List)
-              ?.map((e) =>
+          : (json['path'] as List? ?? [])
+              .map((e) =>
                   e == null ? null : Asset.fromJson(e as Map<String, dynamic>))
-              ?.toList(),
+              .whereType<Asset>().toList(),
       json['_links'] == null
           ? null
           : new PathResponseLinks.fromJson(
@@ -78,7 +78,7 @@ class PathResponse extends Response {
 
 ///Links connected to a path response received from horizon.
 class PathResponseLinks {
-  Link self;
+  Link? self;
   PathResponseLinks(this.self);
 
   factory PathResponseLinks.fromJson(Map<String, dynamic> json) =>

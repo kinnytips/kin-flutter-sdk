@@ -39,7 +39,7 @@ class BackoffStrategyNever extends BackoffStrategy {
 }
 
 class BackoffStrategyFixed extends BackoffStrategy {
-  final int after;
+  final int? after;
   BackoffStrategyFixed([this.after, int maxAttempts = BackoffStrategy.DEFAULT_MAX_ATTEMPTS]) : super(maxAttempts) ;
 }
 
@@ -73,7 +73,7 @@ class BackoffStrategyExponentialIncrease extends BackoffStrategy {
 }
 
 class BackoffStrategyCustom extends BackoffStrategy {
-  final int Function(int x) afterClosure ;
+  final int? Function(int x) afterClosure ;
   final void Function() _reset ;
 
   BackoffStrategyCustom(this.afterClosure, this._reset, [int maxAttempts = BackoffStrategy.DEFAULT_MAX_ATTEMPTS]) : super(maxAttempts) ;
@@ -92,7 +92,7 @@ class BackoffStrategy {
 
   final int maxAttempts ;
 
-  BackoffStrategy([int maxAttempts = DEFAULT_MAX_ATTEMPTS]) : maxAttempts = maxAttempts ?? DEFAULT_MAX_ATTEMPTS ;
+  BackoffStrategy([int maxAttempts = DEFAULT_MAX_ATTEMPTS]) : maxAttempts = maxAttempts ;
 
   static BackoffStrategy combine(List<BackoffStrategy> strategies) {
     var totalMaxAttempts = strategies.map((e) => e.maxAttempts).reduce((value, element) => value + element);
@@ -116,13 +116,13 @@ class BackoffStrategy {
 
   int currentAttempt = 0;
 
-  int nextDelay() => delayForAttempt(currentAttempt++) ;
+  int? nextDelay() => delayForAttempt(currentAttempt++) ;
 
    void reset() {
     currentAttempt = 0;
   }
 
-  int delayForAttempt(int attempt) {
+  int? delayForAttempt(int attempt) {
     if (attempt >= maxAttempts && maxAttempts != InfiniteRetries) {
       throw RetriesExceededException();
     }
@@ -132,7 +132,7 @@ class BackoffStrategy {
       return 0 ;
     }
 
-    var o = this ;
+    BackoffStrategy o = this ;
 
     if (o is BackoffStrategyNever) {
       throw RetriesExceededException();
@@ -183,7 +183,7 @@ class NetworkOperation<T> {
   Future<T> get onComplete => completer.future ;
 
   final String id;
-  final String name;
+  final String? name;
 
   final Duration timeout;
 
@@ -191,13 +191,13 @@ class NetworkOperation<T> {
 
   final Future<T> Function() task;
 
-  final bool Function(Error error) shouldRetryError;
+  final bool Function(Object error)? shouldRetryError;
 
   NetworkOperation(this.task, {
-    String id,
+    String? id,
     this.name,
     this.timeout = DEFAULT_TIMEOUT,
-    BackoffStrategy backoffStrategy,
+    BackoffStrategy? backoffStrategy,
     this.shouldRetryError,
   })  : completer = Completer(),
         id = id ?? generateRandomId(),
@@ -211,7 +211,7 @@ class NetworkOperation<T> {
   set state(NetworkOperationState value) {
     var prevState = _state ;
     if (prevState is NetworkOperationStateScheduled) {
-      prevState.cancellable?.cancel();
+      prevState.cancellable.cancel();
     }
     _state = value;
   }
@@ -227,7 +227,7 @@ class NetworkOperation<T> {
     _cleanup();
   }
 
-  ScheduledFuture expiryFuture ;
+  ScheduledFuture? expiryFuture ;
 
   void _expire() {
     if ( state == NetworkOperationState.completed  ) {
@@ -238,13 +238,13 @@ class NetworkOperation<T> {
     _error(error, null);
   }
 
-  void _error(Error error, StackTrace stackTrace) {
+  void _error(Object error, StackTrace? stackTrace) {
     state = NetworkOperationStateErrored(error);
     _notifyError(error, stackTrace);
     _cleanup();
   }
 
-  void _notifyError(Error error, StackTrace stackTrace) {
+  void _notifyError(Object error, StackTrace? stackTrace) {
     if (!completer.isCompleted) {
       completer.completeError(error, stackTrace);
     }
@@ -252,7 +252,7 @@ class NetworkOperation<T> {
 
   void _cleanup() {
     if (expiryFuture != null) {
-      expiryFuture.cancel();
+      expiryFuture!.cancel();
       expiryFuture = null ;
     }
   }
@@ -260,7 +260,7 @@ class NetworkOperation<T> {
   @override
   String toString() {
     return 'NetworkOperation{id: $id' +
-        (name != null && name.isNotEmpty ? ', name: $name' : '') +
+        (name != null && name!.isNotEmpty ? ', name: $name' : '') +
         '}';
   }
 }
@@ -290,7 +290,7 @@ class NetworkOperationStateScheduled<T> extends NetworkOperationState {
 }
 
 class NetworkOperationStateErrored extends NetworkOperationState {
-  Error error ;
+  Object error ;
 
   NetworkOperationStateErrored(this.error) : super._('errored');
 }
@@ -307,21 +307,21 @@ abstract class NetworkOperationsHandler {
 class NetworkOperationsHandlerImpl extends NetworkOperationsHandler {
   final ScheduledExecutorService _ioScheduler ;
   final ExecutorService _ioExecutor ;
-  final KinLoggerFactory _logger ;
-  final bool Function(Error error) _shouldRetryError ;
+  final KinLoggerFactory? _logger ;
+  final bool Function(Object error) _shouldRetryError ;
 
-  KinLogger _log ;
+  late KinLogger _log ;
 
   NetworkOperationsHandlerImpl(
-      {ScheduledExecutorService ioScheduler,
-      ExecutorService ioExecutor,
-      KinLoggerFactory logger,
-      bool Function(Error error) shouldRetryError})
+      {ScheduledExecutorService? ioScheduler,
+      ExecutorService? ioExecutor,
+      KinLoggerFactory? logger,
+      bool Function(Object error)? shouldRetryError})
       : _ioScheduler = ioScheduler ?? ExecutorService.createScheduled(),
         _ioExecutor = ioExecutor ?? ExecutorService.createSequencial(),
         _logger = logger,
         _shouldRetryError = shouldRetryError ?? ((_) => false) {
-    _log = _logger.getLogger('$runtimeType');
+    _log = _logger!.getLogger('$runtimeType');
   }
 
   final Map<String, NetworkOperation> _operations = <String, NetworkOperation>{} ;
@@ -334,7 +334,7 @@ class NetworkOperationsHandlerImpl extends NetworkOperationsHandler {
 
     _schedule(op);
 
-    if ( op.timeout != null && op.timeout.inMilliseconds > 0 ) {
+    if ( op.timeout.inMilliseconds > 0 ) {
       _log.log("timeout> timeout: ${op.timeout} ; $op");
       _ioScheduler.schedule(() {
         _expire(op);
@@ -344,7 +344,7 @@ class NetworkOperationsHandlerImpl extends NetworkOperationsHandler {
     return op;
   }
 
-  void _schedule<T>(NetworkOperation<T> op, [Error error]) {
+  void _schedule<T>(NetworkOperation<T> op, [Error? error]) {
     var delayMillis ;
     try {
       delayMillis = op.backoffStrategy.nextDelay();
@@ -368,12 +368,12 @@ class NetworkOperationsHandlerImpl extends NetworkOperationsHandler {
     }, Duration(milliseconds: delayMillis)) ;
 
     op.state = NetworkOperationStateScheduled(
-      DateTime.now().millisecondsSinceEpoch + delayMillis,
+      DateTime.now().millisecondsSinceEpoch + delayMillis as int,
       scheduledFuture,
     );
   }
 
-  void _runOperation<T>(NetworkOperation<T> op, [Error error]) async {
+  void _runOperation<T>(NetworkOperation<T> op, [Error? error]) async {
     _log.log("runOperation> $op");
 
     op.state = NetworkOperationState.running;
@@ -399,10 +399,10 @@ class NetworkOperationsHandlerImpl extends NetworkOperationsHandler {
     _cleanup(op);
   }
 
-  void _handleError<T>(NetworkOperation<T> op, Error error, StackTrace stackTrace) {
+  void _handleError<T>(NetworkOperation<T> op, Object error, StackTrace stackTrace) {
     _log.log("handleError> $op > ERROR: $error @ ${stackTrace.firstLine}");
 
-    if ( ( op.shouldRetryError != null && op.shouldRetryError(error) ) || this._shouldRetryError(error) ) {
+    if ( ( op.shouldRetryError != null && op.shouldRetryError!(error) ) || this._shouldRetryError(error) ) {
       op.state = NetworkOperationStateErrored(error);
       _schedule(op);
     }
@@ -411,8 +411,8 @@ class NetworkOperationsHandlerImpl extends NetworkOperationsHandler {
     }
   }
 
-  void _fatalError<T>(NetworkOperation<T> op, Error error, StackTrace stackTrace) {
-    _log.log("fatalError> $op > ERROR: $error @ ${stackTrace.firstLine}");
+  void _fatalError<T>(NetworkOperation<T> op, Object error, StackTrace? stackTrace) {
+    _log.log("fatalError> $op > ERROR: $error @ ${stackTrace?.firstLine ?? '?'}");
     op._error(error, stackTrace);
     _cleanup(op);
   }

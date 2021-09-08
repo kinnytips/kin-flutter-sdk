@@ -4,7 +4,6 @@
 
 import 'muxed_account.dart';
 import 'operation.dart';
-import 'util.dart';
 import 'xdr/xdr_operation.dart';
 
 class EndSponsoringFutureReservesOperation extends Operation {
@@ -23,14 +22,13 @@ class EndSponsoringFutureReservesOperation extends Operation {
 }
 
 class EndSponsoringFutureReservesOperationBuilder {
-  MuxedAccount _mSourceAccount;
+  MuxedAccount? _mSourceAccount;
 
   EndSponsoringFutureReservesOperationBuilder();
 
   /// Sets the source account for this operation represented by [sourceAccount].
   EndSponsoringFutureReservesOperationBuilder setSourceAccount(
       String sourceAccount) {
-    checkNotNull(sourceAccount, "sourceAccount cannot be null");
     _mSourceAccount = MuxedAccount(sourceAccount, null);
     return this;
   }
@@ -38,8 +36,7 @@ class EndSponsoringFutureReservesOperationBuilder {
   /// Sets the muxed source account for this operation represented by [sourceAccountId].
   EndSponsoringFutureReservesOperationBuilder setMuxedSourceAccount(
       MuxedAccount sourceAccount) {
-    _mSourceAccount =
-        checkNotNull(sourceAccount, "sourceAccount cannot be null");
+    _mSourceAccount = sourceAccount;
     return this;
   }
 
@@ -48,7 +45,7 @@ class EndSponsoringFutureReservesOperationBuilder {
     EndSponsoringFutureReservesOperation operation =
         EndSponsoringFutureReservesOperation();
     if (_mSourceAccount != null) {
-      operation.sourceAccount = _mSourceAccount;
+      operation.sourceAccount = _mSourceAccount!;
     }
     return operation;
   }

@@ -42,9 +42,9 @@ class Base58 {
     return data;
   }
 
-  Uint8List hashTwice(Uint8List input, [int offset = 0, int length]) {
-    if ( ( offset != null && offset > 0 ) || (length != null) ) {
-      input = input.sublist(offset, offset + length);
+  Uint8List hashTwice(Uint8List input, [int offset = 0, int? length]) {
+    if ( offset > 0 || length != null ) {
+      input = input.sublist(offset, offset + length!);
     }
 
     var hash1 = sha256.convert(input);

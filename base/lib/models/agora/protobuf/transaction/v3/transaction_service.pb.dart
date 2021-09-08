@@ -2,7 +2,7 @@
 //  Generated code. Do not modify.
 //  source: transaction/v3/transaction_service.proto
 //
-// @dart = 2.7
+
 // ignore_for_file: annotate_overrides,camel_case_types,unnecessary_const,non_constant_identifier_names,library_prefixes,unused_import,unused_shown_name,return_of_invalid_type,unnecessary_this,prefer_final_fields
 
 import 'dart:core' as $core;
@@ -26,9 +26,9 @@ class GetHistoryRequest extends $pb.GeneratedMessage {
 
   GetHistoryRequest._() : super();
   factory GetHistoryRequest({
-    $9.StellarAccountId accountId,
-    Cursor cursor,
-    GetHistoryRequest_Direction direction,
+    $9.StellarAccountId? accountId,
+    Cursor? cursor,
+    GetHistoryRequest_Direction? direction,
   }) {
     final _result = create();
     if (accountId != null) {
@@ -61,7 +61,7 @@ class GetHistoryRequest extends $pb.GeneratedMessage {
   static $pb.PbList<GetHistoryRequest> createRepeated() => $pb.PbList<GetHistoryRequest>();
   @$core.pragma('dart2js:noInline')
   static GetHistoryRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GetHistoryRequest>(create);
-  static GetHistoryRequest _defaultInstance;
+  static GetHistoryRequest? _defaultInstance;
 
   @$pb.TagNumber(1)
   $9.StellarAccountId get accountId => $_getN(0);
@@ -104,8 +104,8 @@ class GetHistoryResponse extends $pb.GeneratedMessage {
 
   GetHistoryResponse._() : super();
   factory GetHistoryResponse({
-    GetHistoryResponse_Result result,
-    $core.Iterable<HistoryItem> items,
+    GetHistoryResponse_Result? result,
+    $core.Iterable<HistoryItem>? items,
   }) {
     final _result = create();
     if (result != null) {
@@ -135,7 +135,7 @@ class GetHistoryResponse extends $pb.GeneratedMessage {
   static $pb.PbList<GetHistoryResponse> createRepeated() => $pb.PbList<GetHistoryResponse>();
   @$core.pragma('dart2js:noInline')
   static GetHistoryResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GetHistoryResponse>(create);
-  static GetHistoryResponse _defaultInstance;
+  static GetHistoryResponse? _defaultInstance;
 
   @$pb.TagNumber(1)
   GetHistoryResponse_Result get result => $_getN(0);
@@ -159,8 +159,8 @@ class SubmitTransactionRequest extends $pb.GeneratedMessage {
 
   SubmitTransactionRequest._() : super();
   factory SubmitTransactionRequest({
-    $core.List<$core.int> envelopeXdr,
-    $9.InvoiceList invoiceList,
+    $core.List<$core.int>? envelopeXdr,
+    $9.InvoiceList? invoiceList,
   }) {
     final _result = create();
     if (envelopeXdr != null) {
@@ -190,7 +190,7 @@ class SubmitTransactionRequest extends $pb.GeneratedMessage {
   static $pb.PbList<SubmitTransactionRequest> createRepeated() => $pb.PbList<SubmitTransactionRequest>();
   @$core.pragma('dart2js:noInline')
   static SubmitTransactionRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<SubmitTransactionRequest>(create);
-  static SubmitTransactionRequest _defaultInstance;
+  static SubmitTransactionRequest? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.List<$core.int> get envelopeXdr => $_getN(0);
@@ -225,11 +225,11 @@ class SubmitTransactionResponse extends $pb.GeneratedMessage {
 
   SubmitTransactionResponse._() : super();
   factory SubmitTransactionResponse({
-    SubmitTransactionResponse_Result result,
-    $core.Iterable<$9.InvoiceError> invoiceErrors,
-    $9.TransactionHash hash,
-    $fixnum.Int64 ledger,
-    $core.List<$core.int> resultXdr,
+    SubmitTransactionResponse_Result? result,
+    $core.Iterable<$9.InvoiceError>? invoiceErrors,
+    $9.TransactionHash? hash,
+    $fixnum.Int64? ledger,
+    $core.List<$core.int>? resultXdr,
   }) {
     final _result = create();
     if (result != null) {
@@ -268,7 +268,7 @@ class SubmitTransactionResponse extends $pb.GeneratedMessage {
   static $pb.PbList<SubmitTransactionResponse> createRepeated() => $pb.PbList<SubmitTransactionResponse>();
   @$core.pragma('dart2js:noInline')
   static SubmitTransactionResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<SubmitTransactionResponse>(create);
-  static SubmitTransactionResponse _defaultInstance;
+  static SubmitTransactionResponse? _defaultInstance;
 
   @$pb.TagNumber(1)
   SubmitTransactionResponse_Result get result => $_getN(0);
@@ -320,7 +320,7 @@ class GetTransactionRequest extends $pb.GeneratedMessage {
 
   GetTransactionRequest._() : super();
   factory GetTransactionRequest({
-    $9.TransactionHash transactionHash,
+    $9.TransactionHash? transactionHash,
   }) {
     final _result = create();
     if (transactionHash != null) {
@@ -347,7 +347,7 @@ class GetTransactionRequest extends $pb.GeneratedMessage {
   static $pb.PbList<GetTransactionRequest> createRepeated() => $pb.PbList<GetTransactionRequest>();
   @$core.pragma('dart2js:noInline')
   static GetTransactionRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GetTransactionRequest>(create);
-  static GetTransactionRequest _defaultInstance;
+  static GetTransactionRequest? _defaultInstance;
 
   @$pb.TagNumber(1)
   $9.TransactionHash get transactionHash => $_getN(0);
@@ -371,9 +371,9 @@ class GetTransactionResponse extends $pb.GeneratedMessage {
 
   GetTransactionResponse._() : super();
   factory GetTransactionResponse({
-    GetTransactionResponse_State state,
-    $fixnum.Int64 ledger,
-    HistoryItem item,
+    GetTransactionResponse_State? state,
+    $fixnum.Int64? ledger,
+    HistoryItem? item,
   }) {
     final _result = create();
     if (state != null) {
@@ -406,7 +406,7 @@ class GetTransactionResponse extends $pb.GeneratedMessage {
   static $pb.PbList<GetTransactionResponse> createRepeated() => $pb.PbList<GetTransactionResponse>();
   @$core.pragma('dart2js:noInline')
   static GetTransactionResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GetTransactionResponse>(create);
-  static GetTransactionResponse _defaultInstance;
+  static GetTransactionResponse? _defaultInstance;
 
   @$pb.TagNumber(1)
   GetTransactionResponse_State get state => $_getN(0);
@@ -450,11 +450,11 @@ class HistoryItem extends $pb.GeneratedMessage {
 
   HistoryItem._() : super();
   factory HistoryItem({
-    $9.TransactionHash hash,
-    $core.List<$core.int> resultXdr,
-    $core.List<$core.int> envelopeXdr,
-    Cursor cursor,
-    $9.InvoiceList invoiceList,
+    $9.TransactionHash? hash,
+    $core.List<$core.int>? resultXdr,
+    $core.List<$core.int>? envelopeXdr,
+    Cursor? cursor,
+    $9.InvoiceList? invoiceList,
   }) {
     final _result = create();
     if (hash != null) {
@@ -493,7 +493,7 @@ class HistoryItem extends $pb.GeneratedMessage {
   static $pb.PbList<HistoryItem> createRepeated() => $pb.PbList<HistoryItem>();
   @$core.pragma('dart2js:noInline')
   static HistoryItem getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<HistoryItem>(create);
-  static HistoryItem _defaultInstance;
+  static HistoryItem? _defaultInstance;
 
   @$pb.TagNumber(1)
   $9.TransactionHash get hash => $_getN(0);
@@ -555,7 +555,7 @@ class Cursor extends $pb.GeneratedMessage {
 
   Cursor._() : super();
   factory Cursor({
-    $core.List<$core.int> value,
+    $core.List<$core.int>? value,
   }) {
     final _result = create();
     if (value != null) {
@@ -582,7 +582,7 @@ class Cursor extends $pb.GeneratedMessage {
   static $pb.PbList<Cursor> createRepeated() => $pb.PbList<Cursor>();
   @$core.pragma('dart2js:noInline')
   static Cursor getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<Cursor>(create);
-  static Cursor _defaultInstance;
+  static Cursor? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.List<$core.int> get value => $_getN(0);

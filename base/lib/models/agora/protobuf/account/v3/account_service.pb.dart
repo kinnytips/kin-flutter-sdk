@@ -2,7 +2,7 @@
 //  Generated code. Do not modify.
 //  source: account/v3/account_service.proto
 //
-// @dart = 2.7
+
 // ignore_for_file: annotate_overrides,camel_case_types,unnecessary_const,non_constant_identifier_names,library_prefixes,unused_import,unused_shown_name,return_of_invalid_type,unnecessary_this,prefer_final_fields
 
 import 'dart:core' as $core;
@@ -26,9 +26,9 @@ class AccountInfo extends $pb.GeneratedMessage {
 
   AccountInfo._() : super();
   factory AccountInfo({
-    $9.StellarAccountId accountId,
-    $fixnum.Int64 sequenceNumber,
-    $fixnum.Int64 balance,
+    $9.StellarAccountId? accountId,
+    $fixnum.Int64? sequenceNumber,
+    $fixnum.Int64? balance,
   }) {
     final _result = create();
     if (accountId != null) {
@@ -61,7 +61,7 @@ class AccountInfo extends $pb.GeneratedMessage {
   static $pb.PbList<AccountInfo> createRepeated() => $pb.PbList<AccountInfo>();
   @$core.pragma('dart2js:noInline')
   static AccountInfo getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<AccountInfo>(create);
-  static AccountInfo _defaultInstance;
+  static AccountInfo? _defaultInstance;
 
   @$pb.TagNumber(1)
   $9.StellarAccountId get accountId => $_getN(0);
@@ -101,7 +101,7 @@ class CreateAccountRequest extends $pb.GeneratedMessage {
 
   CreateAccountRequest._() : super();
   factory CreateAccountRequest({
-    $9.StellarAccountId accountId,
+    $9.StellarAccountId? accountId,
   }) {
     final _result = create();
     if (accountId != null) {
@@ -128,7 +128,7 @@ class CreateAccountRequest extends $pb.GeneratedMessage {
   static $pb.PbList<CreateAccountRequest> createRepeated() => $pb.PbList<CreateAccountRequest>();
   @$core.pragma('dart2js:noInline')
   static CreateAccountRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<CreateAccountRequest>(create);
-  static CreateAccountRequest _defaultInstance;
+  static CreateAccountRequest? _defaultInstance;
 
   @$pb.TagNumber(1)
   $9.StellarAccountId get accountId => $_getN(0);
@@ -151,8 +151,8 @@ class CreateAccountResponse extends $pb.GeneratedMessage {
 
   CreateAccountResponse._() : super();
   factory CreateAccountResponse({
-    CreateAccountResponse_Result result,
-    AccountInfo accountInfo,
+    CreateAccountResponse_Result? result,
+    AccountInfo? accountInfo,
   }) {
     final _result = create();
     if (result != null) {
@@ -182,7 +182,7 @@ class CreateAccountResponse extends $pb.GeneratedMessage {
   static $pb.PbList<CreateAccountResponse> createRepeated() => $pb.PbList<CreateAccountResponse>();
   @$core.pragma('dart2js:noInline')
   static CreateAccountResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<CreateAccountResponse>(create);
-  static CreateAccountResponse _defaultInstance;
+  static CreateAccountResponse? _defaultInstance;
 
   @$pb.TagNumber(1)
   CreateAccountResponse_Result get result => $_getN(0);
@@ -213,7 +213,7 @@ class GetAccountInfoRequest extends $pb.GeneratedMessage {
 
   GetAccountInfoRequest._() : super();
   factory GetAccountInfoRequest({
-    $9.StellarAccountId accountId,
+    $9.StellarAccountId? accountId,
   }) {
     final _result = create();
     if (accountId != null) {
@@ -240,7 +240,7 @@ class GetAccountInfoRequest extends $pb.GeneratedMessage {
   static $pb.PbList<GetAccountInfoRequest> createRepeated() => $pb.PbList<GetAccountInfoRequest>();
   @$core.pragma('dart2js:noInline')
   static GetAccountInfoRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GetAccountInfoRequest>(create);
-  static GetAccountInfoRequest _defaultInstance;
+  static GetAccountInfoRequest? _defaultInstance;
 
   @$pb.TagNumber(1)
   $9.StellarAccountId get accountId => $_getN(0);
@@ -263,8 +263,8 @@ class GetAccountInfoResponse extends $pb.GeneratedMessage {
 
   GetAccountInfoResponse._() : super();
   factory GetAccountInfoResponse({
-    GetAccountInfoResponse_Result result,
-    AccountInfo accountInfo,
+    GetAccountInfoResponse_Result? result,
+    AccountInfo? accountInfo,
   }) {
     final _result = create();
     if (result != null) {
@@ -294,7 +294,7 @@ class GetAccountInfoResponse extends $pb.GeneratedMessage {
   static $pb.PbList<GetAccountInfoResponse> createRepeated() => $pb.PbList<GetAccountInfoResponse>();
   @$core.pragma('dart2js:noInline')
   static GetAccountInfoResponse getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GetAccountInfoResponse>(create);
-  static GetAccountInfoResponse _defaultInstance;
+  static GetAccountInfoResponse? _defaultInstance;
 
   @$pb.TagNumber(1)
   GetAccountInfoResponse_Result get result => $_getN(0);
@@ -325,7 +325,7 @@ class GetEventsRequest extends $pb.GeneratedMessage {
 
   GetEventsRequest._() : super();
   factory GetEventsRequest({
-    $9.StellarAccountId accountId,
+    $9.StellarAccountId? accountId,
   }) {
     final _result = create();
     if (accountId != null) {
@@ -352,7 +352,7 @@ class GetEventsRequest extends $pb.GeneratedMessage {
   static $pb.PbList<GetEventsRequest> createRepeated() => $pb.PbList<GetEventsRequest>();
   @$core.pragma('dart2js:noInline')
   static GetEventsRequest getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<GetEventsRequest>(create);
-  static GetEventsRequest _defaultInstance;
+  static GetEventsRequest? _defaultInstance;
 
   @$pb.TagNumber(1)
   $9.StellarAccountId get accountId => $_getN(0);
@@ -375,8 +375,8 @@ class Events extends $pb.GeneratedMessage {
 
   Events._() : super();
   factory Events({
-    Events_Result result,
-    $core.Iterable<Event> events,
+    Events_Result? result,
+    $core.Iterable<Event>? events,
   }) {
     final _result = create();
     if (result != null) {
@@ -406,7 +406,7 @@ class Events extends $pb.GeneratedMessage {
   static $pb.PbList<Events> createRepeated() => $pb.PbList<Events>();
   @$core.pragma('dart2js:noInline')
   static Events getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<Events>(create);
-  static Events _defaultInstance;
+  static Events? _defaultInstance;
 
   @$pb.TagNumber(1)
   Events_Result get result => $_getN(0);
@@ -442,8 +442,8 @@ class Event extends $pb.GeneratedMessage {
 
   Event._() : super();
   factory Event({
-    AccountUpdateEvent accountUpdateEvent,
-    TransactionEvent transactionEvent,
+    AccountUpdateEvent? accountUpdateEvent,
+    TransactionEvent? transactionEvent,
   }) {
     final _result = create();
     if (accountUpdateEvent != null) {
@@ -473,9 +473,9 @@ class Event extends $pb.GeneratedMessage {
   static $pb.PbList<Event> createRepeated() => $pb.PbList<Event>();
   @$core.pragma('dart2js:noInline')
   static Event getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<Event>(create);
-  static Event _defaultInstance;
+  static Event? _defaultInstance;
 
-  Event_Type whichType() => _Event_TypeByTag[$_whichOneof(0)];
+  Event_Type? whichType() => _Event_TypeByTag[$_whichOneof(0)];
   void clearType() => clearField($_whichOneof(0));
 
   @$pb.TagNumber(1)
@@ -509,7 +509,7 @@ class AccountUpdateEvent extends $pb.GeneratedMessage {
 
   AccountUpdateEvent._() : super();
   factory AccountUpdateEvent({
-    AccountInfo accountInfo,
+    AccountInfo? accountInfo,
   }) {
     final _result = create();
     if (accountInfo != null) {
@@ -536,7 +536,7 @@ class AccountUpdateEvent extends $pb.GeneratedMessage {
   static $pb.PbList<AccountUpdateEvent> createRepeated() => $pb.PbList<AccountUpdateEvent>();
   @$core.pragma('dart2js:noInline')
   static AccountUpdateEvent getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<AccountUpdateEvent>(create);
-  static AccountUpdateEvent _defaultInstance;
+  static AccountUpdateEvent? _defaultInstance;
 
   @$pb.TagNumber(1)
   AccountInfo get accountInfo => $_getN(0);
@@ -559,8 +559,8 @@ class TransactionEvent extends $pb.GeneratedMessage {
 
   TransactionEvent._() : super();
   factory TransactionEvent({
-    $core.List<$core.int> envelopeXdr,
-    $core.List<$core.int> resultXdr,
+    $core.List<$core.int>? envelopeXdr,
+    $core.List<$core.int>? resultXdr,
   }) {
     final _result = create();
     if (envelopeXdr != null) {
@@ -590,7 +590,7 @@ class TransactionEvent extends $pb.GeneratedMessage {
   static $pb.PbList<TransactionEvent> createRepeated() => $pb.PbList<TransactionEvent>();
   @$core.pragma('dart2js:noInline')
   static TransactionEvent getDefault() => _defaultInstance ??= $pb.GeneratedMessage.$_defaultFor<TransactionEvent>(create);
-  static TransactionEvent _defaultInstance;
+  static TransactionEvent? _defaultInstance;
 
   @$pb.TagNumber(1)
   $core.List<$core.int> get envelopeXdr => $_getN(0);

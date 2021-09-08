@@ -20,12 +20,12 @@ class ShortVec {
     }
   }
 
-  static List<T> decodeShortVecOf<T>(ByteInputBuffer input, int sizeOfElement,
-      [T Function(Uint8List) newInstance]) {
+  static List<T?> decodeShortVecOf<T>(ByteInputBuffer input, int sizeOfElement,
+      [T? Function(Uint8List)? newInstance]) {
     newInstance ??= (e) => null ;
 
     final vecLength = decodeLen(input);
-    final elements = <T>[];
+    final elements = <T?>[];
 
     for (int i = 0; i < vecLength; i++) {
       Uint8List elemBytes = Uint8List(sizeOfElement);

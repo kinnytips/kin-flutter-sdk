@@ -9,13 +9,13 @@ class Cache<KEY> {
 
   final Map<KEY, Pair<dynamic, int>> _storage = <KEY, Pair<dynamic, int>>{};
 
-  Cache({Duration defaultTimeout})
+  Cache({Duration? defaultTimeout})
       : defaultTimeout = defaultTimeout ?? Duration(minutes: 5);
 
-  FutureOr<VALUE> resolve<VALUE>(
+  FutureOr<V?> resolve<V>(
     KEY key,
-      { Duration timeoutOverride,
-        Future<VALUE> Function(KEY key) fault,
+      { Duration? timeoutOverride,
+        Future<V> Function(KEY key)? fault,
       }) async {
     var now = DateTime.now().millisecondsSinceEpoch;
 
@@ -30,14 +30,14 @@ class Cache<KEY> {
         var expiryTime = timeStored + timeToExpiry.inMilliseconds;
 
         if (expiryTime > now) {
-          return value as VALUE;
+          return value as V;
         }
       }
     }
 
     if (fault != null) {
       var resolvedFuture = fault(key);
-      var resolved = resolvedFuture != null ? await resolvedFuture : null ;
+      var resolved = await resolvedFuture ;
       _storage[key] = Pair(resolved, DateTime.now().millisecondsSinceEpoch);
       return resolved ;
     }
@@ -45,9 +45,9 @@ class Cache<KEY> {
     return null;
   }
 
-  FutureOr<VALUE> warm<VALUE>(
+  FutureOr<V?> warm<V>(
     KEY key,
-    FutureOr<VALUE> Function(KEY key) fault,
+    FutureOr<V> Function(KEY key) fault,
   ) async {
     var resolvedFuture = fault(key);
     var resolved = resolvedFuture != null ? await resolvedFuture : null ;

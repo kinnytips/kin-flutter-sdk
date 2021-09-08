@@ -4,16 +4,16 @@ import 'package:sse_client/sse_client.dart';
 class ManagedServerSentEventStream<ResponseType> {
 
   final StreamingProtocol<ResponseType> _requestBuilder ;
-  final List<EventListener<ResponseType>> listeners = <EventListener<ResponseType>>[] ;
-  SseClient _connection = null;
-  ResponseType _lastReceivedResponse = null;
-  ResponseTypeEventListener<ResponseType> listener ;
+  final List<EventListener<ResponseType?>> listeners = <EventListener<ResponseType>>[] ;
+  SseClient? _connection = null;
+  ResponseType? _lastReceivedResponse = null;
+  ResponseTypeEventListener<ResponseType>? listener ;
 
   ManagedServerSentEventStream(this._requestBuilder) {
     listener = ResponseTypeEventListener(this);
   }
 
-  addListener(EventListener<ResponseType> listener) {
+  addListener(EventListener<ResponseType?> listener) {
     listeners.add(listener);
     if (_lastReceivedResponse != null) {
         listener.onEvent(_lastReceivedResponse);

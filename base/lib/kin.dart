@@ -28,32 +28,37 @@ class Kin {
   final bool _production;
   final int _appIndex;
   final String _appName;
-  final String _credentialUser;
-  final String _credentialPass;
+  final String? _credentialUser;
+  final String? _credentialPass;
 
-  void Function(KinBalance kinBalance) _onBalanceChange;
-  void Function(List<KinPayment> payments) _onPayment;
-  void Function(Kin kin) _onAccountContext;
+  void Function(KinBalance kinBalance)? _onBalanceChange;
+  void Function(List<KinPayment> payments)? _onPayment;
+  void Function(Kin kin)? _onAccountContext;
 
   final DisposeBag _lifecycle;
 
-  AppInfo _appInfo;
+  AppInfo? _appInfo;
 
-  KinEnvironmentAgora _environment;
-  KinAccountContext _context;
-  Observer<List<KinPayment>> _observerPayments;
-  Observer<KinBalance> _observerBalance;
+  late KinEnvironmentAgora _environment;
+  KinAccountContext? _context;
+  Observer<List<KinPayment>>? _observerPayments;
+  Observer<KinBalance>? _observerBalance;
 
   final String storageLocation;
 
-  Kin(this._production, this._appIndex, this._appName, this.storageLocation,
-      {void Function(KinBalance kinBalance) onBalanceChange,
-      void Function(List<KinPayment> payments) onPayment,
-      void Function(Kin kin) onAccountContext,
-      String credentialUser,
-      String credentialPass,
-      bool initialize = true})
-      : _onBalanceChange = onBalanceChange,
+  Kin(
+    this._production,
+    this._appIndex,
+    this._appName, {
+    required this.storageLocation,
+    void Function(KinBalance kinBalance)? onBalanceChange,
+    void Function(List<KinPayment> payments)? onPayment,
+    void Function(Kin kin)? onAccountContext,
+    String? credentialUser,
+    String? credentialPass,
+    bool initialize = true,
+    bool createAccountIfEmpty = false,
+  })  : _onBalanceChange = onBalanceChange,
         _onPayment = onPayment,
         _onAccountContext = onAccountContext,
         _credentialUser = credentialUser,
@@ -64,12 +69,11 @@ class Kin {
     this._environment = this._getEnvironment();
 
     if (initialize) {
-      this.loadLocalAccount();
+      this.loadLocalAccount(createAccountIfEmpty: createAccountIfEmpty);
     }
   }
 
-  Future<KinAccountId> loadLocalAccount(
-      {bool createAccountIfEmpty = true}) async {
+  Future<KinAccountId?> loadLocalAccount({bool createAccountIfEmpty = false}) async {
     // Fetch  accounts and set the context:
     var ids = await this._environment.allAccountIds();
 
@@ -95,45 +99,45 @@ class Kin {
     _setAppInfo();
 
     if (_onAccountContext != null) {
-      _onAccountContext(this);
+      _onAccountContext!(this);
     }
 
     _notifyReady();
   }
 
-  Function get onBalanceChange => _onBalanceChange;
+  Function? get onBalanceChange => _onBalanceChange;
 
-  set onBalanceChange(Function value) {
+  set onBalanceChange(Function? value) {
     if (identical(_onBalanceChange, value)) return;
 
-    _onBalanceChange = value;
+    _onBalanceChange = value as void Function(KinBalance?)?;
 
     if (isReady && _onBalanceChange != null) {
       this._watchBalance();
     }
   }
 
-  Function get onPayment => _onPayment;
+  Function? get onPayment => _onPayment;
 
-  set onPayment(Function value) {
+  set onPayment(Function? value) {
     if (identical(_onPayment, value)) return;
 
-    _onPayment = value;
+    _onPayment = value as void Function(List<KinPayment>?)?;
 
     if (isReady && _onPayment != null) {
       this._watchPayments();
     }
   }
 
-  Function get onAccountContext => _onAccountContext;
+  Function? get onAccountContext => _onAccountContext;
 
-  set onAccountContext(Function value) {
+  set onAccountContext(Function? value) {
     if (identical(_onAccountContext, value)) return;
 
-    _onAccountContext = value;
+    _onAccountContext = value as void Function(Kin)?;
 
     if (_context != null) {
-      _onAccountContext(this);
+      _onAccountContext!(this);
     }
   }
 
@@ -159,53 +163,53 @@ class Kin {
   Future<bool> waitReady() => _waitReady.future;
 
   void _setAppInfo() {
-    var accountId = this?._context?.accountId ?? KinAccountId(Uint8List(32));
+    var accountId = this._context?.accountId ?? KinAccountId(Uint8List(32));
     _appInfo = AppInfo(AppIdx(_appIndex), accountId, this._appName, 0);
   }
 
   String get address {
-    return this._context.accountId.base58Encode();
+    return this._context!.accountId.base58Encode();
   }
 
   String get addressAsStellarBase32 {
-    return this._context.accountId.stellarBase32Encode();
+    return this._context!.accountId.stellarBase32Encode();
   }
 
   String get addressAsBase58 {
-    return this._context.accountId.base58Encode();
+    return this._context!.accountId.base58Encode();
   }
 
   void _watchPayments() {
     if (_observerPayments != null || _onPayment == null) return;
 
     //watch for changes to this account
-    _observerPayments = _context.observePayments(mode: ObservationMode.Passive);
+    _observerPayments = _context!.observePayments(mode: ObservationMode.Passive);
 
-    _observerPayments.add((payments) {
+    _observerPayments!.add((payments) {
       if (_onPayment != null) {
-        _onPayment(payments);
+        _onPayment!(payments);
       }
     });
 
-    _observerPayments.disposedBy(_lifecycle);
+    _observerPayments!.disposedBy(_lifecycle);
   }
 
   void _watchBalance() {
     if (_observerBalance != null || _onBalanceChange == null) return;
 
     //watch for changes to this account
-    _observerBalance = _context.observeBalance(mode: ObservationMode.Passive);
+    _observerBalance = _context!.observeBalance(mode: ObservationMode.Passive);
 
-    _observerBalance.add((kinBalance) {
+    _observerBalance!.add((kinBalance) {
       if (_onBalanceChange != null) {
-        _onBalanceChange(kinBalance);
+        _onBalanceChange!(kinBalance);
       }
     });
 
-    _observerBalance.disposedBy(_lifecycle);
+    _observerBalance!.disposedBy(_lifecycle);
   }
 
-  KinAccountContext getKinContext([dynamic accountId]) {
+  KinAccountContext? getKinContext([dynamic accountId]) {
     if (accountId == null) {
       return _context;
     }
@@ -232,7 +236,7 @@ class Kin {
 
     var env = KinEnvironmentAgora.build(networkEnv,
         appInfoProvider: appInfoProvider,
-        storageBuilder: ({NetworkEnvironment networkEnvironment}) =>
+        storageBuilder: ({NetworkEnvironment? networkEnvironment}) =>
             KinFileStorage(storageLocation, networkEnvironment));
 
     return env;
@@ -243,7 +247,7 @@ class Kin {
     var kinBackupRestore = KinBackupRestore();
     var keyPair = kinBackupRestore.importWallet(backupJson, backupPassword);
 
-    var account = KinAccount(PrivateKey.fromBytes(keyPair.privateKey));
+    var account = KinAccount(PrivateKey.fromBytes(keyPair.privateKey!));
 
     return importAccount(account);
   }
@@ -267,7 +271,7 @@ class Kin {
   }
 
   String backupWallet(String backupPassword,
-      {KeyPair keyPair, KinAccountId accountId, KinAccount account}) {
+      {KeyPair? keyPair, KinAccountId? accountId, KinAccount? account}) {
     var kinBackupRestore = KinBackupRestore();
 
     var backup = kinBackupRestore.exportWallet(backupPassword,

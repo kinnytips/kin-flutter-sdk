@@ -7,18 +7,18 @@ import 'package:kin_base/base/stellar/models/kin_transactions.dart';
 import 'package:kin_base/base/stellar/models/network_environment.dart';
 
 
-typedef StorageBuilder = Storage Function({NetworkEnvironment networkEnvironment});
+typedef StorageBuilder = Storage Function({NetworkEnvironment? networkEnvironment});
 
 abstract class Storage {
-  bool addAccount(KinAccount account);
+  bool addAccount(KinAccount? account);
 
   bool updateAccount(KinAccount account);
 
   bool removeAccount(KinAccountId accountId);
 
-  KinAccount getAccount(KinAccountId accountId);
+  KinAccount? getAccount(KinAccountId accountId);
 
-  KinAccount advanceSequence(KinAccountId id);
+  KinAccount? advanceSequence(KinAccountId id);
 
   List<KinAccountId> getAllAccountIds();
 
@@ -30,31 +30,31 @@ abstract class Storage {
 
   bool removeServiceConfig();
 
-  KinTransactions getTransactions(KinAccountId key);
+  KinTransactions? getTransactions(KinAccountId key);
 
   String getOrCreateCID();
 
-  Future<KinTransactions> getStoredTransactions(KinAccountId accountId);
+  Future<KinTransactions?> getStoredTransactions(KinAccountId accountId);
 
   Future<List<KinTransaction>> storeTransactions(
       KinAccountId accountId, List<KinTransaction> transactions);
 
   Future<List<KinTransaction>> upsertNewTransactionsInStorage(
-      KinAccountId accountId, List<KinTransaction> newTransactions);
+      KinAccountId accountId, List<KinTransaction>? newTransactions);
 
   Future<List<KinTransaction>> upsertOldTransactionsInStorage(
-      KinAccountId accountId, List<KinTransaction> oldTransactions);
+      KinAccountId accountId, List<KinTransaction>? oldTransactions);
 
   Future<List<KinTransaction>> insertNewTransactionInStorage(
       KinAccountId accountId, KinTransaction newTransaction);
 
-  Future<List<InvoiceList>> addInvoiceLists(
+  Future<List<InvoiceList?>> addInvoiceLists(
       KinAccountId accountId, List<InvoiceList> invoiceLists);
 
-  Future<Map<InvoiceListId, InvoiceList>> getInvoiceListsMapForAccountId(
+  Future<Map<InvoiceListId, InvoiceList?>> getInvoiceListsMapForAccountId(
       KinAccountId account);
 
-  Future<KinAccount> getStoredAccount(KinAccountId accountId);
+  Future<KinAccount?> getStoredAccount(KinAccountId accountId);
 
   Future<KinAccount> updateAccountInStorage(KinAccount account);
 
@@ -63,9 +63,9 @@ abstract class Storage {
 
   Future<QuarkAmount> setMinFee(QuarkAmount minFee);
 
-  Future<QuarkAmount> getMinFee();
+  Future<QuarkAmount?> getMinFee();
 
-  Future<bool> deleteAllStorage([KinAccountId accountId]);
+  Future<bool> deleteAllStorage([KinAccountId? accountId]);
 
   Future<int> setMinApiVersion(int apiVersion);
 

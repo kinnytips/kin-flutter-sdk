@@ -1,34 +1,34 @@
 import 'dart:async';
 
-typedef ExecutorTask<R> = FutureOr<R> Function();
+typedef ExecutorTask<R> = FutureOr<R?> Function();
 
 abstract class ExecutorService {
   static ExecutorService createSequencial() => _ExecutorServiceSequential() ;
   static ExecutorService createParallel() => _ExecutorServiceParallel();
   static ScheduledExecutorService createScheduled() => ScheduledExecutorService.create();
 
-  Future<R> execute<R>(ExecutorTask<FutureOr<R>> task);
+  Future<R?> execute<R>(ExecutorTask<R> task);
 }
 
 abstract class ScheduledExecutorService extends ExecutorService {
   static ScheduledExecutorService create() => _ExecutorServiceScheduled();
 
-  ScheduledFuture<R> schedule<R>(ExecutorTask<R> task, [Duration delay]);
+  ScheduledFuture<R?> schedule<R>(ExecutorTask<R> task, [Duration? delay]);
 }
 
 class ScheduledFuture<T> {
-  final Duration delay;
-  ExecutorTask<T> _task;
+  final Duration? delay;
+  ExecutorTask<T>? _task;
 
-  Future<T> _future;
+  Future<T>? _future;
 
-  Future<T> get future => _future;
+  Future<T>? get future => _future;
 
   ScheduledFuture(this.delay, this._task);
 
-  FutureOr<T> executeTask() {
+  FutureOr<T?> executeTask() {
     if (_task == null) return null ;
-    var ret = _task();
+    var ret = _task!();
     _task = null;
     return ret ;
   }
@@ -41,23 +41,23 @@ class ScheduledFuture<T> {
 class _ExecutorServiceSequential extends ExecutorService {
   final List<ExecutorTask> _queue = [];
 
-  ExecutorTask _executing;
+  ExecutorTask? _executing;
 
   @override
-  Future<R> execute<R>(ExecutorTask<FutureOr<R>> task) async {
+  Future<R?> execute<R>(ExecutorTask<R> task) async {
     if (_executing != null) {
       var completer = Completer<R>();
 
       _queue.add(() {
-        FutureOr<R> ret ;
+        FutureOr<R?> ret ;
         try {
-          ret = task();
+          ret = task() ;
         } finally {
           if (ret == null) {
             completer.complete(null);
           }
           else if (ret is Future) {
-            var future = ret as Future<R> ;
+            var future = ret as Future<R?> ;
             future.then((r) => completer.complete(r));
           }
           else {
@@ -73,10 +73,10 @@ class _ExecutorServiceSequential extends ExecutorService {
     return _executeWithTask(task);
   }
 
-  Future<R> _executeWithTask<R>(ExecutorTask<R> task) {
+  Future<R?> _executeWithTask<R>(ExecutorTask<R> task) {
     _executing = task;
 
-    return Future<R>.microtask(() async {
+    return Future<R?>.microtask(() async {
       try {
         return task();
       } catch (e, s) {
@@ -111,25 +111,25 @@ class _ExecutorServiceSequential extends ExecutorService {
 }
 
 class _ExecutorServiceParallel extends ExecutorService {
-  Future<R> execute<R>(ExecutorTask<FutureOr<R>> task) {
-    return Future.microtask(task);
+  Future<R?> execute<R>(ExecutorTask<R> task) {
+    return Future<R?>.microtask(task);
   }
 }
 
 class _ExecutorServiceScheduled extends ScheduledExecutorService {
-  Future<R> execute<R>(ExecutorTask<FutureOr<R>> task) {
-    return Future<R>.microtask(task);
+  Future<R?> execute<R>(ExecutorTask<R> task) {
+    return Future<R?>.microtask(task);
   }
 
   @override
-  ScheduledFuture<R> schedule<R>(ExecutorTask<R> task, [Duration delay]) {
-    var scheduledFuture = ScheduledFuture<R>(delay, task);
+  ScheduledFuture<R?> schedule<R>(ExecutorTask<R> task, [Duration? delay]) {
+    var scheduledFuture = ScheduledFuture<R?>(delay, task);
 
     if (delay != null && delay.inMilliseconds > 0) {
-      scheduledFuture._future = Future<R>.delayed(
+      scheduledFuture._future = Future<R?>.delayed(
           delay, scheduledFuture.executeTask);
     } else {
-      scheduledFuture._future = Future<R>.microtask(scheduledFuture.executeTask);
+      scheduledFuture._future = Future<R?>.microtask(scheduledFuture.executeTask);
     }
 
     return scheduledFuture;
@@ -145,9 +145,9 @@ class ExecutorServices {
   final ScheduledExecutorService sequentialScheduled;
 
   ExecutorServices(
-      {ExecutorService sequentialIO,
-      ExecutorService parallelIO,
-      ScheduledExecutorService sequentialScheduled})
+      {ExecutorService? sequentialIO,
+      ExecutorService? parallelIO,
+      ScheduledExecutorService? sequentialScheduled})
       : sequentialIO = sequentialIO ?? ExecutorService.createSequencial(),
         parallelIO = parallelIO ?? ExecutorService.createParallel(),
         sequentialScheduled =

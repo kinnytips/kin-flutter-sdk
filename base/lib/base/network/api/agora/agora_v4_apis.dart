@@ -5,7 +5,6 @@ import 'package:kin_base/base/models/invoices.dart';
 import 'package:kin_base/base/models/key.dart';
 import 'package:kin_base/base/models/kin_account.dart';
 import 'package:kin_base/base/models/quark_amount.dart';
-import 'package:kin_base/base/models/solana/encoding.dart';
 import 'package:kin_base/base/models/solana/transaction.dart';
 import 'package:kin_base/base/models/stellar_base_type_conversions.dart';
 import 'package:kin_base/base/models/transaction_hash.dart';
@@ -104,15 +103,16 @@ class AgoraKinAccountApiV4 extends GrpcApi implements KinAccountApiV4, KinStream
       }
     }
     catch (e) {
-      if ( GrpcApi.canRetry(e) ) {
-        return KinServiceResponse(KinServiceResponseType.transientFailure, null, TransientFailure(e));
+      if ( e is Exception ) {
+        if ( GrpcApi.canRetry(e) ) {
+          return KinServiceResponse(KinServiceResponseType.transientFailure, null, TransientFailure(e));
+        }
+        else if ( GrpcApi.isForcedUpgrade(e) ) {
+          return KinServiceResponse(KinServiceResponseType.upgradeRequiredError, null);
+        }
       }
-      else if ( GrpcApi.isForcedUpgrade(e) ) {
-        return KinServiceResponse(KinServiceResponseType.upgradeRequiredError, null);
-      }
-      else {
-        return KinServiceResponse(KinServiceResponseType.undefinedError, null, UnrecognizedResultException(e));
-      }
+
+      return KinServiceResponse(KinServiceResponseType.undefinedError, null, UnrecognizedResultException(e));
     }
   }
 
@@ -154,7 +154,7 @@ class AgoraKinTransactionsApiV4 extends GrpcApi implements KinTransactionApiV4 {
   @override
   Future<KinServiceResponse<List<KinTransaction>>> getTransactionHistory(
     KinAccountId accountId, {
-    PagingToken pagingToken,
+    PagingToken? pagingToken,
     KinServiceOrder order = KinServiceOrder.descending,
   }) async {
     var request = GetHistoryRequest(
@@ -239,7 +239,7 @@ class AgoraKinTransactionsApiV4 extends GrpcApi implements KinTransactionApiV4 {
   }
 
   @override
-  Future<KinServiceInvoiceResponse<KinTransaction>> submitTransaction(Transaction transaction, InvoiceList invoiceList) async {
+  Future<KinServiceInvoiceResponse<KinTransaction>> submitTransaction(Transaction transaction, InvoiceList? invoiceList) async {
     var amount = transaction.totalAmount ;
     var commitment ;
 
@@ -281,7 +281,7 @@ class AgoraKinTransactionsApiV4 extends GrpcApi implements KinTransactionApiV4 {
       return KinServiceInvoiceResponse(KinServiceResponseType.ok, responseTransaction);
     }
     else if (response.result == SubmitTransactionResponse_Result.FAILED) {
-      var resultXdr = response.transactionError.toResultXdr();
+      var resultXdr = response.transactionError.toResultXdr()!;
       var responseType2 = parseResultCode( resultXdr ).toKinServiceResponseType() ;
 
       if (responseType2 == KinServiceResponseType.ok) {

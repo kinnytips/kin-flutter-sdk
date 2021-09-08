@@ -18,11 +18,11 @@ abstract class Asset {
   static final Asset NATIVE = AssetTypeNative();
   static const String TYPE_NATIVE = "native";
 
-  static Asset create(String type, String code, String issuer) {
+  static Asset create(String type, [String? code, String? issuer]) {
     if (type == TYPE_NATIVE) {
       return Asset.NATIVE;
     } else {
-      return Asset.createNonNativeAsset(code, issuer);
+      return Asset.createNonNativeAsset(code!, issuer!);
     }
   }
 
@@ -37,7 +37,7 @@ abstract class Asset {
     }
   }
 
-  static Asset createFromCanonicalForm(String canonicalForm) {
+  static Asset? createFromCanonicalForm(String? canonicalForm) {
     if (canonicalForm == null) {
       return null;
     }
@@ -77,15 +77,15 @@ abstract class Asset {
         return new AssetTypeNative();
       case XdrAssetType.ASSET_TYPE_CREDIT_ALPHANUM4:
         String assetCode4 =
-            Util.paddedByteArrayToString(xdrAsset.alphaNum4.assetCode);
+            Util.paddedByteArrayToString(xdrAsset.alphaNum4!.assetCode!);
         KeyPair issuer4 =
-            KeyPair.fromXdrPublicKey(xdrAsset.alphaNum4.issuer.accountID);
+            KeyPair.fromXdrPublicKey(xdrAsset.alphaNum4!.issuer!.accountID!);
         return AssetTypeCreditAlphaNum4(assetCode4, issuer4.accountId);
       case XdrAssetType.ASSET_TYPE_CREDIT_ALPHANUM12:
         String assetCode12 =
-            Util.paddedByteArrayToString(xdrAsset.alphaNum12.assetCode);
+            Util.paddedByteArrayToString(xdrAsset.alphaNum12!.assetCode!);
         KeyPair issuer12 =
-            KeyPair.fromXdrPublicKey(xdrAsset.alphaNum12.issuer.accountID);
+            KeyPair.fromXdrPublicKey(xdrAsset.alphaNum12!.issuer!.accountID!);
         return AssetTypeCreditAlphaNum12(assetCode12, issuer12.accountId);
       default:
         throw Exception(

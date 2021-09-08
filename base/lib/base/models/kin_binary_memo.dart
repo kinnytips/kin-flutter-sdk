@@ -10,7 +10,7 @@ class KinBinaryMemo {
 
   final int magicByteIndicator ;
   final int  version;
-  final TransferType typeId ;
+  final TransferType? typeId ;
   final int  appIdx;
   final String foreignKey;
 
@@ -90,9 +90,9 @@ class KinBinaryMemo {
     );
   }
 
-  Uint8List _foreignKeyBytes ;
+  Uint8List? _foreignKeyBytes ;
 
-  Uint8List get foreignKeyBytes {
+  Uint8List? get foreignKeyBytes {
     if (_foreignKeyBytes == null) {
       var bs = base64.decode(foreignKey).sublist(0, 29) ;
       bs[28] = bs[28] & 0x3F ;
@@ -114,17 +114,17 @@ class KinBinaryMemo {
 
     bs.setRange(0, BYTE_COUNT_LOWER_BYTES, lowerBytes);
 
-    bs[BYTE_OF_FK_START] = bs[BYTE_OF_FK_START] | ((foreignKeyBytes[0] & 0x3F) << 2);
+    bs[BYTE_OF_FK_START] = bs[BYTE_OF_FK_START] | ((foreignKeyBytes![0] & 0x3F) << 2);
 
     // insert the rest of the fk. since each loop references fk[n] and fk[n+1],
     // the upper bound is offset by 3 instead of 4.
-    for (var i = BYTE_OF_FK_START + 1; i <= 2 + foreignKeyBytes.length; ++i) {
-      bs[i] = bs[i] | (( (foreignKeyBytes[i - 4] & 0xFFFFFFFF) >> 6) & 0x3);
-      bs[i] = bs[i] | (foreignKeyBytes[i - 3] & 0x3F << 2);
+    for (var i = BYTE_OF_FK_START + 1; i <= 2 + foreignKeyBytes!.length; ++i) {
+      bs[i] = bs[i] | (( (foreignKeyBytes![i - 4] & 0xFFFFFFFF) >> 6) & 0x3);
+      bs[i] = bs[i] | (foreignKeyBytes![i - 3] & 0x3F << 2);
     }
 
-    if (foreignKeyBytes.length < 29) {
-      bs[BYTE_OF_FK_START + foreignKeyBytes.length] = (( (foreignKeyBytes[foreignKeyBytes.length - 1] & 0xFFFFFFFF) >> 6)) & 0x3;
+    if (foreignKeyBytes!.length < 29) {
+      bs[BYTE_OF_FK_START + foreignKeyBytes!.length] =  (foreignKeyBytes![foreignKeyBytes!.length - 1] & 0xFFFFFFFF) >> 6 & 0x3;
     }
 
     return bs ;
@@ -151,7 +151,7 @@ enum TransferType {
   p2p
 }
 
-extension TransferTypeUtil on TransferType {
+extension TransferTypeUtil on TransferType? {
   static TransferType getType(int value) {
     switch(value) {
       case -1: return TransferType.unknown;
@@ -179,8 +179,8 @@ class KinBinaryMemoBuilder {
   int magicByteIndicator;
   int version;
 
-  TransferType _typeId;
-  Uint8List _foreignKeyBytes;
+  TransferType? _typeId;
+  Uint8List? _foreignKeyBytes;
 
   KinBinaryMemoBuilder(this.appIdx, [this.magicByteIndicator = 1, this.version = 0]) ;
 
@@ -236,7 +236,7 @@ class KinBinaryMemoBuilder {
 
     var foreignKeyBytesPadded = Uint8List(KinBinaryMemo.BYTE_COUNT_FOREIGN_KEY);
 
-    foreignKeyBytesPadded.setRange(0, min(foreignKeyBytesPadded.length, _foreignKeyBytes.length), _foreignKeyBytes);
+    foreignKeyBytesPadded.setRange(0, min(foreignKeyBytesPadded.length, _foreignKeyBytes!.length), _foreignKeyBytes!);
 
     foreignKeyBytesPadded[28] = foreignKeyBytesPadded[28] & 0x3F ;
 

@@ -129,67 +129,67 @@ class XdrClaimPredicateType {
 
 class XdrClaimPredicate {
   XdrClaimPredicate();
-  XdrClaimPredicateType _type;
-  XdrClaimPredicateType get discriminant => this._type;
-  set discriminant(XdrClaimPredicateType value) => this._type = value;
+  XdrClaimPredicateType? _type;
+  XdrClaimPredicateType? get discriminant => this._type;
+  set discriminant(XdrClaimPredicateType? value) => this._type = value;
 
-  List<XdrClaimPredicate> _andPredicates;
-  List<XdrClaimPredicate> get andPredicates => this._andPredicates;
-  set andPredicates(List<XdrClaimPredicate> value) =>
+  List<XdrClaimPredicate>? _andPredicates;
+  List<XdrClaimPredicate>? get andPredicates => this._andPredicates;
+  set andPredicates(List<XdrClaimPredicate>? value) =>
       this._andPredicates = value;
 
-  List<XdrClaimPredicate> _orPredicates;
-  List<XdrClaimPredicate> get orPredicates => this._orPredicates;
-  set orPredicates(List<XdrClaimPredicate> value) => this._orPredicates = value;
+  List<XdrClaimPredicate>? _orPredicates;
+  List<XdrClaimPredicate>? get orPredicates => this._orPredicates;
+  set orPredicates(List<XdrClaimPredicate>? value) => this._orPredicates = value;
 
-  XdrClaimPredicate _notPredicate;
-  XdrClaimPredicate get notPredicate => this._notPredicate;
-  set notPredicate(XdrClaimPredicate value) => this._notPredicate = value;
+  XdrClaimPredicate? _notPredicate;
+  XdrClaimPredicate? get notPredicate => this._notPredicate;
+  set notPredicate(XdrClaimPredicate? value) => this._notPredicate = value;
 
-  XdrInt64 _absBefore; // Predicate will be true if closeTime < absBefore
-  XdrInt64 get absBefore => this._absBefore;
-  set absBefore(XdrInt64 value) => this._absBefore = value;
+  XdrInt64? _absBefore; // Predicate will be true if closeTime < absBefore
+  XdrInt64? get absBefore => this._absBefore;
+  set absBefore(XdrInt64? value) => this._absBefore = value;
 
-  XdrInt64 _relBefore; // Seconds since closeTime of the ledger in
+  XdrInt64? _relBefore; // Seconds since closeTime of the ledger in
   // which the ClaimableBalanceEntry was created
-  XdrInt64 get relBefore => this._relBefore;
-  set relBefore(XdrInt64 value) => this._relBefore = value;
+  XdrInt64? get relBefore => this._relBefore;
+  set relBefore(XdrInt64? value) => this._relBefore = value;
 
   static void encode(
       XdrDataOutputStream stream, XdrClaimPredicate encodedClaimPredicate) {
-    stream.writeInt(encodedClaimPredicate.discriminant.value);
+    stream.writeInt(encodedClaimPredicate.discriminant!.value);
     switch (encodedClaimPredicate.discriminant) {
       case XdrClaimPredicateType.CLAIM_PREDICATE_UNCONDITIONAL:
         break;
       case XdrClaimPredicateType.CLAIM_PREDICATE_AND:
-        int pSize = encodedClaimPredicate.andPredicates.length;
+        int pSize = encodedClaimPredicate.andPredicates!.length;
         stream.writeInt(pSize);
         for (int i = 0; i < pSize; i++) {
           XdrClaimPredicate.encode(
-              stream, encodedClaimPredicate.andPredicates[i]);
+              stream, encodedClaimPredicate.andPredicates![i]);
         }
         break;
       case XdrClaimPredicateType.CLAIM_PREDICATE_OR:
-        int pSize = encodedClaimPredicate.orPredicates.length;
+        int pSize = encodedClaimPredicate.orPredicates!.length;
         stream.writeInt(pSize);
         for (int i = 0; i < pSize; i++) {
           XdrClaimPredicate.encode(
-              stream, encodedClaimPredicate.orPredicates[i]);
+              stream, encodedClaimPredicate.orPredicates![i]);
         }
         break;
       case XdrClaimPredicateType.CLAIM_PREDICATE_NOT:
         if (encodedClaimPredicate.notPredicate != null) {
           stream.writeInt(1);
-          XdrClaimPredicate.encode(stream, encodedClaimPredicate.notPredicate);
+          XdrClaimPredicate.encode(stream, encodedClaimPredicate.notPredicate!);
         } else {
           stream.writeInt(0);
         }
         break;
       case XdrClaimPredicateType.CLAIM_PREDICATE_BEFORE_ABSOLUTE_TIME:
-        XdrInt64.encode(stream, encodedClaimPredicate.absBefore);
+        XdrInt64.encode(stream, encodedClaimPredicate.absBefore!);
         break;
       case XdrClaimPredicateType.CLAIM_PREDICATE_BEFORE_RELATIVE_TIME:
-        XdrInt64.encode(stream, encodedClaimPredicate.relBefore);
+        XdrInt64.encode(stream, encodedClaimPredicate.relBefore!);
         break;
     }
   }
@@ -203,17 +203,15 @@ class XdrClaimPredicate {
         break;
       case XdrClaimPredicateType.CLAIM_PREDICATE_AND:
         int predicatesSize = stream.readInt();
-        decoded.andPredicates = List<XdrClaimPredicate>(predicatesSize);
-        for (int i = 0; i < predicatesSize; i++) {
-          decoded.andPredicates[i] = XdrClaimPredicate.decode(stream);
-        }
+        decoded.andPredicates = List<XdrClaimPredicate>.generate(predicatesSize, (i){
+          return XdrClaimPredicate.decode(stream);
+        });
         break;
       case XdrClaimPredicateType.CLAIM_PREDICATE_OR:
         int predicatesSize = stream.readInt();
-        decoded.orPredicates = List<XdrClaimPredicate>(predicatesSize);
-        for (int i = 0; i < predicatesSize; i++) {
-          decoded.orPredicates[i] = XdrClaimPredicate.decode(stream);
-        }
+        decoded.orPredicates = List<XdrClaimPredicate>.generate(predicatesSize, (i){
+          return XdrClaimPredicate.decode(stream);
+        });
         break;
       case XdrClaimPredicateType.CLAIM_PREDICATE_NOT:
         decoded.notPredicate = XdrClaimPredicate.decode(stream);
@@ -255,19 +253,19 @@ class XdrClaimantType {
 
 class XdrClaimant {
   XdrClaimant();
-  XdrClaimantType _type;
-  XdrClaimantType get discriminant => this._type;
-  set discriminant(XdrClaimantType value) => this._type = value;
+  XdrClaimantType? _type;
+  XdrClaimantType? get discriminant => this._type;
+  set discriminant(XdrClaimantType? value) => this._type = value;
 
-  XdrClaimantV0 _v0;
-  XdrClaimantV0 get v0 => this._v0;
-  set v0(XdrClaimantV0 value) => this._v0 = value;
+  XdrClaimantV0? _v0;
+  XdrClaimantV0? get v0 => this._v0;
+  set v0(XdrClaimantV0? value) => this._v0 = value;
 
   static void encode(XdrDataOutputStream stream, XdrClaimant encodedClaimant) {
-    stream.writeInt(encodedClaimant.discriminant.value);
+    stream.writeInt(encodedClaimant.discriminant!.value);
     switch (encodedClaimant.discriminant) {
       case XdrClaimantType.CLAIMANT_TYPE_V0:
-        XdrClaimantV0.encode(stream, encodedClaimant.v0);
+        XdrClaimantV0.encode(stream, encodedClaimant.v0!);
         break;
     }
   }
@@ -288,18 +286,18 @@ class XdrClaimant {
 class XdrClaimantV0 {
   XdrClaimantV0();
 
-  XdrAccountID _destination;
-  XdrAccountID get destination => this._destination;
-  set destination(XdrAccountID value) => this._destination = value;
+  XdrAccountID? _destination;
+  XdrAccountID? get destination => this._destination;
+  set destination(XdrAccountID? value) => this._destination = value;
 
-  XdrClaimPredicate _predicate;
-  XdrClaimPredicate get predicate => this._predicate;
-  set predicate(XdrClaimPredicate value) => this._predicate = value;
+  XdrClaimPredicate? _predicate;
+  XdrClaimPredicate? get predicate => this._predicate;
+  set predicate(XdrClaimPredicate? value) => this._predicate = value;
 
   static void encode(
       XdrDataOutputStream stream, XdrClaimantV0 encodedClaimantV0) {
-    XdrAccountID.encode(stream, encodedClaimantV0.destination);
-    XdrClaimPredicate.encode(stream, encodedClaimantV0.predicate);
+    XdrAccountID.encode(stream, encodedClaimantV0.destination!);
+    XdrClaimPredicate.encode(stream, encodedClaimantV0.predicate!);
   }
 
   static XdrClaimantV0 decode(XdrDataInputStream stream) {
@@ -338,20 +336,20 @@ class XdrClaimableBalanceIDType {
 
 class XdrClaimableBalanceID {
   XdrClaimableBalanceID();
-  XdrClaimableBalanceIDType _type;
-  XdrClaimableBalanceIDType get discriminant => this._type;
-  set discriminant(XdrClaimableBalanceIDType value) => this._type = value;
+  XdrClaimableBalanceIDType? _type;
+  XdrClaimableBalanceIDType? get discriminant => this._type;
+  set discriminant(XdrClaimableBalanceIDType? value) => this._type = value;
 
-  XdrHash _v0;
-  XdrHash get v0 => this._v0;
-  set v0(XdrHash value) => this.v0 = value;
+  XdrHash? _v0;
+  XdrHash? get v0 => this._v0;
+  set v0(XdrHash? value) => this.v0 = value;
 
   static void encode(
       XdrDataOutputStream stream, XdrClaimableBalanceID encoded) {
-    stream.writeInt(encoded.discriminant.value);
+    stream.writeInt(encoded.discriminant!.value);
     switch (encoded.discriminant) {
       case XdrClaimableBalanceIDType.CLAIMABLE_BALANCE_ID_TYPE_V0:
-        XdrHash.encode(stream, encoded.v0);
+        XdrHash.encode(stream, encoded.v0!);
         break;
     }
   }
@@ -373,47 +371,46 @@ class XdrClaimableBalanceID {
 class XdrClaimableBalanceEntry {
   XdrClaimableBalanceEntry();
 
-  XdrClaimableBalanceID _balanceID;
-  XdrClaimableBalanceID get balanceID => this._balanceID;
-  set balanceID(XdrClaimableBalanceID value) => this._balanceID = value;
+  XdrClaimableBalanceID? _balanceID;
+  XdrClaimableBalanceID? get balanceID => this._balanceID;
+  set balanceID(XdrClaimableBalanceID? value) => this._balanceID = value;
 
-  List<XdrClaimant> _claimants;
-  List<XdrClaimant> get claimants => this._claimants;
-  set claimants(List<XdrClaimant> value) => this._claimants = value;
+  List<XdrClaimant>? _claimants;
+  List<XdrClaimant>? get claimants => this._claimants;
+  set claimants(List<XdrClaimant>? value) => this._claimants = value;
 
-  XdrAsset _asset;
-  XdrAsset get asset => this._asset;
-  set asset(XdrAsset value) => this._asset = value;
+  XdrAsset? _asset;
+  XdrAsset? get asset => this._asset;
+  set asset(XdrAsset? value) => this._asset = value;
 
-  XdrInt64 _amount;
-  XdrInt64 get amount => this._amount;
-  set amount(XdrInt64 value) => this._amount = value;
+  XdrInt64? _amount;
+  XdrInt64? get amount => this._amount;
+  set amount(XdrInt64? value) => this._amount = value;
 
-  XdrClaimableBalanceEntryExt _ext;
-  XdrClaimableBalanceEntryExt get ext => this._ext;
-  set ext(XdrClaimableBalanceEntryExt value) => this._ext = value;
+  XdrClaimableBalanceEntryExt? _ext;
+  XdrClaimableBalanceEntryExt? get ext => this._ext;
+  set ext(XdrClaimableBalanceEntryExt? value) => this._ext = value;
 
   static void encode(
       XdrDataOutputStream stream, XdrClaimableBalanceEntry encoded) {
-    XdrClaimableBalanceID.encode(stream, encoded.balanceID);
-    int pSize = encoded.claimants.length;
+    XdrClaimableBalanceID.encode(stream, encoded.balanceID!);
+    int pSize = encoded.claimants!.length;
     stream.writeInt(pSize);
     for (int i = 0; i < pSize; i++) {
-      XdrClaimant.encode(stream, encoded.claimants[i]);
+      XdrClaimant.encode(stream, encoded.claimants![i]);
     }
-    XdrAsset.encode(stream, encoded.asset);
-    XdrInt64.encode(stream, encoded.amount);
-    XdrClaimableBalanceEntryExt.encode(stream, encoded.ext);
+    XdrAsset.encode(stream, encoded.asset!);
+    XdrInt64.encode(stream, encoded.amount!);
+    XdrClaimableBalanceEntryExt.encode(stream, encoded.ext!);
   }
 
   static XdrClaimableBalanceEntry decode(XdrDataInputStream stream) {
     XdrClaimableBalanceEntry decoded = XdrClaimableBalanceEntry();
     decoded.balanceID = XdrClaimableBalanceID.decode(stream);
     int pSize = stream.readInt();
-    decoded.claimants = List<XdrClaimant>(pSize);
-    for (int i = 0; i < pSize; i++) {
-      decoded.claimants[i] = XdrClaimant.decode(stream);
-    }
+    decoded.claimants = List<XdrClaimant>.generate(pSize, (i){
+      return XdrClaimant.decode(stream);
+    });
     decoded.asset = XdrAsset.decode(stream);
     decoded.amount = XdrInt64.decode(stream);
     decoded.ext = XdrClaimableBalanceEntryExt.decode(stream);
@@ -424,15 +421,15 @@ class XdrClaimableBalanceEntry {
 class XdrClaimableBalanceEntryExt {
   XdrClaimableBalanceEntryExt();
 
-  int _v;
+  int? _v;
 
-  int get discriminant => this._v;
+  int? get discriminant => this._v;
 
-  set discriminant(int value) => this._v = value;
+  set discriminant(int? value) => this._v = value;
 
   static void encode(
       XdrDataOutputStream stream, XdrClaimableBalanceEntryExt encoded) {
-    stream.writeInt(encoded.discriminant);
+    stream.writeInt(encoded.discriminant!);
     switch (encoded.discriminant) {
       case 0:
         break;
@@ -489,86 +486,86 @@ class XdrLedgerUpgradeType {
 
 class XdrLedgerHeader {
   XdrLedgerHeader();
-  XdrUint32 _ledgerVersion;
-  XdrUint32 get ledgerVersion => this._ledgerVersion;
-  set ledgerVersion(XdrUint32 value) => this._ledgerVersion = value;
+  XdrUint32? _ledgerVersion;
+  XdrUint32? get ledgerVersion => this._ledgerVersion;
+  set ledgerVersion(XdrUint32? value) => this._ledgerVersion = value;
 
-  XdrHash _previousLedgerHash;
-  XdrHash get previousLedgerHash => this._previousLedgerHash;
-  set previousLedgerHash(XdrHash value) => this._previousLedgerHash = value;
+  XdrHash? _previousLedgerHash;
+  XdrHash? get previousLedgerHash => this._previousLedgerHash;
+  set previousLedgerHash(XdrHash? value) => this._previousLedgerHash = value;
 
-  XdrStellarValue _scpValue;
-  XdrStellarValue get scpValue => this._scpValue;
-  set scpValue(XdrStellarValue value) => this._scpValue = value;
+  XdrStellarValue? _scpValue;
+  XdrStellarValue? get scpValue => this._scpValue;
+  set scpValue(XdrStellarValue? value) => this._scpValue = value;
 
-  XdrHash _txSetResultHash;
-  XdrHash get txSetResultHash => this._txSetResultHash;
-  set txSetResultHash(XdrHash value) => this._txSetResultHash = value;
+  XdrHash? _txSetResultHash;
+  XdrHash? get txSetResultHash => this._txSetResultHash;
+  set txSetResultHash(XdrHash? value) => this._txSetResultHash = value;
 
-  XdrHash _bucketListHash;
-  XdrHash get bucketListHash => this._bucketListHash;
-  set bucketListHash(XdrHash value) => this._bucketListHash = value;
+  XdrHash? _bucketListHash;
+  XdrHash? get bucketListHash => this._bucketListHash;
+  set bucketListHash(XdrHash? value) => this._bucketListHash = value;
 
-  XdrUint32 _ledgerSeq;
-  XdrUint32 get ledgerSeq => this._ledgerSeq;
-  set ledgerSeq(XdrUint32 value) => this._ledgerSeq = value;
+  XdrUint32? _ledgerSeq;
+  XdrUint32? get ledgerSeq => this._ledgerSeq;
+  set ledgerSeq(XdrUint32? value) => this._ledgerSeq = value;
 
-  XdrInt64 _totalCoins;
-  XdrInt64 get totalCoins => this._totalCoins;
-  set totalCoins(XdrInt64 value) => this._totalCoins = value;
+  XdrInt64? _totalCoins;
+  XdrInt64? get totalCoins => this._totalCoins;
+  set totalCoins(XdrInt64? value) => this._totalCoins = value;
 
-  XdrInt64 _feePool;
-  XdrInt64 get feePool => this._feePool;
-  set feePool(XdrInt64 value) => this._feePool = value;
+  XdrInt64? _feePool;
+  XdrInt64? get feePool => this._feePool;
+  set feePool(XdrInt64? value) => this._feePool = value;
 
-  XdrUint32 _inflationSeq;
-  XdrUint32 get inflationSeq => this._inflationSeq;
-  set inflationSeq(XdrUint32 value) => this._inflationSeq = value;
+  XdrUint32? _inflationSeq;
+  XdrUint32? get inflationSeq => this._inflationSeq;
+  set inflationSeq(XdrUint32? value) => this._inflationSeq = value;
 
-  XdrUint64 _idPool;
-  XdrUint64 get idPool => this._idPool;
-  set idPool(XdrUint64 value) => this._idPool = value;
+  XdrUint64? _idPool;
+  XdrUint64? get idPool => this._idPool;
+  set idPool(XdrUint64? value) => this._idPool = value;
 
-  XdrUint32 _baseFee;
-  XdrUint32 get baseFee => this._baseFee;
-  set baseFee(XdrUint32 value) => this._baseFee = value;
+  XdrUint32? _baseFee;
+  XdrUint32? get baseFee => this._baseFee;
+  set baseFee(XdrUint32? value) => this._baseFee = value;
 
-  XdrUint32 _baseReserve;
-  XdrUint32 get baseReserve => this._baseReserve;
-  set baseReserve(XdrUint32 value) => this._baseReserve = value;
+  XdrUint32? _baseReserve;
+  XdrUint32? get baseReserve => this._baseReserve;
+  set baseReserve(XdrUint32? value) => this._baseReserve = value;
 
-  XdrUint32 _maxTxSetSize;
-  XdrUint32 get maxTxSetSize => this._maxTxSetSize;
-  set maxTxSetSize(XdrUint32 value) => this._maxTxSetSize = value;
+  XdrUint32? _maxTxSetSize;
+  XdrUint32? get maxTxSetSize => this._maxTxSetSize;
+  set maxTxSetSize(XdrUint32? value) => this._maxTxSetSize = value;
 
-  List<XdrHash> _skipList;
-  List<XdrHash> get skipList => this._skipList;
-  set skipList(List<XdrHash> value) => this._skipList = value;
+  List<XdrHash>? _skipList;
+  List<XdrHash>? get skipList => this._skipList;
+  set skipList(List<XdrHash>? value) => this._skipList = value;
 
-  XdrLedgerHeaderExt _ext;
-  XdrLedgerHeaderExt get ext => this._ext;
-  set ext(XdrLedgerHeaderExt value) => this._ext = value;
+  XdrLedgerHeaderExt? _ext;
+  XdrLedgerHeaderExt? get ext => this._ext;
+  set ext(XdrLedgerHeaderExt? value) => this._ext = value;
 
   static void encode(
       XdrDataOutputStream stream, XdrLedgerHeader encodedLedgerHeader) {
-    XdrUint32.encode(stream, encodedLedgerHeader.ledgerVersion);
-    XdrHash.encode(stream, encodedLedgerHeader.previousLedgerHash);
-    XdrStellarValue.encode(stream, encodedLedgerHeader.scpValue);
-    XdrHash.encode(stream, encodedLedgerHeader.txSetResultHash);
-    XdrHash.encode(stream, encodedLedgerHeader.bucketListHash);
-    XdrUint32.encode(stream, encodedLedgerHeader.ledgerSeq);
-    XdrInt64.encode(stream, encodedLedgerHeader.totalCoins);
-    XdrInt64.encode(stream, encodedLedgerHeader.feePool);
-    XdrUint32.encode(stream, encodedLedgerHeader.inflationSeq);
-    XdrUint64.encode(stream, encodedLedgerHeader.idPool);
-    XdrUint32.encode(stream, encodedLedgerHeader.baseFee);
-    XdrUint32.encode(stream, encodedLedgerHeader.baseReserve);
-    XdrUint32.encode(stream, encodedLedgerHeader.maxTxSetSize);
-    int skipListsize = encodedLedgerHeader.skipList.length;
+    XdrUint32.encode(stream, encodedLedgerHeader.ledgerVersion!);
+    XdrHash.encode(stream, encodedLedgerHeader.previousLedgerHash!);
+    XdrStellarValue.encode(stream, encodedLedgerHeader.scpValue!);
+    XdrHash.encode(stream, encodedLedgerHeader.txSetResultHash!);
+    XdrHash.encode(stream, encodedLedgerHeader.bucketListHash!);
+    XdrUint32.encode(stream, encodedLedgerHeader.ledgerSeq!);
+    XdrInt64.encode(stream, encodedLedgerHeader.totalCoins!);
+    XdrInt64.encode(stream, encodedLedgerHeader.feePool!);
+    XdrUint32.encode(stream, encodedLedgerHeader.inflationSeq!);
+    XdrUint64.encode(stream, encodedLedgerHeader.idPool!);
+    XdrUint32.encode(stream, encodedLedgerHeader.baseFee!);
+    XdrUint32.encode(stream, encodedLedgerHeader.baseReserve!);
+    XdrUint32.encode(stream, encodedLedgerHeader.maxTxSetSize!);
+    int skipListsize = encodedLedgerHeader.skipList!.length;
     for (int i = 0; i < skipListsize; i++) {
-      XdrHash.encode(stream, encodedLedgerHeader.skipList[i]);
+      XdrHash.encode(stream, encodedLedgerHeader.skipList![i]);
     }
-    XdrLedgerHeaderExt.encode(stream, encodedLedgerHeader.ext);
+    XdrLedgerHeaderExt.encode(stream, encodedLedgerHeader.ext!);
   }
 
   static XdrLedgerHeader decode(XdrDataInputStream stream) {
@@ -587,10 +584,9 @@ class XdrLedgerHeader {
     decodedLedgerHeader.baseReserve = XdrUint32.decode(stream);
     decodedLedgerHeader.maxTxSetSize = XdrUint32.decode(stream);
     int skipListsize = 4;
-    decodedLedgerHeader.skipList = List<XdrHash>(skipListsize);
-    for (int i = 0; i < skipListsize; i++) {
-      decodedLedgerHeader.skipList[i] = XdrHash.decode(stream);
-    }
+    decodedLedgerHeader.skipList = List<XdrHash>.generate(skipListsize, (i){
+      return XdrHash.decode(stream);
+    });
     decodedLedgerHeader.ext = XdrLedgerHeaderExt.decode(stream);
     return decodedLedgerHeader;
   }
@@ -598,13 +594,13 @@ class XdrLedgerHeader {
 
 class XdrLedgerHeaderExt {
   XdrLedgerHeaderExt();
-  int _v;
-  int get discriminant => this._v;
-  set discriminant(int value) => this._v = value;
+  int? _v;
+  int? get discriminant => this._v;
+  set discriminant(int? value) => this._v = value;
 
   static void encode(
       XdrDataOutputStream stream, XdrLedgerHeaderExt encodedLedgerHeaderExt) {
-    stream.writeInt(encodedLedgerHeaderExt.discriminant);
+    stream.writeInt(encodedLedgerHeaderExt.discriminant!);
     switch (encodedLedgerHeaderExt.discriminant) {
       case 0:
         break;
@@ -625,48 +621,48 @@ class XdrLedgerHeaderExt {
 
 class XdrLedgerKey {
   XdrLedgerKey();
-  XdrLedgerEntryType _type;
-  XdrLedgerEntryType get discriminant => this._type;
-  set discriminant(XdrLedgerEntryType value) => this._type = value;
+  XdrLedgerEntryType? _type;
+  XdrLedgerEntryType? get discriminant => this._type;
+  set discriminant(XdrLedgerEntryType? value) => this._type = value;
 
-  XdrLedgerKeyAccount _account;
-  XdrLedgerKeyAccount get account => this._account;
-  set account(XdrLedgerKeyAccount value) => this._account = value;
+  XdrLedgerKeyAccount? _account;
+  XdrLedgerKeyAccount? get account => this._account;
+  set account(XdrLedgerKeyAccount? value) => this._account = value;
 
-  XdrLedgerKeyTrustLine _trustLine;
-  XdrLedgerKeyTrustLine get trustLine => this._trustLine;
-  set trustLine(XdrLedgerKeyTrustLine value) => this._trustLine = value;
+  XdrLedgerKeyTrustLine? _trustLine;
+  XdrLedgerKeyTrustLine? get trustLine => this._trustLine;
+  set trustLine(XdrLedgerKeyTrustLine? value) => this._trustLine = value;
 
-  XdrLedgerKeyOffer _offer;
-  XdrLedgerKeyOffer get offer => this._offer;
-  set offer(XdrLedgerKeyOffer value) => this._offer = value;
+  XdrLedgerKeyOffer? _offer;
+  XdrLedgerKeyOffer? get offer => this._offer;
+  set offer(XdrLedgerKeyOffer? value) => this._offer = value;
 
-  XdrLedgerKeyData _data;
-  XdrLedgerKeyData get data => this._data;
-  set data(XdrLedgerKeyData value) => this._data = value;
+  XdrLedgerKeyData? _data;
+  XdrLedgerKeyData? get data => this._data;
+  set data(XdrLedgerKeyData? value) => this._data = value;
 
-  XdrClaimableBalanceID _balanceID;
-  XdrClaimableBalanceID get balanceID => this._balanceID;
-  set balanceID(XdrClaimableBalanceID value) => this._balanceID = value;
+  XdrClaimableBalanceID? _balanceID;
+  XdrClaimableBalanceID? get balanceID => this._balanceID;
+  set balanceID(XdrClaimableBalanceID? value) => this._balanceID = value;
 
   static void encode(
       XdrDataOutputStream stream, XdrLedgerKey encodedLedgerKey) {
-    stream.writeInt(encodedLedgerKey.discriminant.value);
+    stream.writeInt(encodedLedgerKey.discriminant!.value);
     switch (encodedLedgerKey.discriminant) {
       case XdrLedgerEntryType.ACCOUNT:
-        XdrLedgerKeyAccount.encode(stream, encodedLedgerKey.account);
+        XdrLedgerKeyAccount.encode(stream, encodedLedgerKey.account!);
         break;
       case XdrLedgerEntryType.TRUSTLINE:
-        XdrLedgerKeyTrustLine.encode(stream, encodedLedgerKey.trustLine);
+        XdrLedgerKeyTrustLine.encode(stream, encodedLedgerKey.trustLine!);
         break;
       case XdrLedgerEntryType.OFFER:
-        XdrLedgerKeyOffer.encode(stream, encodedLedgerKey.offer);
+        XdrLedgerKeyOffer.encode(stream, encodedLedgerKey.offer!);
         break;
       case XdrLedgerEntryType.DATA:
-        XdrLedgerKeyData.encode(stream, encodedLedgerKey.data);
+        XdrLedgerKeyData.encode(stream, encodedLedgerKey.data!);
         break;
       case XdrLedgerEntryType.CLAIMABLE_BALANCE:
-        XdrClaimableBalanceID.encode(stream, encodedLedgerKey.balanceID);
+        XdrClaimableBalanceID.encode(stream, encodedLedgerKey.balanceID!);
         break;
     }
   }
@@ -695,13 +691,13 @@ class XdrLedgerKey {
 
 class XdrLedgerKeyAccount {
   XdrLedgerKeyAccount();
-  XdrAccountID _accountID;
-  XdrAccountID get accountID => this._accountID;
-  set accountID(XdrAccountID value) => this._accountID = value;
+  XdrAccountID? _accountID;
+  XdrAccountID? get accountID => this._accountID;
+  set accountID(XdrAccountID? value) => this._accountID = value;
 
   static void encode(
       XdrDataOutputStream stream, XdrLedgerKeyAccount encodedLedgerKeyAccount) {
-    XdrAccountID.encode(stream, encodedLedgerKeyAccount.accountID);
+    XdrAccountID.encode(stream, encodedLedgerKeyAccount.accountID!);
   }
 
   static XdrLedgerKeyAccount decode(XdrDataInputStream stream) {
@@ -713,18 +709,18 @@ class XdrLedgerKeyAccount {
 
 class XdrLedgerKeyTrustLine {
   XdrLedgerKeyTrustLine();
-  XdrAccountID _accountID;
-  XdrAccountID get accountID => this._accountID;
-  set accountID(XdrAccountID value) => this._accountID = value;
+  XdrAccountID? _accountID;
+  XdrAccountID? get accountID => this._accountID;
+  set accountID(XdrAccountID? value) => this._accountID = value;
 
-  XdrAsset _asset;
-  XdrAsset get asset => this._asset;
-  set asset(XdrAsset value) => this._asset = value;
+  XdrAsset? _asset;
+  XdrAsset? get asset => this._asset;
+  set asset(XdrAsset? value) => this._asset = value;
 
   static void encode(XdrDataOutputStream stream,
       XdrLedgerKeyTrustLine encodedLedgerKeyTrustLine) {
-    XdrAccountID.encode(stream, encodedLedgerKeyTrustLine.accountID);
-    XdrAsset.encode(stream, encodedLedgerKeyTrustLine.asset);
+    XdrAccountID.encode(stream, encodedLedgerKeyTrustLine.accountID!);
+    XdrAsset.encode(stream, encodedLedgerKeyTrustLine.asset!);
   }
 
   static XdrLedgerKeyTrustLine decode(XdrDataInputStream stream) {
@@ -737,18 +733,18 @@ class XdrLedgerKeyTrustLine {
 
 class XdrLedgerKeyOffer {
   XdrLedgerKeyOffer();
-  XdrAccountID _sellerID;
-  XdrAccountID get sellerID => this._sellerID;
-  set sellerID(XdrAccountID value) => this._sellerID = value;
+  XdrAccountID? _sellerID;
+  XdrAccountID? get sellerID => this._sellerID;
+  set sellerID(XdrAccountID? value) => this._sellerID = value;
 
-  XdrUint64 _offerID;
-  XdrUint64 get offerID => this._offerID;
-  set offerID(XdrUint64 value) => this._offerID = value;
+  XdrUint64? _offerID;
+  XdrUint64? get offerID => this._offerID;
+  set offerID(XdrUint64? value) => this._offerID = value;
 
   static void encode(
       XdrDataOutputStream stream, XdrLedgerKeyOffer encodedLedgerKeyOffer) {
-    XdrAccountID.encode(stream, encodedLedgerKeyOffer.sellerID);
-    XdrUint64.encode(stream, encodedLedgerKeyOffer.offerID);
+    XdrAccountID.encode(stream, encodedLedgerKeyOffer.sellerID!);
+    XdrUint64.encode(stream, encodedLedgerKeyOffer.offerID!);
   }
 
   static XdrLedgerKeyOffer decode(XdrDataInputStream stream) {
@@ -761,18 +757,18 @@ class XdrLedgerKeyOffer {
 
 class XdrLedgerKeyData {
   XdrLedgerKeyData();
-  XdrAccountID _accountID;
-  XdrAccountID get accountID => this._accountID;
-  set accountID(XdrAccountID value) => this._accountID = value;
+  XdrAccountID? _accountID;
+  XdrAccountID? get accountID => this._accountID;
+  set accountID(XdrAccountID? value) => this._accountID = value;
 
-  XdrString64 _dataName;
-  XdrString64 get dataName => this._dataName;
-  set dataName(XdrString64 value) => this._dataName = value;
+  XdrString64? _dataName;
+  XdrString64? get dataName => this._dataName;
+  set dataName(XdrString64? value) => this._dataName = value;
 
   static void encode(
       XdrDataOutputStream stream, XdrLedgerKeyData encodedLedgerKeyData) {
-    XdrAccountID.encode(stream, encodedLedgerKeyData.accountID);
-    XdrString64.encode(stream, encodedLedgerKeyData.dataName);
+    XdrAccountID.encode(stream, encodedLedgerKeyData.accountID!);
+    XdrString64.encode(stream, encodedLedgerKeyData.dataName!);
   }
 
   static XdrLedgerKeyData decode(XdrDataInputStream stream) {
@@ -785,73 +781,72 @@ class XdrLedgerKeyData {
 
 class XdrLedgerSCPMessages {
   XdrLedgerSCPMessages();
-  XdrUint32 _ledgerSeq;
-  XdrUint32 get ledgerSeq => this._ledgerSeq;
-  set ledgerSeq(XdrUint32 value) => this._ledgerSeq = value;
+  XdrUint32? _ledgerSeq;
+  XdrUint32? get ledgerSeq => this._ledgerSeq;
+  set ledgerSeq(XdrUint32? value) => this._ledgerSeq = value;
 
-  List<XdrSCPEnvelope> _messages;
-  List<XdrSCPEnvelope> get messages => this._messages;
-  set messages(List<XdrSCPEnvelope> value) => this._messages = value;
+  List<XdrSCPEnvelope>? _messages;
+  List<XdrSCPEnvelope>? get messages => this._messages;
+  set messages(List<XdrSCPEnvelope>? value) => this._messages = value;
 
   static void encode(XdrDataOutputStream stream,
       XdrLedgerSCPMessages encodedLedgerSCPMessages) {
-    XdrUint32.encode(stream, encodedLedgerSCPMessages.ledgerSeq);
-    int messagessize = encodedLedgerSCPMessages.messages.length;
+    XdrUint32.encode(stream, encodedLedgerSCPMessages.ledgerSeq!);
+    int messagessize = encodedLedgerSCPMessages.messages!.length;
     stream.writeInt(messagessize);
     for (int i = 0; i < messagessize; i++) {
-      XdrSCPEnvelope.encode(stream, encodedLedgerSCPMessages.messages[i]);
+      XdrSCPEnvelope.encode(stream, encodedLedgerSCPMessages.messages![i]);
     }
   }
 
   static XdrLedgerSCPMessages decode(XdrDataInputStream stream) {
     XdrLedgerSCPMessages decodedLedgerSCPMessages = XdrLedgerSCPMessages();
     decodedLedgerSCPMessages.ledgerSeq = XdrUint32.decode(stream);
-    int messagessize = stream.readInt();
-    decodedLedgerSCPMessages.messages = List<XdrSCPEnvelope>(messagessize);
-    for (int i = 0; i < messagessize; i++) {
-      decodedLedgerSCPMessages.messages[i] = XdrSCPEnvelope.decode(stream);
-    }
+    int messagesSize = stream.readInt();
+    decodedLedgerSCPMessages.messages = List<XdrSCPEnvelope>.generate(messagesSize, (i){
+      return XdrSCPEnvelope.decode(stream);
+    });
     return decodedLedgerSCPMessages;
   }
 }
 
 class XdrLedgerUpgrade {
   XdrLedgerUpgrade();
-  XdrLedgerUpgradeType _type;
-  XdrLedgerUpgradeType get discriminant => this._type;
-  set discriminant(XdrLedgerUpgradeType value) => this._type = value;
+  XdrLedgerUpgradeType? _type;
+  XdrLedgerUpgradeType? get discriminant => this._type;
+  set discriminant(XdrLedgerUpgradeType? value) => this._type = value;
 
-  XdrUint32 _newLedgerVersion;
-  XdrUint32 get newLedgerVersion => this._newLedgerVersion;
-  set newLedgerVersion(XdrUint32 value) => this._newLedgerVersion = value;
+  XdrUint32? _newLedgerVersion;
+  XdrUint32? get newLedgerVersion => this._newLedgerVersion;
+  set newLedgerVersion(XdrUint32? value) => this._newLedgerVersion = value;
 
-  XdrUint32 _newBaseFee;
-  XdrUint32 get newBaseFee => this._newBaseFee;
-  set newBaseFee(XdrUint32 value) => this._newBaseFee = value;
+  XdrUint32? _newBaseFee;
+  XdrUint32? get newBaseFee => this._newBaseFee;
+  set newBaseFee(XdrUint32? value) => this._newBaseFee = value;
 
-  XdrUint32 _newMaxTxSetSize;
-  XdrUint32 get newMaxTxSetSize => this._newMaxTxSetSize;
-  set newMaxTxSetSize(XdrUint32 value) => this._newMaxTxSetSize = value;
+  XdrUint32? _newMaxTxSetSize;
+  XdrUint32? get newMaxTxSetSize => this._newMaxTxSetSize;
+  set newMaxTxSetSize(XdrUint32? value) => this._newMaxTxSetSize = value;
 
-  XdrUint32 _newBaseReserve;
-  XdrUint32 get newBaseReserve => this._newBaseReserve;
-  set newBaseReserve(XdrUint32 value) => this._newBaseReserve = value;
+  XdrUint32? _newBaseReserve;
+  XdrUint32? get newBaseReserve => this._newBaseReserve;
+  set newBaseReserve(XdrUint32? value) => this._newBaseReserve = value;
 
   static void encode(
       XdrDataOutputStream stream, XdrLedgerUpgrade encodedLedgerUpgrade) {
-    stream.writeInt(encodedLedgerUpgrade.discriminant.value);
+    stream.writeInt(encodedLedgerUpgrade.discriminant!.value);
     switch (encodedLedgerUpgrade.discriminant) {
       case XdrLedgerUpgradeType.LEDGER_UPGRADE_VERSION:
-        XdrUint32.encode(stream, encodedLedgerUpgrade._newLedgerVersion);
+        XdrUint32.encode(stream, encodedLedgerUpgrade._newLedgerVersion!);
         break;
       case XdrLedgerUpgradeType.LEDGER_UPGRADE_BASE_FEE:
-        XdrUint32.encode(stream, encodedLedgerUpgrade._newBaseFee);
+        XdrUint32.encode(stream, encodedLedgerUpgrade._newBaseFee!);
         break;
       case XdrLedgerUpgradeType.LEDGER_UPGRADE_MAX_TX_SET_SIZE:
-        XdrUint32.encode(stream, encodedLedgerUpgrade._newMaxTxSetSize);
+        XdrUint32.encode(stream, encodedLedgerUpgrade._newMaxTxSetSize!);
         break;
       case XdrLedgerUpgradeType.LEDGER_UPGRADE_BASE_RESERVE:
-        XdrUint32.encode(stream, encodedLedgerUpgrade._newBaseReserve);
+        XdrUint32.encode(stream, encodedLedgerUpgrade._newBaseReserve!);
         break;
     }
   }
@@ -880,24 +875,24 @@ class XdrLedgerUpgrade {
 
 class XdrLedgerEntry {
   XdrLedgerEntry();
-  XdrUint32 _lastModifiedLedgerSeq;
-  XdrUint32 get lastModifiedLedgerSeq => this._lastModifiedLedgerSeq;
-  set lastModifiedLedgerSeq(XdrUint32 value) =>
+  XdrUint32? _lastModifiedLedgerSeq;
+  XdrUint32? get lastModifiedLedgerSeq => this._lastModifiedLedgerSeq;
+  set lastModifiedLedgerSeq(XdrUint32? value) =>
       this._lastModifiedLedgerSeq = value;
 
-  XdrLedgerEntryData _data;
-  XdrLedgerEntryData get data => this._data;
-  set data(XdrLedgerEntryData value) => this._data = value;
+  XdrLedgerEntryData? _data;
+  XdrLedgerEntryData? get data => this._data;
+  set data(XdrLedgerEntryData? value) => this._data = value;
 
-  XdrLedgerEntryExt _ext;
-  XdrLedgerEntryExt get ext => this._ext;
-  set ext(XdrLedgerEntryExt value) => this._ext = value;
+  XdrLedgerEntryExt? _ext;
+  XdrLedgerEntryExt? get ext => this._ext;
+  set ext(XdrLedgerEntryExt? value) => this._ext = value;
 
   static void encode(
       XdrDataOutputStream stream, XdrLedgerEntry encodedLedgerEntry) {
-    XdrUint32.encode(stream, encodedLedgerEntry.lastModifiedLedgerSeq);
-    XdrLedgerEntryData.encode(stream, encodedLedgerEntry.data);
-    XdrLedgerEntryExt.encode(stream, encodedLedgerEntry.ext);
+    XdrUint32.encode(stream, encodedLedgerEntry.lastModifiedLedgerSeq!);
+    XdrLedgerEntryData.encode(stream, encodedLedgerEntry.data!);
+    XdrLedgerEntryExt.encode(stream, encodedLedgerEntry.ext!);
   }
 
   static XdrLedgerEntry decode(XdrDataInputStream stream) {
@@ -911,50 +906,50 @@ class XdrLedgerEntry {
 
 class XdrLedgerEntryData {
   XdrLedgerEntryData();
-  XdrLedgerEntryType _type;
-  XdrLedgerEntryType get discriminant => this._type;
-  set discriminant(XdrLedgerEntryType value) => this._type = value;
+  XdrLedgerEntryType? _type;
+  XdrLedgerEntryType? get discriminant => this._type;
+  set discriminant(XdrLedgerEntryType? value) => this._type = value;
 
-  XdrAccountEntry _account;
-  XdrAccountEntry get account => this._account;
-  set account(XdrAccountEntry value) => this._account = value;
+  XdrAccountEntry? _account;
+  XdrAccountEntry? get account => this._account;
+  set account(XdrAccountEntry? value) => this._account = value;
 
-  XdrTrustLineEntry _trustLine;
-  XdrTrustLineEntry get trustLine => this._trustLine;
-  set trustLine(XdrTrustLineEntry value) => this._trustLine = value;
+  XdrTrustLineEntry? _trustLine;
+  XdrTrustLineEntry? get trustLine => this._trustLine;
+  set trustLine(XdrTrustLineEntry? value) => this._trustLine = value;
 
-  XdrOfferEntry _offer;
-  XdrOfferEntry get offer => this._offer;
-  set offer(XdrOfferEntry value) => this._offer = value;
+  XdrOfferEntry? _offer;
+  XdrOfferEntry? get offer => this._offer;
+  set offer(XdrOfferEntry? value) => this._offer = value;
 
-  XdrDataEntry _data;
-  XdrDataEntry get data => this._data;
-  set data(XdrDataEntry value) => this._data = value;
+  XdrDataEntry? _data;
+  XdrDataEntry? get data => this._data;
+  set data(XdrDataEntry? value) => this._data = value;
 
-  XdrClaimableBalanceEntry _claimableBalance;
-  XdrClaimableBalanceEntry get claimableBalance => this._claimableBalance;
-  set claimableBalance(XdrClaimableBalanceEntry value) =>
+  XdrClaimableBalanceEntry? _claimableBalance;
+  XdrClaimableBalanceEntry? get claimableBalance => this._claimableBalance;
+  set claimableBalance(XdrClaimableBalanceEntry? value) =>
       this._claimableBalance = value;
 
   static void encode(
       XdrDataOutputStream stream, XdrLedgerEntryData encodedLedgerEntryData) {
-    stream.writeInt(encodedLedgerEntryData.discriminant.value);
+    stream.writeInt(encodedLedgerEntryData.discriminant!.value);
     switch (encodedLedgerEntryData.discriminant) {
       case XdrLedgerEntryType.ACCOUNT:
-        XdrAccountEntry.encode(stream, encodedLedgerEntryData.account);
+        XdrAccountEntry.encode(stream, encodedLedgerEntryData.account!);
         break;
       case XdrLedgerEntryType.TRUSTLINE:
-        XdrTrustLineEntry.encode(stream, encodedLedgerEntryData.trustLine);
+        XdrTrustLineEntry.encode(stream, encodedLedgerEntryData.trustLine!);
         break;
       case XdrLedgerEntryType.OFFER:
-        XdrOfferEntry.encode(stream, encodedLedgerEntryData.offer);
+        XdrOfferEntry.encode(stream, encodedLedgerEntryData.offer!);
         break;
       case XdrLedgerEntryType.DATA:
-        XdrDataEntry.encode(stream, encodedLedgerEntryData.data);
+        XdrDataEntry.encode(stream, encodedLedgerEntryData.data!);
         break;
       case XdrLedgerEntryType.CLAIMABLE_BALANCE:
         XdrClaimableBalanceEntry.encode(
-            stream, encodedLedgerEntryData.claimableBalance);
+            stream, encodedLedgerEntryData.claimableBalance!);
         break;
     }
   }
@@ -983,13 +978,13 @@ class XdrLedgerEntryData {
 
 class XdrLedgerEntryExt {
   XdrLedgerEntryExt();
-  int _v;
-  int get discriminant => this._v;
-  set discriminant(int value) => this._v = value;
+  int? _v;
+  int? get discriminant => this._v;
+  set discriminant(int? value) => this._v = value;
 
   static void encode(
       XdrDataOutputStream stream, XdrLedgerEntryExt encodedLedgerEntryExt) {
-    stream.writeInt(encodedLedgerEntryExt.discriminant);
+    stream.writeInt(encodedLedgerEntryExt.discriminant!);
     switch (encodedLedgerEntryExt.discriminant) {
       case 0:
         break;
@@ -1010,22 +1005,22 @@ class XdrLedgerEntryExt {
 
 class XdrLedgerEntryV1 {
   XdrLedgerEntryV1();
-  XdrAccountID _sponsoringID;
-  XdrAccountID get sponsoringID => this._sponsoringID;
-  set sponsoringID(XdrAccountID value) => this._sponsoringID = value;
+  XdrAccountID? _sponsoringID;
+  XdrAccountID? get sponsoringID => this._sponsoringID;
+  set sponsoringID(XdrAccountID? value) => this._sponsoringID = value;
 
-  XdrLedgerEntryV1Ext _ext;
-  XdrLedgerEntryV1Ext get ext => this._ext;
-  set ext(XdrLedgerEntryV1Ext value) => this._ext = value;
+  XdrLedgerEntryV1Ext? _ext;
+  XdrLedgerEntryV1Ext? get ext => this._ext;
+  set ext(XdrLedgerEntryV1Ext? value) => this._ext = value;
 
   static void encode(XdrDataOutputStream stream, XdrLedgerEntryV1 encoded) {
     if (encoded.sponsoringID != null) {
       stream.writeInt(1);
-      XdrAccountID.encode(stream, encoded.sponsoringID);
+      XdrAccountID.encode(stream, encoded.sponsoringID!);
     } else {
       stream.writeInt(0);
     }
-    XdrLedgerEntryV1Ext.encode(stream, encoded.ext);
+    XdrLedgerEntryV1Ext.encode(stream, encoded.ext!);
   }
 
   static XdrLedgerEntryV1 decode(XdrDataInputStream stream) {
@@ -1041,12 +1036,12 @@ class XdrLedgerEntryV1 {
 
 class XdrLedgerEntryV1Ext {
   XdrLedgerEntryV1Ext();
-  int _v;
-  int get discriminant => this._v;
-  set discriminant(int value) => this._v = value;
+  int? _v;
+  int? get discriminant => this._v;
+  set discriminant(int? value) => this._v = value;
 
   static void encode(XdrDataOutputStream stream, XdrLedgerEntryV1Ext encoded) {
-    stream.writeInt(encoded.discriminant);
+    stream.writeInt(encoded.discriminant!);
     switch (encoded.discriminant) {
       case 0:
         break;
@@ -1067,41 +1062,41 @@ class XdrLedgerEntryV1Ext {
 
 class XdrLedgerEntryChange {
   XdrLedgerEntryChange();
-  XdrLedgerEntryChangeType _type;
-  XdrLedgerEntryChangeType get discriminant => this._type;
-  set discriminant(XdrLedgerEntryChangeType value) => this._type = value;
+  XdrLedgerEntryChangeType? _type;
+  XdrLedgerEntryChangeType? get discriminant => this._type;
+  set discriminant(XdrLedgerEntryChangeType? value) => this._type = value;
 
-  XdrLedgerEntry _created;
-  XdrLedgerEntry get created => this._created;
-  set created(XdrLedgerEntry value) => this._created = value;
+  XdrLedgerEntry? _created;
+  XdrLedgerEntry? get created => this._created;
+  set created(XdrLedgerEntry? value) => this._created = value;
 
-  XdrLedgerEntry _updated;
-  XdrLedgerEntry get updated => this._updated;
-  set updated(XdrLedgerEntry value) => this._updated = value;
+  XdrLedgerEntry? _updated;
+  XdrLedgerEntry? get updated => this._updated;
+  set updated(XdrLedgerEntry? value) => this._updated = value;
 
-  XdrLedgerKey _removed;
-  XdrLedgerKey get removed => this._removed;
-  set removed(XdrLedgerKey value) => this._removed = value;
+  XdrLedgerKey? _removed;
+  XdrLedgerKey? get removed => this._removed;
+  set removed(XdrLedgerKey? value) => this._removed = value;
 
-  XdrLedgerEntry _state;
-  XdrLedgerEntry get state => this._state;
-  set state(XdrLedgerEntry value) => this._state = value;
+  XdrLedgerEntry? _state;
+  XdrLedgerEntry? get state => this._state;
+  set state(XdrLedgerEntry? value) => this._state = value;
 
   static void encode(XdrDataOutputStream stream,
       XdrLedgerEntryChange encodedLedgerEntryChange) {
-    stream.writeInt(encodedLedgerEntryChange.discriminant.value);
+    stream.writeInt(encodedLedgerEntryChange.discriminant!.value);
     switch (encodedLedgerEntryChange.discriminant) {
       case XdrLedgerEntryChangeType.LEDGER_ENTRY_CREATED:
-        XdrLedgerEntry.encode(stream, encodedLedgerEntryChange.created);
+        XdrLedgerEntry.encode(stream, encodedLedgerEntryChange.created!);
         break;
       case XdrLedgerEntryChangeType.LEDGER_ENTRY_UPDATED:
-        XdrLedgerEntry.encode(stream, encodedLedgerEntryChange.updated);
+        XdrLedgerEntry.encode(stream, encodedLedgerEntryChange.updated!);
         break;
       case XdrLedgerEntryChangeType.LEDGER_ENTRY_REMOVED:
-        XdrLedgerKey.encode(stream, encodedLedgerEntryChange.removed);
+        XdrLedgerKey.encode(stream, encodedLedgerEntryChange.removed!);
         break;
       case XdrLedgerEntryChangeType.LEDGER_ENTRY_STATE:
-        XdrLedgerEntry.encode(stream, encodedLedgerEntryChange.state);
+        XdrLedgerEntry.encode(stream, encodedLedgerEntryChange.state!);
         break;
     }
   }
@@ -1130,19 +1125,19 @@ class XdrLedgerEntryChange {
 }
 
 class XdrLedgerEntryChanges {
-  List<XdrLedgerEntryChange> _ledgerEntryChanges;
-  List<XdrLedgerEntryChange> get ledgerEntryChanges => this._ledgerEntryChanges;
-  set ledgerEntryChanges(List<XdrLedgerEntryChange> value) =>
+  List<XdrLedgerEntryChange>? _ledgerEntryChanges;
+  List<XdrLedgerEntryChange>? get ledgerEntryChanges => this._ledgerEntryChanges;
+  set ledgerEntryChanges(List<XdrLedgerEntryChange>? value) =>
       this._ledgerEntryChanges = value;
 
   static void encode(XdrDataOutputStream stream,
       XdrLedgerEntryChanges encodedLedgerEntryChanges) {
     int ledgerEntryChangesSize =
-        encodedLedgerEntryChanges.ledgerEntryChanges.length;
+        encodedLedgerEntryChanges.ledgerEntryChanges!.length;
     stream.writeInt(ledgerEntryChangesSize);
     for (int i = 0; i < ledgerEntryChangesSize; i++) {
       XdrLedgerEntryChange.encode(
-          stream, encodedLedgerEntryChanges.ledgerEntryChanges[i]);
+          stream, encodedLedgerEntryChanges.ledgerEntryChanges![i]);
     }
   }
 
@@ -1150,35 +1145,33 @@ class XdrLedgerEntryChanges {
     XdrLedgerEntryChanges decodedLedgerEntryChanges = XdrLedgerEntryChanges();
     int ledgerEntryChangesSize = stream.readInt();
     decodedLedgerEntryChanges.ledgerEntryChanges =
-        List<XdrLedgerEntryChange>(ledgerEntryChangesSize);
-    for (int i = 0; i < ledgerEntryChangesSize; i++) {
-      decodedLedgerEntryChanges.ledgerEntryChanges[i] =
-          XdrLedgerEntryChange.decode(stream);
-    }
+        List<XdrLedgerEntryChange>.generate(ledgerEntryChangesSize, (i){
+          return XdrLedgerEntryChange.decode(stream);
+        });
     return decodedLedgerEntryChanges;
   }
 }
 
 class XdrLedgerHeaderHistoryEntry {
   XdrLedgerHeaderHistoryEntry();
-  XdrHash _hash;
-  XdrHash get hash => this._hash;
-  set hash(XdrHash value) => this._hash = value;
+  XdrHash? _hash;
+  XdrHash? get hash => this._hash;
+  set hash(XdrHash? value) => this._hash = value;
 
-  XdrLedgerHeader _header;
-  XdrLedgerHeader get header => this._header;
-  set header(XdrLedgerHeader value) => this._header = value;
+  XdrLedgerHeader? _header;
+  XdrLedgerHeader? get header => this._header;
+  set header(XdrLedgerHeader? value) => this._header = value;
 
-  XdrLedgerHeaderHistoryEntryExt _ext;
-  XdrLedgerHeaderHistoryEntryExt get ext => this._ext;
-  set ext(XdrLedgerHeaderHistoryEntryExt value) => this._ext = value;
+  XdrLedgerHeaderHistoryEntryExt? _ext;
+  XdrLedgerHeaderHistoryEntryExt? get ext => this._ext;
+  set ext(XdrLedgerHeaderHistoryEntryExt? value) => this._ext = value;
 
   static void encode(XdrDataOutputStream stream,
       XdrLedgerHeaderHistoryEntry encodedLedgerHeaderHistoryEntry) {
-    XdrHash.encode(stream, encodedLedgerHeaderHistoryEntry.hash);
-    XdrLedgerHeader.encode(stream, encodedLedgerHeaderHistoryEntry.header);
+    XdrHash.encode(stream, encodedLedgerHeaderHistoryEntry.hash!);
+    XdrLedgerHeader.encode(stream, encodedLedgerHeaderHistoryEntry.header!);
     XdrLedgerHeaderHistoryEntryExt.encode(
-        stream, encodedLedgerHeaderHistoryEntry.ext);
+        stream, encodedLedgerHeaderHistoryEntry.ext!);
   }
 
   static XdrLedgerHeaderHistoryEntry decode(XdrDataInputStream stream) {
@@ -1194,13 +1187,13 @@ class XdrLedgerHeaderHistoryEntry {
 
 class XdrLedgerHeaderHistoryEntryExt {
   XdrLedgerHeaderHistoryEntryExt();
-  int _v;
-  int get discriminant => this._v;
-  set discriminant(int value) => this._v = value;
+  int? _v;
+  int? get discriminant => this._v;
+  set discriminant(int? value) => this._v = value;
 
   static void encode(XdrDataOutputStream stream,
       XdrLedgerHeaderHistoryEntryExt encodedLedgerHeaderHistoryEntryExt) {
-    stream.writeInt(encodedLedgerHeaderHistoryEntryExt.discriminant);
+    stream.writeInt(encodedLedgerHeaderHistoryEntryExt.discriminant!);
     switch (encodedLedgerHeaderHistoryEntryExt.discriminant) {
       case 0:
         break;

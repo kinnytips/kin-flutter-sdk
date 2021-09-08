@@ -9,25 +9,25 @@ import '../util.dart';
 /// Represents transaction response received from the horizon server
 /// See: <a href="https://developers.stellar.org/api/resources/transactions/" target="_blank">Transaction documentation</a>.
 class TransactionResponse extends Response {
-  String hash;
-  int ledger;
-  String createdAt;
-  String sourceAccount;
-  String feeAccount;
-  bool successful;
-  String pagingToken;
-  int sourceAccountSequence;
-  int maxFee;
-  int feeCharged;
-  int operationCount;
-  String envelopeXdr;
-  String resultXdr;
-  String resultMetaXdr;
-  Memo _memo;
+  String? hash;
+  int? ledger;
+  String? createdAt;
+  String? sourceAccount;
+  String? feeAccount;
+  bool? successful;
+  String? pagingToken;
+  int? sourceAccountSequence;
+  int? maxFee;
+  int? feeCharged;
+  int? operationCount;
+  String? envelopeXdr;
+  String? resultXdr;
+  String? resultMetaXdr;
+  Memo? _memo;
   List<String> signatures;
-  FeeBumpTransactionResponse feeBumpTransaction;
-  InnerTransaction innerTransaction;
-  TransactionResponseLinks links;
+  FeeBumpTransactionResponse? feeBumpTransaction;
+  InnerTransaction? innerTransaction;
+  TransactionResponseLinks? links;
 
   TransactionResponse(
       this.hash,
@@ -50,13 +50,13 @@ class TransactionResponse extends Response {
       this.innerTransaction,
       this.links);
 
-  Memo get memo => _memo;
-  set memo(Memo memo) {
-    memo = checkNotNull(memo, "memo cannot be null");
+  Memo? get memo => _memo;
+
+  set memo(Memo? memo) {
     if (this._memo != null) {
       throw new Exception("Memo has been already set.");
     }
-    this._memo = memo;
+    this._memo = checkNotNull(memo, "memo cannot be null");
   }
 
   factory TransactionResponse.fromJson(Map<String, dynamic> json) {
@@ -64,20 +64,20 @@ class TransactionResponse extends Response {
     List<String> signaturesList = new List<String>.from(signaturesFromJson);
 
     return new TransactionResponse(
-        json['hash'] as String,
+        json['hash'] as String?,
         convertInt(json['ledger']),
-        json['created_at'] as String,
-        json['source_account'] as String,
-        json['fee_account'] as String,
-        json['successful'] as bool,
-        json['paging_token'] as String,
+        json['created_at'] as String?,
+        json['source_account'] as String?,
+        json['fee_account'] as String?,
+        json['successful'] as bool?,
+        json['paging_token'] as String?,
         convertInt(json['source_account_sequence']),
         convertInt(json['max_fee']),
         convertInt(json['fee_charged']),
         convertInt(json['operation_count']),
-        json['envelope_xdr'] as String,
-        json['result_xdr'] as String,
-        json['result_meta_xdr'] as String,
+        json['envelope_xdr'] as String?,
+        json['result_xdr'] as String?,
+        json['result_meta_xdr'] as String?,
         Memo.fromJson(json),
         signaturesList,
         json['fee_bump_transaction'] == null
@@ -99,7 +99,7 @@ class TransactionResponse extends Response {
 /// wrapped by a fee bump transaction. The object has two fields: the hash of the fee bump transaction and the
 /// signatures present in the fee bump transaction envelope.
 class FeeBumpTransactionResponse {
-  String hash;
+  String? hash;
   List<String> signatures;
 
   /// Constructor creates a FeeBumpTransaction object from [hash] and [signatures].
@@ -109,7 +109,7 @@ class FeeBumpTransactionResponse {
     var signaturesFromJson = json['signatures'];
     List<String> signaturesList = new List<String>.from(signaturesFromJson);
     return new FeeBumpTransactionResponse(
-        json['hash'] as String, signaturesList);
+        json['hash'] as String?, signaturesList);
   }
 }
 
@@ -118,9 +118,9 @@ class FeeBumpTransactionResponse {
 /// fee bump transaction, the max fee set in the inner transaction, and the signatures present in the inner
 /// transaction envelope.
 class InnerTransaction {
-  String hash;
+  String? hash;
   List<String> signatures;
-  int maxFee;
+  int? maxFee;
 
   /// Constructor creates a InnerTransaction object from [hash], [signatures] and [maxFee].
   InnerTransaction(this.hash, this.signatures, this.maxFee);
@@ -129,19 +129,19 @@ class InnerTransaction {
     var signaturesFromJson = json['signatures'];
     List<String> signaturesList = new List<String>.from(signaturesFromJson);
     return new InnerTransaction(
-        json['hash'] as String, signaturesList, convertInt(json['max_fee']));
+        json['hash'] as String?, signaturesList, convertInt(json['max_fee']));
   }
 }
 
 /// Links connected to a transaction response.
 class TransactionResponseLinks {
-  Link account;
-  Link effects;
-  Link ledger;
-  Link operations;
-  Link precedes;
-  Link self;
-  Link succeeds;
+  Link? account;
+  Link? effects;
+  Link? ledger;
+  Link? operations;
+  Link? precedes;
+  Link? self;
+  Link? succeeds;
 
   TransactionResponseLinks(this.account, this.effects, this.ledger,
       this.operations, this.precedes, this.self, this.succeeds);

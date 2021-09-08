@@ -2,7 +2,7 @@
 //  Generated code. Do not modify.
 //  source: transaction/v4/transaction_service.proto
 //
-// @dart = 2.7
+
 // ignore_for_file: annotate_overrides,camel_case_types,unnecessary_const,non_constant_identifier_names,library_prefixes,unused_import,unused_shown_name,return_of_invalid_type,unnecessary_this,prefer_final_fields
 
 import 'dart:async' as $async;
@@ -66,57 +66,57 @@ class TransactionClient extends $grpc.Client {
               $0.GetTransactionResponse.fromBuffer(value));
 
   TransactionClient($grpc.ClientChannel channel,
-      {$grpc.CallOptions options,
-      $core.Iterable<$grpc.ClientInterceptor> interceptors})
+      {$grpc.CallOptions? options,
+      $core.Iterable<$grpc.ClientInterceptor>? interceptors})
       : super(channel, options: options, interceptors: interceptors);
 
   $grpc.ResponseFuture<$0.GetServiceConfigResponse> getServiceConfig(
       $0.GetServiceConfigRequest request,
-      {$grpc.CallOptions options}) {
+      {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$getServiceConfig, request, options: options);
   }
 
   $grpc.ResponseFuture<$0.GetMinimumKinVersionResponse> getMinimumKinVersion(
       $0.GetMinimumKinVersionRequest request,
-      {$grpc.CallOptions options}) {
+      {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$getMinimumKinVersion, request, options: options);
   }
 
   $grpc.ResponseFuture<$0.GetRecentBlockhashResponse> getRecentBlockhash(
       $0.GetRecentBlockhashRequest request,
-      {$grpc.CallOptions options}) {
+      {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$getRecentBlockhash, request, options: options);
   }
 
   $grpc.ResponseFuture<$0.GetMinimumBalanceForRentExemptionResponse>
       getMinimumBalanceForRentExemption(
           $0.GetMinimumBalanceForRentExemptionRequest request,
-          {$grpc.CallOptions options}) {
+          {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$getMinimumBalanceForRentExemption, request,
         options: options);
   }
 
   $grpc.ResponseFuture<$0.GetHistoryResponse> getHistory(
       $0.GetHistoryRequest request,
-      {$grpc.CallOptions options}) {
+      {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$getHistory, request, options: options);
   }
 
   $grpc.ResponseFuture<$0.SignTransactionResponse> signTransaction(
       $0.SignTransactionRequest request,
-      {$grpc.CallOptions options}) {
+      {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$signTransaction, request, options: options);
   }
 
   $grpc.ResponseFuture<$0.SubmitTransactionResponse> submitTransaction(
       $0.SubmitTransactionRequest request,
-      {$grpc.CallOptions options}) {
+      {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$submitTransaction, request, options: options);
   }
 
   $grpc.ResponseFuture<$0.GetTransactionResponse> getTransaction(
       $0.GetTransactionRequest request,
-      {$grpc.CallOptions options}) {
+      {$grpc.CallOptions? options}) {
     return $createUnaryCall(_$getTransaction, request, options: options);
   }
 }

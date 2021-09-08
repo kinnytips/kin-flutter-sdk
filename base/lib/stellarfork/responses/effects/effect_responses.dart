@@ -43,17 +43,17 @@ import 'misc_effects_responses.dart';
 ///</ul>
 ///
 abstract class EffectResponse extends Response {
-  String id;
-  String account;
-  String type;
-  String createdAt;
-  String pagingToken;
-  EffectResponseLinks links;
+  String? id;
+  String? account;
+  String? type;
+  String? createdAt;
+  String? pagingToken;
+  EffectResponseLinks? links;
 
   EffectResponse();
 
   factory EffectResponse.fromJson(Map<String, dynamic> json) {
-    int type = convertInt(json["type_i"]);
+    int? type = convertInt(json["type_i"]);
     switch (type) {
       // Account effects
       case 0:
@@ -120,9 +120,9 @@ abstract class EffectResponse extends Response {
 
 ///Represents effect links.
 class EffectResponseLinks {
-  Link operation;
-  Link precedes;
-  Link succeeds;
+  Link? operation;
+  Link? precedes;
+  Link? succeeds;
 
   EffectResponseLinks(this.operation, this.precedes, this.succeeds);
 

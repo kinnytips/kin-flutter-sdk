@@ -2,10 +2,8 @@
 // Use of this source code is governed by a license that can be
 // found in the LICENSE file.
 
-import "package:eventsource/eventsource.dart";
 import 'package:http/http.dart' as http;
 import 'dart:async';
-import 'dart:convert';
 import '../assets.dart';
 import 'request_builder.dart';
 import '../responses/response.dart';
@@ -21,11 +19,11 @@ class OrderBookRequestBuilder extends RequestBuilder {
   /// Sets the asset being sold (base asset).
   /// See: <a href="https://developers.stellar.org/api/aggregations/order-books/" target="_blank">Order books</a>
   OrderBookRequestBuilder sellingAsset(Asset asset) {
-    queryParameters.addAll({"selling_asset_type": asset.type});
+    queryParameters!.addAll({"selling_asset_type": asset.type});
     if (asset is AssetTypeCreditAlphaNum) {
       AssetTypeCreditAlphaNum creditAlphaNumAsset = asset;
-      queryParameters.addAll({"selling_asset_code": creditAlphaNumAsset.code});
-      queryParameters
+      queryParameters!.addAll({"selling_asset_code": creditAlphaNumAsset.code});
+      queryParameters!
           .addAll({"selling_asset_issuer": creditAlphaNumAsset.issuerId});
     }
     return this;
@@ -34,11 +32,11 @@ class OrderBookRequestBuilder extends RequestBuilder {
   /// Sets the asset being bought (counter asset).
   /// See: <a href="https://developers.stellar.org/api/aggregations/order-books/" target="_blank">Order books</a>
   OrderBookRequestBuilder buyingAsset(Asset asset) {
-    queryParameters.addAll({"buying_asset_type": asset.type});
+    queryParameters!.addAll({"buying_asset_type": asset.type});
     if (asset is AssetTypeCreditAlphaNum) {
       AssetTypeCreditAlphaNum creditAlphaNumAsset = asset;
-      queryParameters.addAll({"buying_asset_code": creditAlphaNumAsset.code});
-      queryParameters
+      queryParameters!.addAll({"buying_asset_code": creditAlphaNumAsset.code});
+      queryParameters!
           .addAll({"buying_asset_issuer": creditAlphaNumAsset.issuerId});
     }
     return this;
@@ -48,7 +46,7 @@ class OrderBookRequestBuilder extends RequestBuilder {
   /// This method is helpful for getting the next set of results.
   static Future<OrderBookResponse> requestExecute(
       http.Client httpClient, Uri uri) async {
-    TypeToken type = new TypeToken<OrderBookResponse>();
+    var type = new TypeToken<OrderBookResponse>();
     ResponseHandler<OrderBookResponse> responseHandler =
         new ResponseHandler<OrderBookResponse>(type);
 
@@ -65,24 +63,12 @@ class OrderBookRequestBuilder extends RequestBuilder {
   /// responses as ledgers close.
   /// See: <a href="https://developers.stellar.org/api/introduction/streaming/" target="_blank">Streaming</a>
   Stream<OrderBookResponse> stream() {
-    StreamController<OrderBookResponse> listener =
-        new StreamController.broadcast();
-    EventSource.connect(this.buildUri()).then((eventSource) {
-      eventSource.listen((Event event) {
-        if (event.data == "\"hello\"" || event.event == "close") {
-          return null;
-        }
-        OrderBookResponse orderBookResponse =
-            OrderBookResponse.fromJson(json.decode(event.data));
-        listener.add(orderBookResponse);
-      });
-    });
-    return listener.stream;
+    throw UnsupportedError("No Stellar Horizon API");
   }
 
   Future<OrderBookResponse> execute() {
     return OrderBookRequestBuilder.requestExecute(
-        this.httpClient, this.buildUri());
+        this.httpClient, this.buildUri()!);
   }
 
   @override

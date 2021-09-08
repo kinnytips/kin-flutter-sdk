@@ -49,9 +49,9 @@ class FileStorageWeb extends FileStorage {
 
   void _setKey(String key, String value) => window.localStorage[key] = value;
 
-  String _getKey(String key) => window.localStorage[key];
+  String? _getKey(String key) => window.localStorage[key];
 
-  String _removeKey(String key) => window.localStorage.remove(key);
+  String? _removeKey(String key) => window.localStorage.remove(key);
 }
 
 FileStorage createFileStorage() => FileStorageWeb();

@@ -75,7 +75,7 @@ extension RandomExtension on Random {
   /// Advances this random generator randomly. Return the number of advanced steps.
   ///
   /// - [maxSteps] the maximum number of steps to advance.
-  int advance([int maxSteps = 97, Random random]) {
+  int advance([int maxSteps = 97, Random? random]) {
     var steps = (random ?? this).nextInt(maxSteps) ;
     for (var i = 0; i < steps; ++i) {
       nextDouble();
@@ -98,7 +98,7 @@ extension RandomExtension on Random {
     return nextBool() ? -n : n;
   }
 
-  int nextBytes(Uint8List bytes, [int length]) {
+  int nextBytes(Uint8List bytes, [int? length]) {
     length ??= bytes.length;
 
     for (var i = 0; i < length; ++i) {

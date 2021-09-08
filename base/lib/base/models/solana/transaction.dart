@@ -2,21 +2,18 @@ import 'dart:typed_data';
 
 import 'package:kin_base/base/models/key.dart';
 import 'package:kin_base/base/models/solana/byte_utils.dart';
-// import 'package:kin_sdk/base/tools/byte_utils.dart';
-// import 'package:kin_sdk/base/tools/sort.dart';
 import 'package:kin_base/base/models/solana/fixed_byte_array.dart';
 import 'package:kin_base/base/models/solana/instruction.dart';
 import 'package:kin_base/base/models/solana/short_vec.dart';
 import 'package:kin_base/base/tools/byte_in_out_buffer.dart';
 import 'package:kin_base/base/tools/extensions.dart';
-import 'package:meta/meta.dart';
 
 import 'encoding.dart';
 
 class Signature {
   final FixedByteArray64 value;
 
-  Signature({FixedByteArray64 value}) : value = value ?? FixedByteArray64() ;
+  Signature({FixedByteArray64? value}) : value = value ?? FixedByteArray64() ;
 
   static const SIZE_OF = 64;
 }
@@ -35,24 +32,24 @@ class Hash {
 }
 
 class Header {
-  final int numSignatures;
-  final int numReadOnlySigned;
-  final int numReadOnly;
+  final int? numSignatures;
+  final int? numReadOnlySigned;
+  final int? numReadOnly;
 
   Header({this.numSignatures, this.numReadOnlySigned, this.numReadOnly});
 }
 
 class Message {
   final Header header;
-  final List<PublicKey> accounts;
+  final List<PublicKey?> accounts;
   final List<CompiledInstruction> instructions;
   final Hash recentBlockhash;
 
   Message({
-    @required this.header,
-    @required this.accounts,
-    @required this.instructions,
-    @required this.recentBlockhash,
+    required this.header,
+    required this.accounts,
+    required this.instructions,
+    required this.recentBlockhash,
   });
 
   factory Message.unmarshal(Uint8List bytesValue){
@@ -134,10 +131,10 @@ class Message {
 
 class Transaction {
   final Message message;
-  final List<Signature> signatures;
-  final int numRequiredSignatures;
+  final List<Signature?> signatures;
+  final int? numRequiredSignatures;
 
-  Transaction({@required this.message, this.signatures = const []})
+  Transaction({required this.message, this.signatures = const []})
       : numRequiredSignatures = message.header.numSignatures;
 
   factory Transaction.unmarshal(Uint8List bytes) {
@@ -154,7 +151,7 @@ class Transaction {
     var output = ByteOutputBuffer(32);
 
     // Signatures
-    ShortVec.encodeShortVecOf<Signature>(output, signatures, (s) => s.marshal());
+    ShortVec.encodeShortVecOf<Signature?>(output, signatures, (s) => s!.marshal());
 
     // Message
     output.writeAll(message.marshal());
@@ -163,8 +160,8 @@ class Transaction {
   }
 
   Transaction copyWith({
-    Message message,
-    List<Signature> signatures,
+    Message? message,
+    List<Signature?>? signatures,
   }) =>
       Transaction(
         message: message ?? this.message,
@@ -172,7 +169,7 @@ class Transaction {
       );
 
   static Transaction newTransaction(
-      PublicKey payer, List<Instruction> instructions) {
+      PublicKey payer, List<Instruction?> instructions) {
     final accounts = [
       AccountMeta(
         publicKey: payer,
@@ -184,8 +181,8 @@ class Transaction {
 
     // Extract all of the unique accounts from the instructions.
     instructions.forEach((element) {
-      accounts.add(AccountMeta(publicKey: element.program, isProgram: true));
-      accounts.addAll(element.accounts);
+      accounts.add(AccountMeta(publicKey: element!.program, isProgram: true));
+      accounts.addAll(element.accounts!);
     });
 
     // Sort the account meta's based on:
@@ -210,9 +207,9 @@ class Transaction {
 
     final messageInstructions = instructions.map((e) {
       return CompiledInstruction(
-        programIndex: _indexOf(accountPublicKeys, e.program),
+        programIndex: _indexOf(accountPublicKeys, e!.program),
         data: e.data,
-        accounts: Uint8List.fromList(e.accounts.map((e2) => _indexOf(accountPublicKeys, e2.publicKey)).toList()),
+        accounts: Uint8List.fromList(e.accounts!.map((e2) => _indexOf(accountPublicKeys, e2.publicKey)).toList()),
       );
     }).toList();
 
@@ -227,10 +224,10 @@ class Transaction {
     return Transaction(message: message);
   }
 
-  static int _indexOf(List<PublicKey> slice, PublicKey item) {
+  static int _indexOf(List<PublicKey?> slice, PublicKey item) {
     for (var i = 0; i < slice.length; ++i) {
-      var key = slice[i];
-      if (key.value.equalsContent(item.value)) {
+      var key = slice[i]!;
+      if (key.value!.equalsContent(item.value)) {
         return i;
       }
     }
@@ -238,19 +235,19 @@ class Transaction {
     return -1;
   }
 
-  Transaction copyAndSetRecentBlockhash(Hash recentBlockhash) {
+  Transaction copyAndSetRecentBlockhash(Hash? recentBlockhash) {
     return copyWith(
         message: message.copyWith(recentBlockhash: recentBlockhash));
   }
 
   Transaction copyAndSign(List<PrivateKey> signers) {
-    if (signers.length > numRequiredSignatures) {
+    if (signers.length > numRequiredSignatures!) {
       throw Exception("IllegalArgumentException: too many signers (${signers.length} > $numRequiredSignatures)");
     }
 
     final messageBytes = message.marshal();
 
-    final List newSignatures = List.filled(numRequiredSignatures, null);
+    final List newSignatures = List.filled(numRequiredSignatures!, null);
     newSignatures.asMap().forEach((index, signature) {
       newSignatures[index] = signature;
     });
@@ -260,7 +257,7 @@ class Transaction {
       final index = _indexOf(message.accounts, pubKey);
       if (index < 0) {
         throw Exception("IllegalArgumentException: "
-            "signing account ${pubKey.value.toHexString()} "
+            "signing account ${pubKey.value!.toHexString()} "
             "is not in the account list");
       }
       newSignatures[index] = Signature(
@@ -284,7 +281,7 @@ extension on List<AccountMeta> {
     for (var element in this) {
       for (int i = 0; i < filtered.length; i++) {
         final accountMeta = filtered[i];
-        if (element.publicKey.value
+        if (element.publicKey.value!
             .equalsContent(accountMeta.publicKey.value)) {
           // Promote the existing account to writable if applicable
           if (element.isSigner)

@@ -2,7 +2,7 @@
 //  Generated code. Do not modify.
 //  source: common/v4/model.proto
 //
-// @dart = 2.7
+
 // ignore_for_file: annotate_overrides,camel_case_types,unnecessary_const,non_constant_identifier_names,library_prefixes,unused_import,unused_shown_name,return_of_invalid_type,unnecessary_this,prefer_final_fields
 
 // ignore_for_file: UNDEFINED_SHOWN_NAME
@@ -23,7 +23,7 @@ class Commitment extends $pb.ProtobufEnum {
   ];
 
   static final $core.Map<$core.int, Commitment> _byValue = $pb.ProtobufEnum.initByValue(values);
-  static Commitment valueOf($core.int value) => _byValue[value];
+  static Commitment? valueOf($core.int value) => _byValue[value];
 
   const Commitment._($core.int v, $core.String n) : super(v, n);
 }
@@ -46,7 +46,7 @@ class TransactionError_Reason extends $pb.ProtobufEnum {
   ];
 
   static final $core.Map<$core.int, TransactionError_Reason> _byValue = $pb.ProtobufEnum.initByValue(values);
-  static TransactionError_Reason valueOf($core.int value) => _byValue[value];
+  static TransactionError_Reason? valueOf($core.int value) => _byValue[value];
 
   const TransactionError_Reason._($core.int v, $core.String n) : super(v, n);
 }

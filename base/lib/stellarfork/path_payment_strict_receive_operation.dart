@@ -6,7 +6,6 @@ import 'muxed_account.dart';
 
 import 'operation.dart';
 import 'assets.dart';
-import 'key_pair.dart';
 import 'util.dart';
 import 'xdr/xdr_asset.dart';
 import 'xdr/xdr_operation.dart';
@@ -21,22 +20,17 @@ class PathPaymentStrictReceiveOperation extends Operation {
   MuxedAccount _destination;
   Asset _destAsset;
   String _destAmount;
-  List<Asset> _path;
+  late List<Asset> _path;
 
   PathPaymentStrictReceiveOperation(
-      Asset sendAsset,
-      String sendMax,
-      MuxedAccount destination,
-      Asset destAsset,
-      String destAmount,
-      List<Asset> path) {
-    this._sendAsset = checkNotNull(sendAsset, "sendAsset cannot be null");
-    this._sendMax = checkNotNull(sendMax, "sendMax cannot be null");
-    this._destination = checkNotNull(destination, "destination cannot be null");
-    this._destAsset = checkNotNull(destAsset, "destAsset cannot be null");
-    this._destAmount = checkNotNull(destAmount, "destAmount cannot be null");
+      this._sendAsset,
+      this._sendMax,
+      this._destination,
+      this._destAsset,
+      this._destAmount,
+      List<Asset>? path) {
     if (path == null) {
-      this._path = List<Asset>(0);
+      this._path = <Asset>[];
     } else {
       checkArgument(
           path.length <= 5, "The maximum number of assets in the path is 5");
@@ -60,7 +54,7 @@ class PathPaymentStrictReceiveOperation extends Operation {
   String get destAmount => _destAmount;
 
   /// The assets (other than send asset and destination asset) involved in the offers the path takes. For example, if you can only find a path from USD to EUR through XLM and BTC, the path would be USD -&raquo; XLM -&raquo; BTC -&raquo; EUR and the path would contain XLM and BTC.
-  List<Asset> get path => _path;
+  List<Asset?> get path => _path;
 
   @override
   XdrOperationBody toOperationBody() {
@@ -69,22 +63,20 @@ class PathPaymentStrictReceiveOperation extends Operation {
     // sendAsset
     op.sendAsset = sendAsset.toXdr();
     // sendMax
-    XdrInt64 sendMax = XdrInt64();
-    sendMax.int64 = Operation.toXdrAmount(this.sendMax);
+    XdrInt64 sendMax = XdrInt64(Operation.toXdrAmount(this.sendMax));
     op.sendMax = sendMax;
     // destination
     op.destination = this._destination.toXdr();
     // destAsset
     op.destAsset = destAsset.toXdr();
     // destAmount
-    XdrInt64 destAmount = XdrInt64();
-    destAmount.int64 = Operation.toXdrAmount(this.destAmount);
+    XdrInt64 destAmount = XdrInt64(Operation.toXdrAmount(this.destAmount));
     op.destAmount = destAmount;
     // path
-    List<XdrAsset> path = List<XdrAsset>(this.path.length);
-    for (int i = 0; i < this.path.length; i++) {
-      path[i] = this.path[i].toXdr();
-    }
+
+    var path = List<XdrAsset>.generate(this.path.length, (i) {
+      return this.path[i]!.toXdr();
+    });
     op.path = path;
 
     XdrOperationBody body = XdrOperationBody();
@@ -96,16 +88,17 @@ class PathPaymentStrictReceiveOperation extends Operation {
   /// Builds PathPaymentStrictReceiveOperation operation.
   static PathPaymentStrictReceiveOperationBuilder builder(
       XdrPathPaymentStrictReceiveOp op) {
-    List<Asset> path = List<Asset>(op.path.length);
-    for (int i = 0; i < op.path.length; i++) {
-      path[i] = Asset.fromXdr(op.path[i]);
-    }
+
+    var path = List<Asset>.generate(op.path!.length, (i) {
+      return Asset.fromXdr(op.path![i]);
+    });
+
     return PathPaymentStrictReceiveOperationBuilder.forMuxedDestinationAccount(
-            Asset.fromXdr(op.sendAsset),
-            Operation.fromXdrAmount(op.sendMax.int64),
-            MuxedAccount.fromXdr(op.destination),
-            Asset.fromXdr(op.destAsset),
-            Operation.fromXdrAmount(op.destAmount.int64))
+            Asset.fromXdr(op.sendAsset!),
+            Operation.fromXdrAmount(op.sendMax!.int64),
+            MuxedAccount.fromXdr(op.destination!),
+            Asset.fromXdr(op.destAsset!),
+            Operation.fromXdrAmount(op.destAmount!.int64))
         .setPath(path);
   }
 }
@@ -116,37 +109,23 @@ class PathPaymentStrictReceiveOperationBuilder {
   MuxedAccount _destination;
   Asset _destAsset;
   String _destAmount;
-  List<Asset> _path;
-  MuxedAccount _mSourceAccount;
+  List<Asset>? _path;
+  MuxedAccount? _mSourceAccount;
 
   /// Creates a PathPaymentStrictReceiveOperation builder.
-  PathPaymentStrictReceiveOperationBuilder(Asset sendAsset, String sendMax,
-      String destination, Asset destAsset, String destAmount) {
-    this._sendAsset = checkNotNull(sendAsset, "sendAsset cannot be null");
-    this._sendMax = checkNotNull(sendMax, "sendMax cannot be null");
-    checkNotNull(destination, "destination cannot be null");
-    this._destination = MuxedAccount(destination, null);
-    this._destAsset = checkNotNull(destAsset, "destAsset cannot be null");
-    this._destAmount = checkNotNull(destAmount, "destAmount cannot be null");
-  }
+  PathPaymentStrictReceiveOperationBuilder(this._sendAsset, this._sendMax,
+      String destination, this._destAsset, this._destAmount) : _destination = MuxedAccount(destination, null);
 
   /// Creates a PathPaymentStrictReceiveOperation builder for a MuxedAccount as a destination.
   PathPaymentStrictReceiveOperationBuilder.forMuxedDestinationAccount(
-      Asset sendAsset,
-      String sendMax,
-      MuxedAccount destination,
-      Asset destAsset,
-      String destAmount) {
-    this._sendAsset = checkNotNull(sendAsset, "sendAsset cannot be null");
-    this._sendMax = checkNotNull(sendMax, "sendMax cannot be null");
-    this._destination = checkNotNull(destination, "destination cannot be null");
-    this._destAsset = checkNotNull(destAsset, "destAsset cannot be null");
-    this._destAmount = checkNotNull(destAmount, "destAmount cannot be null");
-  }
+      this._sendAsset,
+      this._sendMax,
+      this._destination,
+      this._destAsset,
+      this._destAmount) ;
 
   /// Sets path for this operation
   PathPaymentStrictReceiveOperationBuilder setPath(List<Asset> path) {
-    checkNotNull(path, "path cannot be null");
     checkArgument(
         path.length <= 5, "The maximum number of assets in the path is 5");
     this._path = path;
@@ -156,7 +135,6 @@ class PathPaymentStrictReceiveOperationBuilder {
   /// Sets the source account for this operation.
   PathPaymentStrictReceiveOperationBuilder setSourceAccount(
       String sourceAccount) {
-    checkNotNull(sourceAccount, "sourceAccount cannot be null");
     _mSourceAccount = MuxedAccount(sourceAccount, null);
     return this;
   }
@@ -164,8 +142,7 @@ class PathPaymentStrictReceiveOperationBuilder {
   /// Sets the muxed source account for this operation.
   PathPaymentStrictReceiveOperationBuilder setMuxedSourceAccount(
       MuxedAccount sourceAccount) {
-    _mSourceAccount =
-        checkNotNull(sourceAccount, "sourceAccount cannot be null");
+    _mSourceAccount = sourceAccount;
     return this;
   }
 
@@ -175,7 +152,7 @@ class PathPaymentStrictReceiveOperationBuilder {
         PathPaymentStrictReceiveOperation(
             _sendAsset, _sendMax, _destination, _destAsset, _destAmount, _path);
     if (_mSourceAccount != null) {
-      operation.sourceAccount = _mSourceAccount;
+      operation.sourceAccount = _mSourceAccount!;
     }
     return operation;
   }

@@ -5,13 +5,13 @@ import 'package:kin_base/base/tools/extensions.dart';
 import 'package:kin_base/stellarfork/key_pair.dart';
 
 abstract class Key {
-  Uint8List value;
+  Uint8List? value;
 
   Key(this.value);
 
   PublicKey asPublicKey() {
     if (this is PrivateKey) {
-      return PublicKey.fromBytes(KeyPair.fromSecretSeedBytes(value).publicKey);
+      return PublicKey.fromBytes(KeyPair.fromSecretSeedBytes(value!).publicKey);
     } else {
       return this as PublicKey;
     }
@@ -22,17 +22,17 @@ abstract class Key {
       identical(this, other) ||
       other is Key &&
           runtimeType == other.runtimeType &&
-          value.equalsContent(other.value);
+          value!.equalsContent(other.value);
 
   @override
-  int get hashCode => value.computeHashCode();
+  int get hashCode => value!.computeHashCode();
 }
 
 class PublicKey extends Key {
   PublicKey(String publicKeyString)
       : super(KeyPair.fromAccountId(publicKeyString).publicKey);
 
-  PublicKey.fromBytes(Uint8List publicKeyBytes) : super(publicKeyBytes);
+  PublicKey.fromBytes(Uint8List? publicKeyBytes) : super(publicKeyBytes);
 
   String toString() {
     return "PublicKey(value=${stellarBase32Encode()}, b58=${base58Encode()})";
@@ -40,7 +40,7 @@ class PublicKey extends Key {
 
   String stellarBase32Encode() => KeyPair.fromPublicKey(value).accountId;
 
-  String base58Encode() => Base58().encode(value);
+  String base58Encode() => Base58().encode(value!);
 
   bool verify(Uint8List data, Uint8List value) {
     return KeyPair.fromPublicKey(this.value).verify(data, value);
@@ -61,17 +61,17 @@ class PrivateKey extends Key {
     return "PrivateKey(value=XXXXXXXX<Private>XXXXXXXX)";
   }
 
-  String stellarBase32Encode() => KeyPair.fromSecretSeedBytes(value).secretSeed;
+  String stellarBase32Encode() => KeyPair.fromSecretSeedBytes(value!).secretSeed;
 
-  String base58Encode() => Base58().encode(value);
+  String base58Encode() => Base58().encode(value!);
 
   Uint8List sign(Uint8List data) =>
-      KeyPair.fromSecretSeedBytes(value).sign(data);
+      KeyPair.fromSecretSeedBytes(value!).sign(data);
 
   static PrivateKey decode(String value) =>
-      PrivateKey.fromBytes(KeyPair.fromSecretSeed(value).privateKey);
+      PrivateKey.fromBytes(KeyPair.fromSecretSeed(value).privateKey!);
 
   static PrivateKey random() {
-    return PrivateKey.fromBytes(KeyPair.random().rawSecretSeed);
+    return PrivateKey.fromBytes(KeyPair.random().rawSecretSeed!);
   }
 }

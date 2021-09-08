@@ -2,14 +2,11 @@
 // Use of this source code is governed by a license that can be
 // found in the LICENSE file.
 
-import "package:eventsource/eventsource.dart";
 import 'package:http/http.dart' as http;
 import 'dart:async';
-import 'dart:convert';
 import 'request_builder.dart';
 import '../responses/response.dart';
 import '../responses/effects/effect_responses.dart';
-import '../util.dart';
 
 /// Builds requests connected to effects from horizon.
 class EffectsRequestBuilder extends RequestBuilder {
@@ -19,7 +16,6 @@ class EffectsRequestBuilder extends RequestBuilder {
   /// Effects request builder of a specific account given by [accountId].
   /// See: <a href="https://developers.stellar.org/api/resources/accounts/effects/" target="_blank">Effects for Account</a>
   EffectsRequestBuilder forAccount(String accountId) {
-    accountId = checkNotNull(accountId, "accountId cannot be null");
     this.setSegments(["accounts", accountId, "effects"]);
     return this;
   }
@@ -34,7 +30,6 @@ class EffectsRequestBuilder extends RequestBuilder {
   /// Effects request builder of a specific transaction given by [transactionId].
   /// See: <a href="https://developers.stellar.org/api/resources/transactions/effects/" target="_blank">Effect for Transaction</a>
   EffectsRequestBuilder forTransaction(String transactionId) {
-    transactionId = checkNotNull(transactionId, "transactionId cannot be null");
     this.setSegments(["transactions", transactionId, "effects"]);
     return this;
   }
@@ -50,7 +45,7 @@ class EffectsRequestBuilder extends RequestBuilder {
   /// This method is helpful for getting the next set of results.
   static Future<Page<EffectResponse>> requestExecute(
       http.Client httpClient, Uri uri) async {
-    TypeToken type = new TypeToken<Page<EffectResponse>>();
+    var type = new TypeToken<Page<EffectResponse>>();
     ResponseHandler<Page<EffectResponse>> responseHandler =
         new ResponseHandler<Page<EffectResponse>>(type);
 
@@ -67,25 +62,13 @@ class EffectsRequestBuilder extends RequestBuilder {
   /// responses as ledgers close.
   /// See: <a href="https://developers.stellar.org/api/introduction/streaming/" target="_blank">Streaming</a>
   Stream<EffectResponse> stream() {
-    StreamController<EffectResponse> listener =
-        new StreamController.broadcast();
-    EventSource.connect(this.buildUri()).then((eventSource) {
-      eventSource.listen((Event event) {
-        if (event.data == "\"hello\"" || event.event == "close") {
-          return null;
-        }
-        EffectResponse effectResponse =
-            EffectResponse.fromJson(json.decode(event.data));
-        listener.add(effectResponse);
-      });
-    });
-    return listener.stream;
+    throw UnsupportedError("No Stellar Horizon API");
   }
 
   /// Build and execute request.
   Future<Page<EffectResponse>> execute() {
     return EffectsRequestBuilder.requestExecute(
-        this.httpClient, this.buildUri());
+        this.httpClient, this.buildUri()!);
   }
 
   @override

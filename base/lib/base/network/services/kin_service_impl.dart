@@ -44,7 +44,7 @@ class KinServiceImpl extends KinService {
       this.logger);
 
   @override
-  Future<KinTransaction> buildAndSignTransaction(PrivateKey ownerKey, PublicKey sourceKey, int nonce, List<KinPaymentItem> paymentItems, KinMemo memo, QuarkAmount fee) {
+  Future<KinTransaction> buildAndSignTransaction(PrivateKey ownerKey, PublicKey sourceKey, int nonce, List<KinPaymentItem> paymentItems, KinMemo? memo, QuarkAmount fee) {
     // TODO: implement buildAndSignTransaction
     throw UnimplementedError();
   }
@@ -89,7 +89,7 @@ class KinServiceImpl extends KinService {
   }
 
   @override
-  Future<List<KinTransaction>> getTransactionPage(KinAccountId kinAccountId, PagingToken pagingToken, KinServiceOrder order) {
+  Future<List<KinTransaction>> getTransactionPage(KinAccountId kinAccountId, PagingToken? pagingToken, KinServiceOrder order) {
     // TODO: implement getTransactionPage
     throw UnimplementedError();
   }

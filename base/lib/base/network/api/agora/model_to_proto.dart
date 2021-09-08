@@ -34,7 +34,7 @@ extension LineItemToProto on LineItem {
   model_v3.Invoice_LineItem toProto() => model_v3.Invoice_LineItem(
       title: title,
       description: description,
-      amount: $fixnum.Int64(amount.toQuarks().value),
+      amount: $fixnum.Int64(amount.toQuarks().value!),
       sku: sku?.bytes);
 }
 

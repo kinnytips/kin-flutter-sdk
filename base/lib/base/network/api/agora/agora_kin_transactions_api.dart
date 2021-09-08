@@ -1,10 +1,6 @@
-import 'package:fixnum/fixnum.dart';
 import 'package:grpc/grpc.dart';
-import 'package:kin_base/base/models/invoices.dart';
 import 'package:kin_base/base/models/kin_account.dart';
 import 'package:kin_base/base/models/quark_amount.dart';
-import 'package:kin_base/base/models/solana/transaction.dart';
-import 'package:kin_base/base/models/stellar_base_type_conversions.dart';
 import 'package:kin_base/base/models/transaction_hash.dart';
 import 'package:kin_base/base/network/api/agora/grpc_api.dart';
 import 'package:kin_base/base/network/api/agora/model_to_proto.dart';
@@ -34,12 +30,12 @@ class AgoraKinTransactionsApi extends GrpcApi implements KinTransactionApi {
   @override
   Future<KinServiceResponse<List<KinTransaction>>> getTransactionHistory(
       KinAccountId accountId, {
-        PagingToken pagingToken,
+        PagingToken? pagingToken,
         KinServiceOrder order = KinServiceOrder.descending,
       }) async {
     var request = GetHistoryRequest(
         accountId: accountId.toProtoStellarAccountId(),
-        cursor: pagingToken.toProtoCursor());
+        cursor: pagingToken!.toProtoCursor());
 
     var history = await _transactionClient.getHistory(request);
 

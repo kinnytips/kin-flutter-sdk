@@ -27,7 +27,7 @@ class LineItem {
   final String title;
   final String description;
   final KinAmount amount;
-  final SKU sku;
+  final SKU? sku;
 
   LineItem(this.title, this.description, this.amount, this.sku) {
     if (title.isEmpty || title.length > 128)
@@ -36,7 +36,7 @@ class LineItem {
     if (description.length > 256)
       throw LineItemFormatException(
           "title too short. Must be > 1 and < 128 characters");
-    if ((sku?.bytes?.length ?? 0) > 128)
+    if ((sku?.bytes.length ?? 0) > 128)
       throw LineItemFormatException("SKU cannot exceed 128 bytes");
   }
 }
@@ -105,9 +105,9 @@ class Invoice {
   factory Invoice.parseProtoBuffer(Uint8List bytes) =>
       ModelInvoiceParser.parseProtoBuffer(bytes).toInvoice();
 
-  KinAmount _total;
+  KinAmount? _total;
 
-  KinAmount get total {
+  KinAmount? get total {
     if (_total == null) {
       _total = lineItems
           .map((e) => e.amount)

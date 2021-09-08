@@ -21,7 +21,7 @@ enum ResultCode {
 
 ResultCode parseResultCode(Uint8List resultXdrBytes) {
   var transactionResultCode =
-      XdrTransactionResult.decode(XdrDataInputStream(resultXdrBytes)).result.discriminant;
+      XdrTransactionResult.decode(XdrDataInputStream(resultXdrBytes)).result!.discriminant;
 
   if (transactionResultCode == XdrTransactionResultCode.txSUCCESS) {
     return ResultCode.success;

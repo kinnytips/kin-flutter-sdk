@@ -2,14 +2,11 @@
 // Use of this source code is governed by a license that can be
 // found in the LICENSE file.
 
-import "package:eventsource/eventsource.dart";
 import 'package:http/http.dart' as http;
 import 'dart:async';
-import 'dart:convert';
 import 'request_builder.dart';
 import '../responses/response.dart';
 import '../responses/operations/operation_responses.dart';
-import '../util.dart';
 
 /// Builds requests connected to payments.
 class PaymentsRequestBuilder extends RequestBuilder {
@@ -19,7 +16,6 @@ class PaymentsRequestBuilder extends RequestBuilder {
   /// Returns successful payments for a given account identified by [accountId].
   /// See: <a href="https://developers.stellar.org/api/resources/accounts/payments/" target="_blank">Payments for Account</a>
   PaymentsRequestBuilder forAccount(String accountId) {
-    accountId = checkNotNull(accountId, "accountId cannot be null");
     this.setSegments(["accounts", accountId, "payments"]);
     return this;
   }
@@ -34,7 +30,6 @@ class PaymentsRequestBuilder extends RequestBuilder {
   /// Returns the payments of a given transaction by [transactionId].
   /// See: <a href="https://www.stellar.org/developers/horizon/reference/endpoints/payments-for-transaction.html" target="_blank">Payments for Transaction</a>
   PaymentsRequestBuilder forTransaction(String transactionId) {
-    transactionId = checkNotNull(transactionId, "transactionId cannot be null");
     this.setSegments(["transactions", transactionId, "payments"]);
     return this;
   }
@@ -45,7 +40,7 @@ class PaymentsRequestBuilder extends RequestBuilder {
   /// This method is helpful for getting the next set of results.
   static Future<Page<OperationResponse>> requestExecute(
       http.Client httpClient, Uri uri) async {
-    TypeToken type = new TypeToken<Page<OperationResponse>>();
+    var type = new TypeToken<Page<OperationResponse>>();
     ResponseHandler<Page<OperationResponse>> responseHandler =
         new ResponseHandler<Page<OperationResponse>>(type);
 
@@ -62,25 +57,13 @@ class PaymentsRequestBuilder extends RequestBuilder {
   /// responses as ledgers close.
   /// See: <a href="https://developers.stellar.org/api/introduction/streaming/" target="_blank">Streaming</a>
   Stream<OperationResponse> stream() {
-    StreamController<OperationResponse> listener =
-        new StreamController.broadcast();
-    EventSource.connect(this.buildUri()).then((eventSource) {
-      eventSource.listen((Event event) {
-        if (event.data == "\"hello\"" || event.event == "close") {
-          return null;
-        }
-        OperationResponse payment =
-            OperationResponse.fromJson(json.decode(event.data));
-        listener.add(payment);
-      });
-    });
-    return listener.stream;
+    throw UnsupportedError("No Stellar Horizon API");
   }
 
   ///Build and execute request.
   Future<Page<OperationResponse>> execute() {
     return PaymentsRequestBuilder.requestExecute(
-        this.httpClient, this.buildUri());
+        this.httpClient, this.buildUri()!);
   }
 
   @override
