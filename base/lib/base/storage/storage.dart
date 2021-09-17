@@ -61,10 +61,6 @@ abstract class Storage {
   Future<KinAccount> updateAccountBalance(
       KinAccountId accountId, KinBalance balance);
 
-  Future<QuarkAmount> setMinFee(QuarkAmount minFee);
-
-  Future<QuarkAmount?> getMinFee();
-
   Future<bool> deleteAllStorage([KinAccountId? accountId]);
 
   Future<int> setMinApiVersion(int apiVersion);

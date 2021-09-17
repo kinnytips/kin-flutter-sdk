@@ -1,35 +1,42 @@
 import 'dart:async';
 
+import 'package:kin_base/base/models/appidx.dart';
 import 'package:kin_base/base/models/key.dart';
 import 'package:kin_base/base/models/kin_account.dart';
 import 'package:kin_base/base/models/kin_memo.dart';
 import 'package:kin_base/base/models/kin_payment_item.dart';
 import 'package:kin_base/base/models/quark_amount.dart';
+import 'package:kin_base/base/models/solana/instruction.dart';
 import 'package:kin_base/base/models/transaction_hash.dart';
 import 'package:kin_base/base/stellar/models/kin_transaction.dart';
 import 'package:kin_base/base/stellar/models/paging_token.dart';
 import 'package:kin_base/base/tools/observers.dart';
 
 abstract class KinService {
-    Future<KinAccount?> createAccount(KinAccountId accountId, PrivateKey signer) ;
+    Future<KinAccount?> createAccount(KinAccountId accountId, PrivateKey signer);
 
-    Future<KinAccount?> getAccount(KinAccountId accountId) ;
+    Future<KinAccount?> getAccount(KinAccountId accountId);
 
-    Future<List<PublicKey>> resolveTokenAccounts(KinAccountId accountId) ;
+    Future<List<PublicKey>> resolveTokenAccounts(KinAccountId accountId);
 
-    Future<List<KinTransaction>?> getLatestTransactions(KinAccountId kinAccountId) ;
+    Future<List<KinTokenAccountInfo>> mergeTokenAccounts(
+      KinAccountId accountId, 
+      PrivateKey signer, 
+      AppIdx appIdx,
+      [bool shouldCreateAssociatedAccount = true]
+    );
+
+    Future<List<KinTransaction>?> getLatestTransactions(KinAccountId kinAccountId);
 
     Future<List<KinTransaction>?> getTransactionPage(
         KinAccountId kinAccountId,
         PagingToken? pagingToken,
         KinServiceOrder order
-    ) ;
+    );
 
-    Future<KinTransaction?> getTransaction(TransactionHash transactionHash) ;
+    Future<KinTransaction?> getTransaction(TransactionHash transactionHash);
 
-    FutureOr<bool> canWhitelistTransactions() ;
-
-    Future<QuarkAmount> getMinFee() ;
+    FutureOr<bool> canWhitelistTransactions();
 
     Future<KinTransaction> buildAndSignTransaction(
         PrivateKey ownerKey,
@@ -37,25 +44,26 @@ abstract class KinService {
         int nonce,
         List<KinPaymentItem> paymentItems,
         KinMemo? memo,
-        QuarkAmount fee
-    ) ;
+        List<Instruction> createAccountInstructions,
+        List<PrivateKey> signers
+    );
 
-    Future<KinTransaction?> submitTransaction(KinTransaction transaction) ;
+    Future<KinTransaction?> submitTransaction(KinTransaction transaction);
 
     Future<KinTransaction> buildSignAndSubmitTransaction(
         Future<KinTransaction> Function() buildAndSignTransaction
-    ) ;
+    );
 
-    Observer<KinAccount> streamAccount(KinAccountId kinAccountId) ;
+    Observer<KinAccount> streamAccount(KinAccountId kinAccountId);
 
-    Observer<KinTransaction> streamNewTransactions(KinAccountId kinAccountId) ;
+    Observer<KinTransaction> streamNewTransactions(KinAccountId kinAccountId);
 
-    void invalidateBlockhashCache() ;
+    void invalidateBlockhashCache();
 }
 
 enum KinServiceOrder { ascending, descending }
 
-typedef KinServiceResponseCallback<T> = void Function(KinServiceResponse<T> response) ;
+typedef KinServiceResponseCallback<T> = void Function(KinServiceResponse<T> response);
 
 class KinServiceResponse<P> {
     final KinServiceResponseType type;

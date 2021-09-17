@@ -1,11 +1,13 @@
 
 import 'dart:async';
 
+import 'package:kin_base/base/models/appidx.dart';
 import 'package:kin_base/base/models/key.dart';
 import 'package:kin_base/base/models/kin_account.dart';
 import 'package:kin_base/base/models/kin_memo.dart';
 import 'package:kin_base/base/models/kin_payment_item.dart';
 import 'package:kin_base/base/models/quark_amount.dart';
+import 'package:kin_base/base/models/solana/instruction.dart';
 import 'package:kin_base/base/models/solana/programs.dart';
 import 'package:kin_base/base/models/solana/transaction.dart';
 import 'package:kin_base/base/models/stellar_base_type_conversions.dart';
@@ -135,8 +137,8 @@ class KinServiceImplV4 extends KinService {
   }
 
   @override
-  Future<KinTransaction> buildAndSignTransaction(PrivateKey ownerKey, PublicKey sourceKey, int nonce, List<KinPaymentItem> paymentItems, KinMemo? memo, QuarkAmount fee) {
-    log!.log("buildAndSignTransaction: ownerKey: $ownerKey ; sourceKey: $sourceKey ; nonce: $nonce ; paymentItems: $paymentItems ; memo: $memo ; fee:$fee");
+  Future<KinTransaction> buildAndSignTransaction(PrivateKey ownerKey, PublicKey sourceKey, int nonce, List<KinPaymentItem> paymentItems, KinMemo? memo, List<Instruction?> createAccountInstructions, List<PrivateKey?> additionalSigners) {
+    log!.log("buildAndSignTransaction: ownerKey: $ownerKey ; sourceKey: $sourceKey ; paymentItems: $paymentItems ; memo: $memo ;");
 
     return networkOperationsHandler.queueWork('buildAndSignTransaction', () async {
       ServiceConfig? serviceConfig ;
@@ -179,7 +181,7 @@ class KinServiceImplV4 extends KinService {
 
       var tx = Transaction.newTransaction(
         subsidizer,
-        [memoInstruction, ...(paymentInstructions.toList())].whereNotNull(),
+        [memoInstruction, ...(paymentInstructions.toList()), ...(createAccountInstructions.toList())].whereNotNull(),
       ).copyAndSetRecentBlockhash(recentBlockHash).copyAndSign([ownerKey]);
 
       var kinTransaction = SolanaKinTransaction(
@@ -317,12 +319,6 @@ class KinServiceImplV4 extends KinService {
   }
 
   @override
-  Future<QuarkAmount> getMinFee() {
-    // TODO: implement getMinFee
-    throw UnimplementedError();
-  }
-
-  @override
   Future<KinTransaction?> getTransaction(TransactionHash transactionHash) async {
     return networkOperationsHandler.queueWork('KinServiceImplV4.getTransaction', () async {
       var response = await transactionApi.getTransaction(transactionHash);
@@ -419,14 +415,12 @@ class KinServiceImplV4 extends KinService {
 
   @override
   Observer<KinAccount> streamAccount(KinAccountId kinAccountId) {
-    // TODO: implement streamAccount
-    throw UnimplementedError();
+    return streamingApi!.streamAccount(kinAccountId);
   }
 
   @override
   Observer<KinTransaction> streamNewTransactions(KinAccountId kinAccountId) {
-    // TODO: implement streamNewTransactions
-    throw UnimplementedError();
+    return streamingApi!.streamNewTransactions(kinAccountId);
   }
 
   @override
@@ -471,6 +465,12 @@ class KinServiceImplV4 extends KinService {
         throw UnexpectedServiceError(response.error);
       }
     });
+  }
+
+  @override
+  Future<List<KinTokenAccountInfo>> mergeTokenAccounts(KinAccountId accountId, PrivateKey signer, AppIdx appIdx, [bool shouldCreateAssociatedAccount = true]) {
+    // TODO: implement mergeTokenAccounts
+    throw UnimplementedError();
   }
 
 }

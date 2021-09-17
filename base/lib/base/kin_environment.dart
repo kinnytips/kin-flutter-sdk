@@ -27,9 +27,10 @@ class KinEnvironment {
   final Storage storage;
   final ExecutorServices executors;
   final NetworkOperationsHandler networkHandler;
+  final bool shouldAutoMergeTokenAccounts;
 
   KinEnvironment(this.networkEnvironment, this.logger, this.service,
-      this.storage, this.executors, this.networkHandler);
+      this.storage, this.executors, this.networkHandler, this.shouldAutoMergeTokenAccounts);
 
   Future<bool> importPrivateKey(PrivateKey privateKey, [ Callback<bool>? callback ]) async {
     var accountId = KinAccountId.fromPrivateKey(privateKey);
@@ -76,6 +77,7 @@ class KinEnvironmentAgora extends KinEnvironment {
   final InMemoryInvoiceRepositoryImpl invoiceRepository =
       InMemoryInvoiceRepositoryImpl();
   final AppInfoProvider appInfoProvider;
+  final bool shouldAutoMergeTokenAccounts;
 
   KinEnvironmentAgora(
       this.managedChannel,
@@ -85,9 +87,10 @@ class KinEnvironmentAgora extends KinEnvironment {
       Storage storage,
       ExecutorServices executors,
       NetworkOperationsHandler networkHandler,
+      this.shouldAutoMergeTokenAccounts,
       this.appInfoProvider)
       : super(networkEnvironment, logger, service, storage, executors,
-            networkHandler);
+            networkHandler, shouldAutoMergeTokenAccounts);
 
 
   factory KinEnvironmentAgora.build(NetworkEnvironment networkEnvironment, {
@@ -100,6 +103,7 @@ class KinEnvironmentAgora extends KinEnvironment {
     ExecutorServices? executors,
     NetworkOperationsHandler? networkHandler,
     AppInfoProvider? appInfoProvider,
+    bool? shouldAutoMergeTokenAccounts
 }) {
 
     logger ??= KinLoggerFactoryImpl(enableLogging) ;
@@ -139,7 +143,9 @@ class KinEnvironmentAgora extends KinEnvironment {
       storage = storageBuilder!(networkEnvironment: networkEnvironment) ;
     }
 
-    var agora = KinEnvironmentAgora(managedChannel, networkEnvironment, logger, service, storage, executors, networkHandler, appInfoProvider);
+    shouldAutoMergeTokenAccounts ??= true;
+
+    var agora = KinEnvironmentAgora(managedChannel, networkEnvironment, logger, service, storage, executors, networkHandler, shouldAutoMergeTokenAccounts, appInfoProvider);
 
     return agora ;
   }
