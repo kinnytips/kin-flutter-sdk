@@ -146,11 +146,6 @@ class KinFileStorage implements Storage {
   }
 
   @override
-  Future<QuarkAmount?> getMinFee() async {
-    return null;
-  }
-
-  @override
   String getOrCreateCID() {
     throw UnimplementedError();
   }
