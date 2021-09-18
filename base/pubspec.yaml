@@ -29,7 +29,9 @@ dependencies:
   toml: ^0.11.0
   path: ^1.8.0
   kin_base_storage:
-    path: ../base_storage
+    git:
+      url: https://kinny-ci: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@github.com/kinnytips/kin-flutter-sdk.git
+      path: base_storage
   collection: ^1.15.0-nullsafety.4
 
 dev_dependencies:
