@@ -73,7 +73,7 @@ class Kin {
     }
   }
 
-  Future<KinAccountId?> loadLocalAccount({bool createAccountIfEmpty = true}) async {
+  Future<KinAccountId?> loadLocalAccount({bool createAccountIfEmpty = false}) async {
     // Fetch  accounts and set the context:
     var ids = await this._environment.allAccountIds();
 
