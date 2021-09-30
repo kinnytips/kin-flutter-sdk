@@ -1,10 +1,17 @@
 import 'dart:async';
+import 'dart:collection';
+import 'dart:js';
 import 'dart:typed_data';
 
+import 'package:decimal/decimal.dart';
 import 'package:kin_base/KinBackupRestore.dart';
 import 'package:kin_base/base/models/app_info.dart';
 import 'package:kin_base/base/models/appidx.dart';
+import 'package:kin_base/base/models/invoices.dart';
 import 'package:kin_base/base/models/key.dart';
+import 'package:kin_base/base/models/kin_binary_memo.dart';
+import 'package:kin_base/base/network/api/agora/model_to_proto.dart';
+import 'package:kin_base/base/network/api/agora/proto_to_model_v4.dart';
 import 'package:kin_base/base/network/services/app_info_providers.dart';
 import 'package:kin_base/base/storage/kin_file_storage.dart';
 import 'package:kin_base/base/tools/observers.dart';
@@ -13,7 +20,9 @@ import 'package:kin_base/stellarfork/key_pair.dart';
 import 'base/kin_account_context.dart';
 import 'base/kin_environment.dart';
 import 'base/models/kin_account.dart';
+import 'base/models/kin_amount.dart';
 import 'base/models/kin_balance.dart';
+import 'base/models/kin_memo.dart';
 import 'base/models/kin_payment.dart';
 import 'base/stellar/models/network_environment.dart';
 import 'base/tools/observers.dart';
@@ -278,6 +287,55 @@ class Kin {
         keyPair: keyPair, accountId: accountId, account: account);
 
     return backup.toJson();
+  }
+
+  Future sendKinPayment(
+    Decimal amount,
+    String address,
+    {TransferType? paymentType}
+  ) {
+    if(_context == null) throw Exception("No Account Loaded");
+    if(paymentType == null) { paymentType == TransferType.p2p; }
+    HashMap<String, Decimal> hashMap = new HashMap<String, Decimal>();
+    hashMap.update(address, (value) => amount);
+    var invoice = buildInvoice(hashMap);
+    return _context!.sendKinPayment(KinAmount(amount), KinAccountId.from(address), memo: buildMemo(invoice, (paymentType as TransferType)), invoice: invoice);
+  }
+
+  Future sendKinPayemnts(
+    HashMap<String, Decimal> paymentItems,
+    String address,
+    {TransferType? paymentType}
+  ) {
+    if(_context == null) throw Exception("No Account Loaded");
+    if(paymentType == null) { paymentType == TransferType.p2p; }
+    var invoice = buildInvoice(paymentItems);
+    return _context!.sendKinPayment(KinAmount(invoiceTotal(paymentItems)), KinAccountId.from(address), memo: buildMemo(invoice, (paymentType as TransferType)), invoice: invoice);
+  }
+
+  Invoice buildInvoice(HashMap<String, Decimal> paymentItems) {
+    InvoiceBuilder invoiceBuilder = new InvoiceBuilder();
+    paymentItems.forEach((key, value) { 
+      invoiceBuilder.addLineItem(LineItemBuilder(key, KinAmount(value)).build());
+    });
+
+    return invoiceBuilder.build();
+  }
+
+  KinMemo buildMemo(
+    Invoice invoice, 
+    TransferType transferType
+    ) {
+      KinBinaryMemoBuilder memo = KinBinaryMemoBuilder(_appIndex)..setTransferType(transferType);
+      memo.setForeignKey([invoice].toProto().sha224Hash().decode());
+
+      return memo.build().toKinMemo();
+  }
+
+  Decimal invoiceTotal(HashMap<String, Decimal> paymentItems) {
+    Decimal total = 0 as Decimal;
+    paymentItems.forEach((key, value) { total += value; });
+    return total;
   }
 
   @override

@@ -41,6 +41,27 @@ class LineItem {
   }
 }
 
+class LineItemBuilder {
+  String title;
+  KinAmount amount;
+  SKU? _sku = null;
+  String _description = "";
+
+  LineItemBuilder(this.title, this.amount);
+
+  void setDescription(String description) {
+    this._description = description;
+  }
+
+  void setSku(SKU sku) {
+    this._sku = sku;
+  }
+
+  LineItem build() {
+    return LineItem(title, _description, amount, _sku);
+  }
+}
+
 class LineItemFormatException implements Exception {
   String message;
 
@@ -129,6 +150,32 @@ class Invoice {
   @override
   String toString() {
     return 'Invoice{id: $id, lineItems: $lineItems}';
+  }
+}
+
+class InvoiceBuilder {
+  late List<LineItem> _lineItems;
+
+  InvoiceBuilder();
+
+  void addLineItem(LineItem lineItem) {
+    this._lineItems.add(lineItem);
+  } 
+
+  void addLineItems(List<LineItem> lineItems) {
+    this._lineItems.addAll(lineItems);
+  }
+
+  Invoice build() {
+    if(_lineItems.isEmpty){
+      throw InvoiceFormatException("Must have at least one LineItem");
+    }
+    else if (_lineItems.length > 1024) {
+      throw InvoiceFormatException("Maximum of 1024 LineItem's allowed");
+    }
+    else {
+      return Invoice(InvoiceId.fromListOfLineItem(_lineItems), _lineItems);
+    }
   }
 }
 
