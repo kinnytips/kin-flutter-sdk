@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:collection';
-import 'dart:js';
 import 'dart:typed_data';
 
 import 'package:decimal/decimal.dart';
@@ -295,9 +294,9 @@ class Kin {
     {TransferType? paymentType}
   ) {
     if(_context == null) throw Exception("No Account Loaded");
-    if(paymentType == null) { paymentType == TransferType.p2p; }
+    if(paymentType == null) { paymentType = TransferType.p2p; }
     HashMap<String, Decimal> hashMap = new HashMap<String, Decimal>();
-    hashMap.update(address, (value) => amount);
+    hashMap[address] = amount;
     var invoice = buildInvoice(hashMap);
     return _context!.sendKinPayment(KinAmount(amount), KinAccountId.from(address), memo: buildMemo(invoice, (paymentType as TransferType)), invoice: invoice);
   }

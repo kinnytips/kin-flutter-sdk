@@ -154,27 +154,29 @@ class Invoice {
 }
 
 class InvoiceBuilder {
-  late List<LineItem> _lineItems;
+  List<LineItem>? _lineItems;
 
-  InvoiceBuilder();
+  InvoiceBuilder() {
+    _lineItems = new List.empty(growable: true);
+  }
 
   void addLineItem(LineItem lineItem) {
-    this._lineItems.add(lineItem);
+    this._lineItems!.add(lineItem);
   } 
 
   void addLineItems(List<LineItem> lineItems) {
-    this._lineItems.addAll(lineItems);
+    this._lineItems!.addAll(lineItems);
   }
 
   Invoice build() {
-    if(_lineItems.isEmpty){
+    if(_lineItems == null || _lineItems!.isEmpty){
       throw InvoiceFormatException("Must have at least one LineItem");
     }
-    else if (_lineItems.length > 1024) {
+    else if (_lineItems!.length > 1024) {
       throw InvoiceFormatException("Maximum of 1024 LineItem's allowed");
     }
     else {
-      return Invoice(InvoiceId.fromListOfLineItem(_lineItems), _lineItems);
+      return Invoice(InvoiceId.fromListOfLineItem(_lineItems!), _lineItems!);
     }
   }
 }
