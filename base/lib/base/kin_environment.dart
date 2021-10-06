@@ -63,6 +63,10 @@ class KinEnvironment {
     return storage.getAllAccountIds();
   }
 
+  Future<List<KinAccount?>> allAccounts() async {
+    return storage.getAllAccounts();
+  }
+
   void setEnableLogging(bool enableLogging) {
     logger.isLoggingEnabled = enableLogging;
   }

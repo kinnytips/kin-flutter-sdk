@@ -229,6 +229,9 @@ class Kin {
   Future<List<KinAccountId>> allAccountIds() =>
       this._environment.allAccountIds();
 
+  Future<List<KinAccount?>> allAccounts() =>
+      this._environment.allAccounts();
+
   KinAccountId createAccount() {
     var kinContext = KinAccountContext.newAccount(_environment);
     return kinContext.accountId;

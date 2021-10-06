@@ -22,6 +22,8 @@ abstract class Storage {
 
   List<KinAccountId> getAllAccountIds();
 
+  List<KinAccount?> getAllAccounts();
+
   void putTransactions(KinAccountId key, KinTransactions transactions);
 
   bool removeAllTransactions(KinAccountId key);

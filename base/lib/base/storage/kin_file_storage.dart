@@ -127,6 +127,18 @@ class KinFileStorage implements Storage {
     return accountIds ;
   }
 
+  @override
+  List<KinAccount?> getAllAccounts() {
+    var accountDirectories = _storageIO.subdirectories(_directoryForAllAccounts());
+
+    var accounts = accountDirectories
+        .map((d) => _getAccountFromAccountDirectory(d))
+        .where((e) => e != null)
+        .toList();
+
+    return accounts ;
+  }
+
   KinAccount? _getAccountFromAccountDirectory(String directory) {
     var bytes = _storageIO.readFile(directory, fileNameForAccountInfo);
     if (bytes.isEmpty) return null;
