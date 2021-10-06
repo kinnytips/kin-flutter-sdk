@@ -304,7 +304,7 @@ class Kin {
     return _context!.sendKinPayment(KinAmount(amount), KinAccountId.from(address), memo: buildMemo(invoice, (paymentType as TransferType)), invoice: invoice);
   }
 
-  Future sendKinPayemnts(
+  Future sendKinPayments(
     HashMap<String, Decimal> paymentItems,
     String address,
     {TransferType? paymentType}
