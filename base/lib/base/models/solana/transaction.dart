@@ -215,7 +215,7 @@ class Transaction {
       return CompiledInstruction(
         programIndex: _indexOf(accountPublicKeys, e!.program),
         data: e.data,
-        accounts: Uint8List.fromList(e.accounts!.map((e2) => _indexOf(accountPublicKeys, e2.publicKey)).toList()),
+        accounts: e.accounts != null ? Uint8List.fromList(e.accounts!.map((e2) => _indexOf(accountPublicKeys, e2.publicKey)).toList()) : Uint8List.fromList(List.empty()),
       );
     }).toList();
 
