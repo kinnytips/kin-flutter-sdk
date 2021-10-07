@@ -301,7 +301,7 @@ class Kin {
     HashMap<String, Decimal> hashMap = new HashMap<String, Decimal>();
     hashMap[address] = amount;
     var invoice = buildInvoice(hashMap);
-    return _context!.sendKinPayment(KinAmount(amount), KinAccountId.from(address), memo: buildMemo(invoice, (paymentType as TransferType)), invoice: invoice);
+    return _context!.sendKinPayment(KinAmount(amount), KinAccountId.fromPublicKey(PublicKey(address)), memo: buildMemo(invoice, (paymentType as TransferType)), invoice: invoice);
   }
 
   Future sendKinPayments(
@@ -312,7 +312,7 @@ class Kin {
     if(_context == null) throw Exception("No Account Loaded");
     if(paymentType == null) { paymentType == TransferType.p2p; }
     var invoice = buildInvoice(paymentItems);
-    return _context!.sendKinPayment(KinAmount(invoiceTotal(paymentItems)), KinAccountId.from(address), memo: buildMemo(invoice, (paymentType as TransferType)), invoice: invoice);
+    return _context!.sendKinPayment(KinAmount(invoiceTotal(paymentItems)), KinAccountId.fromPublicKey(PublicKey(address)), memo: buildMemo(invoice, (paymentType as TransferType)), invoice: invoice);
   }
 
   Invoice buildInvoice(HashMap<String, Decimal> paymentItems) {

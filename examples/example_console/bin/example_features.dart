@@ -19,14 +19,15 @@ void main(List<String> args) async {
   }
 
   var production = true;
-  var appIndex = 0;
+  var appIndex = 134;
 
   var kin = Kin(
     production,
     appIndex,
     'Example App',
     storageLocation:
-        '/tmp/kin-flutter-example-${DateTime.now().millisecondsSinceEpoch}',
+        '/tmp/kin-flutter-feature',
+    createAccountIfEmpty: true,
   );
 
   print(kin);
