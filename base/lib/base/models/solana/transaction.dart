@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:typed_data';
 
 import 'package:kin_base/base/models/key.dart';
@@ -180,10 +181,12 @@ class Transaction {
       )
     ];
 
+    log("LOGGING INSTRUCTIONS " + instructions.toString());
+
     // Extract all of the unique accounts from the instructions.
     instructions.forEach((element) {
       accounts.add(AccountMeta(publicKey: element!.program, isProgram: true));
-      if (element.accounts!.isNotEmpty) {
+      if (element.accounts != null && element.accounts!.length > 0) {
         accounts.addAll(element.accounts!);
       }
     });
