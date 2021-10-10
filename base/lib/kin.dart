@@ -300,8 +300,10 @@ class Kin {
     if(paymentType == null) { paymentType = TransferType.p2p; }
     HashMap<String, Decimal> hashMap = new HashMap<String, Decimal>();
     hashMap[address] = amount;
+
+    // TODO invoice isn't building properly but memo still accepted 
     var invoice = buildInvoice(hashMap);
-    return _context!.sendKinPayment(KinAmount(amount), KinAccountId.fromPublicKey(PublicKey(address)), memo: buildMemo(invoice, (paymentType as TransferType)), invoice: invoice);
+    return _context!.sendKinPayment(KinAmount(amount), KinAccountId.fromPublicKey(PublicKey.decode(address)), memo: buildMemo(invoice, paymentType));
   }
 
   Future sendKinPayments(
@@ -312,7 +314,7 @@ class Kin {
     if(_context == null) throw Exception("No Account Loaded");
     if(paymentType == null) { paymentType == TransferType.p2p; }
     var invoice = buildInvoice(paymentItems);
-    return _context!.sendKinPayment(KinAmount(invoiceTotal(paymentItems)), KinAccountId.fromPublicKey(PublicKey(address)), memo: buildMemo(invoice, (paymentType as TransferType)), invoice: invoice);
+    return _context!.sendKinPayment(KinAmount(invoiceTotal(paymentItems)), KinAccountId.fromPublicKey(PublicKey.decode(address)), memo: buildMemo(invoice, paymentType!));
   }
 
   Invoice buildInvoice(HashMap<String, Decimal> paymentItems) {
@@ -328,8 +330,9 @@ class Kin {
     Invoice invoice, 
     TransferType transferType
     ) {
-      KinBinaryMemoBuilder memo = KinBinaryMemoBuilder(_appIndex)..setTransferType(transferType);
-      memo.setForeignKey([invoice].toProto().sha224Hash().decode());
+      KinBinaryMemoBuilder memo = KinBinaryMemoBuilder(_appIndex)
+       ..setForeignKey([invoice].toProto().sha224Hash().decode())
+       ..setTransferType(transferType);
 
       return memo.build().toKinMemo();
   }
