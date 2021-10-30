@@ -237,9 +237,6 @@ class Kin {
     return kinContext.accountId;
   }
 
-  Future<List<KinAccount?>> allAccounts() =>
-      this._environment.allAccounts();
-
   KinEnvironmentAgora _getEnvironment() {
     NetworkEnvironment networkEnv = _production
         ? KinStellarMainNetKin3.instance
