@@ -17,7 +17,7 @@ abstract class KinService {
 
     Future<KinAccount?> getAccount(KinAccountId accountId);
 
-    Future<List<PublicKey>> resolveTokenAccounts(KinAccountId accountId);
+    Future<List<KinTokenAccountInfo>> resolveTokenAccounts(KinAccountId accountId);
 
     Future<List<KinTokenAccountInfo>> mergeTokenAccounts(
       KinAccountId accountId, 

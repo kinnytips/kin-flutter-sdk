@@ -381,7 +381,7 @@ class KinAccountContextBase implements KinAccountReadOperations , KinPaymentRead
     catch(e) {
       var accounts = await service.resolveTokenAccounts(accountId);
 
-      var maybeResolvedAccountId = accounts.isNotEmpty ? accounts.first.asKinAccountId() : accountId ;
+      var maybeResolvedAccountId = accounts.isNotEmpty ? accounts.first.key.asKinAccountId() : accountId ;
 
       var account2 = await service.getAccount(maybeResolvedAccountId) ;
 
@@ -391,7 +391,7 @@ class KinAccountContextBase implements KinAccountReadOperations , KinPaymentRead
         accountResolved = account2!.copy(
           id: accountId,
           key: PublicKey.fromBytes(accountId.value),
-          tokenAccounts: accounts,
+          tokenAccounts: accounts.map((e) => e.key).toList(),
         );
 
       } else {
@@ -596,7 +596,7 @@ class KinAccountContextImpl extends KinAccountContextBase with KinAccountContext
 
       try {
         var resolveTokenAccounts = await service.resolveTokenAccounts(accountId);
-        var resolvedAccount = await storage.updateAccountInStorage(accountToStore.copy(tokenAccounts: resolveTokenAccounts));
+        var resolvedAccount = await storage.updateAccountInStorage(accountToStore.copy(tokenAccounts: resolveTokenAccounts.map((e) => e.key).toList()));
 
         print('-- Resolved account: $resolvedAccount');
 
@@ -620,7 +620,7 @@ class KinAccountContextImpl extends KinAccountContextBase with KinAccountContext
       serviceExistingAccount = await service.getAccount(account.id);
     }
     catch(e) {
-      existingTokenAccounts = await service.resolveTokenAccounts(account.id);
+      existingTokenAccounts = (await service.resolveTokenAccounts(account.id)).map((e) => e.key).toList();
     }
 
     return serviceExistingAccount != null ||
@@ -721,7 +721,7 @@ class KinAccountContextImpl extends KinAccountContextBase with KinAccountContext
     } else {
       var resolveTokenAccounts = await service.resolveTokenAccounts(accountId);
 
-      var resolvedAccount = await storage.updateAccountInStorage(account!.copy(tokenAccounts: resolveTokenAccounts));
+      var resolvedAccount = await storage.updateAccountInStorage(account!.copy(tokenAccounts: resolveTokenAccounts.map((e) => e.key).toList()));
 
       log!.log('_buildPaymentTransaction> account(resolved token account): $resolvedAccount');
 
@@ -738,7 +738,7 @@ class KinAccountContextImpl extends KinAccountContextBase with KinAccountContext
     } else {
       paymentItems = await Future.wait( payments.map((paymentItem) async {
         var destinationTokenAccounts = await service.resolveTokenAccounts(paymentItem.destinationAccount) ;
-        return paymentItem.copy(destinationAccount: destinationTokenAccounts.first.asKinAccountId());
+        return paymentItem.copy(destinationAccount: destinationTokenAccounts.first.key.asKinAccountId());
       }));
     }
 

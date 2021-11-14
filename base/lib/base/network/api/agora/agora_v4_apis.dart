@@ -4,6 +4,7 @@ import 'package:grpc/grpc.dart';
 import 'package:kin_base/base/models/invoices.dart';
 import 'package:kin_base/base/models/key.dart';
 import 'package:kin_base/base/models/kin_account.dart';
+import 'package:kin_base/base/models/kin_amount.dart';
 import 'package:kin_base/base/models/quark_amount.dart';
 import 'package:kin_base/base/models/solana/transaction.dart';
 import 'package:kin_base/base/models/stellar_base_type_conversions.dart';
@@ -117,13 +118,13 @@ class AgoraKinAccountApiV4 extends GrpcApi implements KinAccountApiV4, KinStream
   }
 
   @override
-  Future<KinServiceResponse<List<PublicKey>>> resolveTokenAccounts(KinAccountId accountId) async {
+  Future<KinServiceResponse<List<KinTokenAccountInfo>>> resolveTokenAccounts(KinAccountId accountId) async {
     var request = new ResolveTokenAccountsRequest(accountId: accountId.toProtoSolanaAccountId(), includeAccountInfo: true);
     var accounts = await _accountClient.resolveTokenAccounts(request);
 
-    var publicKeys = accounts.tokenAccountInfos.map((e) => e.accountId.toPublicKey()).toList();
+    var publicKeys = accounts.tokenAccountInfos;
 
-    return new KinServiceResponse(KinServiceResponseType.ok, publicKeys);
+    return new KinServiceResponse(KinServiceResponseType.ok, publicKeys.map((e) => KinTokenAccountInfo(PublicKey(e.accountId.toString()), KinAmount.fromInt(e.balance.toInt()), PublicKey(e.closeAuthority.toString()))).toList());
   }
 
   @override

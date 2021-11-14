@@ -7,6 +7,7 @@ import 'kin_account_api.dart';
 
 abstract class KinAccountApiV4 extends KinAccountApi {
 
-  Future<KinServiceResponse<List<PublicKey>>> resolveTokenAccounts(KinAccountId accountId) ;
+  
+  Future<KinServiceResponse<List<KinTokenAccountInfo>>> resolveTokenAccounts(KinAccountId accountId) ;
 
 }

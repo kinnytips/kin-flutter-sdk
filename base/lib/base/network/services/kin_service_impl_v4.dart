@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:kin_base/base/models/appidx.dart';
 import 'package:kin_base/base/models/key.dart';
 import 'package:kin_base/base/models/kin_account.dart';
+import 'package:kin_base/base/models/kin_binary_memo.dart';
 import 'package:kin_base/base/models/kin_memo.dart';
 import 'package:kin_base/base/models/kin_payment_item.dart';
 import 'package:kin_base/base/models/quark_amount.dart';
@@ -373,11 +374,16 @@ class KinServiceImplV4 extends KinService {
       _cache.invalidate("recentBlockHash");
   }
 
+  void invalidateResolvedTokenAccounts(KinAccountId accountId) {
+    var cacheKey = "resolvedAccounts:${accountId.base58Encode()}";
+    _cache.invalidate(cacheKey);
+  }
+
   @override
-  Future<List<PublicKey>> resolveTokenAccounts(KinAccountId accountId) async {
+  Future<List<KinTokenAccountInfo>> resolveTokenAccounts(KinAccountId accountId) async {
     var cacheKey = "resolvedAccounts:${accountId.stellarBase32Encode()}";
 
-    List<PublicKey>? tokenAccounts;
+    List<KinTokenAccountInfo>? tokenAccounts;
 
     try {
       tokenAccounts = await _cache.resolve(cacheKey, fault: (k) async {
@@ -404,7 +410,7 @@ class KinServiceImplV4 extends KinService {
         });
       });
 
-      return tokenAccounts ?? <PublicKey>[];
+      return tokenAccounts ?? <KinTokenAccountInfo>[];
     }
     finally {
       if (tokenAccounts == null || tokenAccounts.isEmpty) {
@@ -469,8 +475,104 @@ class KinServiceImplV4 extends KinService {
 
   @override
   Future<List<KinTokenAccountInfo>> mergeTokenAccounts(KinAccountId accountId, PrivateKey signer, AppIdx appIdx, [bool shouldCreateAssociatedAccount = true]) {
-    // TODO: implement mergeTokenAccounts
-    throw UnimplementedError();
+    return resolveTokenAccounts(accountId).then((existingAccounts) async {
+      if(existingAccounts.isEmpty) {
+        return List.empty();
+      }
+      else {
+        final serviceConfig;
+        final cachedRecentBlockhash;
+        try{
+          serviceConfig = await _cachedServiceConfig();
+          cachedRecentBlockhash = await _cachedRecentBlockHash();
+        }
+        catch(e){
+          throw TransientFailure("Pre-requisite response failed" + e.toString());
+        }
+
+        var dest = existingAccounts[0].key;
+        List<Instruction> instructions = List.empty();
+        List<PrivateKey> signers = List.empty();
+        PublicKey subsidizer = serviceConfig!.payload!.tokenProgram.toKeyPair().asPublicKey();
+        final PublicKey owner = signer.asPublicKey();
+        final programKey = serviceConfig.payload!.token.toKeyPair().asPublicKey();
+        var mint = serviceConfig.payload!.token.toKeyPair().asPublicKey();
+
+        var memo = null;
+        if(appIdx.value > 0) {
+          memo = KinBinaryMemoBuilder(appIdx.value)..setTransferType(TransferType.none)..build();
+        }
+
+        var createAssocAccount = 
+          AssociatedTokenProgramCreateAssociatedTokenAccount(subsidizer, owner, mint);
+
+        if(shouldCreateAssociatedAccount) {
+          if(existingAccounts.isEmpty || existingAccounts[0].key != createAssocAccount.addr) {
+            if(memo != null) {
+              instructions.add(MemoProgramBase64EncodedMemo.fromBytes((memo as KinBinaryMemo).encode()).instruction!);
+            }
+
+            instructions.add(createAssocAccount.instruction!);
+            instructions.add(SetAuthority(
+              createAssocAccount.addr,
+              owner,
+              subsidizer,
+              TokenProgramAuthorityTypeCloseAccount(),
+              programKey
+            ).instruction!);
+
+            dest = createAssocAccount.addr;
+            signers.add(signer);
+          }
+        }
+
+        existing:
+        for (var tokenAccount in existingAccounts) {
+          if(tokenAccount == dest) {
+            continue existing;
+          }
+
+          instructions.add(
+            TokenProgramTransfer(tokenAccount.key, 
+            dest, 
+            signer.asPublicKey(), 
+            tokenAccount.balance, TokenProgram.PROGRAM_KEY).instruction!
+            );
+          
+          signers.add(signer);
+          if(tokenAccount.closeAuthority == null) {
+            continue existing;
+          }
+
+          for (var account in List.of([null, accountId, (serviceConfig as ServiceConfig).subsidizerAccount.toKeyPair().asPublicKey()
+          
+          ])) {
+            if(tokenAccount.closeAuthority == account) {
+              instructions.add(CloseAccount(
+                tokenAccount.key,
+                tokenAccount.closeAuthority!,
+                tokenAccount.closeAuthority!
+              ).instruction!);
+            }
+          }
+        }
+
+        var tx = Transaction.newTransaction(
+          (serviceConfig as ServiceConfig).subsidizerAccount.toKeyPair().asPublicKey(), 
+          instructions.toList())
+          ..copyAndSetRecentBlockhash((cachedRecentBlockhash as Hash))
+          ..copyAndSign(signers.toList());
+
+        var kinTransaction = SolanaKinTransaction(tx.marshal(), null, networkEnvironment, null);
+        submitTransaction(kinTransaction)
+          ..whenComplete(
+            () => 
+            invalidateResolvedTokenAccounts(accountId)
+          );
+        return [KinTokenAccountInfo(createAssocAccount.addr, (existingAccounts.map((e) => e.balance)
+        ..reduce((acc, kinAmount) => acc + kinAmount).amount).first, null)];
+      }
+    });
   }
 
 }
