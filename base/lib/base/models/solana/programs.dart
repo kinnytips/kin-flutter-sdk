@@ -261,13 +261,12 @@ class AssociatedTokenProgramCreateAssociatedTokenAccount {
   AssociatedTokenProgramCreateAssociatedTokenAccount(
     this.subsidizer, this.wallet, this.mint);
 
-  late final addr = (AssociatedTokenProgram().getAssociatedAccount(wallet, mint) as PublicKey);
+  late final addr = AssociatedTokenProgram().getAssociatedAccount(wallet, mint) as PublicKey;
 
   Instruction? _instruction;
 
   Instruction? get instruction {
-    if(_instruction == null) {
-      _instruction = Instruction.newInstruction(
+      _instruction ??= Instruction.newInstruction(
         AssociatedTokenProgram.PROGRAM_KEY, 
         new Uint8List(0), [
         AccountMeta.newAccountMeta(subsidizer, true),
@@ -279,7 +278,6 @@ class AssociatedTokenProgramCreateAssociatedTokenAccount {
         AccountMeta.newReadonlyAccountMeta(PublicKey.fromBytes(SYS_VAR_RENT_KEY), false)
         ]
       );
-    }
     return _instruction;
   }
 }
@@ -599,15 +597,13 @@ class CloseAccount {
   Instruction? _instruction;
 
   Instruction? get instruction {
-    if(_instruction == null) {
-      _instruction = Instruction.newInstruction(
+      _instruction ??= Instruction.newInstruction(
         TokenProgram.PROGRAM_KEY,
         TokenProgramAuthorityTypeCloseAccount().value.toUint8List(), [
         AccountMeta.newAccountMeta(dest, false),
         AccountMeta.newAccountMeta(dest, false),
         AccountMeta.newReadonlyAccountMeta(owner, false)
         ]);
-    }
   }
 }
 
