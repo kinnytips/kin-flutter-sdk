@@ -264,7 +264,7 @@ class AssociatedTokenProgramCreateAssociatedTokenAccount {
   Instruction? _instruction;
 
   Instruction? get instruction {
-      _instruction ??= Instruction.newInstruction(
+    return  _instruction ??= Instruction.newInstruction(
         AssociatedTokenProgram.PROGRAM_KEY, 
         new Uint8List(0), [
         AccountMeta.newAccountMeta(subsidizer, true),
@@ -276,7 +276,6 @@ class AssociatedTokenProgramCreateAssociatedTokenAccount {
         AccountMeta.newReadonlyAccountMeta(PublicKey.fromBytes(SYS_VAR_RENT_KEY), false)
         ]
       );
-    return _instruction;
   }
 }
 
@@ -459,8 +458,7 @@ class TokenProgramInitializeAccount {
   Instruction? _instruction;
 
   Instruction? get instruction {
-    if (_instruction == null) {
-      _instruction = Instruction.newInstruction(programKey,
+    return  _instruction ??= Instruction.newInstruction(programKey,
           TokenProgramCommandInitializeAccount().value.toUint8List(), [
         AccountMeta.newAccountMeta(account, true),
         AccountMeta.newReadonlyAccountMeta(mint, false),
@@ -468,8 +466,6 @@ class TokenProgramInitializeAccount {
         AccountMeta.newReadonlyAccountMeta(
             PublicKey.fromBytes(SYS_VAR_RENT_KEY), false)
       ]);
-    }
-    return _instruction;
   }
 }
 
@@ -490,8 +486,7 @@ class TokenProgramTransfer {
   Instruction? _instruction;
 
   Instruction? get instruction {
-    if (_instruction == null) {
-      _instruction = Instruction.newInstruction(
+    return  _instruction ??= Instruction.newInstruction(
           programKey,
           Uint8List.fromList([
             TokenProgramCommandTransfer().value,
@@ -502,8 +497,6 @@ class TokenProgramTransfer {
             AccountMeta.newAccountMeta(destination, false),
             AccountMeta.newAccountMeta(owner, true)
           ]);
-    }
-    return _instruction;
   }
 }
 
@@ -595,7 +588,7 @@ class CloseAccount {
   Instruction? _instruction;
 
   Instruction? get instruction {
-      _instruction ??= Instruction.newInstruction(
+    return  _instruction ??= Instruction.newInstruction(
         TokenProgram.PROGRAM_KEY,
         TokenProgramAuthorityTypeCloseAccount().value.toUint8List(), [
         AccountMeta.newAccountMeta(dest, false),
@@ -629,11 +622,8 @@ class MemoProgramBase64EncodedMemo extends MemoProgram {
   Instruction? _instruction;
 
   Instruction? get instruction {
-    if (_instruction == null) {
-      _instruction = Instruction.newInstruction(
+    return  _instruction ??= Instruction.newInstruction(
           MemoProgram.PROGRAM_KEY, base64Value.toBytesUTF8());
-    }
-    return _instruction;
   }
 }
 
@@ -645,9 +635,6 @@ class MemoProgramRawMemo {
   Instruction? _instruction;
 
   Instruction? get instruction {
-    if (_instruction == null) {
-      _instruction = Instruction.newInstruction(MemoProgram.PROGRAM_KEY, bytes);
-    }
-    return _instruction;
+    return  _instruction ??= Instruction.newInstruction(MemoProgram.PROGRAM_KEY, bytes);
   }
 }
