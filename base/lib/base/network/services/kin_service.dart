@@ -5,7 +5,6 @@ import 'package:kin_base/base/models/key.dart';
 import 'package:kin_base/base/models/kin_account.dart';
 import 'package:kin_base/base/models/kin_memo.dart';
 import 'package:kin_base/base/models/kin_payment_item.dart';
-import 'package:kin_base/base/models/quark_amount.dart';
 import 'package:kin_base/base/models/solana/instruction.dart';
 import 'package:kin_base/base/models/transaction_hash.dart';
 import 'package:kin_base/base/stellar/models/kin_transaction.dart';

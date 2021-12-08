@@ -491,8 +491,8 @@ class KinServiceImplV4 extends KinService {
         }
 
         var dest = existingAccounts[0].key;
-        List<Instruction> instructions = List.empty();
-        List<PrivateKey> signers = List.empty();
+        var instructions = <Instruction>[];
+        var signers = <PrivateKey>[];
         PublicKey subsidizer = serviceConfig!.payload!.tokenProgram.toKeyPair().asPublicKey();
         final PublicKey owner = signer.asPublicKey();
         final programKey = serviceConfig.payload!.token.toKeyPair().asPublicKey();
@@ -526,10 +526,9 @@ class KinServiceImplV4 extends KinService {
           }
         }
 
-        existing:
-        for (var tokenAccount in existingAccounts) {
+        for (var tokenAccount in existingAccounts.whereNotNull()) {
           if(tokenAccount == dest) {
-            continue existing;
+            continue;
           }
 
           instructions.add(
@@ -541,7 +540,7 @@ class KinServiceImplV4 extends KinService {
           
           signers.add(signer);
           if(tokenAccount.closeAuthority == null) {
-            continue existing;
+            continue;
           }
 
           for (var account in List.of([null, accountId, (serviceConfig as ServiceConfig).subsidizerAccount.toKeyPair().asPublicKey()

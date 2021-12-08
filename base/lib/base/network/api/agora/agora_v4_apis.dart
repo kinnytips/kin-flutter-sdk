@@ -124,7 +124,15 @@ class AgoraKinAccountApiV4 extends GrpcApi implements KinAccountApiV4, KinStream
 
     var publicKeys = accounts.tokenAccountInfos;
 
-    return new KinServiceResponse(KinServiceResponseType.ok, publicKeys.map((e) => KinTokenAccountInfo(PublicKey(e.accountId.toString()), KinAmount.fromInt(e.balance.toInt()), PublicKey(e.closeAuthority.toString()))).toList());
+    return new KinServiceResponse(
+      KinServiceResponseType.ok, 
+      publicKeys.map((e) => 
+        KinTokenAccountInfo(
+          PublicKey(e.accountId.toString()), 
+          KinAmount.fromInt(e.balance.toInt()), 
+          PublicKey(e.closeAuthority.toString())
+        )
+      ).toList());
   }
 
   @override
