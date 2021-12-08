@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:decimal/decimal.dart';
 import 'package:kin_base/base/kin_environment.dart';
 import 'package:kin_base/base/models/kin_balance.dart';
+import 'package:kin_base/base/models/solana/instruction.dart';
 import 'package:kin_base/base/models/stellar_base_type_conversions.dart';
 import 'package:kin_base/base/network/api/agora/model_to_proto.dart';
 import 'package:kin_base/base/network/services/kin_service.dart';
@@ -65,9 +66,8 @@ abstract class KinPaymentReadOperationsAltIdioms {
 
 
 abstract class  KinPaymentReadOperations implements KinPaymentReadOperationsAltIdioms {
-
-  Future<QuarkAmount> calculateFee(int numberOfOperations);
-
+  //TODO: Observe Payment
+  //TODO: GetPaymentsForTransactionHash
 }
 
 abstract class KinPaymentWriteOperationsAltIdioms {
@@ -258,23 +258,6 @@ class KinAccountContextBase implements KinAccountReadOperations , KinPaymentRead
   }
 
   @override
-  Future<QuarkAmount> calculateFee(int numberOfOperations) async {
-    if (await service.canWhitelistTransactions()) {
-      return KinAmount.zero.toQuarks();
-    }
-    else {
-      var minFee = await storage.getMinFee();
-
-      if (minFee == null) {
-        minFee = await service.getMinFee();
-        await storage.setMinFee(minFee);
-      }
-
-      return QuarkAmount(minFee.value! * numberOfOperations);
-    }
-  }
-
-  @override
   Future<bool> clearStorage({Callback<bool>? clearCompleteCallback}) async {
     log!.log("clearStorage");
 
@@ -398,7 +381,7 @@ class KinAccountContextBase implements KinAccountReadOperations , KinPaymentRead
     catch(e) {
       var accounts = await service.resolveTokenAccounts(accountId);
 
-      var maybeResolvedAccountId = accounts.isNotEmpty ? accounts.first.asKinAccountId() : accountId ;
+      var maybeResolvedAccountId = accounts.isNotEmpty ? accounts.first.key.asKinAccountId() : accountId ;
 
       var account2 = await service.getAccount(maybeResolvedAccountId) ;
 
@@ -408,7 +391,7 @@ class KinAccountContextBase implements KinAccountReadOperations , KinPaymentRead
         accountResolved = account2!.copy(
           id: accountId,
           key: PublicKey.fromBytes(accountId.value),
-          tokenAccounts: accounts,
+          tokenAccounts: accounts.map((e) => e.key).toList(),
         );
 
       } else {
@@ -490,7 +473,7 @@ class KinAccountContextImpl extends KinAccountContextBase with KinAccountContext
   AppInfoProvider? appInfoProvider;
 
   KinAccountContextImpl._(executors, KinService service, Storage storage,
-      KinAccountId accountId, this.appInfoProvider, KinLoggerFactory logger)
+      KinAccountId accountId, this.appInfoProvider, KinLoggerFactory logger, bool shouldAutoMergeTokenAccounts)
       : super(executors, service, storage, accountId, logger);
 
   static Uint8List? _generateRandomPrivateKey() {
@@ -512,7 +495,8 @@ class KinAccountContextImpl extends KinAccountContextBase with KinAccountContext
         env.storage,
         newAccount.id,
         envAgora.appInfoProvider,
-        env.logger
+        env.logger,
+        env.shouldAutoMergeTokenAccounts
     );
   }
 
@@ -525,8 +509,26 @@ class KinAccountContextImpl extends KinAccountContextBase with KinAccountContext
         env.storage,
         accountId,
         envAgora.appInfoProvider,
-        env.logger
+        env.logger,
+        env.shouldAutoMergeTokenAccounts
     );
+  }
+
+  Future<List<KinTokenAccountInfo>> mergeTokenAccountIfNecessary() async {
+    var account = await storage.getAccount(accountId);
+    var privateKey = account?.key as PrivateKey;
+    if(account?.status is KinAccountStatusRegistered && account != null && (account).tokenAccounts.length > 1) {
+      List<KinTokenAccountInfo> tokenAccounts = List.empty();
+      service.mergeTokenAccounts(accountId, privateKey, appInfoProvider!.appInfo!.appIndex).then((value) => 
+      {
+          storage.updateAccountInStorage(account.copy(tokenAccounts: value.map((e) => e.key).toList())),
+          tokenAccounts = value
+      });
+      return tokenAccounts;
+    }
+    else {
+      return List.empty();
+    }
   }
 
   @override
@@ -594,7 +596,7 @@ class KinAccountContextImpl extends KinAccountContextBase with KinAccountContext
 
       try {
         var resolveTokenAccounts = await service.resolveTokenAccounts(accountId);
-        var resolvedAccount = await storage.updateAccountInStorage(accountToStore.copy(tokenAccounts: resolveTokenAccounts));
+        var resolvedAccount = await storage.updateAccountInStorage(accountToStore.copy(tokenAccounts: resolveTokenAccounts.map((e) => e.key).toList()));
 
         print('-- Resolved account: $resolvedAccount');
 
@@ -618,7 +620,7 @@ class KinAccountContextImpl extends KinAccountContextBase with KinAccountContext
       serviceExistingAccount = await service.getAccount(account.id);
     }
     catch(e) {
-      existingTokenAccounts = await service.resolveTokenAccounts(account.id);
+      existingTokenAccounts = (await service.resolveTokenAccounts(account.id)).map((e) => e.key).toList();
     }
 
     return serviceExistingAccount != null ||
@@ -689,11 +691,6 @@ class KinAccountContextImpl extends KinAccountContextBase with KinAccountContext
           service.invalidateBlockhashCache();
           continue;
         }
-        else if (e is InsufficientFeeInRequestError) {
-          var minFee = await service.getMinFee();
-          storage.setMinFee(minFee);
-          continue;
-        }
         else if (e is UnknownAccountInRequestError) {
           var delay = invalidAccountErrorRetryStrategy.nextDelay()!;
           log!.log("Waiting $delay ms...");
@@ -724,7 +721,7 @@ class KinAccountContextImpl extends KinAccountContextBase with KinAccountContext
     } else {
       var resolveTokenAccounts = await service.resolveTokenAccounts(accountId);
 
-      var resolvedAccount = await storage.updateAccountInStorage(account!.copy(tokenAccounts: resolveTokenAccounts));
+      var resolvedAccount = await storage.updateAccountInStorage(account!.copy(tokenAccounts: resolveTokenAccounts.map((e) => e.key).toList()));
 
       log!.log('_buildPaymentTransaction> account(resolved token account): $resolvedAccount');
 
@@ -741,11 +738,12 @@ class KinAccountContextImpl extends KinAccountContextBase with KinAccountContext
     } else {
       paymentItems = await Future.wait( payments.map((paymentItem) async {
         var destinationTokenAccounts = await service.resolveTokenAccounts(paymentItem.destinationAccount) ;
-        return paymentItem.copy(destinationAccount: destinationTokenAccounts.first.asKinAccountId());
+        return paymentItem.copy(destinationAccount: destinationTokenAccounts.first.key.asKinAccountId());
       }));
     }
 
-    var fee = await calculateFee(payments.length);
+    List<Instruction> createAccountInstructions = new List.empty();
+    List<PrivateKey> additionalSigners = new List.empty();
 
     var transaction = service.buildAndSignTransaction(
         sourceAccount.ownerKey,
@@ -753,7 +751,8 @@ class KinAccountContextImpl extends KinAccountContextBase with KinAccountContext
         sourceAccount.nonce,
         paymentItems,
         memo,
-        feeOverride ?? fee
+        createAccountInstructions,
+        additionalSigners
     );
 
     if (transaction is StellarKinTransaction) {

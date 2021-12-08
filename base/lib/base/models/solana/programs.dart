@@ -1,12 +1,13 @@
 import 'dart:convert';
 import 'dart:typed_data';
-
 import 'package:kin_base/base/models/key.dart';
 import 'package:kin_base/base/models/kin_amount.dart';
 import 'package:kin_base/base/models/quark_amount.dart';
 import 'package:kin_base/base/tools/base58.dart';
 import 'package:kin_base/base/tools/byte_in_out_buffer.dart';
 import 'package:kin_base/base/tools/extensions.dart';
+import 'package:kin_base/stellarfork/xdr/xdr_type.dart';
+import 'package:pointycastle/digests/sha256.dart';
 
 import 'instruction.dart';
 
@@ -171,6 +172,113 @@ class CreateAccount {
   }
 }
 
+final Uint8List SYS_VAR_RENT_KEY = Base58().decode("SysvarRent111111111111111111111111111111111");
+
+class Address {
+  final int maxSeeds = 16;
+  final int maxSeedLength = 32;
+
+  PublicKey? createProgramAddress(PublicKey program, Uint8List seeds) {
+    if(seeds.length > maxSeeds) {
+      throw Exception("too many seeds");
+    }
+
+    var h = SHA256Digest();
+
+    for (var s in seeds) {
+      if(s.bitLength > maxSeedLength) {
+        throw Exception("max seed length exceeded");
+      }
+      try {
+        h.update(Uint8List.fromList([s]), 0, s.bitLength);
+      } catch (e) {
+        throw Exception("failed to hash seed " + e.toString());
+      }
+    }
+
+    for(var v in [program.value, "ProgramDerivedAddress".toBytesUTF8()]) {
+      try {
+        h.update(v ?? Uint8List.fromList(List.empty()), 0, v!.length);
+      } catch (e) {
+        throw Exception("failed to hash seed " + e.toString());
+      }
+    }
+
+    var pub;
+    h.doFinal(pub, 0);
+
+    try {
+      // TEST the key curve
+      var a = XdrCurve25519Public(pub);
+    } catch (e) {
+      return PublicKey(pub);
+    }
+    throw Exception("invalid public key");
+  }
+
+  PublicKey? findProgramAddress(PublicKey program, Uint8List seeds) {
+    var maxUint8 = (1 << 8) - 1;
+    var bumpSeed = Uint8List(maxUint8);
+
+    for(var i = 0; i < maxUint8; i++) {
+      try {
+        seeds.add(bumpSeed.single);
+        return createProgramAddress(program, seeds);
+      } catch (e) {
+        bumpSeed[0]--;
+      }
+    }
+    return null;
+  }
+}
+
+class AssociatedTokenProgram {
+    static final PublicKey PROGRAM_KEY = PublicKey.fromBytes(Uint8List.fromList([
+    140, 151, 37, 143, 78, 36, 137, 241, 187, 61, 16, 41, 20, 142,
+    13, 131, 11, 90, 19, 153, 218, 255, 16, 132, 4, 142, 123, 216,
+    219, 233, 248, 89
+  ]));
+
+  PublicKey? getAssociatedAccount(PublicKey wallet, PublicKey mint) {
+    return Address().findProgramAddress(
+      PROGRAM_KEY, 
+      Uint8List.fromList([
+        ...(wallet.value as Uint8List), 
+        ...(TokenProgram.PROGRAM_KEY.value as Uint8List), 
+        ...(mint.value as Uint8List)
+      ])
+    );
+  }
+}
+
+class AssociatedTokenProgramCreateAssociatedTokenAccount {
+  final PublicKey subsidizer;
+  final PublicKey wallet;
+  final PublicKey mint;
+
+  AssociatedTokenProgramCreateAssociatedTokenAccount(
+    this.subsidizer, this.wallet, this.mint);
+
+  late final addr = AssociatedTokenProgram().getAssociatedAccount(wallet, mint) as PublicKey;
+
+  Instruction? _instruction;
+
+  Instruction? get instruction {
+    return  _instruction ??= Instruction.newInstruction(
+        AssociatedTokenProgram.PROGRAM_KEY, 
+        new Uint8List(0), [
+        AccountMeta.newAccountMeta(subsidizer, true),
+        AccountMeta.newAccountMeta(addr, false),
+        AccountMeta.newReadonlyAccountMeta(wallet, false),
+        AccountMeta.newReadonlyAccountMeta(mint, false),
+        AccountMeta.newReadonlyAccountMeta(SystemProgram.PROGRAM_KEY, false),
+        AccountMeta.newReadonlyAccountMeta(TokenProgram.PROGRAM_KEY, false),
+        AccountMeta.newReadonlyAccountMeta(PublicKey.fromBytes(SYS_VAR_RENT_KEY), false)
+        ]
+      );
+  }
+}
+
 class TokenProgram {
   // Reference: https://github.com/solana-labs/solana-program-library/blob/11b1e3eefdd4e523768d63f7c70a7aa391ea0d02/token/program/src/state.rs#L125
   int accountSize = 165;
@@ -186,9 +294,6 @@ class TokenProgram {
     70, 206, 235, 121, 172, 28, 180, 133, 237, 95, 91, 55,
     145, 58, 140, 245, 133, 126, 255, 0, 169
   ]));
-
-  static final Uint8List SYS_VAR_RENT =
-      Base58().decode("SysvarRent111111111111111111111111111111111");
 }
 
 class TokenProgramCommand {
@@ -353,17 +458,14 @@ class TokenProgramInitializeAccount {
   Instruction? _instruction;
 
   Instruction? get instruction {
-    if (_instruction == null) {
-      _instruction = Instruction.newInstruction(programKey,
+    return  _instruction ??= Instruction.newInstruction(programKey,
           TokenProgramCommandInitializeAccount().value.toUint8List(), [
         AccountMeta.newAccountMeta(account, true),
         AccountMeta.newReadonlyAccountMeta(mint, false),
         AccountMeta.newReadonlyAccountMeta(owner, false),
         AccountMeta.newReadonlyAccountMeta(
-            PublicKey.fromBytes(TokenProgram.SYS_VAR_RENT), false)
+            PublicKey.fromBytes(SYS_VAR_RENT_KEY), false)
       ]);
-    }
-    return _instruction;
   }
 }
 
@@ -384,8 +486,7 @@ class TokenProgramTransfer {
   Instruction? _instruction;
 
   Instruction? get instruction {
-    if (_instruction == null) {
-      _instruction = Instruction.newInstruction(
+    return  _instruction ??= Instruction.newInstruction(
           programKey,
           Uint8List.fromList([
             TokenProgramCommandTransfer().value,
@@ -396,8 +497,6 @@ class TokenProgramTransfer {
             AccountMeta.newAccountMeta(destination, false),
             AccountMeta.newAccountMeta(owner, true)
           ]);
-    }
-    return _instruction;
   }
 }
 
@@ -479,6 +578,26 @@ class SetAuthority {
   }
 }
 
+class CloseAccount {
+  final PublicKey account;
+  final PublicKey dest;
+  final PublicKey owner;
+
+  CloseAccount(this.account, this.dest, this.owner);
+
+  Instruction? _instruction;
+
+  Instruction? get instruction {
+    return  _instruction ??= Instruction.newInstruction(
+        TokenProgram.PROGRAM_KEY,
+        TokenProgramAuthorityTypeCloseAccount().value.toUint8List(), [
+        AccountMeta.newAccountMeta(dest, false),
+        AccountMeta.newAccountMeta(dest, false),
+        AccountMeta.newReadonlyAccountMeta(owner, false)
+        ]);
+  }
+}
+
 class MemoProgram {
   static final MemoProgram _instance = MemoProgram._();
 
@@ -503,11 +622,8 @@ class MemoProgramBase64EncodedMemo extends MemoProgram {
   Instruction? _instruction;
 
   Instruction? get instruction {
-    if (_instruction == null) {
-      _instruction = Instruction.newInstruction(
+    return  _instruction ??= Instruction.newInstruction(
           MemoProgram.PROGRAM_KEY, base64Value.toBytesUTF8());
-    }
-    return _instruction;
   }
 }
 
@@ -519,9 +635,6 @@ class MemoProgramRawMemo {
   Instruction? _instruction;
 
   Instruction? get instruction {
-    if (_instruction == null) {
-      _instruction = Instruction.newInstruction(MemoProgram.PROGRAM_KEY, bytes);
-    }
-    return _instruction;
+    return  _instruction ??= Instruction.newInstruction(MemoProgram.PROGRAM_KEY, bytes);
   }
 }

@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:kin_base/base/models/kin_amount.dart';
 import 'package:kin_base/base/tools/base58.dart';
 import 'package:kin_base/base/tools/extensions.dart';
 import 'package:kin_base/stellarfork/key_pair.dart';
@@ -116,4 +117,12 @@ class KinAccount {
   String toString() {
     return 'KinAccount{key: $key, id: $id, tokenAccounts: $tokenAccounts, balance: $balance, status: $status}';
   }
+}
+
+class KinTokenAccountInfo{
+  final PublicKey key;
+  final KinAmount balance;
+  final PublicKey? closeAuthority;
+
+  KinTokenAccountInfo(this.key, this.balance, this.closeAuthority){}
 }
