@@ -1,10 +1,16 @@
 import 'dart:async';
+import 'dart:collection';
 import 'dart:typed_data';
 
+import 'package:decimal/decimal.dart';
 import 'package:kin_base/KinBackupRestore.dart';
 import 'package:kin_base/base/models/app_info.dart';
 import 'package:kin_base/base/models/appidx.dart';
+import 'package:kin_base/base/models/invoices.dart';
 import 'package:kin_base/base/models/key.dart';
+import 'package:kin_base/base/models/kin_binary_memo.dart';
+import 'package:kin_base/base/network/api/agora/model_to_proto.dart';
+import 'package:kin_base/base/network/api/agora/proto_to_model_v4.dart';
 import 'package:kin_base/base/network/services/app_info_providers.dart';
 import 'package:kin_base/base/storage/kin_file_storage.dart';
 import 'package:kin_base/base/tools/observers.dart';
@@ -13,7 +19,9 @@ import 'package:kin_base/stellarfork/key_pair.dart';
 import 'base/kin_account_context.dart';
 import 'base/kin_environment.dart';
 import 'base/models/kin_account.dart';
+import 'base/models/kin_amount.dart';
 import 'base/models/kin_balance.dart';
+import 'base/models/kin_memo.dart';
 import 'base/models/kin_payment.dart';
 import 'base/stellar/models/network_environment.dart';
 import 'base/tools/observers.dart';
@@ -50,13 +58,14 @@ class Kin {
     this._production,
     this._appIndex,
     this._appName, {
-    this.storageLocation = "/tmp/kin-flutter",
+    required this.storageLocation,
     void Function(KinBalance kinBalance)? onBalanceChange,
     void Function(List<KinPayment> payments)? onPayment,
     void Function(Kin kin)? onAccountContext,
     String? credentialUser,
     String? credentialPass,
-    bool initialize = true
+    bool initialize = true,
+    bool createAccountIfEmpty = false,
   })  : _onBalanceChange = onBalanceChange,
         _onPayment = onPayment,
         _onAccountContext = onAccountContext,
@@ -68,25 +77,23 @@ class Kin {
     this._environment = this._getEnvironment();
 
     if (initialize) {
-      this.loadLocalAccount();
+      this.loadLocalAccount(createAccountIfEmpty: createAccountIfEmpty);
     }
   }
 
-  Future<KinAccountId?> loadLocalAccount({bool createAccountIfEmpty = false}) async {
+  Future<KinAccountId?> loadLocalAccount({bool createAccountIfEmpty = true}) async {
     // Fetch  accounts and set the context:
     var ids = await this._environment.allAccountIds();
 
-    KinAccountId accountId ;
+    KinAccountId accountId;
 
     if (ids.isEmpty) {
       if (createAccountIfEmpty) {
         accountId = createAccount();
+      } else {
+        return null;
       }
-      else {
-        return null ;
-      }
-    }
-    else {
+    } else {
       accountId = ids[0];
     }
 
@@ -96,7 +103,7 @@ class Kin {
   }
 
   void setContextByAccountID(dynamic accountId) {
-    this._context = this.getKinContext( KinAccountId.from(accountId) );
+    this._context = this.getKinContext(KinAccountId.from(accountId));
     _setAppInfo();
 
     if (_onAccountContext != null) {
@@ -219,11 +226,15 @@ class Kin {
         _environment, KinAccountId.from(accountId));
   }
 
-  Future<List<KinAccountId>> allAccountIds() => this._environment.allAccountIds();
+  Future<List<KinAccountId>> allAccountIds() =>
+      this._environment.allAccountIds();
+
+  Future<List<KinAccount?>> allAccounts() =>
+      this._environment.allAccounts();
 
   KinAccountId createAccount() {
     var kinContext = KinAccountContext.newAccount(_environment);
-    return kinContext.accountId ;
+    return kinContext.accountId;
   }
 
   KinEnvironmentAgora _getEnvironment() {
@@ -242,7 +253,8 @@ class Kin {
     return env;
   }
 
-  Future<KinAccountId> importWallet(String backupJson, String backupPassword) async {
+  Future<KinAccountId> importWallet(
+      String backupJson, String backupPassword) async {
     var kinBackupRestore = KinBackupRestore();
     var keyPair = kinBackupRestore.importWallet(backupJson, backupPassword);
 
@@ -251,21 +263,22 @@ class Kin {
     return importAccount(account);
   }
 
-  Future<KinAccountId> importAccount(KinAccount account, {bool overwriteStoredAccount = false}) async {
+  Future<KinAccountId> importAccount(KinAccount account,
+      {bool overwriteStoredAccount = false}) async {
     var accountId = account.id;
 
     var storedAccount = _environment.storage.getAccount(accountId);
-    if ( storedAccount != null && !overwriteStoredAccount) {
-      return storedAccount.id ;
+    if (storedAccount != null && !overwriteStoredAccount) {
+      return storedAccount.id;
     }
 
     _environment.storage.addAccount(account);
 
-    var kinContext = getKinContext(accountId) as KinAccountContextBase ;
+    var kinContext = getKinContext(accountId) as KinAccountContextBase;
 
-    var accountUpdated = await kinContext.getAccountUpdated() ;
+    var accountUpdated = await kinContext.getAccountUpdated();
 
-    return accountUpdated.id ;
+    return accountUpdated.id;
   }
 
   String backupWallet(String backupPassword,
@@ -276,6 +289,58 @@ class Kin {
         keyPair: keyPair, accountId: accountId, account: account);
 
     return backup.toJson();
+  }
+
+  Future sendKinPayment(
+    Decimal amount,
+    String address,
+    {TransferType? paymentType}
+  ) {
+    if(_context == null) throw Exception("No Account Loaded");
+    if(paymentType == null) { paymentType = TransferType.p2p; }
+    HashMap<String, Decimal> hashMap = new HashMap<String, Decimal>();
+    hashMap[address] = amount;
+
+    // TODO invoice isn't building properly but memo still accepted 
+    var invoice = buildInvoice(hashMap);
+    return _context!.sendKinPayment(KinAmount(amount), KinAccountId.fromPublicKey(PublicKey.decode(address)), memo: buildMemo(invoice, paymentType));
+  }
+
+  Future sendKinPayments(
+    HashMap<String, Decimal> paymentItems,
+    String address,
+    {TransferType? paymentType}
+  ) {
+    if(_context == null) throw Exception("No Account Loaded");
+    if(paymentType == null) { paymentType == TransferType.p2p; }
+    var invoice = buildInvoice(paymentItems);
+    return _context!.sendKinPayment(KinAmount(invoiceTotal(paymentItems)), KinAccountId.fromPublicKey(PublicKey.decode(address)), memo: buildMemo(invoice, paymentType!));
+  }
+
+  Invoice buildInvoice(HashMap<String, Decimal> paymentItems) {
+    InvoiceBuilder invoiceBuilder = new InvoiceBuilder();
+    paymentItems.forEach((key, value) { 
+      invoiceBuilder.addLineItem(LineItemBuilder(key, KinAmount(value)).build());
+    });
+
+    return invoiceBuilder.build();
+  }
+
+  KinMemo buildMemo(
+    Invoice invoice, 
+    TransferType transferType
+    ) {
+      KinBinaryMemoBuilder memo = KinBinaryMemoBuilder(_appIndex)
+       ..setForeignKey([invoice].toProto().sha224Hash().decode())
+       ..setTransferType(transferType);
+
+      return memo.build().toKinMemo();
+  }
+
+  Decimal invoiceTotal(HashMap<String, Decimal> paymentItems) {
+    Decimal total = 0 as Decimal;
+    paymentItems.forEach((key, value) { total += value; });
+    return total;
   }
 
   @override

@@ -19,13 +19,15 @@ void main(List<String> args) async {
   }
 
   var production = true;
-  var appIndex = 0;
+  var appIndex = 134;
 
   var kin = Kin(
     production,
     appIndex,
     'Example App',
-    //storageLocation: '/tmp/kin-flutter-example-${DateTime.now().millisecondsSinceEpoch}',
+    storageLocation:
+        '/tmp/kin-flutter-feature',
+    createAccountIfEmpty: true,
   );
 
   print(kin);
@@ -62,12 +64,17 @@ void main(List<String> args) async {
   print('Current context account: $account');
   print('Current context balance: ${account.balance}');
 
-  //await Future.delayed(Duration(seconds: 10));
+  // var sentPayment = await submitTransaction(
+  //     kin, '3RXbFoTTTHHKXu2MikKz8NWbGLnV5PfbcTaQR8Z7oxME', 0.10);
 
-  var sentPayment = await submitTransaction(kin, '3RXbFoTTTHHKXu2MikKz8NWbGLnV5PfbcTaQR8Z7oxME', 0.10);
-  //var sentPayment = await submitTransaction(kin, '26toq28ewEfQZxXZh7MrZTkP3aTKkWemG2PQNg6TixXr', 0.10);
+  // if (sentPayment != null) {
+  //   showPaymentsForAccount(kin, accountId.base58Encode());
+  // }
 
-  if (sentPayment != null) {
+    var sentPaymentWithMemo = await submitTransactionWithMemo(
+      kin, '3RXbFoTTTHHKXu2MikKz8NWbGLnV5PfbcTaQR8Z7oxME', 0.10);
+
+  if (sentPaymentWithMemo != null) {
     showPaymentsForAccount(kin, accountId.base58Encode());
   }
 
@@ -97,6 +104,27 @@ Future<KinPayment?> submitTransaction(
       await kinContext.sendKinPayment(amountToSend, destinationAccount);
 
   print('Sent payment: $sentPayment');
+
+  return sentPayment;
+}
+
+Future<KinPayment?> submitTransactionWithMemo(
+  Kin kin, String destinationAccountID, double amount) async {
+      if (kin.isNotReady) {
+    print("Can't send payments without a defined contexts at: $kin");
+    return null;
+  }
+
+  var destinationAccount = KinAccountId.fromIdString(destinationAccountID);
+  var amountToSend = KinAmount.fromDouble(amount).amount;
+
+  print('Destination Account: $destinationAccount');
+  print('Amount to send: $amountToSend');
+
+  var sentPayment =
+      await kin.sendKinPayment(amountToSend, destinationAccountID);
+
+  print('Sent payment with memo: $sentPayment');
 
   return sentPayment;
 }

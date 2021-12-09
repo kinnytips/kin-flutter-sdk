@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:typed_data';
 
 import 'package:kin_base/base/models/key.dart';
@@ -5,6 +6,7 @@ import 'package:kin_base/base/models/solana/byte_utils.dart';
 import 'package:kin_base/base/models/solana/fixed_byte_array.dart';
 import 'package:kin_base/base/models/solana/instruction.dart';
 import 'package:kin_base/base/models/solana/short_vec.dart';
+import 'package:kin_base/base/tools/base58.dart';
 import 'package:kin_base/base/tools/byte_in_out_buffer.dart';
 import 'package:kin_base/base/tools/extensions.dart';
 
@@ -179,10 +181,14 @@ class Transaction {
       )
     ];
 
+    log("LOGGING INSTRUCTIONS " + instructions.toString());
+
     // Extract all of the unique accounts from the instructions.
     instructions.forEach((element) {
-      accounts.add(AccountMeta(publicKey: element.program, isProgram: true));
-      accounts.addAll(element.accounts!);
+      accounts.add(AccountMeta(publicKey: element!.program, isProgram: true));
+      if (element.accounts != null && element.accounts!.length > 0) {
+        accounts.addAll(element.accounts!);
+      }
     });
 
     // Sort the account meta's based on:
@@ -209,7 +215,7 @@ class Transaction {
       return CompiledInstruction(
         programIndex: _indexOf(accountPublicKeys, e.program),
         data: e.data,
-        accounts: Uint8List.fromList(e.accounts!.map((e2) => _indexOf(accountPublicKeys, e2.publicKey)).toList()),
+        accounts: e.accounts != null ? Uint8List.fromList(e.accounts!.map((e2) => _indexOf(accountPublicKeys, e2.publicKey)).toList()) : Uint8List.fromList(List.empty()),
       );
     }).toList();
 
@@ -257,7 +263,7 @@ class Transaction {
       final index = _indexOf(message.accounts, pubKey);
       if (index < 0) {
         throw Exception("IllegalArgumentException: "
-            "signing account ${pubKey.value!.toHexString()} "
+            "signing account ${Base58().encode(pubKey.value!)} (${pubKey.value!.toHexString()}) "
             "is not in the account list");
       }
       newSignatures[index] = Signature(

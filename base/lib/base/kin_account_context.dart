@@ -551,7 +551,7 @@ class KinAccountContextImpl extends KinAccountContextBase with KinAccountContext
     var storedAccount = await storage.getStoredAccount(accountId);
 
     if (storedAccount == null) {
-      throw StateError("Private key missing for account with id: $accountId");
+      throw StateError("Private key missing for account with id: $accountId > javaHashCode: ${ accountId.javaHashCode } ; hashCode: ${ accountId.hashCode }");
     }
 
     if ( storedAccount.status.value == KinAccountStatusUnregistered.defaultValue ) {
