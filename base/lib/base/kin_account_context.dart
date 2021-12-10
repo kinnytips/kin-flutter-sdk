@@ -24,13 +24,15 @@ import 'models/kin_memo.dart';
 import 'models/kin_payment.dart';
 import 'models/kin_payment_item.dart';
 import 'models/quark_amount.dart';
+import 'models/solana/instruction.dart';
 import 'models/transaction_hash.dart';
 import 'network/services/app_info_providers.dart';
 import 'storage/storage.dart';
 import 'tools/executor_service.dart';
 import 'tools/extensions.dart';
 
-
+import 'network/api/agora/model_to_proto_v4.dart';
+import 'network/api/agora/proto_to_model_v4.dart' hide ModelInvoiceListExtension;
 
 enum ObservationMode {
   Passive,
@@ -52,6 +54,8 @@ abstract class KinAccountReadOperationsAltIdioms {
 abstract class KinAccountReadOperations extends KinAccountReadOperationsAltIdioms {
 
   Future<KinAccount?> getAccount({ bool forceUpdate = false , Callback<KinAccount?>? accountCallback }) ;
+
+  Future<KinAccount> getAccountUpdated() ;
 
 }
 
@@ -419,6 +423,7 @@ class KinAccountContextBase implements KinAccountReadOperations , KinPaymentRead
     }
   }
 
+  @override
   Future<KinAccount> getAccountUpdated() async {
     var accountUpdated = await maybeFetchAccountDetails() ;
     var accountStatus = accountUpdated!.status;
@@ -655,7 +660,7 @@ class KinAccountContextImpl extends KinAccountContextBase with KinAccountContext
     return _sendKinPaymentsImpl(payments, memo);
   }
 
-  Future<List<KinPayment>> _sendKinPaymentsImpl(List<KinPaymentItem> payments, KinMemo? memo, { AccountSpec? sourceAccountSpec, AccountSpec? destinationAccountSpec , QuarkAmount? feeOverride}) async {
+  Future<List<KinPayment>> _sendKinPaymentsImpl(List<KinPaymentItem> payments, KinMemo? memo, { AccountSpec sourceAccountSpec = AccountSpec.Preferred, AccountSpec destinationAccountSpec = AccountSpec.Preferred, QuarkAmount? feeOverride}) async {
     log!.log("sendKinPayments");
 
     memo ??= KinMemo.none;
@@ -678,7 +683,7 @@ class KinAccountContextImpl extends KinAccountContextBase with KinAccountContext
     for (var attemptCount = 0; attemptCount < MAX_ATTEMPTS; ++attemptCount) {
       try {
         var ret = await executors.parallelIO.execute(() async {
-          return await sendKinTransaction(() => _buildPaymentTransaction(payments, memo, sourceAccountSpec, destinationAccountSpec, feeOverride, attemptCount));
+          return await sendKinTransaction(() => _buildPaymentTransaction(payments, memo, sourceAccountSpec, destinationAccountSpec, feeOverride, attemptCount, lastError));
         });
         return ret ?? <KinPayment>[] ;
       }
@@ -709,7 +714,7 @@ class KinAccountContextImpl extends KinAccountContextBase with KinAccountContext
     throw lastError! ;
   }
 
-  Future<KinTransaction> _buildPaymentTransaction(List<KinPaymentItem> payments, KinMemo? memo, AccountSpec? sourceAccountSpec, AccountSpec? destinationAccountSpec , QuarkAmount? feeOverride, int attemptCount,) async {
+  Future<KinTransaction> _buildPaymentTransaction(List<KinPaymentItem> payments, KinMemo? memo, AccountSpec? sourceAccountSpec, AccountSpec? destinationAccountSpec , QuarkAmount? feeOverride, int attemptCount, Error? lastError) async {
     var account = await getAccount();
 
     log!.log('_buildPaymentTransaction> account: $account');
@@ -735,17 +740,29 @@ class KinAccountContextImpl extends KinAccountContextBase with KinAccountContext
       );
     }
 
+    var createAccountInstructions = <Instruction>[];
+    var additionalSigners = <PrivateKey>[];
+
     List<KinPaymentItem> paymentItems ;
     if (attemptCount == 0 || destinationAccountSpec == AccountSpec.Exact) {
       paymentItems = payments ;
     } else {
       paymentItems = await Future.wait( payments.map((paymentItem) async {
         var destinationTokenAccounts = await service.resolveTokenAccounts(paymentItem.destinationAccount) ;
-        return paymentItem.copy(destinationAccount: destinationTokenAccounts.first.asKinAccountId());
+
+        if (destinationTokenAccounts.isEmpty) {
+            var ret = await service.createTokenAccountForDestinationOwner(paymentItem.destinationAccount.toProtoSolanaAccountId().toPublicKey());
+            var destAccountInstructions = ret.first;
+            var signer = ret.second;
+            createAccountInstructions.addAll(destAccountInstructions);
+            additionalSigners.add(signer);
+            return paymentItem.copy(destinationAccount: signer.asKinAccountId());
+        }
+        else {
+          return paymentItem.copy(destinationAccount: destinationTokenAccounts.first.asKinAccountId());
+        }
       }));
     }
-
-    var fee = await calculateFee(payments.length);
 
     var transaction = service.buildAndSignTransaction(
         sourceAccount.ownerKey,
@@ -753,7 +770,8 @@ class KinAccountContextImpl extends KinAccountContextBase with KinAccountContext
         sourceAccount.nonce,
         paymentItems,
         memo,
-        feeOverride ?? fee
+        createAccountInstructions,
+        additionalSigners
     );
 
     if (transaction is StellarKinTransaction) {

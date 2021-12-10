@@ -102,7 +102,7 @@ extension ListExtension<T> on List<T> {
     return this ;
   }
 
-  List<T> whereNotNull() => where((e) => e != null).toList();
+  List<T> whereNotNull<T>() => where((e) => e != null).whereType<T>().toList();
 
   T? get firstOrNull => isEmpty ? null : first ;
 }

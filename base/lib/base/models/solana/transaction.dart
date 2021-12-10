@@ -171,7 +171,7 @@ class Transaction {
       );
 
   static Transaction newTransaction(
-      PublicKey payer, List<Instruction?> instructions) {
+      PublicKey payer, List<Instruction> instructions) {
     final accounts = [
       AccountMeta(
         publicKey: payer,
@@ -213,7 +213,7 @@ class Transaction {
 
     final messageInstructions = instructions.map((e) {
       return CompiledInstruction(
-        programIndex: _indexOf(accountPublicKeys, e!.program),
+        programIndex: _indexOf(accountPublicKeys, e.program),
         data: e.data,
         accounts: e.accounts != null ? Uint8List.fromList(e.accounts!.map((e2) => _indexOf(accountPublicKeys, e2.publicKey)).toList()) : Uint8List.fromList(List.empty()),
       );

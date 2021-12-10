@@ -265,7 +265,7 @@ class KinFileStorage implements Storage {
     var storedTransactions = await getStoredTransactions(accountId);
     var items = storedTransactions?.items ?? <KinTransaction>[] ;
 
-    var list = <KinTransaction>[newTransaction , ...items].whereNotNull();
+    var list = [newTransaction , ...items].whereNotNull<KinTransaction>();
 
     return storeTransactions(accountId, list);
   }

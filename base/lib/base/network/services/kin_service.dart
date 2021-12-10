@@ -5,13 +5,17 @@ import 'package:kin_base/base/models/kin_account.dart';
 import 'package:kin_base/base/models/kin_memo.dart';
 import 'package:kin_base/base/models/kin_payment_item.dart';
 import 'package:kin_base/base/models/quark_amount.dart';
+import 'package:kin_base/base/models/solana/instruction.dart';
 import 'package:kin_base/base/models/transaction_hash.dart';
 import 'package:kin_base/base/stellar/models/kin_transaction.dart';
 import 'package:kin_base/base/stellar/models/paging_token.dart';
+import 'package:kin_base/base/tools/cache.dart';
 import 'package:kin_base/base/tools/observers.dart';
 
 abstract class KinService {
     Future<KinAccount?> createAccount(KinAccountId accountId, PrivateKey signer) ;
+
+    Future<Pair<List<Instruction>, PrivateKey>> createTokenAccountForDestinationOwner(PublicKey owner) ;
 
     Future<KinAccount?> getAccount(KinAccountId accountId) ;
 
@@ -37,7 +41,8 @@ abstract class KinService {
         int nonce,
         List<KinPaymentItem> paymentItems,
         KinMemo? memo,
-        QuarkAmount fee
+        List<Instruction> createAccountInstructions,
+        List<PrivateKey> additionalSigners
     ) ;
 
     Future<KinTransaction?> submitTransaction(KinTransaction transaction) ;
