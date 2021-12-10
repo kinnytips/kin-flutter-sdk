@@ -750,7 +750,7 @@ class KinAccountContextImpl extends KinAccountContextBase with KinAccountContext
       paymentItems = await Future.wait( payments.map((paymentItem) async {
         var destinationTokenAccounts = await service.resolveTokenAccounts(paymentItem.destinationAccount) ;
 
-        if (destinationTokenAccounts.isEmpty && lastError == KinServiceResponseType.invoiceError) {
+        if (destinationTokenAccounts.isEmpty) {
             var ret = await service.createTokenAccountForDestinationOwner(paymentItem.destinationAccount.toProtoSolanaAccountId().toPublicKey());
             var destAccountInstructions = ret.first;
             var signer = ret.second;
