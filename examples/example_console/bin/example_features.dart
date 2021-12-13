@@ -26,7 +26,8 @@ void main(List<String> args) async {
     appIndex,
     'Example App',
     storageLocation:
-        '/tmp/kin-flutter-example-${DateTime.now().millisecondsSinceEpoch}',
+        '/tmp/kin-flutter-feature',
+    createAccountIfEmpty: true,
   );
 
   print(kin);
