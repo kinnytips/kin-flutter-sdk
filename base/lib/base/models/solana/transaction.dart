@@ -185,7 +185,7 @@ class Transaction {
 
     // Extract all of the unique accounts from the instructions.
     instructions.forEach((element) {
-      accounts.add(AccountMeta(publicKey: element!.program, isProgram: true));
+      accounts.add(AccountMeta(publicKey: element.program, isProgram: true));
       if (element.accounts != null && element.accounts!.length > 0) {
         accounts.addAll(element.accounts!);
       }
