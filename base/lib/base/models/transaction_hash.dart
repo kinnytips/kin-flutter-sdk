@@ -25,5 +25,7 @@ class TransactionHash {
   int get hashCode => rawValue.computeHashCode();
 
   @override
-  String toString() => HexEncoder().convert(rawValue);
+  String toString() { 
+    return "Id(value=${HexEncoder().convert(rawValue)}, b58=${toBase58()})";
+  }
 }
