@@ -6,12 +6,9 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:kin_base/KinBackupRestore.dart';
 import 'package:kin_base/base/models/kin_account.dart';
 import 'package:kin_base/stellarfork/key_pair.dart';
-import 'package:qr/qr.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 class _QrImage extends QrImage {
