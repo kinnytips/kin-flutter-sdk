@@ -5,6 +5,7 @@ import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
+import 'package:bip39/bip39.dart' as bip39;
 import 'package:flutter/material.dart';
 import 'package:kin_base/KinBackupRestore.dart';
 import 'package:kin_base/base/models/kin_account.dart';
@@ -179,5 +180,19 @@ class KinBackupQRImage extends _QrImage {
     stream.addListener(streamListener);
 
     return completer.future;
+  }
+}
+
+extension Bip39 on KeyPair {
+  static KeyPair fromMnemonic(String mnemonic, String password) {
+    return KeyPair.fromSecretSeed(bip39.mnemonicToSeedHex(mnemonic, passphrase: password));
+  }
+
+  static String generateMnemonic() {
+    return bip39.generateMnemonic();
+  }
+
+  static String generateMnemonicWithPassword(String password) {
+    return bip39.entropyToMnemonic(password);
   }
 }

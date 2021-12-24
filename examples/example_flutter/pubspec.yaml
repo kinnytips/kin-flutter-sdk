@@ -18,7 +18,9 @@ dependencies:
     # See https://dart.dev/tools/pub/dependencies#version-constraints
     # The example app is bundled with the plugin so we use a path dependency on
     # the parent directory to use the current plugin's version.
-    path: ../../base
+    git:
+      url: https://kinny-ci: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@github.com/kinnytips/kin-flutter-sdk.git
+      path: base
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -29,10 +31,10 @@ dependencies:
   connectivity: ^3.0.6
   equatable: ^2.0.0
   permission_handler: ^5.1.0+2
-  path_provider: ^1.6.28
+  path_provider: ^2.0.8
   prompt_dialog: ^0.1.4
   alert_dialog: ^0.2.0
-  gallery_saver: ^2.0.3
+  gallery_saver: ^2.3.2
   backup_restore:
     path: ../../backup_restore
 
