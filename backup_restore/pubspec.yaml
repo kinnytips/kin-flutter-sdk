@@ -1,7 +1,6 @@
 name: backup_restore
 description: A new Flutter package project.
 version: 0.0.1
-author:
 publish_to: none
 #homepage:
 
@@ -13,6 +12,7 @@ dependencies:
   flutter:
     sdk: flutter
   qr_flutter: ^4.0.0
+  bip39: ^1.0.6
   kin_base:
     git:
       url: https://kinny-ci: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@github.com/kinnytips/kin-flutter-sdk.git

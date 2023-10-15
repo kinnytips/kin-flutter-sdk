@@ -1,7 +1,6 @@
 name: kin_base
 description: Flutter SDK for kin
 version: 2.0.0
-author: Kinny.io development team 
 homepage: https://kinny.io
 
 environment:
