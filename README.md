@@ -1,7 +1,7 @@
 # Kin Flutter SDK
 [![Kin flutter SDK CI](https://github.com/kinnytips/kin-flutter-sdk/actions/workflows/dart.yml/badge.svg)](https://github.com/kinnytips/kin-flutter-sdk/actions/workflows/dart.yml)
 
-## NOTE - Kin Agora service is no longer opeational.  This SDK can be used along with the open source [Agora](https://github.com/kinecosystem/agora) components to host your own Agora for a feeless UX
+## NOTE - Kin Agora service is no longer operational.  This SDK can be used along with the open source [Agora](https://github.com/kinecosystem/agora) components to host your own Agora for a feeless UX
 
 Flutter Package for using [Kin Cryptocurrency](https://www.kin.org/). Based on the [Kin Android SDK](https://github.com/kinecosystem/kin-android).
 
